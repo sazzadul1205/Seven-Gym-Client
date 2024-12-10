@@ -3,6 +3,7 @@ import Welcome from "./Welcome/Welcome";
 import Banner from "./Banner/Banner";
 import Highlights from "./Highlights/Highlights";
 import ClassSchedule from "./ClassSchedule/ClassSchedule";
+import FeaturedTrainers from "./FeaturedTrainers/FeaturedTrainers";
 
 const Home = () => {
   return (
@@ -14,6 +15,7 @@ const Home = () => {
       <Welcome></Welcome>
       <Highlights></Highlights>
       <ClassSchedule></ClassSchedule>
+      <FeaturedTrainers></FeaturedTrainers>
     </div>
   );
 };

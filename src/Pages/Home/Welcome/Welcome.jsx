@@ -10,7 +10,7 @@ const Welcome = () => {
   };
 
   return (
-    <div className="relative h-screen bg-gray-900 text-white">
+    <div className="relative h-screen w-full text-white">
       {/* Background Video */}
       {isVideoVisible && (
         <div className="absolute inset-0 overflow-hidden">

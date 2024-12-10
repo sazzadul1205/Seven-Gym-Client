@@ -1,43 +1,39 @@
 import { useState, useEffect } from "react";
-import Banner1 from "../../../assets/Banners/1.jpg";
-import Banner2 from "../../../assets/Banners/2.jpg";
-import Banner3 from "../../../assets/Banners/3.jpg";
-import Banner4 from "../../../assets/Banners/4.jpg";
-import Banner5 from "../../../assets/Banners/5.jpg";
+
 
 const Banner = () => {
   // In-page JSON with updated banner data
   const bannerData = [
     {
-      image: Banner1,
+      image: "https://i.ibb.co.com/7GjcQZz/Banner-01.jpg",
       title: "Welcome to Our Platform",
       description: "Discover a world of opportunities with us.",
       buttonName: "Learn More",
       link: "/about",
     },
     {
-      image: Banner2,
+      image: "https://i.ibb.co.com/TtscQVb/Banner-02.jpg",
       title: "Explore Our Features",
       description: "Advanced tools to help you grow and succeed.",
       buttonName: "Features",
       link: "/features",
     },
     {
-      image: Banner3,
+      image: "https://i.ibb.co.com/Twk0P8t/Banner-03.jpg",
       title: "Your Success, Our Goal",
       description: "Partnering with you for a brighter future.",
       buttonName: "Our Services",
       link: "/services",
     },
     {
-      image: Banner4,
+      image: "https://i.ibb.co.com/3hsNGRR/Banner-04.jpg",
       title: "Join Us Today",
       description: "Be a part of our growing community.",
       buttonName: "Sign Up",
       link: "/signup",
     },
     {
-      image: Banner5,
+      image: "https://i.ibb.co.com/9q9GGCD/Banner-05.jpg",
       title: "Achieve More with Us",
       description: "Take the next step towards your dreams.",
       buttonName: "Contact Us",
