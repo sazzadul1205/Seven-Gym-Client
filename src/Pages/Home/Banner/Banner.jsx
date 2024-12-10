@@ -54,7 +54,7 @@ const Banner = () => {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [currentIndex]);
+  }, [bannerData.length, currentIndex]);
 
   // Navigation handlers
   const handleLeftClick = () => {

@@ -137,7 +137,7 @@ const Navbar = () => {
 
         {/* End */}
         <div className="navbar-end flex items-center">
-          <button className="bg-blue-400 hover:bg-gradient-to-l from-blue-700 to-blue-400 w-28 rounded-full text-center py-2 text-white font-semibold">
+          <button className="bg-blue-400 hover:bg-gradient-to-l from-blue-700 to-blue-400 w-28 md:w-32 text-center py-2 md:py-3 text-white font-semibold">
             Login
           </button>
         </div>
