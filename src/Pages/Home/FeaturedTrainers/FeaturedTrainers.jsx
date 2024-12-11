@@ -1,3 +1,5 @@
+import Title from "../../../Shared/Componenet/Title";
+
 const trainersData = [
   {
     id: 1,
@@ -80,14 +82,13 @@ const FeaturedTrainers = () => {
 
   return (
     <div className="py-16 mx-auto max-w-[1200px]">
-      <div className="container mx-auto px-6 text-center">
+      <div className="container mx-auto text-center">
         {/* Section Title */}
-        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-2">
-          Our Featured Teachers
-        </h2>
-        <div className="bg-white p-[1px] w-1/3 mx-auto"></div>
+        <div className="px-6">
+          <Title titleContent={" Our Featured Teachers"} />
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-11">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-8 mt-6 md:mt-11 px-2">
           {trainersData.map((trainer) => (
             <div
               key={trainer.id}
@@ -135,7 +136,7 @@ const FeaturedTrainers = () => {
         </div>
 
         <div className="text-center mt-8">
-          <button className=" px-24 py-3 font-semibold bg-[#F72C5B] hover:bg-white text-white hover:text-[#F72C5B] items-end gap-5 justify-end mx-auto transform transition-all duration-300 ease-in-out hover:scale-105">
+          <button className=" px-12 md:px-24 py-3 font-semibold bg-[#F72C5B] hover:bg-white text-white hover:text-[#F72C5B] items-end gap-5 justify-end mx-auto transform transition-all duration-300 ease-in-out hover:scale-105">
             <span>Find More Teachers</span>
           </button>
         </div>

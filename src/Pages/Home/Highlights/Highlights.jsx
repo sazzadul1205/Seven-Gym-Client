@@ -1,34 +1,30 @@
-import { FaDumbbell, FaUsers, FaAppleAlt, FaHeartbeat } from "react-icons/fa";
 import { Link } from "react-router"; // Correct import for React Router
+import Title from "../../../Shared/Componenet/Title";
 
 const Highlights = () => {
   const services = [
     {
-      id: 1,
-      icon: <FaDumbbell className="text-4xl text-blue-500" />,
+      icon: "https://i.ibb.co/HXTdzWQ/Dumble.png",
       title: "Personal Training",
       description:
         "Work one-on-one with expert trainers to achieve your goals.",
       link: "/personal-training",
     },
     {
-      id: 2,
-      icon: <FaUsers className="text-4xl text-blue-500" />,
+      icon: "https://i.ibb.co/VtBmHkJ/Group.png",
       title: "Group Classes",
       description: "Join dynamic group classes to stay motivated and fit.",
       link: "/group-classes",
     },
     {
-      id: 3,
-      icon: <FaAppleAlt className="text-4xl text-blue-500" />,
+      icon: "https://i.ibb.co/MBwPnsQ/Assessments.png",
       title: "Nutrition Guidance",
       description:
         "Get personalized diet plans to complement your fitness journey.",
       link: "/nutrition-guidance",
     },
     {
-      id: 4,
-      icon: <FaHeartbeat className="text-4xl text-blue-500" />,
+      icon: "https://i.ibb.co/VBDGH4M/Nutrition.png",
       title: "Fitness Assessments",
       description: "Track your progress with professional assessments.",
       link: "/fitness-assessments",
@@ -37,25 +33,28 @@ const Highlights = () => {
 
   return (
     <div className="py-16 mx-auto max-w-[1200px]">
-      <div className="container mx-auto px-6 text-center">
+      <div className="container mx-auto text-center">
         {/* Section Title */}
-        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-2">
-          Our Services
-        </h2>
-        <div className="bg-white p-[1px] w-1/3 mx-auto"></div>
+        <div className="px-6">
+          <Title titleContent={"Our Services"} />
+        </div>
 
         {/* Cards Grid */}
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 mt-11">
-          {services.map((service) => (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-1 md:gap-8 mt-5 md:mt-11 px-2">
+          {services.map((service, index) => (
             <Link
-              key={service.id}
+              key={index} // Use index as the key since the id is not available
               to={service.link}
               className="block transform transition-transform duration-300 hover:scale-105"
             >
-              <div className="bg-white shadow-lg hover:shadow-2xl rounded-lg p-6 text-center h-[180px] w-full flex flex-col justify-between">
+              <div className="bg-white shadow-lg hover:shadow-2xl rounded-lg p-6 text-center h-[190px] w-full flex flex-col justify-between">
                 {/* Icon */}
                 <div className="flex justify-center items-center mb-4">
-                  {service.icon}
+                  <img
+                    src={service.icon}
+                    alt={service.title}
+                    className="w-12 h-12"
+                  />
                 </div>
 
                 {/* Title */}

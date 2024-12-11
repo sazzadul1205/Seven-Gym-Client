@@ -1,6 +1,7 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Title from "../../../Shared/Componenet/Title";
 
 const galleryImages = [
   { id: 1, url: "https://via.placeholder.com/300x200", alt: "Gym Equipment 1" },
@@ -28,21 +29,35 @@ const GalleryPreview = () => {
     dots: false,
     infinite: true,
     speed: 2000,
-    slidesToShow: 3,
+    slidesToShow: 3, // Default number of slides shown
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 0, // No delay between slides
     cssEase: "linear",
+    arrows: false,
+    responsive: [
+      {
+        breakpoint: 1024, // Tablet view: 2 slides
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 768, // Mobile view: 1 slide
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
   };
 
   return (
-    <div className="py-16 ">
-      <div className="container mx-auto px-6 text-center">
+    <div className="py-16">
+      <div className="container mx-auto text-center">
         {/* Section Title */}
-        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-2">
-          Gallery Preview
-        </h2>
-        <div className="bg-white p-[1px] w-1/3 mx-auto"></div>
+        <div className="px-6">
+          <Title titleContent={"Gallery Preview"} />
+        </div>
 
         <div className="mt-11">
           {/* Top Slider */}
@@ -86,7 +101,7 @@ const GalleryPreview = () => {
 
         {/* Link to Full Gallery */}
         <div className="text-center mt-8">
-          <button className=" px-24 py-3 font-semibold bg-[#F72C5B] hover:bg-white text-white hover:text-[#F72C5B] items-end gap-5 justify-end mx-auto transform transition-all duration-300 ease-in-out hover:scale-105">
+          <button className=" px-12 md:px-24 py-3 font-semibold bg-[#F72C5B] hover:bg-white text-white hover:text-[#F72C5B] items-end gap-5 justify-end mx-auto transform transition-all duration-300 ease-in-out hover:scale-105">
             <span>View Full Gallery</span>
           </button>
         </div>

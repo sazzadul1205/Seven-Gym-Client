@@ -1,3 +1,5 @@
+import Title from "../../../Shared/Componenet/Title";
+
 const promotions = [
   {
     id: 1,
@@ -76,15 +78,14 @@ const promotions = [
 const PromotionsSection = () => {
   return (
     <div className="py-16">
-      <div className="container mx-auto px-6 text-center">
+      <div className="container mx-auto text-center">
         {/* Section Title */}
-        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-2">
-          Promotions & Offers
-        </h2>
-        <div className="bg-white p-[1px] w-1/3 mx-auto"></div>
-
+        <div className="px-6">
+          <Title titleContent={"Promotions & Offers"} />
+        </div>
+        
         {/* Promotions Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-11 text-left">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 md:gap-8 mt-6 md:mt-11 text-left px-1">
           {promotions.map((promo) => (
             <div
               key={promo.id}
@@ -95,11 +96,11 @@ const PromotionsSection = () => {
                 alt={promo.title}
                 className="w-full h-56 object-cover"
               />
-              <div className="flex-1 p-6">
+              <div className="flex-1 pt-2 px-3 md:px-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">
                   {promo.title}
                 </h3>
-                <p className="text-gray-600 mb-6">{promo.description}</p>
+                <p className="text-gray-600 mb-1">{promo.description}</p>
               </div>
               <div className="p-6">
                 <a

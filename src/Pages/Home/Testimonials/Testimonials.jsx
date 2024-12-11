@@ -2,6 +2,7 @@ import React from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Title from "../../../Shared/Componenet/Title";
 
 const testimonialsData = [
   {
@@ -113,15 +114,16 @@ const Testimonials = () => {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 1500,
+    arrows: false,
     responsive: [
       {
-        breakpoint: 1024,
+        breakpoint: 1024, // Tablet view: 2 testimonials
         settings: {
           slidesToShow: 2,
         },
       },
       {
-        breakpoint: 768,
+        breakpoint: 768, // Mobile view: 1 testimonial
         settings: {
           slidesToShow: 1,
         },
@@ -138,24 +140,23 @@ const Testimonials = () => {
   };
 
   return (
-    <div className="py-16 ">
-      <div className="container mx-auto px-6 text-center">
+    <div className="py-16">
+      <div className="container mx-auto text-center">
         {/* Section Title */}
-        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-2">
-          What Our Client say about Us
-        </h2>
-        <div className="bg-white p-[1px] w-1/3 mx-auto"></div>
+        <div className="px-6">
+          <Title titleContent={"What Our Clients Say About Us"} />
+        </div>
 
         {/* Testimonials Carousel */}
-        <Slider ref={sliderRef} {...settings} className="mt-16">
+        <Slider ref={sliderRef} {...settings} className="mt-6 md:mt-16 md:px-2">
           {testimonialsData.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="px-4 relative" // Added relative positioning for stacking context
+              className="md:px-4 relative"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <div className="bg-white shadow-lg rounded-lg p-6 text-left transform transition-all duration-300 ">
+              <div className="bg-white shadow-lg rounded-lg p-6 text-left transform transition-all duration-300 h-[200px]">
                 <div className="flex items-center mb-4">
                   <img
                     src={testimonial.imageUrl}
@@ -179,7 +180,7 @@ const Testimonials = () => {
 
         {/* Read More Stories Button */}
         <div className="text-center mt-8">
-          <button className=" px-24 py-3 font-semibold bg-[#F72C5B] hover:bg-white text-white hover:text-[#F72C5B] items-end gap-5 justify-end mx-auto transform transition-all duration-300 ease-in-out hover:scale-105">
+          <button className=" px-12 md:px-24 py-3 font-semibold bg-[#F72C5B] hover:bg-white text-white hover:text-[#F72C5B] items-end gap-5 justify-end mx-auto transform transition-all duration-300 ease-in-out hover:scale-105">
             <span>Read More Stories</span>
           </button>
         </div>
