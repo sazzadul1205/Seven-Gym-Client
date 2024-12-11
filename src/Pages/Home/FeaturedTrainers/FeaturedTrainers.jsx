@@ -136,7 +136,7 @@ const FeaturedTrainers = () => {
 
         <div className="text-center mt-8">
           <button className=" px-24 py-3 font-semibold bg-[#F72C5B] hover:bg-white text-white hover:text-[#F72C5B] items-end gap-5 justify-end mx-auto transform transition-all duration-300 ease-in-out hover:scale-105">
-            <span>Find More Tedachers</span>
+            <span>Find More Teachers</span>
           </button>
         </div>
       </div>

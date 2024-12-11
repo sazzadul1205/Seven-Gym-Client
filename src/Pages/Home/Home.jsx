@@ -4,6 +4,8 @@ import Banner from "./Banner/Banner";
 import Highlights from "./Highlights/Highlights";
 import ClassSchedule from "./ClassSchedule/ClassSchedule";
 import FeaturedTrainers from "./FeaturedTrainers/FeaturedTrainers";
+import Testimonials from "./Testimonials/Testimonials";
+import GalleryPreview from "./GalleryPreview/GalleryPreview";
 
 const Home = () => {
   return (
@@ -16,6 +18,8 @@ const Home = () => {
       <Highlights></Highlights>
       <ClassSchedule></ClassSchedule>
       <FeaturedTrainers></FeaturedTrainers>
+      <Testimonials></Testimonials>
+      <GalleryPreview></GalleryPreview>
     </div>
   );
 };
