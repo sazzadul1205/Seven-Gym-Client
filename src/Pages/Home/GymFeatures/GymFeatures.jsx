@@ -2,49 +2,41 @@ import Title from "../../../Shared/Componenet/Title";
 
 const gymFeatures = [
   {
-    id: 1,
     title: "Modern Equipment",
     description: "State-of-the-art fitness machines for every workout.",
     icon: "https://i.ibb.co.com/1fGh9H9/Modern-Gym.png",
   },
   {
-    id: 2,
     title: "Spacious Workout Areas",
     description: "Plenty of space to move around and get your workout done.",
     icon: "https://i.ibb.co.com/Pc5q2kx/Spacious.png",
   },
   {
-    id: 3,
     title: "Clean and Sanitized Environment",
     description: "We maintain high standards of cleanliness and hygiene.",
     icon: "https://i.ibb.co.com/4sTr3n7/Cleaning.png",
   },
   {
-    id: 4,
     title: "Locker and Shower Facilities",
     description: "Secure lockers and refreshing showers for your convenience.",
     icon: "https://i.ibb.co.com/dDfFCY3/Locker.png",
   },
   {
-    id: 5,
     title: "Personal Trainers",
     description: "Certified trainers to help you achieve your fitness goals.",
     icon: "https://i.ibb.co.com/Xbdy73G/Personal.png",
   },
   {
-    id: 6,
     title: "Group Classes",
     description: "Join engaging classes like yoga, Zumba, and aerobics.",
     icon: "https://i.ibb.co.com/zF3dGTX/Group-class.png",
   },
   {
-    id: 7,
     title: "Nutrition Advice",
     description: "Get expert guidance on diet and nutrition plans.",
     icon: "https://i.ibb.co.com/ZgG2wwV/Nutrition.png",
   },
   {
-    id: 8,
     title: "24/7 Access",
     description: "Work out at your convenience with round-the-clock access.",
     icon: "https://i.ibb.co.com/1rPYvyn/24-hours.png",

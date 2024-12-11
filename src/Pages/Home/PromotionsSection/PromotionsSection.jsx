@@ -2,7 +2,6 @@ import Title from "../../../Shared/Componenet/Title";
 
 const promotions = [
   {
-    id: 1,
     title: "Free Trial Classes",
     description:
       "Try out our gym for free! Get a feel for the equipment, classes, and facilities. Limited time offer! Enjoy 1 week of free access to all our gym facilities including group classes and personal training sessions.",
@@ -14,7 +13,6 @@ const promotions = [
     discountPercentage: 0, // No discount, free offer
   },
   {
-    id: 2,
     title: "Discounts on Memberships",
     description:
       "Sign up now and enjoy amazing discounts on all membership plans. Get up to 25% off on our 12-month memberships. Don't miss this exclusive offer to lock in a lower rate for a full year of fitness!",
@@ -26,7 +24,6 @@ const promotions = [
     discountPercentage: 25, // Discount value
   },
   {
-    id: 3,
     title: "Seasonal Offers",
     description:
       "Take advantage of our seasonal offers with special rates and packages. Whether you're looking for a membership or group classes, we have exciting deals to match your fitness goals.",
@@ -38,7 +35,6 @@ const promotions = [
     discountPercentage: 15, // Discount value
   },
   {
-    id: 4,
     title: "Bring a Friend, Get Rewards",
     description:
       "Refer a friend to join the gym and receive up to 1 month of free membership for every successful sign-up. Plus, your friend will get a special discount on their first month!",
@@ -50,7 +46,6 @@ const promotions = [
     discountPercentage: 0, // Free month for referral
   },
   {
-    id: 5,
     title: "Holiday Special Package",
     description:
       "Celebrate the holiday season with our exclusive holiday special membership package. Enjoy full access to all gym facilities, unlimited group classes, and a free personal training session.",
@@ -62,7 +57,6 @@ const promotions = [
     discountPercentage: 20, // Holiday discount
   },
   {
-    id: 6,
     title: "Early Bird Sign-Up Discount",
     description:
       "Be an early bird and enjoy 30% off your first month when you sign up for any membership before 10 AM! This offer is valid for a limited time only.",

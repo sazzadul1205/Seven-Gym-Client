@@ -24,6 +24,8 @@ const galleryImages = [
   },
 ];
 
+
+
 const GalleryPreview = () => {
   const sliderSettings = {
     dots: false,

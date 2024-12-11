@@ -6,7 +6,6 @@ import Title from "../../../Shared/Componenet/Title";
 
 const testimonialsData = [
   {
-    id: 1,
     name: "Alice Johnson",
     imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
     quote:
@@ -14,7 +13,6 @@ const testimonialsData = [
     role: "Fitness Enthusiast",
   },
   {
-    id: 2,
     name: "Michael Smith",
     imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
     quote:
@@ -22,7 +20,6 @@ const testimonialsData = [
     role: "Yoga Practitioner",
   },
   {
-    id: 3,
     name: "Emily Davis",
     imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
     quote:
@@ -30,7 +27,6 @@ const testimonialsData = [
     role: "Personal Training Client",
   },
   {
-    id: 4,
     name: "Chris Brown",
     imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
     quote:
@@ -38,7 +34,6 @@ const testimonialsData = [
     role: "Gym Member",
   },
   {
-    id: 5,
     name: "Sophia Martinez",
     imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
     quote:
@@ -46,7 +41,6 @@ const testimonialsData = [
     role: "Pilates Practitioner",
   },
   {
-    id: 6,
     name: "James Wilson",
     imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
     quote:
@@ -54,7 +48,6 @@ const testimonialsData = [
     role: "CrossFit Athlete",
   },
   {
-    id: 7,
     name: "Olivia Taylor",
     imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
     quote:
@@ -62,7 +55,6 @@ const testimonialsData = [
     role: "Wellness Advocate",
   },
   {
-    id: 8,
     name: "Ethan Clark",
     imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
     quote:
@@ -70,7 +62,6 @@ const testimonialsData = [
     role: "Strength Trainer",
   },
   {
-    id: 9,
     name: "Isabella Miller",
     imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
     quote:
@@ -78,7 +69,6 @@ const testimonialsData = [
     role: "Cardio Enthusiast",
   },
   {
-    id: 10,
     name: "Liam Anderson",
     imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
     quote:
@@ -86,7 +76,6 @@ const testimonialsData = [
     role: "Health Seeker",
   },
   {
-    id: 11,
     name: "Emma Roberts",
     imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
     quote:
@@ -94,7 +83,6 @@ const testimonialsData = [
     role: "Wellness Enthusiast",
   },
   {
-    id: 12,
     name: "Noah Walker",
     imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
     quote:
