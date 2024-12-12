@@ -5,6 +5,8 @@ import "./index.css";
 import Home from "./Pages/Home/Home.jsx";
 import PublicLayout from "./Layouts/PublicLayout.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import PageNotFound from "./Pages/PageNotFound/PageNotFound.jsx";
+import Gallery from "./Pages/Gallery/Gallery.jsx";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +17,8 @@ createRoot(document.getElementById("root")).render(
         <Routes>
           <Route element={<PublicLayout />}>
             <Route path="/" element={<Home />} />
+            <Route path="/Gallery" element={<Gallery />} />
+            <Route path="*" element={<PageNotFound />} />
           </Route>
         </Routes>
       </BrowserRouter>
