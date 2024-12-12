@@ -69,13 +69,68 @@ const Home = () => {
     queryFn: () => axiosPublic.get(`/Class_Details`).then((res) => res.data),
   });
 
+  // Fetching Trainers Data
+  const {
+    data: TrainersData,
+    isLoading: TrainersDataIsLoading,
+    error: TrainersDataError,
+  } = useQuery({
+    queryKey: ["TrainersData"],
+    queryFn: () => axiosPublic.get(`/Trainers`).then((res) => res.data),
+  });
+
+  // Fetching Testimonials Data
+  const {
+    data: TestimonialsData,
+    isLoading: TestimonialsDataIsLoading,
+    error: TestimonialsDataError,
+  } = useQuery({
+    queryKey: ["TestimonialsData"],
+    queryFn: () => axiosPublic.get(`/Testimonials`).then((res) => res.data),
+  });
+
+  // Fetching Gallery Data
+  const {
+    data: GalleryData,
+    isLoading: GalleryDataIsLoading,
+    error: GalleryDataError,
+  } = useQuery({
+    queryKey: ["GalleryData"],
+    queryFn: () => axiosPublic.get(`/Gallery`).then((res) => res.data),
+  });
+
+  // Fetching Promotions Data
+  const {
+    data: PromotionsData,
+    isLoading: PromotionsDataIsLoading,
+    error: PromotionsDataError,
+  } = useQuery({
+    queryKey: ["PromotionsData"],
+    queryFn: () => axiosPublic.get(`/Promotions`).then((res) => res.data),
+  });
+
+  // Fetching Gym_Features Data
+  const {
+    data: Gym_FeaturesData,
+    isLoading: Gym_FeaturesDataIsLoading,
+    error: Gym_FeaturesDataError,
+  } = useQuery({
+    queryKey: ["Gym_FeaturesData"],
+    queryFn: () => axiosPublic.get(`/Gym_Features`).then((res) => res.data),
+  });
+
   // Loading and error states (render below hooks)
   if (
     Home_Banner_SectionDataIsLoading ||
     Home_Welcome_SectionDataIsLoading ||
     Home_Services_SectionDataIsLoading ||
     Our_ClassesDataIsLoading ||
-    Class_DetailsDataIsLoading
+    Class_DetailsDataIsLoading ||
+    TrainersDataIsLoading ||
+    TestimonialsDataIsLoading ||
+    GalleryDataIsLoading ||
+    PromotionsDataIsLoading ||
+    Gym_FeaturesDataIsLoading
   ) {
     return <Loading />;
   }
@@ -85,7 +140,12 @@ const Home = () => {
     Home_Welcome_SectionDataError ||
     Home_Services_SectionDataError ||
     Our_ClassesDataError ||
-    Class_DetailsDataError
+    Class_DetailsDataError ||
+    TrainersDataError ||
+    TestimonialsDataError ||
+    GalleryDataError ||
+    PromotionsDataError ||
+    Gym_FeaturesDataError
   ) {
     return (
       <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
@@ -101,8 +161,6 @@ const Home = () => {
       </div>
     );
   }
-
-  console.log(Class_DetailsData);
 
   return (
     <div
@@ -120,11 +178,11 @@ const Home = () => {
         ourClasses={Our_ClassesData}
         classDetails={Class_DetailsData}
       />
-      <FeaturedTrainers />
-      <Testimonials />
-      <GalleryPreview />
-      <PromotionsSection />
-      <GymFeatures />
+      <FeaturedTrainers trainersData={TrainersData} />
+      <Testimonials testimonialsData={TestimonialsData} />
+      <GalleryPreview galleryData={GalleryData} />
+      <PromotionsSection promotionsData={PromotionsData} />
+      <GymFeatures gymFeaturesData={Gym_FeaturesData} />
       <CallToAction />
     </div>
   );

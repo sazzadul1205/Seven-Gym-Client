@@ -1,32 +1,10 @@
+/* eslint-disable react/prop-types */
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Title from "../../../Shared/Componenet/Title";
 
-const galleryImages = [
-  { id: 1, url: "https://via.placeholder.com/300x200", alt: "Gym Equipment 1" },
-  { id: 2, url: "https://via.placeholder.com/300x200", alt: "Gym Equipment 2" },
-  { id: 3, url: "https://via.placeholder.com/300x200", alt: "Gym Equipment 3" },
-  { id: 4, url: "https://via.placeholder.com/300x200", alt: "Workout Area" },
-  { id: 5, url: "https://via.placeholder.com/300x200", alt: "Yoga Space" },
-  { id: 6, url: "https://via.placeholder.com/300x200", alt: "Strength Area" },
-  { id: 7, url: "https://via.placeholder.com/300x200", alt: "Cardio Zone" },
-  { id: 8, url: "https://via.placeholder.com/300x200", alt: "Swimming Pool" },
-  {
-    id: 9,
-    url: "https://via.placeholder.com/300x200",
-    alt: "Free Weights Area",
-  },
-  {
-    id: 10,
-    url: "https://via.placeholder.com/300x200",
-    alt: "Fitness Classes",
-  },
-];
-
-
-
-const GalleryPreview = () => {
+const GalleryPreview = ({ galleryData }) => {
   const sliderSettings = {
     dots: false,
     infinite: true,
@@ -69,7 +47,7 @@ const GalleryPreview = () => {
               className="slider-left"
               style={{ transform: "scaleX(-1)" }} // Reverse direction
             >
-              {galleryImages.map((image) => (
+              {galleryData.map((image) => (
                 <div key={image.id} className="">
                   <div className="rounded-lg overflow-hidden shadow-lg">
                     <img
@@ -86,7 +64,7 @@ const GalleryPreview = () => {
           {/* Bottom Slider */}
           <div className="">
             <Slider {...sliderSettings} className="slider-right">
-              {galleryImages.map((image) => (
+              {galleryData.map((image) => (
                 <div key={image.id} className="">
                   <div className="rounded-lg overflow-hidden shadow-lg">
                     <img

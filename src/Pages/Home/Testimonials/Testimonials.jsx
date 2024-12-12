@@ -1,97 +1,11 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Title from "../../../Shared/Componenet/Title";
 
-const testimonialsData = [
-  {
-    name: "Alice Johnson",
-    imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
-    quote:
-      "This platform transformed my experience! The trainers are outstanding and truly care about my progress.",
-    role: "Fitness Enthusiast",
-  },
-  {
-    name: "Michael Smith",
-    imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
-    quote:
-      "I’ve seen incredible results in just a few months. The guidance and support are second to none!",
-    role: "Yoga Practitioner",
-  },
-  {
-    name: "Emily Davis",
-    imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
-    quote:
-      "Joining was the best decision I made this year. The trainers motivate and inspire me every session.",
-    role: "Personal Training Client",
-  },
-  {
-    name: "Chris Brown",
-    imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
-    quote:
-      "The app is user-friendly, and the trainers are amazing. I highly recommend it to everyone!",
-    role: "Gym Member",
-  },
-  {
-    name: "Sophia Martinez",
-    imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
-    quote:
-      "This platform has made my workouts enjoyable and effective. I couldn’t be happier with my results.",
-    role: "Pilates Practitioner",
-  },
-  {
-    name: "James Wilson",
-    imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
-    quote:
-      "The expertise and dedication of the trainers are remarkable. I feel healthier and stronger every day.",
-    role: "CrossFit Athlete",
-  },
-  {
-    name: "Olivia Taylor",
-    imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
-    quote:
-      "From the personalized training plans to the amazing community, everything has exceeded my expectations.",
-    role: "Wellness Advocate",
-  },
-  {
-    name: "Ethan Clark",
-    imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
-    quote:
-      "This platform is a game-changer! The variety of workouts and the motivation it provides are incredible.",
-    role: "Strength Trainer",
-  },
-  {
-    name: "Isabella Miller",
-    imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
-    quote:
-      "I love how the trainers adapt to my needs and encourage me to push my limits safely.",
-    role: "Cardio Enthusiast",
-  },
-  {
-    name: "Liam Anderson",
-    imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
-    quote:
-      "A truly transformative experience! The training plans and support have improved my lifestyle significantly.",
-    role: "Health Seeker",
-  },
-  {
-    name: "Emma Roberts",
-    imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
-    quote:
-      "I feel so much stronger and more confident. This platform is the best investment in my health I’ve made.",
-    role: "Wellness Enthusiast",
-  },
-  {
-    name: "Noah Walker",
-    imageUrl: "https://i.ibb.co/Tryb0YT/User.jpg",
-    quote:
-      "The trainers’ passion and expertise are unmatched. I’ve achieved results I never thought possible.",
-    role: "Bodybuilding Enthusiast",
-  },
-];
-
-const Testimonials = () => {
+const Testimonials = ({ testimonialsData }) => {
   const sliderRef = React.useRef(null);
 
   const settings = {
