@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router";
 import icon from "../assets/Icon.png";
 import { IoMenu } from "react-icons/io5";
@@ -40,8 +40,9 @@ const Navbar = () => {
     },
   ];
 
-  // Track scroll position
   const [isScrolled, setIsScrolled] = useState(false);
+  const [openSubmenu, setOpenSubmenu] = useState(null);
+  const menuRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,43 +53,52 @@ const Navbar = () => {
       }
     };
 
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpenSubmenu(null);
+      }
+    };
+
     window.addEventListener("scroll", handleScroll);
+    document.addEventListener("click", handleClickOutside);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, []);
 
   const renderNavLink = (item) => {
     if (item.submenu) {
       return (
-        <div className="dropdown" key={item.name}>
-          <div
-            tabIndex={0}
-            role="button"
-            className=" text-white hover:text-[#FFC107]"
-          >
-            {item.name}
-          </div>
-          <ul
-            tabIndex={0}
-            className="dropdown-content menu bg-[#f35f81] text-white z-[1] w-52 p-2 shadow-2xl mt-2"
-          >
-            {item.submenu.map((subItem, subIndex) => (
-              <li key={subIndex}>
-                <NavLink
-                  to={subItem.path}
-                  className={({ isActive }) =>
-                    isActive
-                      ? "text-[#FFC107] hover:text-[#FFC107] font-bold"
-                      : "hover:text-[#FFC107]"
-                  }
-                >
-                  {subItem.name}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+        <div
+          key={item.name}
+          className="relative"
+          onMouseEnter={() => setOpenSubmenu(item.name)}
+          onMouseLeave={() => setOpenSubmenu(null)}
+        >
+          <div className="text-white hover:text-[#FFC107]">{item.name}</div>
+          {openSubmenu === item.name && (
+            <ul
+              className="absolute dropdown-content menu left-0 w-52 bg-[#f35f81] text-white z-[1] p-2 shadow-2xl mt-2"
+              ref={menuRef}
+            >
+              {item.submenu.map((subItem, subIndex) => (
+                <li key={subIndex}>
+                  <NavLink
+                    to={subItem.path}
+                    className={({ isActive }) =>
+                      isActive
+                        ? "text-[#FFC107] hover:text-[#FFC107] font-bold"
+                        : "hover:text-[#FFC107]"
+                    }
+                  >
+                    {subItem.name}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       );
     }

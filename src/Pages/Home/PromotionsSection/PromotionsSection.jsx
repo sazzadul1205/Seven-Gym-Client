@@ -14,7 +14,7 @@ const PromotionsSection = ({ promotionsData }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 md:gap-8 mt-6 md:mt-11 text-left px-1">
           {promotionsData.map((promo) => (
             <div
-              key={promo.id}
+              key={promo._id}
               className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col"
             >
               <img

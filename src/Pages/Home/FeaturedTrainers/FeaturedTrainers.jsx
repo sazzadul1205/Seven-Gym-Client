@@ -31,7 +31,7 @@ const FeaturedTrainers = ({ trainersData }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-8 mt-6 md:mt-11 px-2">
           {trainersData.slice(0, 6).map((trainer) => (
             <div
-              key={trainer.id}
+              key={trainer._id}
               className="bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col"
             >
               {/* Tier Badge */}

@@ -53,7 +53,7 @@ const Testimonials = ({ testimonialsData }) => {
         <Slider ref={sliderRef} {...settings} className="mt-6 md:mt-16 md:px-2">
           {testimonialsData.map((testimonial) => (
             <div
-              key={testimonial.id}
+              key={testimonial._id}
               className="md:px-4 relative"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}

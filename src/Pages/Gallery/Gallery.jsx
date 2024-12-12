@@ -6,7 +6,7 @@ import Background from "../../assets/Background.jpeg";
 // Function to fetch the images (with pagination)
 const getImages = async ({ pageParam = 0 }) => {
   const res = await fetch(
-    `http://localhost:5000/Gallery?limit=12&offset=${pageParam}`
+    `http://localhost:5000/Gallery?limit=20&offset=${pageParam}`
   );
   if (!res.ok) {
     throw new Error(`Error fetching images: ${res.statusText}`);
@@ -20,38 +20,21 @@ const getImages = async ({ pageParam = 0 }) => {
 
 const Gallery = () => {
   // Infinite Query to fetch paginated images
-  const { data, fetchNextPage, hasNextPage, isLoading, error } =
-    useInfiniteQuery({
-      queryKey: ["GalleryData"],
-      queryFn: getImages,
-      getNextPageParam: (lastPage) => {
-        // If there are more images, fetch the next set of data
-        if (lastPage.prevOffset + 20 < lastPage.images.length) {
-          return lastPage.prevOffset + 20;
-        }
+  const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery({
+    queryKey: ["GalleryImages"],
+    queryFn: getImages,
+    getNextPageParam: (lastPage) => {
+      // Ensure `lastPage` and `lastPage.images` exist before checking length
+      if (lastPage.prevOffset + 20 > lastPage.images.length) {
         return false;
-      },
-    });
+      }
+      return lastPage.prevOffset + 20;
+    },
+  });
 
   // Loading and error states
   if (isLoading) {
     return <Loading />;
-  }
-
-  if (error) {
-    return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
-        <p className="text-center text-red-500 font-bold text-3xl mb-8">
-          Something went wrong. Please reload the page.
-        </p>
-        <button
-          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
-          onClick={() => window.location.reload()}
-        >
-          Reload
-        </button>
-      </div>
-    );
   }
 
   // Flatten the images data from paginated results
@@ -74,8 +57,8 @@ const Gallery = () => {
 
       {/* Infinite Scroll Gallery */}
       <InfiniteScroll
-        dataLength={images ? images.length : 0}
-        next={fetchNextPage}
+        dataLength={images ? images?.length : 0}
+        next={() => fetchNextPage()}
         hasMore={hasNextPage}
         loader={<Loading />}
       >
@@ -84,8 +67,8 @@ const Gallery = () => {
             images.map((item, idx) => (
               <div key={idx} className="relative group">
                 <img
-                  src={item.url}
-                  alt={item.alt}
+                  src={item?.url}
+                  alt={item?.alt}
                   className="w-full h-full object-cover rounded-lg shadow-lg transition-transform duration-300 ease-in-out group-hover:scale-110"
                 />
               </div>

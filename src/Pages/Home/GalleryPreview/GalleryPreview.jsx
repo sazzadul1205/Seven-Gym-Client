@@ -48,7 +48,7 @@ const GalleryPreview = ({ galleryData }) => {
               style={{ transform: "scaleX(-1)" }} // Reverse direction
             >
               {galleryData.map((image) => (
-                <div key={image.id} className="">
+                <div key={image._id} className="">
                   <div className="rounded-lg overflow-hidden shadow-lg">
                     <img
                       src={image.url}
@@ -65,7 +65,7 @@ const GalleryPreview = ({ galleryData }) => {
           <div className="">
             <Slider {...sliderSettings} className="slider-right">
               {galleryData.map((image) => (
-                <div key={image.id} className="">
+                <div key={image._id} className="">
                   <div className="rounded-lg overflow-hidden shadow-lg">
                     <img
                       src={image.url}
