@@ -1,20 +1,13 @@
+/* eslint-disable react/prop-types */
 import { FaChevronRight } from "react-icons/fa";
 
-const overlayData = {
-  videoUrl:
-    "https://www.youtube.com/embed/Y5RtQ4cawVk?autoplay=1&mute=1&loop=1&playlist=Y5RtQ4cawVk",
-  title: "Achieve Your Fitness Goals with Us!",
-  description:
-    "Join our community and transform your health with state-of-the-art facilities, personalized coaching, and a motivating environment.",
-};
-
-const WelcomeSection = () => {
+const WelcomeSection = ({ homeWelcomeData }) => {
   return (
     <div className="hidden md:flex relative h-screen w-full text-white ">
       {/* Background Video */}
       <div className="absolute inset-0 overflow-hidden">
         <iframe
-          src={overlayData.videoUrl}
+          src={homeWelcomeData[0].videoUrl}
           title="Background Video"
           className="w-full h-full object-cover" // Ensures the video fills the entire screen
           allow="autoplay; fullscreen"
@@ -26,10 +19,10 @@ const WelcomeSection = () => {
       <div className="absolute inset-0 flex flex-col justify-center items-center bg-black bg-opacity-50 px-6">
         {/* Hero Text */}
         <h1 className="text-2xl sm:text-4xl lg:text-6xl font-bold text-center mb-4 max-w-3xl">
-          {overlayData.title}
+          {homeWelcomeData[0].title}
         </h1>
         <p className="text-sm sm:text-lg lg:text-xl text-center mb-6 max-w-2xl opacity-80 sm:opacity-90">
-          {overlayData.description}
+          {homeWelcomeData[0].description}
         </p>
 
         {/* Call to Action (CTA) Buttons */}
