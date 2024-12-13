@@ -9,12 +9,8 @@ const Navbar = () => {
     { name: "Gallery", path: "/Gallery" },
     {
       name: "Trainers",
-      path: "/Trainers",
-      submenu: [
-        { name: "Personal Trainers", path: "/Trainers/Personal" },
-        { name: "Group Trainers", path: "/Trainers/Group" },
-        { name: "Trainer Profiles", path: "/Trainers/Profiles" },
-      ],
+      path: "#",
+      submenu: [{ name: "All Trainers", path: "/Trainers" }],
     },
     {
       name: "Classes",
@@ -42,6 +38,7 @@ const Navbar = () => {
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
+  const [isHovering, setIsHovering] = useState(false); // Track hover state
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -68,14 +65,28 @@ const Navbar = () => {
     };
   }, []);
 
+  const handleMouseEnter = (itemName) => {
+    setIsHovering(true); // Mark hover as true
+    setOpenSubmenu(itemName);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false); // Mark hover as false
+    setTimeout(() => {
+      if (!isHovering) {
+        setOpenSubmenu(null); // Close submenu after a short delay
+      }
+    }, 200); // Adjust the delay here (200ms is the delay)
+  };
+
   const renderNavLink = (item) => {
     if (item.submenu) {
       return (
         <div
           key={item.name}
           className="relative"
-          onMouseEnter={() => setOpenSubmenu(item.name)}
-          onMouseLeave={() => setOpenSubmenu(null)}
+          onMouseEnter={() => handleMouseEnter(item.name)}
+          onMouseLeave={handleMouseLeave}
         >
           <div className="text-white hover:text-[#FFC107]">{item.name}</div>
           {openSubmenu === item.name && (
