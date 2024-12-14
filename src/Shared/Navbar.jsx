@@ -9,8 +9,7 @@ const Navbar = () => {
     { name: "Gallery", path: "/Gallery" },
     {
       name: "Trainers",
-      path: "#",
-      submenu: [{ name: "All Trainers", path: "/Trainers" }],
+      path: "Trainers",
     },
     {
       name: "Classes",

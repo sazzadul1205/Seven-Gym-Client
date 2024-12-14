@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import Title from "../../../Shared/Componenet/Title";
+import Cards from "../../Trainers/Cards/Cards";
 
 const FeaturedTrainers = ({ trainersData }) => {
   // Function to return tier badge style
@@ -30,48 +31,11 @@ const FeaturedTrainers = ({ trainersData }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-8 mt-6 md:mt-11 px-2">
           {trainersData.slice(0, 6).map((trainer) => (
-            <div
+            <Cards
               key={trainer._id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col"
-            >
-              {/* Tier Badge */}
-              <span
-                className={`absolute opacity-80 top-4 left-4 inline-block px-4 py-2 rounded-full text-sm font-semibold ${getTierBadge(
-                  trainer.tier
-                )}`}
-              >
-                {trainer.tier} Tier
-              </span>
-
-              <img
-                src={trainer.imageUrl}
-                alt={trainer.name}
-                className="w-full h-[300px]"
-              />
-              <div className="p-6 text-left flex-1">
-                <h3 className="text-2xl font-bold">{trainer.name}</h3>
-                <p className="font-semibold">({trainer.specialization})</p>
-
-                {/* Active Time Works */}
-                <div className="mt-4 text-sm">
-                  <p>
-                    <strong>Active Time: </strong>
-                    {trainer.availableFrom} - {trainer.availableUntil}
-                  </p>
-                  <p>
-                    <strong>Available Days: </strong>
-                    {trainer.availableDays.join(", ")}
-                  </p>
-                </div>
-              </div>
-
-              {/* Book Teacher Button */}
-              <div className="mt-auto mb-1 mx-1">
-                <button className="px-6 py-2 font-semibold border-2 border-[#F72C5B] hover:bg-[#F72C5B] text-[#F72C5B] hover:text-white w-full">
-                  Book Teacher
-                </button>
-              </div>
-            </div>
+              trainer={trainer}
+              getTierBadge={getTierBadge}
+            />
           ))}
         </div>
 
