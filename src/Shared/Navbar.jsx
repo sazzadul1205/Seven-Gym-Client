@@ -14,13 +14,6 @@ const Navbar = () => {
     {
       name: "Classes",
       path: "/Classes",
-      submenu: [
-        { name: "Yoga", path: "/Classes/Yoga" },
-        { name: "Pilates", path: "/Classes/Pilates" },
-        { name: "Strength Training", path: "/Classes/Strength" },
-        { name: "Cardio", path: "/Classes/Cardio" },
-        { name: "Special Classes", path: "/Classes/Special" },
-      ],
     },
     { name: "Forums", path: "/Forums" },
     { name: "Blogs", path: "/Blogs" },

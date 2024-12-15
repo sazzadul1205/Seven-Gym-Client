@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import PageNotFound from "./Pages/PageNotFound/PageNotFound.jsx";
 import Gallery from "./Pages/Gallery/Gallery.jsx";
 import Trainers from "./Pages/Trainers/Trainers.jsx";
+import Classes from "./Pages/Classes/Classes.jsx";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/" element={<Home />} />
             <Route path="/Gallery" element={<Gallery />} />
             <Route path="/Trainers" element={<Trainers />} />
+            <Route path="/Classes" element={<Classes />} />
           </Route>
         </Routes>
       </BrowserRouter>
