@@ -11,6 +11,7 @@ import Trainers from "./Pages/Trainers/Trainers.jsx";
 import Classes from "./Pages/Classes/Classes.jsx";
 import Forums from "./Pages/Forums/Forums.jsx";
 import OurMission from "./Pages/OurMission/OurMission.jsx";
+import Testimonials from "./Pages/Testimonials/Testimonials.jsx";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/Classes" element={<Classes />} />
             <Route path="/Forums" element={<Forums />} />
             <Route path="/About/OurMission" element={<OurMission />} />
+            <Route path="/About/Testimonials" element={<Testimonials />} />
           </Route>
         </Routes>
       </BrowserRouter>
