@@ -12,6 +12,7 @@ import Classes from "./Pages/Classes/Classes.jsx";
 import Forums from "./Pages/Forums/Forums.jsx";
 import OurMission from "./Pages/OurMission/OurMission.jsx";
 import Testimonials from "./Pages/Testimonials/Testimonials.jsx";
+import AboutUs from "./Pages/AboutUs/AboutUs.jsx";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/Forums" element={<Forums />} />
             <Route path="/About/OurMission" element={<OurMission />} />
             <Route path="/About/Testimonials" element={<Testimonials />} />
+            <Route path="/About/AboutUs" element={<AboutUs />} />
           </Route>
         </Routes>
       </BrowserRouter>

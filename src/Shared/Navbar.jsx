@@ -17,12 +17,12 @@ const Navbar = () => {
     },
     { name: "Forums", path: "/Forums" },
     {
-      name: "About Us",
+      name: "About",
       // path: "/About",
       submenu: [
         { name: "Our Mission", path: "/About/OurMission" },
         { name: "Testimonials", path: "/About/Testimonials" },
-        { name: "Careers", path: "/About/Careers" },
+        { name: "About Us", path: "/About/AboutUs" },
       ],
     },
   ];
