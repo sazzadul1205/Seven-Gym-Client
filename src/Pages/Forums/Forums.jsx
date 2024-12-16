@@ -193,7 +193,7 @@ const Forums = () => {
             ))}
           </div>
         </div>
-        ;
+
         <div className="flex flex-col lg:flex-row gap-10 lg:px-20">
           {/* Threads */}
           <div className="pt-8 px-3 lg:w-4/5">

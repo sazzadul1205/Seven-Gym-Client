@@ -16,12 +16,11 @@ const Navbar = () => {
       path: "/Classes",
     },
     { name: "Forums", path: "/Forums" },
-    { name: "Blogs", path: "/Blogs" },
     {
       name: "About Us",
-      path: "/About",
+      // path: "/About",
       submenu: [
-        { name: "Our Mission", path: "/About/Mission" },
+        { name: "Our Mission", path: "/About/OurMission" },
         { name: "Testimonials", path: "/About/Testimonials" },
         { name: "Careers", path: "/About/Careers" },
       ],
