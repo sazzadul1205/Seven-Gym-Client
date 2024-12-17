@@ -5,6 +5,7 @@ import AllClasses from "./AllClasses/AllClasses";
 import Loading from "../../Shared/Loading/Loading";
 import Title from "../../Shared/Componenet/Title";
 import Banner from "../../assets/ClassesWall.jpg";
+import { Link } from "react-router";
 
 const Classes = () => {
   const axiosPublic = useAxiosPublic();
@@ -114,21 +115,25 @@ const Classes = () => {
                 className="relative border-2 border-blue-500 bg-white hover:bg-gray-300 text-black px-6 py-3 rounded-lg group"
               >
                 {/* Image */}
-                {classDetail?.icon && (
-                  <img
-                    src={classDetail.icon}
-                    alt={module}
-                    className="w-16 h-16 mx-auto mb-2"
-                  />
-                )}
+                <Link to={`/Classes/${module}`}>
+                  {classDetail?.icon && (
+                    <img
+                      src={classDetail.icon}
+                      alt={module}
+                      className="w-16 h-16 mx-auto mb-2"
+                    />
+                  )}
 
-                {/* Module Name */}
-                <div className="text-center text-sm">{module}</div>
+                  {/* Module Name */}
+                  <div className="text-center text-sm">{module}</div>
 
-                {/* Join Now Overlay */}
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="text-white font-bold text-lg">Join Now</span>
-                </div>
+                  {/* Join Now Overlay */}
+                  <div className="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="text-white font-bold text-lg">
+                      Join Now
+                    </span>
+                  </div>
+                </Link>
               </div>
             );
           })}
