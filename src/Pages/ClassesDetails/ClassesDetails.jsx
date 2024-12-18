@@ -227,7 +227,7 @@ const ClassesDetails = () => {
         <h3 className="text-2xl font-semibold text-gray-800">
           Detailed Description
         </h3>
-        <p>{ThisModule.detailedDescription}</p>
+        <p>{ThisModule.detailedDescription || ThisModule.bigDescription}</p>
       </div>
 
       {/* Trainer Cards */}

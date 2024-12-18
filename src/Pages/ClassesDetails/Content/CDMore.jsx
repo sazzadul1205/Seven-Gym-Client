@@ -23,7 +23,7 @@ const CDMore = ({ ThisModule }) => {
         <ul className="text-gray-600 mt-4 list-disc pl-6 space-y-2">
           {ThisModule.fitnessBenefits.map((benefit, index) => (
             <li key={index}>{benefit}</li>
-          ))}
+          ))}-
         </ul>
       </div>
 
