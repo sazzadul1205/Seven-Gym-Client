@@ -7,9 +7,7 @@ import Loading from "../../Shared/Loading/Loading";
 import { FaSearch } from "react-icons/fa";
 import { IoMdFemale, IoMdMale } from "react-icons/io";
 import { MdOutlinePeopleAlt } from "react-icons/md";
-import Cards from "./Cards/Cards";
-// import RangeSlider from "react-range-slider-input"; // Import RangeSlider component
-// import "react-range-slider-input/dist/style.css"; // Import the styles
+import TrainersCards from "./TrainersCards/TrainersCards";
 
 const Trainers = () => {
   const axiosPublic = useAxiosPublic();
@@ -18,9 +16,7 @@ const Trainers = () => {
   const [searchName, setSearchName] = useState("");
   const [selectedSpecialization, setSelectedSpecialization] = useState("");
   const [selectedTier, setSelectedTier] = useState("");
-  const [selectedGender, setSelectedGender] = useState(null); // use null for "All"
-  // const [experienceRange, setExperienceRange] = useState([4, 12]);
-  // const [feeRange, setFeeRange] = useState([40, 90]);
+  const [selectedGender, setSelectedGender] = useState(null);
   const [selectedLanguages, setSelectedLanguages] = useState("");
   const [selectedClassType, setSelectedClassType] = useState("");
   const [selectedFocusArea, setSelectedFocusArea] = useState("");
@@ -40,7 +36,7 @@ const Trainers = () => {
   const { data: TrainersLanguagesData } = useQuery({
     queryKey: ["TrainersLanguagesData"],
     queryFn: () =>
-      axiosPublic.get(`/Trainers/languages`).then((res) => res.data),
+      axiosPublic.get(`/Trainers/languagesSpoken`).then((res) => res.data),
   });
 
   const { data: TrainersClassTypesData } = useQuery({
@@ -63,8 +59,6 @@ const Trainers = () => {
       selectedSpecialization,
       selectedTier,
       selectedGender,
-      // experienceRange,
-      // feeRange,
       selectedLanguages,
       selectedClassType,
       selectedFocusArea,
@@ -77,10 +71,6 @@ const Trainers = () => {
         params.specialization = selectedSpecialization;
       if (selectedTier) params.tier = selectedTier;
       if (selectedGender) params.gender = selectedGender;
-      // if (experienceRange[0]) params.experienceMin = experienceRange[0];
-      // if (experienceRange[1]) params.experienceMax = experienceRange[1];
-      // if (feeRange[0]) params.feeMin = feeRange[0];
-      // if (feeRange[1]) params.feeMax = feeRange[1];
       if (selectedLanguages) params.languages = selectedLanguages;
       if (selectedClassType) params.classType = selectedClassType;
       if (selectedFocusArea) params.focusArea = selectedFocusArea;
@@ -123,10 +113,6 @@ const Trainers = () => {
       </select>
     </div>
   );
-
-  // if (TrainersDataIsLoading) {
-  //   return <Loading />; // Show loading spinner for the whole page
-  // }
 
   return (
     <div
@@ -237,12 +223,12 @@ const Trainers = () => {
           {/* Title */}
           <div>
             <div className=" py-5 text-center hidden lg:block">
-              <p className="text-3xl font-bold text-black">Our Gallery</p>
+              <p className="text-3xl font-bold text-black">Our Trainers</p>
               <div className="bg-white p-[2px] md:w-1/6 mx-auto"></div>
             </div>
 
             <div className="px-4 py-5 flex lg:hidden justify-between items-center">
-              <p className="text-3xl font-bold text-black">Our Gallery</p>
+              <p className="text-3xl font-bold text-black">Our Trainers</p>
               {/* Drawer toggle button */}
               <label htmlFor="my-drawer-5" className="drawer-button ">
                 <FaSearch className="text-2xl" />
@@ -254,11 +240,13 @@ const Trainers = () => {
           {TrainersDataIsLoading ? (
             <Loading /> // Show loading spinner in the content area while trainers are being loaded
           ) : TrainersData?.length === 0 ? (
-            <div className="text-center text-3xl text-red-500 font-semibold">No trainers found.</div>
+            <div className="text-center text-3xl text-red-500 font-semibold">
+              No trainers found.
+            </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {TrainersData.map((trainer) => (
-                <Cards
+                <TrainersCards
                   key={trainer.id}
                   trainer={trainer}
                   getTierBadge={getTierBadge}

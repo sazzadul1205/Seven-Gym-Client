@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import Title from "../../../Shared/Componenet/Title";
-import Cards from "../../Trainers/Cards/Cards";
+import TrainersCards from "../../Trainers/TrainersCards/TrainersCards";
 
 const FeaturedTrainers = ({ trainersData }) => {
   // Function to return tier badge style
@@ -29,9 +29,9 @@ const FeaturedTrainers = ({ trainersData }) => {
           <Title titleContent={" Our Featured Teachers"} />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-8 mt-6 md:mt-11 px-2">
-          {trainersData.slice(0, 6).map((trainer) => (
-            <Cards
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-8 mt-6 md:mt-11 px-2">
+          {trainersData.slice(0, 8).map((trainer) => (
+            <TrainersCards
               key={trainer._id}
               trainer={trainer}
               getTierBadge={getTierBadge}
