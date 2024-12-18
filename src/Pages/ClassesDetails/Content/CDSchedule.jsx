@@ -1,5 +1,21 @@
 /* eslint-disable react/prop-types */
 const CDSchedule = ({ ClassScheduleData }) => {
+  // Define the order of days for sorting
+  const daysOrder = [
+    "Friday",
+    "Saturday",
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+  ];
+
+  // Sort ClassScheduleData based on the defined day order
+  const sortedSchedule = [...ClassScheduleData].sort(
+    (a, b) => daysOrder.indexOf(a.day) - daysOrder.indexOf(b.day)
+  );
+
   return (
     <div className="max-w-[1200px] mx-auto">
       <p className="text-xl font-bold py-4">Class Schedule</p>
@@ -21,7 +37,7 @@ const CDSchedule = ({ ClassScheduleData }) => {
             </tr>
           </thead>
           <tbody>
-            {ClassScheduleData.map((schedule, index) => (
+            {sortedSchedule.map((schedule, index) => (
               <tr
                 key={index}
                 className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
