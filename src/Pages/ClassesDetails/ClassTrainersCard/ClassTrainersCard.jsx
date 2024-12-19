@@ -60,7 +60,7 @@ const ClassTrainersCard = ({ trainer, role }) => {
 
       {/* Button */}
       <div className="mt-auto p-4">
-        <button className="px-4 py-2 font-medium text-white bg-[#F72C5B] hover:bg-[#d1234f] rounded-md w-full shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-[#F72C5B]">
+        <button className="px-4 py-2 font-medium text-black hover:text-white border-2 border-[#F72C5B] hover:bg-[#d1234f] rounded-md w-full shadow-md transition-all">
           View Details
         </button>
       </div>

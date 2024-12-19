@@ -15,6 +15,7 @@ import Testimonials from "./Pages/Testimonials/Testimonials.jsx";
 import AboutUs from "./Pages/AboutUs/AboutUs.jsx";
 import Feedback from "./Pages/Feedback/Feedback.jsx";
 import ClassesDetails from "./Pages/ClassesDetails/ClassesDetails.jsx";
+import TrainersDetails from "./Pages/TrainersDetails/TrainersDetails.jsx";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/" element={<Home />} />
             <Route path="/Gallery" element={<Gallery />} />
             <Route path="/Trainers" element={<Trainers />} />
+            <Route path="/Trainers/:name" element={<TrainersDetails />} />
             <Route path="/Classes" element={<Classes />} />
             <Route path="/Classes/:module" element={<ClassesDetails />} />
             <Route path="/Forums" element={<Forums />} />

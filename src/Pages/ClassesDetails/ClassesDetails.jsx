@@ -2,11 +2,11 @@ import { useParams } from "react-router";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../Shared/Loading/Loading";
-import CDTrainers from "./Content/CDTrainers";
-import CDPrice from "./Content/CDPrice";
-import CDSchedule from "./Content/CDSchedule";
-import CDReview from "./Content/CDReview";
-import CDMore from "./Content/CDMore";
+import CDTrainers from "./CDContent/CDTrainers";
+import CDPrice from "./CDContent/CDPrice";
+import CDSchedule from "./CDContent/CDSchedule";
+import CDReview from "./CDContent/CDReview";
+import CDMore from "./CDContent/CDMore";
 
 const ClassesDetails = () => {
   const axiosPublic = useAxiosPublic();
@@ -152,10 +152,10 @@ const ClassesDetails = () => {
         </div>
       </div>
 
-      {/* Content Section */}
+      {/* CDContent Section */}
       <div className="max-w-7xl mx-auto p-6 md:p-12 bg-white shadow-lg rounded-lg -mt-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Left Content */}
+          {/* Left CDContent */}
           <div className="md:col-span-2 space-y-6">
             {/* Description */}
             <div>

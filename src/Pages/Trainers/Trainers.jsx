@@ -74,10 +74,6 @@ const Trainers = () => {
       if (selectedLanguages) params.languages = selectedLanguages;
       if (selectedClassType) params.classType = selectedClassType;
       if (selectedFocusArea) params.focusArea = selectedFocusArea;
-
-      // Log the params to debug
-      console.log("Request Parameters:", params);
-
       return axiosPublic.get(`/Trainers`, { params }).then((res) => res.data);
     },
     enabled: true,
@@ -127,7 +123,7 @@ const Trainers = () => {
         {/* Filter Section */}
         <div className="w-full lg:w-1/4 bg-white bg-opacity-90 shadow-lg pt-20 p-6 h-screen sticky top-0 hidden lg:block">
           {/* Search By Name */}
-          <div className="mt-6">
+          <div className="mt-24 ">
             <p className="font-bold">Search By Name</p>
             <label className="input input-bordered flex items-center mt-2">
               <input
@@ -247,7 +243,7 @@ const Trainers = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {TrainersData.map((trainer) => (
                 <TrainersCards
-                  key={trainer.id}
+                  key={trainer._id}
                   trainer={trainer}
                   getTierBadge={getTierBadge}
                 />

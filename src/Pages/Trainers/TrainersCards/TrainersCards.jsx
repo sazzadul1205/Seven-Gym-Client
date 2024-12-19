@@ -1,4 +1,6 @@
 /* eslint-disable react/prop-types */
+import { Link } from "react-router";
+
 const TrainersCards = ({ trainer, getTierBadge }) => {
   return (
     <div
@@ -48,9 +50,11 @@ const TrainersCards = ({ trainer, getTierBadge }) => {
 
       {/* View Details Button */}
       <div className="mt-auto p-4">
-        <button className="px-4 py-2 font-medium text-black hover:text-white border-2 border-[#F72C5B] hover:bg-[#d1234f] rounded-md w-full shadow-md transition-all">
-          View Details
-        </button>
+        <Link to={`/Trainers/${trainer.name}`}>
+          <button className="px-4 py-2 font-medium text-black hover:text-white border-2 border-[#F72C5B] hover:bg-[#d1234f] rounded-md w-full shadow-md transition-all">
+            View Details
+          </button>
+        </Link>
       </div>
     </div>
   );
