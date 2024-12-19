@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 const TDBio = ({ TrainerDetails }) => {
   return (
-    <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto my-8">
+    <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
       <h2 className="text-3xl font-semibold text-gray-800 mb-6">
         About {TrainerDetails.name}
       </h2>
