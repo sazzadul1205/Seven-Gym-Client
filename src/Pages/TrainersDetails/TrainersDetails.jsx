@@ -15,6 +15,7 @@ const TrainersDetails = () => {
 
   // Decode the URL parameter to handle spaces correctly
   const decodedName = decodeURIComponent(name); // Decode the name parameter
+  console.log(decodedName);
 
   // Fetching Trainer_Detail Data
   const {
@@ -66,7 +67,7 @@ const TrainersDetails = () => {
   const TrainerSchedule = Trainer_ScheduleData[0];
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className=" bg-[#f72c5b44]">
       <div className="bg-[#F72C5B] py-11"></div>
 
       {/* images and Name */}
@@ -80,15 +81,14 @@ const TrainersDetails = () => {
           {/* Trainer Contact Info */}
           <TDContact TrainerDetails={TrainerDetails} />
         </div>
-
-        {/* Trainer Certifications */}
-        <TDDetails TrainerDetails={TrainerDetails} />
-
         {/* Trainer Pricing */}
         <TDPricing
           TrainerDetails={TrainerDetails}
           TrainerSchedule={TrainerSchedule}
         />
+
+        {/* Trainer Certifications */}
+        <TDDetails TrainerDetails={TrainerDetails} />
 
         {/* Testimonials */}
         <TDTestimonials TrainerDetails={TrainerDetails} />

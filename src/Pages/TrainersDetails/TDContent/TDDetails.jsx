@@ -9,7 +9,7 @@ import {
 
 const TDDetails = ({ TrainerDetails }) => {
   return (
-    <div className="space-y-8 grid grid-cols-2 gap-5">
+    <div className="space-y-8 sm:grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
       {/* Trainer Certifications */}
       <div className="bg-white p-6 mt-8 rounded-lg shadow-lg">
         <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center">
@@ -49,7 +49,7 @@ const TDDetails = ({ TrainerDetails }) => {
           <FaRegCalendarAlt className="mr-3 text-xl text-green-500" />
           Training Preferences
         </h2>
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="mb-6">
             <h3 className="font-semibold text-xl mb-2">Focus Areas</h3>
             <ul className="list-disc pl-6 space-y-2 text-gray-700">

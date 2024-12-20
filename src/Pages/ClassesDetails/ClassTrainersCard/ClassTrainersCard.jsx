@@ -35,7 +35,7 @@ const ClassTrainersCard = ({ trainer, role }) => {
       />
 
       {/* Card Content */}
-      <div className=" text-left flex-1">
+      <div className="text-left flex-1">
         {/* Role Badge at the top of the card */}
         <p className="bg-white py-2 text-center font-semibold text-sm shadow-md w-full">
           {role}

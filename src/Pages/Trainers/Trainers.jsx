@@ -223,7 +223,7 @@ const Trainers = () => {
               <div className="bg-white p-[2px] md:w-1/6 mx-auto"></div>
             </div>
 
-            <div className="px-4 py-5 flex lg:hidden justify-between items-center">
+            <div className="px-4 py-5 flex lg:hidden justify-between items-center bg-white mb-2">
               <p className="text-3xl font-bold text-black">Our Trainers</p>
               {/* Drawer toggle button */}
               <label htmlFor="my-drawer-5" className="drawer-button ">
@@ -302,7 +302,7 @@ const Trainers = () => {
               {/* Gender Selection */}
               <div className="mt-6">
                 <p className="font-bold">Select Gender</p>
-                <div className="flex justify-between mt-3 space-x-2">
+                <div className="flex flex-col justify-between mt-3 space-y-2">
                   <button
                     className={`flex-1 flex items-center justify-center p-4 border rounded-lg ${
                       selectedGender === "Male"

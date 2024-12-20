@@ -137,16 +137,16 @@ const ClassesDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f72c5b44]">
       {/* Header Image */}
       <div className="relative">
         <img
           src={ThisModule.mainImage}
           alt={ThisModule.module}
-          className="w-full h-[400px] object-cover brightness-75"
+          className="w-full h-[300px] md:h-[400px] object-cover brightness-75"
         />
         <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center">
-          <h1 className="text-5xl text-white font-bold bg-black bg-opacity-50 px-8 py-2 rounded-lg">
+          <h1 className="text-3xl md:text-5xl text-white font-bold bg-black bg-opacity-50 px-6 py-2 rounded-lg text-center">
             {ThisModule.module}
           </h1>
         </div>
@@ -159,7 +159,7 @@ const ClassesDetails = () => {
           <div className="md:col-span-2 space-y-6">
             {/* Description */}
             <div>
-              <h3 className="text-2xl font-semibold text-gray-800">
+              <h3 className="text-xl md:text-2xl font-semibold text-gray-800">
                 Description
               </h3>
               <p className="text-gray-600 mt-2">{ThisModule.description}</p>
@@ -167,7 +167,7 @@ const ClassesDetails = () => {
 
             {/* Additional Info */}
             <div>
-              <h3 className="text-2xl font-semibold text-gray-800">
+              <h3 className="text-xl md:text-2xl font-semibold text-gray-800">
                 Additional Info
               </h3>
               <p className="text-gray-600 mt-2">{ThisModule.additionalInfo}</p>
@@ -175,7 +175,7 @@ const ClassesDetails = () => {
 
             {/* Difficulty Level */}
             <div>
-              <h3 className="text-2xl font-semibold text-gray-800">
+              <h3 className="text-xl md:text-2xl font-semibold text-gray-800">
                 Difficulty Level
               </h3>
               <p className="text-gray-600 mt-2">{ThisModule.difficultyLevel}</p>
@@ -183,7 +183,7 @@ const ClassesDetails = () => {
 
             {/* Prerequisites */}
             <div>
-              <h3 className="text-2xl font-semibold text-gray-800">
+              <h3 className="text-xl md:text-2xl font-semibold text-gray-800">
                 Prerequisites
               </h3>
               <p className="text-gray-600 mt-2">{ThisModule.prerequisites}</p>
@@ -195,9 +195,9 @@ const ClassesDetails = () => {
             <img
               src={ThisModule.icon}
               alt={ThisModule.module}
-              className="w-24 h-24 object-cover mb-4"
+              className="w-20 h-20 md:w-24 md:h-24 object-cover mb-4"
             />
-            <p className="text-lg font-medium text-gray-700">
+            <p className="text-lg font-medium text-gray-700 text-center">
               Module: <span className="text-gray-900">{ThisModule.module}</span>
             </p>
             <p className="text-gray-600 mt-2 text-center">
@@ -209,35 +209,40 @@ const ClassesDetails = () => {
       </div>
 
       {/* Key Features */}
-      <div className=" p-6  max-w-[1200px] mx-auto">
-        <h3 className="text-2xl font-semibold text-gray-800">Key Features</h3>
-        <div className="flex px-3 gap-5 pt-2">
+      <div className="max-w-7xl py-5 px-5 mx-auto mt-5 bg-gray-50 rounded-lg">
+        <h3 className="text-xl md:text-2xl font-semibold text-gray-800">
+          Key Features
+        </h3>
+        <div className="flex flex-wrap px-3 gap-3 md:gap-5 pt-2">
           {ThisModule.tags.map((feature, index) => (
-            <p key={index} className="bg-blue-300 px-8 py-2 rounded-full">
+            <p
+              key={index}
+              className="bg-blue-300 px-4 md:px-6 py-2 rounded-full text-center text-sm sm:text-base"
+            >
               {feature}
             </p>
           ))}
         </div>
       </div>
 
-      {/* More Info */}
-
       {/* Detailed Description */}
-      <div className="max-w-[1200px] mx-auto pt-5 space-y-6">
-        <h3 className="text-2xl font-semibold text-gray-800">
+      <div className="max-w-7xl py-5 px-5 mx-auto mt-5 bg-gray-50 rounded-lg">
+        <h3 className="text-2xl font-semibold text-gray-800 py-2">
           Detailed Description
         </h3>
-        <p>{ThisModule.detailedDescription || ThisModule.bigDescription}</p>
+        <p className="leading-relaxed text-lg">
+          {ThisModule.detailedDescription || ThisModule.bigDescription}
+        </p>
       </div>
-
-      {/* Trainer Cards */}
-      <CDTrainers TrainersData={TrainersData} getTrainerRole={getTrainerRole} />
 
       {/* Pricing Section */}
       <CDPrice ThisModule={ThisModule} />
 
       {/* Class Schedule */}
       <CDSchedule ClassScheduleData={ClassScheduleData} />
+
+      {/* Trainer Cards */}
+      <CDTrainers TrainersData={TrainersData} getTrainerRole={getTrainerRole} />
 
       {/* More Info */}
       <CDMore ThisModule={ThisModule} />

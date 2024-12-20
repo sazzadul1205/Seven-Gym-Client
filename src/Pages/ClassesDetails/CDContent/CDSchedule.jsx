@@ -17,8 +17,10 @@ const CDSchedule = ({ ClassScheduleData }) => {
   );
 
   return (
-    <div className="max-w-[1200px] mx-auto">
-      <p className="text-xl font-bold py-4">Class Schedule</p>
+    <div className="max-w-7xl mx-auto bg-white my-4 px-5 py-5">
+      <h3 className="text-2xl font-semibold text-gray-800 mb-6">
+        Class Schedule
+      </h3>
       <div className="overflow-x-auto">
         <table className="table w-full border-collapse border border-gray-200">
           {/* Table Head */}
