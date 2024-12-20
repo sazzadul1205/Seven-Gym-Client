@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { NavLink } from "react-router";
+import { Link, NavLink } from "react-router";
 import icon from "../assets/Icon.png";
 import { IoMenu } from "react-icons/io5";
 
@@ -150,9 +150,11 @@ const Navbar = () => {
 
         {/* End */}
         <div className="navbar-end flex items-center">
-          <button className="bg-blue-400 hover:bg-gradient-to-l from-blue-700 to-blue-400 w-28 md:w-32 text-center py-2 md:py-3 text-white font-semibold">
-            Login
-          </button>
+          <Link to={"/Login"}>
+            <button className="bg-blue-400 hover:bg-gradient-to-l from-blue-700 to-blue-400 w-28 md:w-32 text-center py-2 md:py-3 text-white font-semibold">
+              Login
+            </button>
+          </Link>
         </div>
       </div>
 

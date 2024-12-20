@@ -44,8 +44,6 @@ const ClassSchedule = ({ ourClasses, classDetails }) => {
         100
       : 0;
 
-    console.log(classItem.module);
-
     return (
       <div key={index} className="relative group">
         <div
