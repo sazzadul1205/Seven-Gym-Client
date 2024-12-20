@@ -119,11 +119,12 @@ const Trainers = () => {
         backgroundPosition: "center",
       }}
     >
+      <div className="bg-[#F72C5B] py-11"></div>
       <div className="flex">
         {/* Filter Section */}
-        <div className="w-full lg:w-1/4 bg-white bg-opacity-90 shadow-lg pt-20 p-6 h-screen sticky top-0 hidden lg:block">
+        <div className="w-full lg:w-1/4 bg-white bg-opacity-90 shadow-lg p-6 h-screen sticky top-0 hidden lg:block">
           {/* Search By Name */}
-          <div className="mt-24 ">
+          <div className="mt-5">
             <p className="font-bold">Search By Name</p>
             <label className="input input-bordered flex items-center mt-2">
               <input
@@ -215,7 +216,7 @@ const Trainers = () => {
         </div>
 
         {/* Trainers Cards */}
-        <div className="flex-1 w-full lg:w-3/4 overflow-y-auto pb-20 lg:px-6 pt-20">
+        <div className="flex-1 w-full lg:w-3/4 overflow-y-auto pb-20 lg:px-6">
           {/* Title */}
           <div>
             <div className=" py-5 text-center hidden lg:block">
@@ -233,23 +234,25 @@ const Trainers = () => {
           </div>
 
           {/* Content */}
-          {TrainersDataIsLoading ? (
-            <Loading /> // Show loading spinner in the content area while trainers are being loaded
-          ) : TrainersData?.length === 0 ? (
-            <div className="text-center text-3xl text-red-500 font-semibold">
-              No trainers found.
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {TrainersData.map((trainer) => (
-                <TrainersCards
-                  key={trainer._id}
-                  trainer={trainer}
-                  getTierBadge={getTierBadge}
-                />
-              ))}
-            </div>
-          )}
+          <>
+            {TrainersDataIsLoading ? (
+              <Loading /> // Show loading spinner in the content area while trainers are being loaded
+            ) : TrainersData?.length === 0 ? (
+              <div className="text-center text-3xl text-red-500 font-semibold">
+                No trainers found.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2 px-2 lg:px-0">
+                {TrainersData.map((trainer) => (
+                  <TrainersCards
+                    key={trainer._id}
+                    trainer={trainer}
+                    getTierBadge={getTierBadge}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         </div>
       </div>
 

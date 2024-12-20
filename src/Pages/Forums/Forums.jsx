@@ -103,7 +103,7 @@ const Forums = () => {
         />
         <div className="absolute inset-0 flex flex-col justify-center items-center">
           <p className="text-3xl font-bold text-white">Search Thread</p>
-          <div className="flex w-2/3 max-w-xl">
+          <div className="flex md:w-2/3 max-w-xl">
             <input
               type="text"
               placeholder="Search threads by title..."

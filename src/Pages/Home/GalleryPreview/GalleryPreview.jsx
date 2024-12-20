@@ -3,6 +3,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Title from "../../../Shared/Componenet/Title";
+import { Link } from "react-router";
 
 const GalleryPreview = ({ galleryData }) => {
   const sliderSettings = {
@@ -81,9 +82,11 @@ const GalleryPreview = ({ galleryData }) => {
 
         {/* Link to Full Gallery */}
         <div className="text-center mt-8">
-          <button className=" px-12 md:px-24 py-3 font-semibold bg-[#F72C5B] hover:bg-white text-white hover:text-[#F72C5B] items-end gap-5 justify-end mx-auto transform transition-all duration-300 ease-in-out hover:scale-105">
-            <span>View Full Gallery</span>
-          </button>
+          <Link to={'/Gallery'}>
+            <button className=" px-12 md:px-24 py-3 font-semibold bg-[#F72C5B] hover:bg-white text-white hover:text-[#F72C5B] items-end gap-5 justify-end mx-auto transform transition-all duration-300 ease-in-out hover:scale-105">
+              View Full Gallery
+            </button>
+          </Link>
         </div>
       </div>
     </div>

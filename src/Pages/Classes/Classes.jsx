@@ -86,7 +86,7 @@ const Classes = () => {
         {/* Banner Image */}
         <img
           src={Banner}
-          alt=""
+          alt={Banner}
           className="w-full h-[250px] md:h-[300px] lg:h-[500px] object-cover"
         />
 

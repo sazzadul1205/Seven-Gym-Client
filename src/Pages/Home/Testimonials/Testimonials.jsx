@@ -4,6 +4,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Title from "../../../Shared/Componenet/Title";
+import { Link } from "react-router";
 
 const Testimonials = ({ testimonialsData }) => {
   const sliderRef = React.useRef(null);
@@ -19,72 +20,61 @@ const Testimonials = ({ testimonialsData }) => {
     arrows: false,
     responsive: [
       {
-        breakpoint: 1024, // Tablet view: 2 testimonials
-        settings: {
-          slidesToShow: 2,
-        },
+        breakpoint: 1024, // Tablet view
+        settings: { slidesToShow: 2 },
       },
       {
-        breakpoint: 768, // Mobile view: 1 testimonial
-        settings: {
-          slidesToShow: 1,
-        },
+        breakpoint: 768, // Mobile view
+        settings: { slidesToShow: 1 },
       },
     ],
   };
 
-  const handleMouseEnter = () => {
-    sliderRef.current.slickPause(); // Pause autoplay
-  };
-
-  const handleMouseLeave = () => {
-    sliderRef.current.slickPlay(); // Resume autoplay
-  };
+  const handleSliderPause = () => sliderRef.current.slickPause();
+  const handleSliderPlay = () => sliderRef.current.slickPlay();
 
   return (
     <div className="py-16">
       <div className="container mx-auto text-center">
         {/* Section Title */}
-        <div className="px-6">
-          <Title titleContent={"What Our Clients Say About Us"} />
-        </div>
+        <Title titleContent="What Our Clients Say About Us" />
 
         {/* Testimonials Carousel */}
         <Slider ref={sliderRef} {...settings} className="mt-6 md:mt-16 md:px-2">
-          {testimonialsData.map((testimonial) => (
+          {testimonialsData.map(({ _id, imageUrl, name, role, quote }) => (
             <div
-              key={testimonial._id}
-              className="md:px-4 relative"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
+              key={_id}
+              className="md:px-4"
+              onMouseEnter={handleSliderPause}
+              onMouseLeave={handleSliderPlay}
             >
-              <div className="bg-white shadow-lg rounded-lg p-6 text-left transform transition-all duration-300 h-[200px]">
+              <div className="bg-white shadow-lg rounded-lg p-6 h-[200px] transition-transform transform hover:scale-105">
                 <div className="flex items-center mb-4">
                   <img
-                    src={testimonial.imageUrl}
-                    alt={testimonial.name}
+                    src={imageUrl}
+                    alt={name}
                     className="w-16 h-16 rounded-full border-2 border-[#F72C5B]"
                   />
-                  <div className="ml-4">
+                  <div className="ml-4 text-left">
                     <h3 className="text-lg font-semibold text-gray-800">
-                      {testimonial.name}
+                      {name}
                     </h3>
-                    <p className="text-sm text-gray-600">{testimonial.role}</p>
+                    <p className="text-sm text-gray-600">{role}</p>
                   </div>
                 </div>
-                <p className="text-gray-700 italic">
-                  &quot;{testimonial.quote}&quot;
-                </p>
+                <p className="text-gray-700 italic">&quot;{quote}&quot;</p>
               </div>
             </div>
           ))}
         </Slider>
 
         {/* Read More Stories Button */}
-        <div className="text-center mt-8">
-          <button className=" px-12 md:px-24 py-3 font-semibold bg-[#F72C5B] hover:bg-white text-white hover:text-[#F72C5B] items-end gap-5 justify-end mx-auto transform transition-all duration-300 ease-in-out hover:scale-105">
-            <span>Read More Stories</span>
-          </button>
+        <div className="mt-8">
+          <Link to={'/About/Testimonials'}>
+            <button className="px-12 md:px-24 py-3 font-semibold bg-[#F72C5B] text-white hover:bg-white hover:text-[#F72C5B] rounded-lg transition-transform transform hover:scale-105">
+              Read More Stories
+            </button>
+          </Link>
         </div>
       </div>
     </div>

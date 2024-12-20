@@ -4,7 +4,7 @@ import Title from "../../../Shared/Componenet/Title";
 
 const Highlights = ({ homeServicesData }) => {
   return (
-    <div className="py-16 mx-auto max-w-[1200px]">
+    <div className="py-16 mx-auto max-w-7xl">
       <div className="container mx-auto text-center">
         {/* Section Title */}
         <div className="px-6">

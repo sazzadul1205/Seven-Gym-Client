@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { Link } from "react-router";
 import Title from "../../../Shared/Componenet/Title";
 import TrainersCards from "../../Trainers/TrainersCards/TrainersCards";
 
@@ -22,7 +23,7 @@ const FeaturedTrainers = ({ trainersData }) => {
   };
 
   return (
-    <div className="py-16 mx-auto max-w-[1200px]">
+    <div className="py-16 mx-auto max-w-7xl">
       <div className="container mx-auto text-center">
         {/* Section Title */}
         <div className="px-6">
@@ -40,9 +41,11 @@ const FeaturedTrainers = ({ trainersData }) => {
         </div>
 
         <div className="text-center mt-8">
-          <button className=" px-12 md:px-24 py-3 font-semibold bg-[#F72C5B] hover:bg-white text-white hover:text-[#F72C5B] items-end gap-5 justify-end mx-auto transform transition-all duration-300 ease-in-out hover:scale-105">
-            <span>Find More Teachers</span>
-          </button>
+          <Link to={`/Trainers`}>
+            <button className=" px-12 md:px-24 py-3 font-semibold bg-[#F72C5B] hover:bg-white text-white hover:text-[#F72C5B] items-end gap-5 justify-end mx-auto transform transition-all duration-300 ease-in-out hover:scale-105">
+              <span>Find More Teachers</span>
+            </button>
+          </Link>
         </div>
       </div>
     </div>

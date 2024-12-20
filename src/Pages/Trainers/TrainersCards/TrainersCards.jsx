@@ -5,7 +5,7 @@ const TrainersCards = ({ trainer, getTierBadge }) => {
   return (
     <div
       key={trainer._id}
-      className="bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col transform transition-transform hover:scale-105"
+      className="bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col transform transition-transform lg:hover:scale-105"
     >
       {/* Tier Badge */}
       <span

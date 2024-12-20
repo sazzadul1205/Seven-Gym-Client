@@ -71,7 +71,7 @@ const ViewDetails = ({ thread }) => {
   };
 
   return (
-    <div className="modal-box max-w-3xl p-6 bg-white rounded-lg shadow-lg">
+    <div className="modal-box max-w-3xl sm:max-w-4xl p-6 bg-white rounded-lg shadow-lg">
       {/* Close Button */}
       <div className="flex justify-end">
         <form method="dialog">
@@ -82,14 +82,14 @@ const ViewDetails = ({ thread }) => {
       </div>
 
       {/* Title */}
-      <h2 className="font-bold text-3xl mb-4 text-gray-800 text-center">
+      <h2 className="font-bold text-3xl sm:text-4xl mb-4 text-gray-800 text-center">
         {thread.title}
       </h2>
 
       {/* Description */}
       <p className="text-gray-600 mb-6 leading-relaxed">{thread.description}</p>
-      <div className="flex justify-between">
-        <p className="text-gray-700">
+      <div className="flex justify-between flex-wrap">
+        <p className="text-gray-700 text-sm sm:text-base">
           <a
             href={thread.author?.profileUrl}
             className="text-blue-500 hover:underline"
@@ -102,17 +102,17 @@ const ViewDetails = ({ thread }) => {
 
       {/* Category */}
       <div className="mb-6">
-        <p className="text-gray-700">{thread.category}</p>
+        <p className="text-gray-700 text-sm sm:text-base">{thread.category}</p>
       </div>
 
       {/* Tags */}
-      <div className="mb-6 flex items-center">
-        <h3 className=" font-semibold text-xl text-gray-800">Tags:</h3>
+      <div className="mb-6 flex items-center flex-wrap gap-2">
+        <h3 className="font-semibold text-xl text-gray-800">Tags:</h3>
         <div className="flex flex-wrap gap-2 ml-4">
           {thread.tags?.map((tag, index) => (
             <span
               key={index}
-              className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"
+              className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs sm:text-sm font-medium"
             >
               {tag}
             </span>
@@ -121,7 +121,7 @@ const ViewDetails = ({ thread }) => {
       </div>
 
       {/* Likes and Add Comment Button */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center flex-wrap">
         <div className="flex items-center">
           <h3 className="font-semibold text-xl text-gray-800">Comments:</h3>
           <MdOutlineAddComment
