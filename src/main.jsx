@@ -21,6 +21,7 @@ import PageNotFound from "./Pages/PageNotFound/PageNotFound.jsx";
 import Testimonials from "./Pages/Testimonials/Testimonials.jsx";
 import ClassesDetails from "./Pages/ClassesDetails/ClassesDetails.jsx";
 import TrainersDetails from "./Pages/TrainersDetails/TrainersDetails.jsx";
+import SUDetails from "./Pages/SignUp/SUDetails/SUDetails.jsx";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ createRoot(document.getElementById("root")).render(
               <Route path="/About/Feedback" element={<Feedback />} />
               <Route path="/Login" element={<Login />} />
               <Route path="/SignUp" element={<SignUp />} />
+              <Route path="/SignUp/Details" element={<SUDetails />} />
             </Route>
           </Routes>
         </BrowserRouter>

@@ -99,7 +99,7 @@ const Login = () => {
             Log In
           </button>
 
-          {/* Sign Up */}
+          {/* Sign Up link */}
           <p className="font-semibold">
             Don&apos;t have an Account , Please{" "}
             <Link to={"/SignUp"} className="text-[#F72C5B] hover:underline">
