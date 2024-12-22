@@ -5,7 +5,6 @@ import Cropper from "react-easy-crop";
 
 const ImageCropper = ({ onImageCropped }) => {
   const [image, setImage] = useState(null);
-  const [croppedImage, setCroppedImage] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
@@ -15,8 +14,7 @@ const ImageCropper = ({ onImageCropped }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const objectURL = URL.createObjectURL(file);
-      setImage(objectURL);
+      setImage(file); // Save the File object
       setShowCropper(true);
     }
   };
@@ -27,9 +25,10 @@ const ImageCropper = ({ onImageCropped }) => {
 
   const getCroppedImage = async () => {
     if (!image || !cropArea) return;
+
     const canvas = document.createElement("canvas");
     const img = document.createElement("img");
-    img.src = image;
+    img.src = URL.createObjectURL(image);
 
     return new Promise((resolve) => {
       img.onload = () => {
@@ -56,13 +55,15 @@ const ImageCropper = ({ onImageCropped }) => {
         );
         ctx.restore();
 
-        canvas.toBlob((blob) => {
-          const croppedImgUrl = URL.createObjectURL(blob);
-          setCroppedImage(croppedImgUrl);
-          onImageCropped(croppedImgUrl);
-          setShowCropper(false);
-          resolve(croppedImgUrl);
-        });
+        canvas.toBlob(
+          (blob) => {
+            onImageCropped(blob); // Pass the Blob object
+            setShowCropper(false);
+            resolve(blob);
+          },
+          "image/jpeg",
+          1
+        );
       };
     });
   };
@@ -73,12 +74,11 @@ const ImageCropper = ({ onImageCropped }) => {
         className="w-[250px] h-[250px] rounded-full mx-auto border-2 border-dashed border-gray-500 flex items-center justify-center relative overflow-hidden hover:scale-105"
         style={{ backgroundColor: "#f9f9f9" }}
       >
-        {croppedImage ? (
+        {image && !showCropper ? (
           <img
-            src={croppedImage}
+            src={URL.createObjectURL(image)}
             alt="Cropped Profile"
             className="w-full h-full object-cover rounded-full"
-            style={{ objectFit: "cover" }} // Ensures proper fit
           />
         ) : (
           <div className="flex flex-col items-center text-gray-400">
@@ -99,7 +99,7 @@ const ImageCropper = ({ onImageCropped }) => {
           <div className="bg-white p-5 rounded-lg shadow-lg relative w-full max-w-4xl">
             <div className="relative h-96">
               <Cropper
-                image={image}
+                image={URL.createObjectURL(image)} // Correctly create object URL
                 crop={crop}
                 zoom={zoom}
                 rotation={rotation}
