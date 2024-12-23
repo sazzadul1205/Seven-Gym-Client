@@ -1,9 +1,41 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { Link, NavLink } from "react-router";
 import icon from "../assets/Icon.png";
 import { IoMenu } from "react-icons/io5";
+import useAxiosPublic from "../Hooks/useAxiosPublic";
+import { AuthContext } from "../Providers/AuthProviders";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "./Loading/Loading";
+import { ImExit } from "react-icons/im";
+import Swal from "sweetalert2";
 
 const Navbar = () => {
+  const axiosPublic = useAxiosPublic();
+  const { user, logOut } = useContext(AuthContext); // Access user context
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [openSubmenu, setOpenSubmenu] = useState(null);
+  const [isHovering, setIsHovering] = useState(false); // Track hover state
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Dropdown state
+  const menuRef = useRef(null);
+
+  // Fetching data for Users
+  const {
+    data: Users,
+    isLoading: UsersIsLoading,
+    error: UsersError,
+  } = useQuery({
+    queryKey: ["Users"],
+    queryFn: () => {
+      if (!user) {
+        return null; // Return null if no user
+      }
+      return axiosPublic
+        .get(`/Users?email=${user.email}`)
+        .then((res) => res.data);
+    },
+    enabled: !!user, // Only fetch if user exists
+  });
+
   const menuItems = [
     { name: "Home", path: "/" },
     { name: "Gallery", path: "/Gallery" },
@@ -27,11 +59,6 @@ const Navbar = () => {
       ],
     },
   ];
-
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [openSubmenu, setOpenSubmenu] = useState(null);
-  const [isHovering, setIsHovering] = useState(false); // Track hover state
-  const menuRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -119,6 +146,45 @@ const Navbar = () => {
     );
   };
 
+  // Handle loading and error states
+  if (UsersIsLoading) {
+    return <Loading />;
+  }
+
+  if (UsersError) {
+    return (
+      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+        <p className="text-center text-red-500 font-bold text-3xl mb-8">
+          Something went wrong. Please reload the page.
+        </p>
+        <button
+          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
+          onClick={() => window.location.reload()}
+        >
+          Reload
+        </button>
+      </div>
+    );
+  }
+
+  // Handle logout with Swal alert
+  const handleSignOut = () => {
+    logOut()
+      .then(() => {
+        console.log("Logged Out ....");
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon: "error",
+          title: "Logout Failed",
+          text: `Error logging out: ${error.message}`,
+          confirmButtonColor: "#d33",
+          timer: 3000,
+        });
+        console.error("Error signing out:", error);
+      });
+  };
+
   return (
     <div
       className={`navbar fixed w-full top-0 z-50 transition-all duration-300 ${
@@ -150,11 +216,44 @@ const Navbar = () => {
 
         {/* End */}
         <div className="navbar-end flex items-center">
-          <Link to={"/Login"}>
-            <button className="bg-blue-400 hover:bg-gradient-to-l from-blue-700 to-blue-400 w-28 md:w-32 text-center py-2 md:py-3 text-white font-semibold">
-              Login
-            </button>
-          </Link>
+          {Users ? (
+            // Show the user avatar if user exists
+            <div className="relative">
+              <img
+                src={
+                  Users.profileImage || "https://i.ibb.co.com/XtrM9rc/Users.jpg"
+                }
+                alt="User Avatar"
+                className="w-14 h-14 rounded-full hover:scale-105 cursor-pointer"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown
+              />
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded-lg shadow-lg z-10 px-2 py-2 ">
+                  <ul>
+                    <li className="p-2 px-5 hover:bg-gray-100">
+                      <Link to="/Profile">Profile</Link>
+                    </li>
+                    <li className="p-2 px-5 hover:bg-gray-100">
+                      <Link to="/Settings">Settings</Link>
+                    </li>
+                    <li
+                      className="p-2 px-5 hover:bg-gray-100 flex items-center justify-between text-red-500 font-semibold"
+                      onClick={handleSignOut}
+                    >
+                      <span>Logout</span>
+                      <ImExit />
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link to="/Login">
+              <button className="bg-blue-400 hover:bg-gradient-to-l from-blue-700 to-blue-400 w-28 md:w-32 text-center py-2 md:py-3 text-white font-semibold">
+                Login
+              </button>
+            </Link>
+          )}
         </div>
       </div>
 

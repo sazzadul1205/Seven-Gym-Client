@@ -5,6 +5,10 @@ import ImageCropper from "./ImageCropper/ImageCropper";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FitnessGoalsSelector from "./FitnessGoalsSelector/FitnessGoalsSelector";
 import { AuthContext } from "../../../Providers/AuthProviders";
+import { useNavigate } from "react-router";
+import Swal from "sweetalert2";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "../../../Shared/Loading/Loading";
 
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Key}`;
@@ -12,11 +16,23 @@ const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Ke
 const SUDetails = () => {
   const axiosPublic = useAxiosPublic();
   const { user } = useContext(AuthContext);
-  console.log(user.email);
-  
-
+  const navigate = useNavigate();
   const [selectedGoals, setSelectedGoals] = useState([]);
   const [profileImage, setProfileImage] = useState(null);
+  const [loading, setLoading] = useState(false); // Loading state for the button
+
+  // Fetching data for Users
+  const {
+    data: UserExists,
+    isLoading: UserExistsIsLoading,
+    error: UserExistsError,
+  } = useQuery({
+    queryKey: ["UserExists"],
+    queryFn: () =>
+      axiosPublic
+        .get(`/Users/check-email?email=${user?.email}`)
+        .then((res) => res.data),
+  });
 
   const {
     register,
@@ -25,13 +41,15 @@ const SUDetails = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    try {
-      let uploadedImageUrl = null;
+    setLoading(true); // Set loading to true when submission starts
 
-      if (profileImage) {
-        const formData = new FormData();
-        formData.append("image", profileImage); // Append the Blob directly
+    let uploadedImageUrl = null;
 
+    if (profileImage) {
+      const formData = new FormData();
+      formData.append("image", profileImage);
+
+      try {
         console.log("Uploading image...");
         const res = await axiosPublic.post(Image_Hosting_API, formData, {
           headers: {
@@ -41,23 +59,99 @@ const SUDetails = () => {
 
         uploadedImageUrl = res.data.data.display_url;
         console.log("Image uploaded successfully:", uploadedImageUrl);
-      } else {
-        console.warn("No profile image selected.");
+      } catch (error) {
+        console.error("Failed to upload image:", error);
+        setLoading(false); // Stop loading on error
+        Swal.fire({
+          icon: "error",
+          title: "Image Upload Failed",
+          text: "Failed to upload the image. Please try again.",
+        });
+        return;
       }
+    } else {
+      console.warn("No profile image selected.");
+    }
 
-      const formDataWithImage = {
-        email: user.email,
-        ...data,
-        profileImage: uploadedImageUrl,
-      };
+    const creationTime = new Date().toLocaleString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
 
-      console.log("Form data:", formDataWithImage);
-      alert("Form submitted successfully!");
+    const formDataWithImage = {
+      email: user.email,
+      ...data,
+      profileImage: uploadedImageUrl,
+      selectedGoals,
+      creationTime,
+    };
+
+    console.log("Form data:", formDataWithImage);
+
+    try {
+      await axiosPublic.post("/Users", formDataWithImage);
+      setLoading(false); // Stop loading on success
+      navigate("/"); // Redirect to the home page
     } catch (error) {
-      console.error("Image upload failed", error);
-      alert("Failed to upload the image. Please try again.");
+      console.error("Failed to create the account:", error);
+      setLoading(false); // Stop loading on error
+      Swal.fire({
+        icon: "error",
+        title: "Account Creation Failed",
+        text:
+          error.response?.data?.message ||
+          "Failed to create the account. Please try again.",
+      });
     }
   };
+
+  // Handle loading and error states
+  if (UserExistsIsLoading) {
+    return <Loading />;
+  }
+
+  if (UserExistsError) {
+    return (
+      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+        <p className="text-center text-red-500 font-bold text-3xl mb-8">
+          Something went wrong. Please reload the page.
+        </p>
+        <button
+          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
+          onClick={() => window.location.reload()}
+        >
+          Reload
+        </button>
+      </div>
+    );
+  }
+
+  // If user already exists
+  if (UserExists?.exists) {
+    return (
+      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+        <div className="text-center text-2xl font-bold text-red-500 mb-6">
+          You already have an account.
+        </div>
+        <div className="text-center mb-6">
+          <p className="text-lg text-gray-700">
+            To modify your information, go to your profile update page.
+          </p>
+        </div>
+        <button
+          onClick={() => navigate("/profileupdate")} // Redirect to profile update page
+          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
+        >
+          Go to Profile Update
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -180,9 +274,12 @@ const SUDetails = () => {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="w-1/3 bg-[#F72C5B] hover:bg-[#f72c5bbd] text-white py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#f72c5bbd]"
+              disabled={loading} // Disable the button when loading
+              className={`w-1/3 bg-[#F72C5B] hover:bg-[#f72c5bbd] text-white py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#f72c5bbd] ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              Sign Up
+              {loading ? "Submitting..." : "Create Account"}
             </button>
           </div>
         </form>

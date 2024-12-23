@@ -4,9 +4,9 @@ const CDMore = ({ ThisModule }) => {
   return (
     <div className="max-w-7xl mx-auto bg-gray-50 p-6 md:p-12 mt-8">
       <h3 className="text-2xl font-semibold text-gray-800 mb-6">
-        Class Schedule
+        Class More Info
       </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Class Goals Section */}
         <div className="bg-gray-200 p-6 rounded-lg shadow-md hover:scale-105 transition-transform duration-300">
           <img

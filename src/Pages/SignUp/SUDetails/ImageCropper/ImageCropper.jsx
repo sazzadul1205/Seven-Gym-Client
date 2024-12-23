@@ -95,7 +95,7 @@ const ImageCropper = ({ onImageCropped }) => {
       </div>
 
       {showCropper && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
           <div className="bg-white p-5 rounded-lg shadow-lg relative w-full max-w-4xl">
             <div className="relative h-96">
               <Cropper
