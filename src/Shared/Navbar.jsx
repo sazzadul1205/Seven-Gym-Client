@@ -16,6 +16,7 @@ const Navbar = () => {
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [isHovering, setIsHovering] = useState(false); // Track hover state
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Dropdown state
+  const [isLoggingOut, setIsLoggingOut] = useState(false); // Loading state
   const menuRef = useRef(null);
 
   // Fetching data for Users
@@ -31,7 +32,13 @@ const Navbar = () => {
       }
       return axiosPublic
         .get(`/Users?email=${user.email}`)
-        .then((res) => res.data);
+        .then((res) => res.data)
+        .catch((error) => {
+          if (error.response?.status === 404) {
+            return null; // Handle 404 as no data found
+          }
+          throw error; // Rethrow other errors
+        });
     },
     enabled: !!user, // Only fetch if user exists
   });
@@ -167,11 +174,11 @@ const Navbar = () => {
     );
   }
 
-  // Handle logout with Swal alert
   const handleSignOut = () => {
+    setIsLoggingOut(true); // Start loading state
     logOut()
       .then(() => {
-        console.log("Logged Out ....");
+        window.location.reload(); // Refresh the page
       })
       .catch((error) => {
         Swal.fire({
@@ -182,6 +189,9 @@ const Navbar = () => {
           timer: 3000,
         });
         console.error("Error signing out:", error);
+      })
+      .finally(() => {
+        setIsLoggingOut(false); // Stop loading state (in case of error)
       });
   };
 
@@ -219,16 +229,19 @@ const Navbar = () => {
           {Users ? (
             // Show the user avatar if user exists
             <div className="relative">
-              <img
-                src={
-                  Users.profileImage || "https://i.ibb.co.com/XtrM9rc/Users.jpg"
-                }
-                alt="User Avatar"
-                className="w-14 h-14 rounded-full hover:scale-105 cursor-pointer"
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown
-              />
+              <div className="bg-white p-[3px] rounded-full">
+                <img
+                  src={
+                    Users.profileImage ||
+                    "https://i.ibb.co.com/XtrM9rc/Users.jpg"
+                  }
+                  alt="User Avatar"
+                  className="w-14 h-14 rounded-full hover:scale-105 cursor-pointer "
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown
+                />
+              </div>
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded-lg shadow-lg z-10 px-2 py-2 ">
+                <div className="absolute right-0 mt-2 w-[200px] bg-white text-black rounded-lg shadow-lg z-10 px-2 py-2 ">
                   <ul>
                     <li className="p-2 px-5 hover:bg-gray-100">
                       <Link to="/Profile">Profile</Link>
@@ -237,11 +250,17 @@ const Navbar = () => {
                       <Link to="/Settings">Settings</Link>
                     </li>
                     <li
-                      className="p-2 px-5 hover:bg-gray-100 flex items-center justify-between text-red-500 font-semibold"
+                      className="p-2 px-5  hover:bg-gray-100 flex items-center justify-between text-red-500 font-semibold"
                       onClick={handleSignOut}
                     >
-                      <span>Logout</span>
-                      <ImExit />
+                      {isLoggingOut ? (
+                        <>Logging Out...</>
+                      ) : (
+                        <>
+                          <span>Logout</span>
+                          <ImExit />
+                        </>
+                      )}
                     </li>
                   </ul>
                 </div>

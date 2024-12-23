@@ -1,14 +1,12 @@
 import { useForm } from "react-hook-form";
 import LoginBack from "../../assets/LoginBack.jpeg";
-import { FcGoogle } from "react-icons/fc";
-import { FaFacebookSquare } from "react-icons/fa";
 import { Link, useNavigate } from "react-router";
-import { AuthContext } from "../../Providers/AuthProviders";
-import { useContext } from "react";
 import Swal from "sweetalert2";
+import useAuth from "../../Hooks/useAuth";
+import SocialLinks from "../../Shared/SocialLinks/SocialLinks";
 
 const SignUp = () => {
-  const { createUser } = useContext(AuthContext);
+  const { createUser } = useAuth();
   const navigate = useNavigate();
   const {
     register,
@@ -167,17 +165,7 @@ const SignUp = () => {
             <div className="divider font-bold">OR</div>
           </div>
 
-          {/* Social Media Login */}
-          <div className="space-y-2">
-            <button className="flex border-2 border-[#F72C5B] bg-white hover:bg-[#F72C5B] hover:text-white rounded-xl w-full py-3 justify-center gap-5">
-              <FcGoogle className="text-xl" />
-              <span className="font-semibold">Sign Up With Google</span>
-            </button>
-            <button className="flex border-2 border-[#F72C5B] bg-white hover:bg-[#F72C5B] hover:text-white rounded-xl w-full py-3 justify-center gap-5">
-              <FaFacebookSquare className="text-xl text-[#1877F2]" />
-              <span className="font-semibold">Sign Up With Facebook</span>
-            </button>
-          </div>
+          <SocialLinks></SocialLinks>
         </div>
       </div>
     </div>

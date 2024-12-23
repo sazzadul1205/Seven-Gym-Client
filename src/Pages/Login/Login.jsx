@@ -1,19 +1,52 @@
 import { useForm } from "react-hook-form";
 import LoginBack from "../../assets/LoginBack.jpeg";
-import { FcGoogle } from "react-icons/fc";
-import { FaFacebookSquare } from "react-icons/fa";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
+import { useState } from "react";
+import useAxiosPublic from "../../Hooks/useAxiosPublic";
+import useAuth from "../../Hooks/useAuth";
+import Swal from "sweetalert2";
+import SocialLinks from "../../Shared/SocialLinks/SocialLinks";
 
 const Login = () => {
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const axiosPublic = useAxiosPublic();
+  const [loading, setLoading] = useState(false);
+  const from = location.state?.from?.pathname || "/";
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+  // Normal login
   const onSubmit = (data) => {
-    console.log("Form Submitted:", data);
-    alert("Login successful!");
+    setLoading(true);
+    signIn(data.email, data.password)
+      .then((res) => {
+        const user = res.user;
+        // Fetch user role from the database
+        return axiosPublic.get(`/Users?email=${user.email}`);
+      })
+      .then((response) => {
+        const userData = response.data;
+        if (userData.role === "Admin" || userData.role === "Manager") {
+          navigate("/Dashboard", { replace: true });
+        } else {
+          navigate(from, { replace: true });
+          window.location.reload(); // Reload the page after navigation
+        }
+        // showSuccessLogInAlert();
+      })
+      .catch((error) => {
+        console.error("Error during login:", error);
+        showFailedLogInAlert(error.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -25,14 +58,10 @@ const Login = () => {
         backgroundPosition: "center",
       }}
     >
-      {/* Login Card */}
       <div
         className="w-full max-w-md shadow-md rounded-tl-[50px] rounded-br-[50px] p-10"
-        style={{
-          backgroundColor: "rgba(255, 255, 255, 0.8)", // Transparent background
-        }}
+        style={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
       >
-        {/* Welcome Part */}
         <div className="pb-5">
           <h4 className="text-3xl font-bold text-center text-[#F72C5B]">
             Welcome Back
@@ -43,7 +72,6 @@ const Login = () => {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Email Field */}
           <div>
             <label className="block text-gray-700 font-semibold text-xl pb-2">
               Email
@@ -67,7 +95,6 @@ const Login = () => {
             )}
           </div>
 
-          {/* Password Field */}
           <div>
             <label className="block text-gray-700 font-semibold text-xl pb-2">
               Password
@@ -91,19 +118,22 @@ const Login = () => {
             )}
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-[#F72C5B] hover:bg-[#f72c5bbd] text-white py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#f72c5bbd]"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#f72c5bbd] ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#F72C5B] hover:bg-[#f72c5bbd] text-white"
+            }`}
           >
-            Log In
+            {loading ? "Logging in..." : "Log In"}
           </button>
 
-          {/* Sign Up link */}
           <p className="font-semibold">
-            Don&apos;t have an Account , Please{" "}
-            <Link to={"/SignUp"} className="text-[#F72C5B] hover:underline">
-              SignUp
+            Don&apos;t have an Account? Please{" "}
+            <Link to="/SignUp" className="text-[#F72C5B] hover:underline">
+              Sign Up
             </Link>
           </p>
         </form>
@@ -112,22 +142,26 @@ const Login = () => {
           <div className="divider font-bold">OR</div>
         </div>
 
-        {/* Outside Login L9ink */}
-        <div className="space-y-2">
-          {/* Google Login */}
-          <button className="flex border-2 border-[#F72C5B] bg-white hover:bg-[#F72C5B] hover:text-white rounded-xl w-full py-3 justify-center gap-5">
-            <FcGoogle className="text-xl" />
-            <span className="font-semibold">Log In With Google</span>
-          </button>
-          {/* Facebook Login */}
-          <button className="flex border-2 border-[#F72C5B] bg-white hover:bg-[#F72C5B] hover:text-white rounded-xl w-full py-3 justify-center gap-5">
-            <FaFacebookSquare className="text-xl text-[#1877F2]" />
-            <span className="font-semibold">Log In With Facebook</span>
-          </button>
-        </div>
+        <SocialLinks></SocialLinks>
       </div>
     </div>
   );
 };
 
 export default Login;
+
+// const showSuccessLogInAlert = () => {
+//   Swal.fire({
+//     icon: "success",
+//     title: "Login Successful!",
+//     text: "You are now logged in.",
+//   });
+// };
+
+const showFailedLogInAlert = (errorMessage) => {
+  Swal.fire({
+    icon: "error",
+    title: "Login Failed",
+    text: errorMessage,
+  });
+};

@@ -89,14 +89,15 @@ const SUDetails = () => {
       profileImage: uploadedImageUrl,
       selectedGoals,
       creationTime,
+      role: "Member",
+      tier: "Bronze",
     };
-
-    console.log("Form data:", formDataWithImage);
 
     try {
       await axiosPublic.post("/Users", formDataWithImage);
       setLoading(false); // Stop loading on success
       navigate("/"); // Redirect to the home page
+      window.location.reload(); // Reload the page after navigation
     } catch (error) {
       console.error("Failed to create the account:", error);
       setLoading(false); // Stop loading on error
