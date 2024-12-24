@@ -31,18 +31,14 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
       case "Outdoor Class":
       case "Partner Workout":
         return (
-          <div className="flex mx-auto w-[180px]">
-            <button
-              className="bg-[#F72C5B] text-white px-3 py-2 rounded-2xl hover:bg-[#f72c5b83] w-full"
-              onClick={() =>
-                alert(
-                  `Booking ${classType} on ${day} from ${timeStart} to ${timeEnd}`
-                )
-              }
-            >
+          <Link
+            to={`/Trainers/${TrainerDetails.name}/Payment?day=${day}&timeStart=${timeStart}&classType${classType}`}
+            className="flex mx-auto w-[180px]"
+          >
+            <button className="bg-[#F72C5B] text-white px-3 py-2 rounded-2xl hover:bg-[#f72c5b83] w-full">
               Book Session
             </button>
-          </div>
+          </Link>
         );
       case "Drop-In Class":
         return (
@@ -64,30 +60,26 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
       case "Semi-Private Training":
       case "Workshops":
         return (
-          <div className="flex mx-auto w-[180px]">
-            <button
-              className="bg-[#F72C5B] text-white px-3 py-2 rounded-2xl hover:bg-[#f72c5b83] w-full"
-              onClick={() =>
-                alert(
-                  `Booking ${classType} on ${day} from ${timeStart} to ${timeEnd}`
-                )
-              }
-            >
+          <Link
+            to={`/Trainers/${TrainerDetails.name}/Payment?day=${day}&timeStart=${timeStart}&classType=${classType}`}
+            className="flex mx-auto w-[180px]"
+          >
+            <button className="bg-[#F72C5B] text-white px-3 py-2 rounded-2xl hover:bg-[#f72c5b83] w-full">
               Book Session
             </button>
-          </div>
+          </Link>
         );
       default:
         return (
           <div className="flex mx-auto w-[180px]">
-            <button className="bg-green-500 text-white px-3 py-2 rounded-2xl hover:bg-green-600 w-full">
-              <Link
-                to={`/Classes/${classType.split(" ").slice(0, -1).join(" ")}`}
-              >
-                {" "}
+            <Link
+              to={`/Classes/${classType.split(" ").slice(0, -1).join(" ")}`}
+              className="w-full"
+            >
+              <button className="bg-green-500 text-white px-3 py-2 rounded-2xl hover:bg-green-600 w-full">
                 Visit Class
-              </Link>
-            </button>
+              </button>
+            </Link>
           </div>
         );
     }
@@ -112,10 +104,10 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
       {Object.entries(schedule).map(([day, classes]) => (
         <div key={day} className="mb-6 collapse collapse-arrow bg-base-200">
           <input type="radio" name="schedule-accordion" />
-          <div className="collapse-title text-xl font-medium">{day}</div>
+          <p className="collapse-title text-xl font-medium">{day}</p>
           <div className="collapse-content">
+            {/* Mobile view: Stacked layout */}
             <div className="block sm:hidden">
-              {/* Mobile view: Stacked layout */}
               {classes.map((classDetails, index) => (
                 <div
                   key={`${day}-${index}`}

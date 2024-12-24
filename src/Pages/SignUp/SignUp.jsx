@@ -4,10 +4,12 @@ import { Link, useNavigate } from "react-router";
 import Swal from "sweetalert2";
 import useAuth from "../../Hooks/useAuth";
 import SocialLinks from "../../Shared/SocialLinks/SocialLinks";
+import { useState } from "react";
 
 const SignUp = () => {
   const { createUser } = useAuth();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false); // Loading state
   const {
     register,
     handleSubmit,
@@ -20,11 +22,14 @@ const SignUp = () => {
   const onSubmit = (data) => {
     const { email, password } = data;
 
+    setLoading(true); // Start loading
+
     // Create User
     createUser(email, password)
       .then((res) => {
         const user = res.user;
         console.log("User created successfully:", user);
+        setLoading(false); // Stop loading
         navigate("/SignUp/Details");
 
         // Show success alert
@@ -37,6 +42,7 @@ const SignUp = () => {
       })
       .catch((error) => {
         console.error("Error creating user:", error);
+        setLoading(false); // Stop loading
 
         // Show error alert
         Swal.fire({
@@ -147,9 +153,12 @@ const SignUp = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-[#F72C5B] hover:bg-[#f72c5bbd] text-white py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#f72c5bbd]"
+              disabled={loading} // Disable button while loading
+              className={`w-full ${
+                loading ? "bg-gray-400" : "bg-[#F72C5B] hover:bg-[#f72c5bbd]"
+              } text-white py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#f72c5bbd]`}
             >
-              Sign Up
+              {loading ? "Signing Up..." : "Sign Up"}
             </button>
 
             {/* Sign Up link */}

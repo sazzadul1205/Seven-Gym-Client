@@ -12,10 +12,8 @@ import TDPricing from "./TDContent/TDPricing";
 const TrainersDetails = () => {
   const axiosPublic = useAxiosPublic();
   let { name } = useParams();
-
   // Decode the URL parameter to handle spaces correctly
   const decodedName = decodeURIComponent(name); // Decode the name parameter
-  console.log(decodedName);
 
   // Fetching Trainer_Detail Data
   const {

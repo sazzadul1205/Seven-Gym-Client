@@ -1,17 +1,17 @@
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, NavLink } from "react-router";
 import icon from "../assets/Icon.png";
 import { IoMenu } from "react-icons/io5";
 import useAxiosPublic from "../Hooks/useAxiosPublic";
-import { AuthContext } from "../Providers/AuthProviders";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "./Loading/Loading";
 import { ImExit } from "react-icons/im";
 import Swal from "sweetalert2";
+import useAuth from "../Hooks/useAuth";
 
 const Navbar = () => {
   const axiosPublic = useAxiosPublic();
-  const { user, logOut } = useContext(AuthContext); // Access user context
+  const { user, logOut } = useAuth(); // Access user context
   const [isScrolled, setIsScrolled] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [isHovering, setIsHovering] = useState(false); // Track hover state
