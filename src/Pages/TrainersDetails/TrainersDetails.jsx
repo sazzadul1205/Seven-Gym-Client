@@ -72,6 +72,7 @@ const TrainersDetails = () => {
       <TDImages TrainerDetails={TrainerDetails} />
 
       <div className="container mx-auto py-8">
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Trainer Bio and Experience */}
           <TDBio TrainerDetails={TrainerDetails} />
@@ -79,6 +80,7 @@ const TrainersDetails = () => {
           {/* Trainer Contact Info */}
           <TDContact TrainerDetails={TrainerDetails} />
         </div>
+
         {/* Trainer Pricing */}
         <TDPricing
           TrainerDetails={TrainerDetails}

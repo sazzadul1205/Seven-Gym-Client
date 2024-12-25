@@ -71,9 +71,7 @@ const TrainerPayment = () => {
     queryFn: () =>
       axiosPublic
         .get(
-          `/Trainers_Schedule/searchTimeAndType?name=${name}&timeStart=${timeStart}${
-            currentClassType ? `&classType=${currentClassType}` : ""
-          }`
+          `/Trainers_Schedule/searchTimeAndType?name=${name}&timeStart=${timeStart}`
         )
         .then((res) => res.data),
   });

@@ -32,7 +32,7 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
       case "Partner Workout":
         return (
           <Link
-            to={`/Trainers/${TrainerDetails.name}/Payment?day=${day}&timeStart=${timeStart}&classType${classType}`}
+            to={`/Trainers/Bookings/${TrainerDetails.name}?classType=${classType}&day=${day}&timeStart=${timeStart}`}
             className="flex mx-auto w-[180px]"
           >
             <button className="bg-[#F72C5B] text-white px-3 py-2 rounded-2xl hover:bg-[#f72c5b83] w-full">
@@ -61,7 +61,7 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
       case "Workshops":
         return (
           <Link
-            to={`/Trainers/${TrainerDetails.name}/Payment?day=${day}&timeStart=${timeStart}&classType=${classType}`}
+            to={`/Trainers/Bookings/${TrainerDetails.name}?classType=${classType}&day=${day}&timeStart=${timeStart}`}
             className="flex mx-auto w-[180px]"
           >
             <button className="bg-[#F72C5B] text-white px-3 py-2 rounded-2xl hover:bg-[#f72c5b83] w-full">

@@ -23,6 +23,7 @@ import ClassesDetails from "./Pages/ClassesDetails/ClassesDetails.jsx";
 import TrainersDetails from "./Pages/TrainersDetails/TrainersDetails.jsx";
 import SUDetails from "./Pages/SignUp/SUDetails/SUDetails.jsx";
 import TrainerPayment from "./Pages/Payments/TrainersPayment.jsx";
+import TrainersBookings from "./Pages/TrainersBookings/TrainersBookings.jsx";
 
 const queryClient = new QueryClient();
 
@@ -38,7 +39,14 @@ createRoot(document.getElementById("root")).render(
               <Route path="/Gallery" element={<Gallery />} />
               <Route path="/Trainers" element={<Trainers />} />
               <Route path="/Trainers/:name" element={<TrainersDetails />} />
-              <Route path="/Trainers/:name/Payment" element={<TrainerPayment />} />
+              <Route
+                path="/Trainers/Bookings/:name"
+                element={<TrainersBookings />}
+              />
+              <Route
+                path="/Trainers/:name/Payment"
+                element={<TrainerPayment />}
+              />
               <Route path="/Classes" element={<Classes />} />
               <Route path="/Classes/:module" element={<ClassesDetails />} />
               <Route path="/Forums" element={<Forums />} />
