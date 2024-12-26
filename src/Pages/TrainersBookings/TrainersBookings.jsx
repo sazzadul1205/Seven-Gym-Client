@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useParams } from "react-router";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
@@ -5,6 +6,7 @@ import Loading from "../../Shared/Loading/Loading";
 import useAuth from "../../Hooks/useAuth";
 import TrainerBookingDetails from "./TrainerBookingDetails/TrainerBookingDetails";
 import SameTimeWeekClass from "./SameTimeWeekClass/SameTimeWeekClass";
+import BookedTable from "./BookedTable/BookedTable";
 
 const TrainersBookings = () => {
   const axiosPublic = useAxiosPublic();
@@ -12,11 +14,13 @@ const TrainersBookings = () => {
   const { name } = useParams();
   const { user } = useAuth();
 
+  // State to track clicked sessions
+  const [clickedSessions, setClickedSessions] = useState([]);
+
   // Extract query parameters
   const searchParams = new URLSearchParams(location.search);
   const Day = searchParams.get("day");
   const TimeStart = searchParams.get("timeStart");
-  const ClassType = searchParams.get("classType");
 
   // Fetch session details
   const {
@@ -54,7 +58,8 @@ const TrainersBookings = () => {
         .get(`/Trainers/searchByNames?names=${name}`)
         .then((res) => res.data),
   });
-  const trainer = TrainerDetailData[0];
+
+  const trainer = TrainerDetailData?.[0];
 
   // Loading state
   if (SameTimeDataIsLoading || UsersDataLoading || TrainerDetailDataLoading)
@@ -89,8 +94,20 @@ const TrainersBookings = () => {
       {/* Trainer Details */}
       <TrainerBookingDetails trainer={trainer} />
 
+      {/* Booked Table */}
+      <BookedTable
+        SameTimeData={SameTimeData}
+        Day={Day}
+        clickedSessions={clickedSessions}
+      />
+
       {/* Classes The Same Day */}
-      <SameTimeWeekClass SameTimeData={SameTimeData} />
+      <SameTimeWeekClass
+        SameTimeData={SameTimeData}
+        Day={Day}
+        clickedSessions={clickedSessions}
+        setClickedSessions={setClickedSessions}
+      />
     </div>
   );
 };

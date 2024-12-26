@@ -4,7 +4,7 @@ import { Link } from "react-router";
 const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
   const schedule = TrainerSchedule.schedule;
 
-  const getClassButton = (classType, timeStart, timeEnd, day, participants) => {
+  const getClassButton = (classType, timeStart, day, participants) => {
     // If the class is a non-group class and has exactly one participant
     if (
       participants.length === 1 &&
