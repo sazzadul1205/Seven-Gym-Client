@@ -1,15 +1,30 @@
 /* eslint-disable react/prop-types */
-const SameTimeWeekClass = ({
-  SameTimeData,
-  Day,
+const SameClassTypeWeekClass = ({
+  SameClassTypeData,
   listedSessions,
   setListedSessions,
 }) => {
-  const { name, schedule } = SameTimeData;
+  const { name, schedule } = SameClassTypeData;
 
   // Function to generate a unique key for a session
   const generateKey = (classType, timeStart, timeEnd, day) => {
     return `${classType}-${timeStart}-${timeEnd}-${day}`;
+  };
+
+  // Function to format the date for each day
+  const formatDate = (day) => {
+    const date = new Date();
+    const dayIndex = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ].indexOf(day);
+    date.setDate(date.getDate() + ((dayIndex - date.getDay() + 7) % 7)); // Adjusts the date to the specific day
+    return date.toLocaleDateString(); // Returns formatted date (e.g., 12/26/2024)
   };
 
   const handleAddSession = (classType, timeStart, timeEnd, day) => {
@@ -101,22 +116,26 @@ const SameTimeWeekClass = ({
     }
   };
 
-  const filteredSchedule = Object.keys(schedule).filter((day) => day !== Day);
-
   return (
-    <div className="max-w-7xl mx-auto bg-white p-8 shadow-xl rounded-xl">
+    <div className="max-w-7xl mx-auto bg-white p-8 shadow-xl rounded-xl py-5">
       <h2 className="text-3xl font-semibold text-center mb-6">
-        Schedule for {name} This Week
+        Same Class Schedule for {name} This Week
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {filteredSchedule.map((day) => (
-          <div
-            key={day}
-            className="bg-white border rounded-lg shadow-lg py-4 hover:scale-105"
-          >
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {/* Loop through each day in the schedule */}
+        {Object.keys(schedule).map((day) => (
+          <div key={day} className="py-4">
+            {/* Display day name and the formatted date */}
+            <div className="text-center mb-3">
+              <h3 className="text-xl font-semibold">{day}</h3>
+              <p className="text-gray-600">{formatDate(day)}</p>
+            </div>
+
             {schedule[day].map((classItem, index) => (
-              <div key={index} className="px-5">
-                <h3 className="text-xl font-semibold text-center">{day}</h3>
+              <div
+                key={index}
+                className="px-5 py-3 my-2 bg-white shadow-2xl rounded-2xl  hover:scale-105"
+              >
                 <p className="font-semibold text-center italic">
                   {classItem.classType}
                 </p>
@@ -142,4 +161,4 @@ const SameTimeWeekClass = ({
   );
 };
 
-export default SameTimeWeekClass;
+export default SameClassTypeWeekClass;

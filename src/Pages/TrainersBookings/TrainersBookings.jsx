@@ -7,6 +7,7 @@ import useAuth from "../../Hooks/useAuth";
 import TrainerBookingDetails from "./TrainerBookingDetails/TrainerBookingDetails";
 import SameTimeWeekClass from "./SameTimeWeekClass/SameTimeWeekClass";
 import BookedTable from "./BookedTable/BookedTable";
+import SameClassTypeWeekClass from "./SameClassTypeWeekClass/SameClassTypeWeekClass";
 
 const TrainersBookings = () => {
   const axiosPublic = useAxiosPublic();
@@ -15,12 +16,13 @@ const TrainersBookings = () => {
   const { user } = useAuth();
 
   // State to track clicked sessions
-  const [clickedSessions, setClickedSessions] = useState([]);
+  const [listedSessions, setListedSessions] = useState([]);
 
   // Extract query parameters
   const searchParams = new URLSearchParams(location.search);
   const Day = searchParams.get("day");
   const TimeStart = searchParams.get("timeStart");
+  const ClassType = searchParams.get("classType");
 
   // Fetch session details
   const {
@@ -31,7 +33,20 @@ const TrainersBookings = () => {
     queryKey: ["SameTimeData"],
     queryFn: () =>
       axiosPublic
-        .get(`Trainers_Schedule/${name}/${TimeStart}`)
+        .get(`Trainers_Schedule/${name}/time/${TimeStart}`)
+        .then((res) => res.data),
+  });
+
+  // Fetch session details
+  const {
+    data: SameClassTypeData,
+    isLoading: SameClassTypeDataIsLoading,
+    error: SameClassTypeDataError,
+  } = useQuery({
+    queryKey: ["SameClassTypeData"],
+    queryFn: () =>
+      axiosPublic
+        .get(`Trainers_Schedule/${name}/classType/${ClassType}`)
         .then((res) => res.data),
   });
 
@@ -60,16 +75,27 @@ const TrainersBookings = () => {
   });
 
   const trainer = TrainerDetailData?.[0];
+  const pricePerSession = trainer?.perSession;
 
   // Loading state
-  if (SameTimeDataIsLoading || UsersDataLoading || TrainerDetailDataLoading)
+  if (
+    SameTimeDataIsLoading ||
+    UsersDataLoading ||
+    TrainerDetailDataLoading ||
+    SameClassTypeDataIsLoading
+  )
     return <Loading />;
 
   // Error handling
-  if (SameTimeDataError || UsersDataError || TrainerDetailDataError) {
+  if (
+    SameTimeDataError ||
+    UsersDataError ||
+    TrainerDetailDataError ||
+    SameClassTypeDataError
+  ) {
     console.error(
       "Error fetching data:",
-      SameTimeData || UsersData || TrainerDetailData
+      SameTimeData || UsersData || TrainerDetailData || SameClassTypeData
     );
     return (
       <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
@@ -96,17 +122,28 @@ const TrainersBookings = () => {
 
       {/* Booked Table */}
       <BookedTable
+        setListedSessions={setListedSessions}
+        pricePerSession={pricePerSession}
+        listedSessions={listedSessions}
         SameTimeData={SameTimeData}
+        ClassType={ClassType}
         Day={Day}
-        clickedSessions={clickedSessions}
       />
 
       {/* Classes The Same Day */}
       <SameTimeWeekClass
         SameTimeData={SameTimeData}
         Day={Day}
-        clickedSessions={clickedSessions}
-        setClickedSessions={setClickedSessions}
+        listedSessions={listedSessions}
+        setListedSessions={setListedSessions}
+      />
+
+      {/* Classes The Same Day */}
+      <SameClassTypeWeekClass
+        SameClassTypeData={SameClassTypeData}
+        Day={Day}
+        listedSessions={listedSessions}
+        setListedSessions={setListedSessions}
       />
     </div>
   );
