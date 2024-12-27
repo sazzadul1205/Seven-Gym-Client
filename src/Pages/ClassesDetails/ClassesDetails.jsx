@@ -7,10 +7,14 @@ import CDPrice from "./CDContent/CDPrice";
 import CDSchedule from "./CDContent/CDSchedule";
 import CDReview from "./CDContent/CDReview";
 import CDMore from "./CDContent/CDMore";
+import CDContent from "./CDContent/CDContent";
+import ClassesDetailsModal from "./ClassesDetailsModal/ClassesDetailsModal";
+import useAuth from "../../Hooks/useAuth";
 
 const ClassesDetails = () => {
   const axiosPublic = useAxiosPublic();
   let { module } = useParams();
+  const { user } = useAuth();
 
   // Fetching data for Module
   const {
@@ -62,16 +66,46 @@ const ClassesDetails = () => {
     enabled: teacherNames.length > 0, // Prevent fetching if teacherNames are empty
   });
 
+  // Fetching data for UsersData
+  const {
+    data: UsersData,
+    isLoading: UsersDataIsLoading,
+    error: UsersDataError,
+  } = useQuery({
+    queryKey: ["UsersData"],
+    queryFn: () => {
+      if (!user) {
+        return null; // Return null if no user
+      }
+      return axiosPublic
+        .get(`/Users?email=${user.email}`)
+        .then((res) => res.data)
+        .catch((error) => {
+          if (error.response?.status === 404) {
+            return null; // Handle 404 as no data found
+          }
+          throw error; // Rethrow other errors
+        });
+    },
+    enabled: !!user, // Only fetch if user exists
+  });
+
   // Handle loading and error states
   if (
     ModuleDataIsLoading ||
     TrainersDataIsLoading ||
-    ClassScheduleDataIsLoading
+    ClassScheduleDataIsLoading ||
+    UsersDataIsLoading
   ) {
     return <Loading />;
   }
 
-  if (ModuleDataError || TrainersDataError || ClassScheduleDataError) {
+  if (
+    ModuleDataError ||
+    TrainersDataError ||
+    ClassScheduleDataError ||
+    UsersDataError
+  ) {
     return (
       <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
         <p className="text-center text-red-500 font-bold text-3xl mb-8">
@@ -88,53 +122,6 @@ const ClassesDetails = () => {
   }
 
   const ThisModule = ModuleData[0];
-
-  // Helper to categorize and assign roles to trainers
-  const getTrainerRole = (trainer) => {
-    if (trainer.name === ThisModule.classTeacher) return "Class Teacher";
-    if (ThisModule.helperTeachers.includes(trainer.name)) return "Helper";
-    if (trainer.name === ThisModule.fallbackTeacher) return "Fallback Teacher";
-    return "Unknown Role";
-  };
-
-  // Calculate the average rating from comments
-  const calculateAverageRating = (comments) => {
-    if (comments.length === 0) return 0;
-    const totalRating = comments.reduce(
-      (acc, comment) => acc + comment.rating,
-      0
-    );
-    return totalRating / comments.length;
-  };
-
-  const averageRating = calculateAverageRating(ThisModule.comments);
-
-  // Star rating rendering
-  const renderStars = (rating) => {
-    const fullStars = Math.floor(rating);
-    const halfStar = rating - fullStars >= 0.5;
-    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-    return (
-      <div className="flex items-center space-x-1">
-        {Array(fullStars)
-          .fill(0)
-          .map((_, index) => (
-            <span key={index} className="text-yellow-500">
-              ★
-            </span>
-          ))}
-        {halfStar && <span className="text-yellow-500">★</span>}
-        {Array(emptyStars)
-          .fill(0)
-          .map((_, index) => (
-            <span key={index} className="text-gray-400">
-              ★
-            </span>
-          ))}
-      </div>
-    );
-  };
 
   return (
     <div className="min-h-screen bg-[#f72c5b44]">
@@ -153,71 +140,18 @@ const ClassesDetails = () => {
       </div>
 
       {/* CDContent Section */}
-      <div className="max-w-7xl mx-auto p-6 md:p-12 bg-white shadow-lg rounded-lg -mt-16 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Left CDContent */}
-          <div className="md:col-span-2 space-y-6">
-            {/* Description */}
-            <div>
-              <h3 className="text-xl md:text-2xl font-semibold text-gray-800">
-                Description
-              </h3>
-              <p className="text-gray-600 mt-2">{ThisModule.description}</p>
-            </div>
-
-            {/* Additional Info */}
-            <div>
-              <h3 className="text-xl md:text-2xl font-semibold text-gray-800">
-                Additional Info
-              </h3>
-              <p className="text-gray-600 mt-2">{ThisModule.additionalInfo}</p>
-            </div>
-
-            {/* Difficulty Level */}
-            <div>
-              <h3 className="text-xl md:text-2xl font-semibold text-gray-800">
-                Difficulty Level
-              </h3>
-              <p className="text-gray-600 mt-2">{ThisModule.difficultyLevel}</p>
-            </div>
-
-            {/* Prerequisites */}
-            <div>
-              <h3 className="text-xl md:text-2xl font-semibold text-gray-800">
-                Prerequisites
-              </h3>
-              <p className="text-gray-600 mt-2">{ThisModule.prerequisites}</p>
-            </div>
-          </div>
-
-          {/* Right Sidebar */}
-          <div className="flex flex-col items-center border-2 border-gray-200 rounded-lg p-6 bg-gray-50 shadow-inner">
-            <img
-              src={ThisModule.icon}
-              alt={ThisModule.module}
-              className="w-20 h-20 md:w-24 md:h-24 object-cover mb-4"
-            />
-            <p className="text-lg font-medium text-gray-700 text-center">
-              Module: <span className="text-gray-900">{ThisModule.module}</span>
-            </p>
-            <p className="text-gray-600 mt-2 text-center">
-              Explore and enjoy this exciting and engaging activity tailored for
-              all!
-            </p>
-          </div>
-        </div>
-      </div>
+      <CDContent ThisModule={ThisModule} />
 
       {/* Key Features */}
-      <div className="max-w-7xl py-5 px-5 mx-auto mt-5 bg-gray-50 rounded-lg">
+      <div className="max-w-7xl py-5 px-5 mx-auto mt-5 bg-gray-50 rounded-lg shadow-2xl">
         <h3 className="text-xl md:text-2xl font-semibold text-gray-800">
-          Key Features
+          Key Features :
         </h3>
-        <div className="flex flex-wrap px-3 gap-3 md:gap-5 pt-2">
+        <div className="flex flex-wrap px-3 gap-3 md:gap-5 pt-5">
           {ThisModule.tags.map((feature, index) => (
             <p
               key={index}
-              className="bg-blue-300 px-4 md:px-6 py-2 rounded-full text-center text-sm sm:text-base"
+              className="bg-[#F72C5B] text-white font-semibold px-4 md:px-6 py-2 rounded-full text-center text-sm sm:text-base hover:scale-110"
             >
               {feature}
             </p>
@@ -226,11 +160,11 @@ const ClassesDetails = () => {
       </div>
 
       {/* Detailed Description */}
-      <div className="max-w-7xl py-5 px-5 mx-auto mt-5 bg-gray-50 rounded-lg">
+      <div className="max-w-7xl py-10 px-5 mx-auto mt-5 bg-gray-50 rounded-lg shadow-2xl">
         <h3 className="text-2xl font-semibold text-gray-800 py-2">
           Detailed Description
         </h3>
-        <p className="leading-relaxed text-lg">
+        <p className="leading-relaxed text-lg italic">
           {ThisModule.detailedDescription || ThisModule.bigDescription}
         </p>
       </div>
@@ -242,17 +176,22 @@ const ClassesDetails = () => {
       <CDSchedule ClassScheduleData={ClassScheduleData} />
 
       {/* Trainer Cards */}
-      <CDTrainers TrainersData={TrainersData} getTrainerRole={getTrainerRole} />
+      <CDTrainers TrainersData={TrainersData} ThisModule={ThisModule} />
 
       {/* More Info */}
       <CDMore ThisModule={ThisModule} />
 
       {/* Reviews Section */}
-      <CDReview
-        ThisModule={ThisModule}
-        averageRating={averageRating}
-        renderStars={renderStars}
-      />
+      <CDReview ThisModule={ThisModule} />
+
+      {/* Module */}
+      <dialog id="my_modal_2" className="modal">
+        <ClassesDetailsModal
+          ThisModule={ThisModule}
+          user={user}
+          UsersData={UsersData}
+        />
+      </dialog>
     </div>
   );
 };

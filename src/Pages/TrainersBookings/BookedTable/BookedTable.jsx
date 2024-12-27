@@ -60,8 +60,7 @@ const BookedTable = ({
       trainerEmail: trainer?.email,
       currentTime,
     };
-
-    console.log(data);
+    
     try {
       // POST booking data to the backend API at the /Trainers_Booking_Request endpoint
       const response = await axiosPublic.post(

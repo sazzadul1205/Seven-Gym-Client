@@ -1,6 +1,14 @@
 /* eslint-disable react/prop-types */
 import ClassTrainersCard from "../ClassTrainersCard/ClassTrainersCard";
-const CDTrainers = ({ TrainersData, getTrainerRole }) => {
+const CDTrainers = ({ TrainersData, ThisModule }) => {
+  // Helper to categorize and assign roles to trainers
+  const getTrainerRole = (trainer) => {
+    if (trainer.name === ThisModule.classTeacher) return "Class Teacher";
+    if (ThisModule.helperTeachers.includes(trainer.name)) return "Helper";
+    if (trainer.name === ThisModule.fallbackTeacher) return "Fallback Teacher";
+    return "Unknown Role";
+  };
+
   return (
     <div className="max-w-7xl mx-auto pt-5 space-y-6 bg-white my-2 px-5 py-5">
       <h3 className="text-2xl font-semibold text-gray-800 mb-6">
