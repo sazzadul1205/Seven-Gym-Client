@@ -62,15 +62,14 @@ const ClassesDetailsModal = ({ ThisModule, user, UsersData }) => {
       applicantName: UsersData.fullName,
       applicantPhone: UsersData.phone,
     };
-    console.log("Submitted Form Data:", formData);
 
     try {
       // POST booking data to the backend API at the /Trainers_Booking_Request endpoint
+      // eslint-disable-next-line no-unused-vars
       const response = await axiosPublic.post(
         "/Trainers_Booking_Request",
         formData
       );
-      console.log(response.data);
 
       // Success alert with SweetAlert2
       Swal.fire({

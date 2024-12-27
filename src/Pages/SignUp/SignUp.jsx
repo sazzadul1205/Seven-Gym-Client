@@ -26,9 +26,8 @@ const SignUp = () => {
 
     // Create User
     createUser(email, password)
+      // eslint-disable-next-line no-unused-vars
       .then((res) => {
-        const user = res.user;
-        console.log("User created successfully:", user);
         setLoading(false); // Stop loading
         navigate("/SignUp/Details");
 

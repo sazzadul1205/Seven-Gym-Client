@@ -50,7 +50,6 @@ const SUDetails = () => {
       formData.append("image", profileImage);
 
       try {
-        console.log("Uploading image...");
         const res = await axiosPublic.post(Image_Hosting_API, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -58,7 +57,6 @@ const SUDetails = () => {
         });
 
         uploadedImageUrl = res.data.data.display_url;
-        console.log("Image uploaded successfully:", uploadedImageUrl);
       } catch (error) {
         console.error("Failed to upload image:", error);
         setLoading(false); // Stop loading on error

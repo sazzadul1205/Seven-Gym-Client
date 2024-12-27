@@ -63,11 +63,11 @@ const BookedTable = ({
     
     try {
       // POST booking data to the backend API at the /Trainers_Booking_Request endpoint
+      // eslint-disable-next-line no-unused-vars
       const response = await axiosPublic.post(
         "/Trainers_Booking_Request",
         data
       );
-      console.log(response.data);
 
       // Success alert with SweetAlert2
       Swal.fire({

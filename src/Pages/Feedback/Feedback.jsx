@@ -26,8 +26,8 @@ const Feedback = () => {
 
     try {
       // POST feedback data to the backend API at the /Feedback endpoint
+      // eslint-disable-next-line no-unused-vars
       const response = await axiosPublic.post("/Feedback", feedbackData);
-      console.log(feedbackData);
 
       // Success alert with SweetAlert2
       Swal.fire({
@@ -40,7 +40,6 @@ const Feedback = () => {
         reset();
       });
 
-      console.log("Feedback submitted successfully:", response.data);
     } catch (error) {
       // Error alert with SweetAlert2
       Swal.fire({
