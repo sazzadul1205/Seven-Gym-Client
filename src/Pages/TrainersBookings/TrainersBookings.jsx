@@ -75,7 +75,6 @@ const TrainersBookings = () => {
   });
 
   const trainer = TrainerDetailData?.[0];
-  const pricePerSession = trainer?.perSession;
 
   // Loading state
   if (
@@ -124,11 +123,10 @@ const TrainersBookings = () => {
       {/* Booked Table */}
       <BookedTable
         setListedSessions={setListedSessions}
-        pricePerSession={pricePerSession}
         listedSessions={listedSessions}
         SameTimeData={SameTimeData}
-        ClassType={ClassType}
         Day={Day}
+        trainer={trainer}
       />
 
       {/* Classes The Same Day */}

@@ -11,9 +11,16 @@ const SameClassTypeWeekClass = ({
     return `${classType}-${timeStart}-${timeEnd}-${day}`;
   };
 
-  const handleAddSession = (classType, timeStart, timeEnd, day) => {
+  const handleAddSession = (classType, timeStart, timeEnd, day, price) => {
     const sessionKey = generateKey(classType, timeStart, timeEnd, day);
-    const session = { key: sessionKey, classType, timeStart, timeEnd, day };
+    const session = {
+      key: sessionKey,
+      classType,
+      timeStart,
+      timeEnd,
+      day,
+      price,
+    };
 
     setListedSessions((prev) => {
       const isAlreadyListed = prev.some((s) => s.key === sessionKey);
@@ -24,7 +31,14 @@ const SameClassTypeWeekClass = ({
     });
   };
 
-  const getClassButton = (classType, timeStart, timeEnd, day, participants) => {
+  const getClassButton = (
+    classType,
+    timeStart,
+    timeEnd,
+    day,
+    participants,
+    price
+  ) => {
     const sessionKey = generateKey(classType, timeStart, timeEnd, day);
     const isListed = listedSessions.some((s) => s.key === sessionKey);
 
@@ -66,7 +80,9 @@ const SameClassTypeWeekClass = ({
       case "Workshops":
         return (
           <button
-            onClick={() => handleAddSession(classType, timeStart, timeEnd, day)}
+            onClick={() =>
+              handleAddSession(classType, timeStart, timeEnd, day, price)
+            }
             className="bg-[#F72C5B] text-white px-3 py-2 rounded-2xl hover:bg-[#f72c5b83] w-full"
           >
             Book Session
@@ -91,7 +107,9 @@ const SameClassTypeWeekClass = ({
       default:
         return (
           <button
-            onClick={() => handleAddSession(classType, timeStart, timeEnd, day)}
+            onClick={() =>
+              handleAddSession(classType, timeStart, timeEnd, day, price)
+            }
             className="bg-green-500 text-white px-3 py-2 rounded-2xl hover:bg-green-600 w-full"
           >
             Visit Class
@@ -117,7 +135,7 @@ const SameClassTypeWeekClass = ({
             {schedule[day].map((classItem, index) => (
               <div
                 key={index}
-                className="px-5 py-3 my-2 bg-white shadow-2xl rounded-2xl  hover:scale-105"
+                className="px-5 py-3 my-2 bg-white shadow-2xl rounded-2xl hover:scale-105"
               >
                 <p className="font-semibold text-center italic">
                   {classItem.classType}
@@ -126,13 +144,17 @@ const SameClassTypeWeekClass = ({
                   <strong>Time:</strong> {classItem.timeStart} -{" "}
                   {classItem.timeEnd}
                 </p>
+                <p className="text-center text-lg font-semibold text-green-500">
+                  Price: ${classItem.price} {/* Display the price */}
+                </p>
                 <div className="py-2">
                   {getClassButton(
                     classItem.classType,
                     classItem.timeStart,
                     classItem.timeEnd,
                     day,
-                    classItem.participants || []
+                    classItem.participants || [],
+                    classItem.price // Pass the price to the button
                   )}
                 </div>
               </div>

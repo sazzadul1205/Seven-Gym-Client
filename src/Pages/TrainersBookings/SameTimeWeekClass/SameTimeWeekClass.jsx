@@ -17,7 +17,8 @@ const SameTimeWeekClass = ({
     timeStart,
     timeEnd,
     day,
-    classIdentifier
+    classIdentifier,
+    price
   ) => {
     const sessionKey = generateKey(classType, timeStart, timeEnd, day);
     const session = {
@@ -27,6 +28,7 @@ const SameTimeWeekClass = ({
       timeEnd,
       day,
       classIdentifier,
+      price, // Add price to the session
     };
 
     setListedSessions((prev) => {
@@ -44,7 +46,8 @@ const SameTimeWeekClass = ({
     timeEnd,
     day,
     participants,
-    classIdentifier
+    classIdentifier,
+    price
   ) => {
     const sessionKey = generateKey(classType, timeStart, timeEnd, day);
     const isListed = listedSessions.some((s) => s.key === sessionKey);
@@ -93,7 +96,8 @@ const SameTimeWeekClass = ({
                 timeStart,
                 timeEnd,
                 day,
-                classIdentifier
+                classIdentifier,
+                price // Pass the price when booking the session
               )
             }
             className="bg-[#F72C5B] text-white px-3 py-2 rounded-2xl hover:bg-[#f72c5b83] w-full"
@@ -149,6 +153,9 @@ const SameTimeWeekClass = ({
                   <strong>Time:</strong> {classItem.timeStart} -{" "}
                   {classItem.timeEnd}
                 </p>
+                <p className="text-center text-lg font-semibold text-green-500">
+                  Price: ${classItem.price} {/* Show the price */}
+                </p>
                 <div className="py-2">
                   {getClassButton(
                     classItem.classType,
@@ -156,7 +163,8 @@ const SameTimeWeekClass = ({
                     classItem.timeEnd,
                     day,
                     classItem.participants || [],
-                    classItem.classIdentifier
+                    classItem.classIdentifier,
+                    classItem.price // Pass price to the button
                   )}
                 </div>
               </div>

@@ -2,15 +2,16 @@
 import { Link } from "react-router";
 
 const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
-  const schedule = TrainerSchedule.schedule;
+  const schedule = TrainerSchedule.scheduleWithPrices;
 
   const getClassButton = (classType, timeStart, day, participants) => {
     // If the class is a non-group class and has exactly one participant
     if (
-      participants.length === 1 &&
+      participants?.length === 1 &&
       ![
         "Group Classes",
         "Online Class",
+        "Private Session",
         "Outdoor Class",
         "Partner Workout",
       ].includes(classType)
@@ -30,6 +31,7 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
       case "Online Class":
       case "Outdoor Class":
       case "Partner Workout":
+      case "Private Session":
       case "Private Training":
       case "Semi-Private Training":
       case "Workshops":
@@ -44,6 +46,7 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
           </Link>
         );
       case "Drop-In Class":
+      case "Open Gym Class":
         return (
           <div className="flex mx-auto w-[180px]">
             <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full">

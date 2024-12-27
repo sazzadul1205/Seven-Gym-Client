@@ -17,12 +17,11 @@ import Trainers from "./Pages/Trainers/Trainers.jsx";
 import Feedback from "./Pages/Feedback/Feedback.jsx";
 import AuthProvider from "./Providers/AuthProviders.jsx";
 import OurMission from "./Pages/OurMission/OurMission.jsx";
+import SUDetails from "./Pages/SignUp/SUDetails/SUDetails.jsx";
 import PageNotFound from "./Pages/PageNotFound/PageNotFound.jsx";
 import Testimonials from "./Pages/Testimonials/Testimonials.jsx";
 import ClassesDetails from "./Pages/ClassesDetails/ClassesDetails.jsx";
 import TrainersDetails from "./Pages/TrainersDetails/TrainersDetails.jsx";
-import SUDetails from "./Pages/SignUp/SUDetails/SUDetails.jsx";
-import TrainerPayment from "./Pages/Payments/TrainersPayment.jsx";
 import TrainersBookings from "./Pages/TrainersBookings/TrainersBookings.jsx";
 
 const queryClient = new QueryClient();
@@ -42,10 +41,6 @@ createRoot(document.getElementById("root")).render(
               <Route
                 path="/Trainers/Bookings/:name"
                 element={<TrainersBookings />}
-              />
-              <Route
-                path="/Trainers/:name/Payment"
-                element={<TrainerPayment />}
               />
               <Route path="/Classes" element={<Classes />} />
               <Route path="/Classes/:module" element={<ClassesDetails />} />
