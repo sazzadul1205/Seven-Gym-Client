@@ -30,6 +30,9 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
       case "Online Class":
       case "Outdoor Class":
       case "Partner Workout":
+      case "Private Training":
+      case "Semi-Private Training":
+      case "Workshops":
         return (
           <Link
             to={`/Trainers/Bookings/${TrainerDetails.name}?classType=${classType}&day=${day}&timeStart=${timeStart}`}
@@ -55,19 +58,6 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
               On a Break
             </button>
           </div>
-        );
-      case "Private Training":
-      case "Semi-Private Training":
-      case "Workshops":
-        return (
-          <Link
-            to={`/Trainers/Bookings/${TrainerDetails.name}?classType=${classType}&day=${day}&timeStart=${timeStart}`}
-            className="flex mx-auto w-[180px]"
-          >
-            <button className="bg-[#F72C5B] text-white px-3 py-2 rounded-2xl hover:bg-[#f72c5b83] w-full">
-              Book Session
-            </button>
-          </Link>
         );
       default:
         return (
@@ -124,7 +114,6 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
                       {getClassButton(
                         classDetails.classType,
                         classDetails.timeStart,
-                        classDetails.timeEnd,
                         day,
                         classDetails.participants
                       )}
@@ -164,7 +153,6 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
                         {getClassButton(
                           classDetails.classType,
                           classDetails.timeStart,
-                          classDetails.timeEnd,
                           day,
                           classDetails.participants
                         )}

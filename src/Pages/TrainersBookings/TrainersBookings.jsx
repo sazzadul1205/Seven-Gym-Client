@@ -112,6 +112,7 @@ const TrainersBookings = () => {
     );
   }
 
+
   return (
     <div className="min-h-screen">
       {/* Header */}

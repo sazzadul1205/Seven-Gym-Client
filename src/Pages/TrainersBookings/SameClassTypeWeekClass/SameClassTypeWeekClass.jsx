@@ -11,22 +11,6 @@ const SameClassTypeWeekClass = ({
     return `${classType}-${timeStart}-${timeEnd}-${day}`;
   };
 
-  // Function to format the date for each day
-  const formatDate = (day) => {
-    const date = new Date();
-    const dayIndex = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ].indexOf(day);
-    date.setDate(date.getDate() + ((dayIndex - date.getDay() + 7) % 7)); // Adjusts the date to the specific day
-    return date.toLocaleDateString(); // Returns formatted date (e.g., 12/26/2024)
-  };
-
   const handleAddSession = (classType, timeStart, timeEnd, day) => {
     const sessionKey = generateKey(classType, timeStart, timeEnd, day);
     const session = { key: sessionKey, classType, timeStart, timeEnd, day };
@@ -117,7 +101,7 @@ const SameClassTypeWeekClass = ({
   };
 
   return (
-    <div className="max-w-7xl mx-auto bg-white p-8 shadow-xl rounded-xl py-5">
+    <div className="max-w-7xl mx-auto bg-white p-8 shadow-xl rounded-xl py-5 my-5">
       <h2 className="text-3xl font-semibold text-center mb-6">
         Same Class Schedule for {name} This Week
       </h2>
@@ -128,7 +112,6 @@ const SameClassTypeWeekClass = ({
             {/* Display day name and the formatted date */}
             <div className="text-center mb-3">
               <h3 className="text-xl font-semibold">{day}</h3>
-              <p className="text-gray-600">{formatDate(day)}</p>
             </div>
 
             {schedule[day].map((classItem, index) => (

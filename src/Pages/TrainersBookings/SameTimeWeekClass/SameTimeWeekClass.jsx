@@ -12,9 +12,22 @@ const SameTimeWeekClass = ({
     return `${classType}-${timeStart}-${timeEnd}-${day}`;
   };
 
-  const handleAddSession = (classType, timeStart, timeEnd, day) => {
+  const handleAddSession = (
+    classType,
+    timeStart,
+    timeEnd,
+    day,
+    classIdentifier
+  ) => {
     const sessionKey = generateKey(classType, timeStart, timeEnd, day);
-    const session = { key: sessionKey, classType, timeStart, timeEnd, day };
+    const session = {
+      key: sessionKey,
+      classType,
+      timeStart,
+      timeEnd,
+      day,
+      classIdentifier,
+    };
 
     setListedSessions((prev) => {
       const isAlreadyListed = prev.some((s) => s.key === sessionKey);
@@ -25,7 +38,14 @@ const SameTimeWeekClass = ({
     });
   };
 
-  const getClassButton = (classType, timeStart, timeEnd, day, participants) => {
+  const getClassButton = (
+    classType,
+    timeStart,
+    timeEnd,
+    day,
+    participants,
+    classIdentifier
+  ) => {
     const sessionKey = generateKey(classType, timeStart, timeEnd, day);
     const isListed = listedSessions.some((s) => s.key === sessionKey);
 
@@ -67,7 +87,15 @@ const SameTimeWeekClass = ({
       case "Workshops":
         return (
           <button
-            onClick={() => handleAddSession(classType, timeStart, timeEnd, day)}
+            onClick={() =>
+              handleAddSession(
+                classType,
+                timeStart,
+                timeEnd,
+                day,
+                classIdentifier
+              )
+            }
             className="bg-[#F72C5B] text-white px-3 py-2 rounded-2xl hover:bg-[#f72c5b83] w-full"
           >
             Book Session
@@ -91,11 +119,8 @@ const SameTimeWeekClass = ({
         );
       default:
         return (
-          <button
-            onClick={() => handleAddSession(classType, timeStart, timeEnd, day)}
-            className="bg-green-500 text-white px-3 py-2 rounded-2xl hover:bg-green-600 w-full"
-          >
-            Visit Class
+          <button className="bg-green-500 text-white px-3 py-2 rounded-2xl hover:bg-green-600 w-full">
+            Classes
           </button>
         );
     }
@@ -130,7 +155,8 @@ const SameTimeWeekClass = ({
                     classItem.timeStart,
                     classItem.timeEnd,
                     day,
-                    classItem.participants || []
+                    classItem.participants || [],
+                    classItem.classIdentifier
                   )}
                 </div>
               </div>
