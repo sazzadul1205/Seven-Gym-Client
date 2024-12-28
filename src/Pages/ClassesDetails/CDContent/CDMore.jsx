@@ -2,7 +2,7 @@
 
 const CDMore = ({ ThisModule }) => {
   return (
-    <div className="max-w-7xl mx-auto bg-gray-50 p-6 md:p-12 mt-8">
+    <div className="max-w-7xl mx-auto bg-gray-50 rounded-xl shadow-xl p-6 md:p-12 mt-8">
       <h3 className="text-2xl font-semibold text-gray-800 mb-6">
         Class More Info
       </h3>

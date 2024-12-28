@@ -196,8 +196,8 @@ const Forums = () => {
 
         <div className="flex flex-col lg:flex-row gap-10 lg:px-20">
           {/* Threads */}
-          <div className="pt-8 px-3 lg:w-4/5">
-            <h2 className="text-2xl font-bold pb-2 text-white text-center lg:text-left italic">
+          <div className="pt-8 pb-4 px-6 lg:w-4/5 bg-white">
+            <h2 className="text-2xl font-bold pb-2 text-center lg:text-left italic">
               All Threads
             </h2>
             <div className="grid gap-4 pt-2">
@@ -240,8 +240,8 @@ const Forums = () => {
           </div>
 
           {/* Top Threads */}
-          <div className="pt-8 px-3 lg:w-1/5">
-            <h2 className="text-2xl font-bold pb-2 text-white text-center lg:text-left italic">
+          <div className="pt-8 pb-4 px-6 lg:w-1/5 bg-white">
+            <h2 className="text-2xl font-bold pb-2 text-center lg:text-left italic">
               Top Threads
             </h2>
             <div className="grid gap-4 pt-2">

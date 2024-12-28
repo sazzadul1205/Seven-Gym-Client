@@ -49,8 +49,11 @@ const Gallery = () => {
         backgroundPosition: "center",
       }}
     >
+      {/* Header */}
+      <div className="bg-[#F72C5B] py-11"></div>
+
       {/* Title */}
-      <div className="pt-28 text-center">
+      <div className="py-5 text-center">
         <p className="text-3xl font-bold text-black">Our Gallery</p>
         <div className="bg-white p-[2px] md:w-1/6 mx-auto"></div>
       </div>

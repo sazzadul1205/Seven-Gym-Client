@@ -46,6 +46,8 @@ const TDTestimonials = ({ TrainerDetails }) => {
     return stars;
   };
 
+  console.log(TrainerDetails);
+
   return (
     <div className="max-w-[6xl] mx-auto p-5 bg-white shadow-lg rounded-lg mt-8">
       <h2 className="text-2xl font-semibold text-gray-800 mb-6">

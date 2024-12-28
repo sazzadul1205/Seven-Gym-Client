@@ -106,6 +106,7 @@ const SameTimeWeekClass = ({
           </button>
         );
       case "Drop-In Class":
+      case "Open Gym Class":
         return (
           <div className="flex mx-auto w-[180px]">
             <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full">

@@ -10,7 +10,7 @@ const CDTrainers = ({ TrainersData, ThisModule }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto pt-5 space-y-6 bg-white my-2 px-5 py-5">
+    <div className="max-w-7xl mx-auto pt-5 space-y-6 bg-white rounded-xl shadow-xl my-2 px-5 py-5">
       <h3 className="text-2xl font-semibold text-gray-800 mb-6">
         Meet Our Trainers
       </h3>

@@ -124,7 +124,7 @@ const ClassesDetails = () => {
   const ThisModule = ModuleData[0];
 
   return (
-    <div className="min-h-screen bg-[#f72c5b44]">
+    <div className="min-h-screen bg-gradient-to-br from-[#f72c5b9c] to-[#f72c5b44] pb-5">
       {/* Header Image */}
       <div className="relative">
         <img

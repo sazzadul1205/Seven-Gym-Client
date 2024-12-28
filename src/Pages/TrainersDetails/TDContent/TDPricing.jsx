@@ -35,6 +35,7 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
       case "Private Training":
       case "Semi-Private Training":
       case "Workshops":
+      case "Group Class":
         return (
           <Link
             to={`/Trainers/Bookings/${TrainerDetails.name}?classType=${classType}&day=${day}&timeStart=${timeStart}`}
