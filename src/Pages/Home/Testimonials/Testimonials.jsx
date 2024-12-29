@@ -34,7 +34,7 @@ const Testimonials = ({ testimonialsData }) => {
   const handleSliderPlay = () => sliderRef.current.slickPlay();
 
   return (
-    <div className="py-16">
+    <div className="py-16 max--7xl mx-auto">
       <div className="container mx-auto text-center">
         {/* Section Title */}
         <Title titleContent="What Our Clients Say About Us" />
