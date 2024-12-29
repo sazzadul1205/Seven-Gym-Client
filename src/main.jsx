@@ -2,28 +2,29 @@ import "./index.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import PublicLayout from "./Layouts/PublicLayout.jsx";
+import AuthProvider from "./Providers/AuthProviders.jsx";
 import { BrowserRouter, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Route Links
-import Home from "./Pages/Home/Home.jsx";
-import Login from "./Pages/Login/Login.jsx";
-import SignUp from "./Pages/SignUp/SignUp.jsx";
-import Forums from "./Pages/Forums/Forums.jsx";
-import Classes from "./Pages/Classes/Classes.jsx";
-import Gallery from "./Pages/Gallery/Gallery.jsx";
-import AboutUs from "./Pages/AboutUs/AboutUs.jsx";
-import Trainers from "./Pages/Trainers/Trainers.jsx";
-import Feedback from "./Pages/Feedback/Feedback.jsx";
-import AuthProvider from "./Providers/AuthProviders.jsx";
-import OurMission from "./Pages/OurMission/OurMission.jsx";
-import SUDetails from "./Pages/SignUp/SUDetails/SUDetails.jsx";
+import Login from "./Pages/(Auth)/Login/Login.jsx";
+import SignUp from "./Pages/(Auth)/SignUp/SignUp.jsx";
+import Home from "./Pages/(Public Pages)/Home/Home.jsx";
+import Forums from "./Pages/(Public Pages)/Forums/Forums.jsx";
+import Gallery from "./Pages/(Public Pages)/Gallery/Gallery.jsx";
 import PageNotFound from "./Pages/PageNotFound/PageNotFound.jsx";
-import Testimonials from "./Pages/Testimonials/Testimonials.jsx";
-import ClassesDetails from "./Pages/ClassesDetails/ClassesDetails.jsx";
-import TrainersDetails from "./Pages/TrainersDetails/TrainersDetails.jsx";
-import TrainersBookings from "./Pages/TrainersBookings/TrainersBookings.jsx";
 import UserProfile from "./Pages/(Users)/UserProfile/UserProfile.jsx";
+import SUDetails from "./Pages/(Auth)/SignUp/SUDetails/SUDetails.jsx";
+import AboutUs from "./Pages/(Public Pages)/(About)/AboutUs/AboutUs.jsx";
+import Classes from "./Pages/(Public Pages)/(Classes)/Classes/Classes.jsx";
+import Feedback from "./Pages/(Public Pages)/(About)/Feedback/Feedback.jsx";
+import Trainers from "./Pages/(Public Pages)/(Trainers)/Trainers/Trainers.jsx";
+import OurMission from "./Pages/(Public Pages)/(About)/OurMission/OurMission.jsx";
+import Testimonials from "./Pages/(Public Pages)/Home/Testimonials/Testimonials.jsx";
+import ClassesDetails from "./Pages/(Public Pages)/(Classes)/ClassesDetails/ClassesDetails.jsx";
+import TrainersDetails from "./Pages/(Public Pages)/(Trainers)/TrainersDetails/TrainersDetails.jsx";
+import TrainersBookings from "./Pages/(Public Pages)/(Trainers)/TrainersBookings/TrainersBookings.jsx";
+
 
 const queryClient = new QueryClient();
 
