@@ -9,6 +9,7 @@ import UPAchievements from "./UPDetailes/UPAchievements";
 import UPRecentWorkout from "./UPDetailes/UPRecentWorkout";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../Shared/Loading/Loading";
+import UPTeachers from "./UPDetailes/UPTeachers";
 
 const UserProfile = () => {
   const { user } = useAuth();
@@ -16,7 +17,7 @@ const UserProfile = () => {
 
   // Fetch data
   const {
-    data: UsersDatas,
+    data: UsersData,
     isLoading: UsersLoading,
     error: UsersError,
   } = useQuery({
@@ -46,96 +47,7 @@ const UserProfile = () => {
   }
 
   // Mock Data (simulating response from API)
-  const usersData = {
-    fullName: "sazzadul",
-    email: "user@gmail.com",
-    phone: "+8801917335945",
-    dob: "2001-04-28",
-    gender: "Male",
-    tier: "Bronze",
-    profileImage: "https://i.ibb.co.com/Vv5xMBx/blob.jpg",
-    backgroundImage: "https://i.ibb.co.com/j60QJXc/Background.jpg",
-    selectedGoals: [
-      "Muscle Gain",
-      "Cardio Improvement",
-      "Sports Performance",
-      "Rehabilitation",
-      "Posture Correction",
-      "Strength Training",
-    ],
-    creationTime: "December 23, 2024 at 11:49:56 PM",
-    role: "Member",
-    socialLinks: {
-      instagram: "https://instagram.com/johndoe",
-      facebook: "https://facebook.com/johndoe",
-    },
-    recentWorkouts: [
-      {
-        name: "Morning Run",
-        duration: "45 minutes",
-        date: "31/12/2024 7:30 AM",
-        calories: "400 kcal",
-      },
-      {
-        name: "Yoga",
-        duration: "30 minutes",
-        date: "31/12/2024 8:15 AM",
-        calories: "200 kcal",
-      },
-      {
-        name: "HIIT Workout",
-        duration: "25 minutes",
-        date: "31/12/2024 9:00 AM",
-        calories: "350 kcal",
-      },
-      {
-        name: "Cycling",
-        duration: "60 minutes",
-        date: "31/12/2024 10:00 AM",
-        calories: "500 kcal",
-      },
-      {
-        name: "Swimming",
-        duration: "40 minutes",
-        date: "31/12/2024 11:00 AM",
-        calories: "300 kcal",
-      },
-      {
-        name: "Strength Training",
-        duration: "60 minutes",
-        date: "31/12/2024 12:00 PM",
-        calories: "550 kcal",
-      },
-      {
-        name: "Boxing",
-        duration: "50 minutes",
-        date: "31/12/2024 1:30 PM",
-        calories: "450 kcal",
-      },
-      {
-        name: "Pilates",
-        duration: "35 minutes",
-        date: "31/12/2024 3:00 PM",
-        calories: "250 kcal",
-      },
-      {
-        name: "Zumba",
-        duration: "40 minutes",
-        date: "31/12/2024 4:30 PM",
-        calories: "300 kcal",
-      },
-      {
-        name: "Jogging",
-        duration: "30 minutes",
-        date: "31/12/2024 6:00 PM",
-        calories: "200 kcal",
-      },
-    ],
-
-    badges: [
-      { name: "10 Workouts Completed", icon: FaDumbbell },
-      { name: "5kg Weight Loss", icon: FaWeight },
-    ],
+  const usersDataMore = {
     currentTeacher: {
       name: "Jane Smith",
       title: "Personal Trainer",
@@ -155,64 +67,41 @@ const UserProfile = () => {
       },
     ],
   };
-  console.log(UsersDatas);
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-400 to-indigo-500">
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="bg-[#F72C5B] py-12"></div>
 
       {/* Top section */}
-      <UPTopSection usersData={usersData} />
+      <UPTopSection usersData={UsersData} />
 
-      <div className="max-w-7xl mx-auto flex justify-between gap-6 px-6 pb-10">
+      <div className="max-w-7xl mx-auto flex justify-between gap-6 pb-10">
         {/* Info Section */}
-        <div className="w-1/2">
-          <h2 className="text-2xl font-semibold text-white border-b">
+        <div className="w-1/2 bg-slate-50 p-8 rounded-lg shadow-lg">
+          <h2 className="text-2xl font-semibold text-black border-b">
             User Information
           </h2>
           <div className="space-y-2">
             {/* Main Info */}
-            <UPMainInfo usersData={usersData} />
+            <UPMainInfo usersData={UsersData} />
 
             {/* Socials Links */}
-            <UPSocialLinks usersData={usersData} />
+            <UPSocialLinks usersData={UsersData} />
 
             {/* Selected Goals */}
-            <UPSelectedGoals usersData={usersData} />
+            <UPSelectedGoals usersData={UsersData} />
 
             {/* Current Teacher */}
-            <div className="space-y-4 mt-8">
-              <h3 className="text-xl font-semibold text-white">
-                Current Teacher
-              </h3>
-              <div className="flex items-center space-x-4 bg-slate-200 p-4 rounded-lg shadow-lg">
-                <img
-                  src={usersData.currentTeacher.profileImage}
-                  alt="Teacher"
-                  className="w-20 h-20 rounded-full border-4 border-white shadow-md"
-                />
-                <div>
-                  <h4 className="text-xl font-semibold text-gray-800">
-                    {usersData.currentTeacher.name}
-                  </h4>
-                  <p className="text-gray-600">
-                    {usersData.currentTeacher.title}
-                  </p>
-                  <p className="text-gray-500 mt-2">
-                    {usersData.currentTeacher.bio}
-                  </p>
-                </div>
-              </div>
-            </div>
+            <UPTeachers usersData={usersDataMore} />
 
             {/* Current Attending Classes */}
-            <div className="space-y-4 mt-8">
+            {/* <div className="space-y-4 mt-8">
               <h3 className="text-xl font-semibold text-white">
                 Current Attending Classes
               </h3>
               <div className="space-y-2">
-                {usersData?.currentClasses?.map((classItem, index) => (
+                {UsersData?.currentClasses?.map((classItem, index) => (
                   <div
                     key={index}
                     className="flex justify-between text-gray-600 bg-gray-100 p-4 rounded-lg shadow-sm hover:bg-gray-200 transition-all duration-200"
@@ -223,17 +112,17 @@ const UserProfile = () => {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
         {/* Achievements and Notifications */}
         <div className="w-1/2 space-y-8">
           {/* Achievements */}
-          <UPAchievements usersData={usersData} />
+          <UPAchievements usersData={UsersData} />
 
           {/* Recent Workouts */}
-          <UPRecentWorkout usersData={usersData} />
+          <UPRecentWorkout usersData={UsersData} />
         </div>
       </div>
     </div>

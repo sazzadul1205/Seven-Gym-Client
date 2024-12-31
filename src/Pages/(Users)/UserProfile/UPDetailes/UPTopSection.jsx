@@ -45,7 +45,7 @@ const UPTopSection = ({ usersData }) => {
                 </span>
               )}
             </div>
-            <p className="text-white">
+            <p className="text-black text-lg">
               {usersData?.email || "example@example.com"}
             </p>
           </div>
