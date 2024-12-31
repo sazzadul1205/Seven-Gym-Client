@@ -167,38 +167,24 @@ const UserProfile = () => {
                   </span>
                 </p>
               </div>
+            </div>
 
+            {/* Socials Links */}
+            <div className="flex space-x-5 pt-5">
               {/* Facebook */}
-              <div className="flex items-center space-x-4 hover:scale-105 transition-transform duration-200">
+              <div className="flex items-center space-x-4 hover:scale-105 transition-transform duration-200 bg-gray-100 p-3 rounded-full">
                 <FaSquareFacebook className="text-[#1877F2] text-2xl" />
-                <p className="text-gray-600">
-                  <strong className="text-white">Facebook:</strong>
-                  <span className="text-gray-50 ml-4">
-                    {usersData?.Facebook || "N/A"}
-                  </span>
-                </p>
               </div>
 
               {/* Gender */}
-              <div className="flex items-center space-x-4 hover:scale-105 transition-transform duration-200">
+              <div className="flex items-center space-x-4 hover:scale-105 transition-transform duration-200 bg-gray-100 p-3 rounded-full">
                 <FaVenusMars className="text-green-500 text-2xl" />
-                <p className="text-gray-600">
-                  <strong className="text-white">Gender:</strong>
-                  <span className="text-gray-50 ml-4">
-                    {usersData?.gender || "N/A"}
-                  </span>
-                </p>
+                <img src="" alt="" />
               </div>
 
               {/* Gender */}
-              <div className="flex items-center space-x-4 hover:scale-105 transition-transform duration-200">
+              <div className="flex items-center space-x-4 hover:scale-105 transition-transform duration-200 bg-gray-100 p-3 rounded-full">
                 <FaVenusMars className="text-green-500 text-2xl" />
-                <p className="text-gray-600">
-                  <strong className="text-white">Gender:</strong>
-                  <span className="text-gray-50 ml-4">
-                    {usersData?.gender || "N/A"}
-                  </span>
-                </p>
               </div>
             </div>
 
