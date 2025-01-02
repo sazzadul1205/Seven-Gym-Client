@@ -8,7 +8,7 @@ const UPSelectedGoals = ({ usersData }) => {
         <FaBullseye className="text-red-500" />
         <h2 className="text-xl font-semibold text-black ">Selected Goals</h2>
       </div>
-      <div className="grid grid-cols-3 text-gray-600 mt-5 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 text-gray-600 mt-5 gap-2">
         {usersData?.selectedGoals && usersData.selectedGoals.length > 0 ? (
           usersData.selectedGoals.map((goal, index) => (
             <p

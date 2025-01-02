@@ -7,13 +7,13 @@ const UPMainInfo = ({ usersData }) => {
       <p className="text-lg italic text-gray-600">
         {usersData?.description || "N/A"}
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 pt-5">
         {/* Phone */}
         <div className="flex items-center space-x-4 hover:scale-105 transition-transform duration-200">
           <FaPhoneAlt className="text-blue-500 text-2xl" />
           <p className="text-gray-600">
-            <strong className="">Phone:</strong>
-            <span className=" ml-4">{usersData?.phone || "N/A"}</span>
+            <strong>Phone:</strong>
+            <span className="ml-4">{usersData?.phone || "N/A"}</span>
           </p>
         </div>
 
@@ -21,8 +21,8 @@ const UPMainInfo = ({ usersData }) => {
         <div className="flex items-center space-x-4 hover:scale-105 transition-transform duration-200">
           <FaBirthdayCake className="text-pink-500 text-2xl" />
           <p className="text-gray-600">
-            <strong className="">Date of Birth:</strong>
-            <span className=" ml-4">{usersData?.dob || "N/A"}</span>
+            <strong>Date of Birth:</strong>
+            <span className="ml-4">{usersData?.dob || "N/A"}</span>
           </p>
         </div>
 
@@ -30,8 +30,8 @@ const UPMainInfo = ({ usersData }) => {
         <div className="flex items-center space-x-4 hover:scale-105 transition-transform duration-200">
           <FaVenusMars className="text-green-500 text-2xl" />
           <p className="text-gray-600">
-            <strong className="">Gender:</strong>
-            <span className=" ml-4">{usersData?.gender || "N/A"}</span>
+            <strong>Gender:</strong>
+            <span className="ml-4">{usersData?.gender || "N/A"}</span>
           </p>
         </div>
       </div>

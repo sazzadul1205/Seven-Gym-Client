@@ -201,7 +201,7 @@ const Navbar = () => {
         isScrolled ? "bg-[#F72C5B]" : "bg-transparent"
       }`}
     >
-      <div className="navbar flex-none w-full justify-between lg:px-24">
+      <div className="navbar flex-none w-full justify-between px-0 lg:px-24">
         {/* Start */}
         <div className="navbar-start flex items-center">
           <label
@@ -287,8 +287,8 @@ const Navbar = () => {
             className="drawer-overlay"
           ></label>
           <ul
-            className="menu text-white h-full w-2/3 max-w-sm p-4 bg-[#F72C5B]"
-            style={{ maxWidth: "70%" }}
+            className="menu text-white h-full w-full max-w-full p-4 bg-[#F72C5B] overflow-hidden"
+            style={{ maxWidth: "100%" }} // Ensures the drawer does not exceed the screen width
           >
             <li className="mx-auto">
               <img src={icon} alt="icon" className="w-28" />

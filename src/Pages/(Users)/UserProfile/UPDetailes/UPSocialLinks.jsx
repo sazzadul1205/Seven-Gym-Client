@@ -12,12 +12,12 @@ const UPSocialLinks = ({ usersData }) => {
   return (
     <div className="pt-4">
       <div className="flex items-center space-x-2 border-b ">
-        <FaLink  className="text-blue-500"/>
+        <FaLink className="text-blue-500" />
         <h2 className="text-xl font-semibold text-black ">
           User Links
         </h2>
       </div>
-      <div className="flex space-x-5 pt-5">
+      <div className="flex flex-wrap space-x-5 pt-5">
         {/* Facebook */}
         {usersData.socialLinks.facebook && (
           <Link

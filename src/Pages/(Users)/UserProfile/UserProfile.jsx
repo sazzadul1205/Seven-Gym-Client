@@ -1,6 +1,5 @@
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import useAuth from "../../../Hooks/useAuth";
-import { FaDumbbell, FaWeight, FaRegPlusSquare } from "react-icons/fa";
 import UPMainInfo from "./UPDetailes/UPMainInfo";
 import UPSocialLinks from "./UPDetailes/UPSocialLinks";
 import UPTopSection from "./UPDetailes/UPTopSection";
@@ -10,6 +9,7 @@ import UPRecentWorkout from "./UPDetailes/UPRecentWorkout";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../Shared/Loading/Loading";
 import UPTeachers from "./UPDetailes/UPTeachers";
+import UPAttendingClasses from "./UPDetailes/UPAttendingClasses";
 
 const UserProfile = () => {
   const { user } = useAuth();
@@ -46,28 +46,6 @@ const UserProfile = () => {
     );
   }
 
-  // Mock Data (simulating response from API)
-  const usersDataMore = {
-    currentTeacher: {
-      name: "Jane Smith",
-      title: "Personal Trainer",
-      profileImage: "https://via.placeholder.com/150",
-      bio: "Expert in strength training and weight loss, passionate about motivating individuals to reach their fitness goals.",
-    },
-    currentClasses: [
-      {
-        className: "Yoga Class",
-        time: "10:00 AM - 11:00 AM",
-        instructor: "Jane Smith",
-      },
-      {
-        className: "Cardio Blast",
-        time: "2:00 PM - 3:00 PM",
-        instructor: "John Doe",
-      },
-    ],
-  };
-
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -76,13 +54,13 @@ const UserProfile = () => {
       {/* Top section */}
       <UPTopSection usersData={UsersData} />
 
-      <div className="max-w-7xl mx-auto flex justify-between gap-6 pb-10">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-6 pb-10">
         {/* Info Section */}
-        <div className="w-1/2 bg-slate-50 p-8 rounded-lg shadow-lg">
+        <div className="w-full md:w-1/2 bg-slate-50 p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-semibold text-black border-b">
             User Information
           </h2>
-          <div className="space-y-2">
+          <div className="space-y-5">
             {/* Main Info */}
             <UPMainInfo usersData={UsersData} />
 
@@ -93,31 +71,15 @@ const UserProfile = () => {
             <UPSelectedGoals usersData={UsersData} />
 
             {/* Current Teacher */}
-            <UPTeachers usersData={usersDataMore} />
+            <UPTeachers usersData={UsersData} />
 
             {/* Current Attending Classes */}
-            {/* <div className="space-y-4 mt-8">
-              <h3 className="text-xl font-semibold text-white">
-                Current Attending Classes
-              </h3>
-              <div className="space-y-2">
-                {UsersData?.currentClasses?.map((classItem, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between text-gray-600 bg-gray-100 p-4 rounded-lg shadow-sm hover:bg-gray-200 transition-all duration-200"
-                  >
-                    <p>{classItem.className}</p>
-                    <p>{classItem.time}</p>
-                    <p>{classItem.instructor}</p>
-                  </div>
-                ))}
-              </div>
-            </div> */}
+            <UPAttendingClasses usersData={UsersData} />
           </div>
         </div>
 
         {/* Achievements and Notifications */}
-        <div className="w-1/2 space-y-8">
+        <div className="w-full md:w-1/2">
           {/* Achievements */}
           <UPAchievements usersData={UsersData} />
 

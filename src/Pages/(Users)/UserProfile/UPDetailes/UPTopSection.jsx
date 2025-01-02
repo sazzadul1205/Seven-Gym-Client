@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { IoSettings } from "react-icons/io5"; // Import settings icon
 
 const getTierBadge = (tier) => {
   const styles = {
@@ -14,23 +15,31 @@ const getTierBadge = (tier) => {
 const UPTopSection = ({ usersData }) => {
   return (
     <div className="relative pb-24">
+      {/* Background Image */}
       <img
         src={
           usersData?.backgroundImage || `https://via.placeholder.com/1200x400`
         }
         alt="Background Image"
-        className="w-full h-[400px] object-cover rounded-lg shadow-lg"
+        className="w-full h-[300px] sm:h-[400px] object-cover rounded-lg shadow-lg"
       />
       <div className="relative">
-        {/* User section */}
-        <div className="absolute bottom-[-50px] left-16 flex items-center space-x-4">
+        {/* Settings Icon (top-left) */}
+        <div className="absolute top-2 right-10 z-20">
+          <a href="/settings">
+            <IoSettings className="text-red-500 text-3xl hover:text-gray-300 transition-all" />
+          </a>
+        </div>
+
+        {/* User Section */}
+        <div className="absolute bottom-[-60px] left-4 sm:left-16 flex flex-col sm:flex-row items-center sm:items-start sm:space-x-4 sm:space-y-0 space-y-4">
           <img
             src={usersData?.profileImage || "https://via.placeholder.com/150"}
             alt="Profile"
             className="w-28 h-28 rounded-full border-4 border-white shadow-md"
           />
-          <div className="ml-4">
-            <h2 className="text-4xl font-semibold text-white">
+          <div className="ml-4 text-center sm:text-left">
+            <h2 className="text-2xl sm:text-4xl font-semibold text-white">
               {usersData?.fullName || "Default Name"}
             </h2>
             {/* Tier Badge */}
