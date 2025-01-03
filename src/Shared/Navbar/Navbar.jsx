@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, NavLink } from "react-router";
-import icon from "../assets/Icon.png";
-import { IoMenu } from "react-icons/io5";
-import useAxiosPublic from "../Hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
-import Loading from "./Loading/Loading";
+import { Link, NavLink } from "react-router";
+import { IoMenu } from "react-icons/io5";
 import { ImExit } from "react-icons/im";
 import Swal from "sweetalert2";
-import useAuth from "../Hooks/useAuth";
+
+import icon from "../../assets/Icon.png";
+import useAxiosPublic from "../../Hooks/useAxiosPublic";
+import useAuth from "../../Hooks/useAuth";
+import Loading from "../Loading/Loading";
+import NavDrawer from "./NavDrawer/NavDrawer";
 
 const Navbar = () => {
   const axiosPublic = useAxiosPublic();
@@ -195,6 +197,23 @@ const Navbar = () => {
       });
   };
 
+  const roleBasedLinks = {
+    Member: [
+      { name: "Profile", path: `/User/${user?.email}/UserProfile` },
+      { name: "Settings", path: "/Settings" },
+    ],
+    Trainer: [
+      { name: "Trainer Dashboard", path: "/TrainerDashboard" },
+      { name: "Class Management", path: "/ClassManagement" },
+    ],
+    ClassManager: [{ name: "Dashboard", path: "/ClassManagerDashboard" }],
+    Moderator: [{ name: "Moderator Dashboard", path: "/ModeratorDashboard" }],
+    Admin: [
+      { name: "Admin Dashboard", path: "/AdminDashboard" },
+      { name: "User Management", path: "/UserManagement" },
+    ],
+  };
+
   return (
     <div
       className={`navbar fixed w-full top-0 z-50 transition-all duration-300 ${
@@ -243,22 +262,23 @@ const Navbar = () => {
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-[200px] bg-white text-black rounded-lg shadow-lg z-10 px-2 py-2 ">
                   <ul>
-                    <Link to={`/User/${user.email}/UserProfile`}>
-                      <li className="p-2 px-5 hover:bg-gray-100">Profile</li>
-                    </Link>
-                    <li className="p-2 px-5 hover:bg-gray-100">
-                      <Link to="/Settings">Settings</Link>
-                    </li>
+                    {(roleBasedLinks[Users?.role] || []).map((link) => (
+                      <li
+                        key={link.name}
+                        className="p-2 px-5 hover:bg-gray-100"
+                      >
+                        <Link to={link.path}>{link.name}</Link>
+                      </li>
+                    ))}
                     <li
-                      className="p-2 px-5  hover:bg-gray-100 flex items-center justify-between text-red-500 font-semibold"
+                      className="p-2 px-5 hover:bg-gray-100 flex items-center justify-between text-red-500 font-semibold"
                       onClick={handleSignOut}
                     >
                       {isLoggingOut ? (
-                        <>Logging Out...</>
+                        "Logging Out..."
                       ) : (
                         <>
-                          <span>Logout</span>
-                          <ImExit />
+                          Logout <ImExit />
                         </>
                       )}
                     </li>
@@ -280,69 +300,7 @@ const Navbar = () => {
       <div className="drawer drawer-end lg:hidden">
         <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content"></div>
-        <div className="drawer-side">
-          <label
-            htmlFor="my-drawer-4"
-            aria-label="close sidebar"
-            className="drawer-overlay"
-          ></label>
-          <ul
-            className="menu text-white h-full w-full max-w-full p-4 bg-[#F72C5B] overflow-hidden"
-            style={{ maxWidth: "100%" }} // Ensures the drawer does not exceed the screen width
-          >
-            <li className="mx-auto">
-              <img src={icon} alt="icon" className="w-28" />
-            </li>
-            {menuItems.map((item) =>
-              item.submenu ? (
-                <li key={item.name} className="border-slate-700">
-                  <details
-                    onToggle={(e) => {
-                      if (e.target.open) {
-                        document
-                          .querySelectorAll(".drawer-side details[open]")
-                          .forEach((el) => {
-                            if (el !== e.target) el.removeAttribute("open");
-                          });
-                      }
-                    }}
-                  >
-                    <summary className="cursor-pointer">{item.name}</summary>
-                    <ul className="pl-4">
-                      {item.submenu.map((subItem) => (
-                        <li key={subItem.name}>
-                          <NavLink
-                            to={subItem.path}
-                            className={({ isActive }) =>
-                              isActive
-                                ? "text-[#FFC107] hover:text-[#FFC107] font-bold"
-                                : "hover:text-[#FFC107]"
-                            }
-                          >
-                            {subItem.name}
-                          </NavLink>
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
-                </li>
-              ) : (
-                <li key={item.name} className="border-slate-400">
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) =>
-                      isActive
-                        ? "text-[#FFC107] hover:text-[#FFC107] font-bold"
-                        : "hover:text-[#FFC107]"
-                    }
-                  >
-                    {item.name}
-                  </NavLink>
-                </li>
-              )
-            )}
-          </ul>
-        </div>
+        <NavDrawer icon={icon} menuItems={menuItems} />
       </div>
     </div>
   );

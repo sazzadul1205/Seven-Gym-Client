@@ -91,6 +91,19 @@ const SUDetails = () => {
       creationTime,
       role: "Member",
       tier: "Bronze",
+      description: "No description provided.",
+      backgroundImage: "https://via.placeholder.com/1920x1080",
+      socialLinks: {
+        facebook: "",
+        instagram: "",
+        twitter: "",
+        telegram: "",
+      },
+      badges: [],
+      attendingTrainer: [],
+      attendingClasses: [],
+      awards: [],
+      recentWorkouts: [],
     };
 
     try {

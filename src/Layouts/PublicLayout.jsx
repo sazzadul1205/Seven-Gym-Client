@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import Navbar from "../Shared/Navbar";
+import Navbar from "../Shared/Navbar/Navbar";
 import Footer from "../Shared/Footer";
 
 const PublicLayout = () => {

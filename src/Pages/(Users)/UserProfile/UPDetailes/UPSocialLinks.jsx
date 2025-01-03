@@ -64,12 +64,12 @@ const UPSocialLinks = ({ usersData }) => {
           )}
 
           {/* Gmail */}
-          {socialLinks.gmail && (
+          {socialLinks.email && (
             <Link
-              to={socialLinks.gmail}
+              to={socialLinks.email}
               className="flex items-center space-x-4 hover:scale-125 transition-transform duration-200 bg-gray-200 p-3 rounded-full"
             >
-              <img src={gmail} alt="Gmail" className="w-6 h-6" />
+              <img src={gmail} alt="Email" className="w-6 h-6" />
             </Link>
           )}
         </div>

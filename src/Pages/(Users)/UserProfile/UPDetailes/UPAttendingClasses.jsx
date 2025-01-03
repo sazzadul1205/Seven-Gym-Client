@@ -8,9 +8,9 @@ import groupClass from "../../../../assets/group-class.png";
 const UPAttendingClasses = ({ usersData }) => {
   const axiosPublic = useAxiosPublic();
 
-  // Extract class names from usersData.currentClasses
+  // Extract class names from usersData.attendingClasses
   const classesName =
-    usersData?.currentClasses?.map((classItem) => classItem.className) || [];
+    usersData?.attendingClasses?.map((classItem) => classItem.className) || [];
 
   // Fetch detailed data for classes by their names
   const {
@@ -51,12 +51,26 @@ const UPAttendingClasses = ({ usersData }) => {
   // Check if ClassesData is available and map it correctly
   if (!ClassesData || ClassesData.length === 0) {
     return (
-      <div className="text-center mt-8">
-        <p className="text-gray-500">No classes available at the moment.</p>
-      </div>
+      <>
+        <div className="flex items-center space-x-2 border-b pb-2">
+          <img src={groupClass} alt="groupClass Icon" className="w-5 h-5" />
+          <h2 className="text-xl font-semibold text-black ">
+            Current Attending Classes
+          </h2>
+        </div>
+        <div className="text-center mt-8">
+          <p className="text-gray-500">No classes available at the moment.</p>
+          <Link
+            to="/Classes" // Assuming you have a join class page
+            className="mt-4 inline-block px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
+          >
+            Join a Class
+          </Link>
+        </div>
+      </>
     );
   }
-  // group-class.png
+
   return (
     <div className="space-y-4 mt-8 px-4 sm:px-6 lg:px-8">
       <div className="flex items-center space-x-2 border-b pb-2">

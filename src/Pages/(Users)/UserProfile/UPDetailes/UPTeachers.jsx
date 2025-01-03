@@ -9,9 +9,9 @@ import { Link } from "react-router";
 const UPTeachers = ({ usersData }) => {
   const axiosPublic = useAxiosPublic();
 
-  // Extract trainer names from usersData.currentTeacher
+  // Extract trainer names from usersData.attendingTrainer
   const trainerNames =
-    usersData?.currentTeacher?.map((trainer) => trainer.name) || [];
+    usersData?.attendingTrainer?.map((trainer) => trainer.name) || [];
 
   // Fetch detailed data for trainers by their names
   const {

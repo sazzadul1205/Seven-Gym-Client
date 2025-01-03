@@ -24,7 +24,7 @@ import Testimonials from "./Pages/(Public Pages)/Home/Testimonials/Testimonials.
 import ClassesDetails from "./Pages/(Public Pages)/(Classes)/ClassesDetails/ClassesDetails.jsx";
 import TrainersDetails from "./Pages/(Public Pages)/(Trainers)/TrainersDetails/TrainersDetails.jsx";
 import TrainersBookings from "./Pages/(Public Pages)/(Trainers)/TrainersBookings/TrainersBookings.jsx";
-
+import UserTearUpgrade from "./Pages/(Users)/UserTearUpgrade/UserTearUpgrade.jsx";
 
 const queryClient = new QueryClient();
 
@@ -56,8 +56,14 @@ createRoot(document.getElementById("root")).render(
               <Route path="/SignUp" element={<SignUp />} />
               <Route path="/SignUp/Details" element={<SUDetails />} />
               {/* User Section */}
-              <Route path="/User/:email/UserProfile" element={<UserProfile />} />
-              <Route path="/User/:email/TierUpgrade" element={<UserProfile />} />
+              <Route
+                path="/User/:email/UserProfile"
+                element={<UserProfile />}
+              />
+              <Route
+                path="/User/:email/TierUpgrade"
+                element={<UserTearUpgrade />}
+              />
             </Route>
           </Routes>
         </BrowserRouter>
