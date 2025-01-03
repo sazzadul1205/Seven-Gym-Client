@@ -4,6 +4,7 @@ import Loading from "../../../../Shared/Loading/Loading";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import ClassTrainersCard from "../../../(Public Pages)/(Classes)/ClassesDetails/ClassTrainersCard/ClassTrainersCard";
+import { Link } from "react-router";
 
 const UPTeachers = ({ usersData }) => {
   const axiosPublic = useAxiosPublic();
@@ -55,15 +56,27 @@ const UPTeachers = ({ usersData }) => {
           My Current Trainers
         </h2>
       </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {TrainerDetails.map((trainer) => (
-          <ClassTrainersCard
-            key={trainer.trainersID}
-            trainer={trainer}
-            role="Trainer"
-          />
-        ))}
-      </div>
+      {TrainerDetails?.length > 0 ? (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {TrainerDetails.map((trainer, index) => (
+            <ClassTrainersCard
+              key={trainer.trainersID || index}
+              trainer={trainer}
+              role="Trainer"
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center space-y-4 pt-4">
+          <p className="text-gray-600 text-lg">No trainers assigned yet.</p>
+          <Link
+            to="/Trainers"
+            className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
+          >
+            Book Teacher
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

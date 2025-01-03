@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { IoSettings } from "react-icons/io5"; // Import settings icon
+import { Link } from "react-router";
 
 const getTierBadge = (tier) => {
   const styles = {
@@ -12,7 +13,7 @@ const getTierBadge = (tier) => {
   return styles[tier] || "bg-gray-200 text-gray-700";
 };
 
-const UPTopSection = ({ usersData }) => {
+const UPTopSection = ({ usersData, user, confEmail }) => {
   return (
     <div className="relative pb-24">
       {/* Background Image */}
@@ -25,11 +26,13 @@ const UPTopSection = ({ usersData }) => {
       />
       <div className="relative">
         {/* Settings Icon (top-left) */}
-        <div className="absolute top-2 right-10 z-20">
-          <a href="/settings">
-            <IoSettings className="text-red-500 text-3xl hover:text-gray-300 transition-all" />
-          </a>
-        </div>
+        {confEmail === user.email && (
+          <div className="absolute top-2 right-10 z-20">
+            <Link to="/settings">
+              <IoSettings className="text-red-500 text-3xl hover:text-gray-300 transition-all" />
+            </Link>
+          </div>
+        )}
 
         {/* User Section */}
         <div className="absolute bottom-[-60px] left-4 sm:left-16 flex flex-col sm:flex-row items-center sm:items-start sm:space-x-4 sm:space-y-0 space-y-4">
@@ -45,13 +48,14 @@ const UPTopSection = ({ usersData }) => {
             {/* Tier Badge */}
             <div className="pb-1">
               {usersData?.tier && (
-                <span
-                  className={`inline-block px-4 py-2 mt-2 rounded-full text-sm font-semibold ${getTierBadge(
+                <Link
+                  to={`/Users/${user.email}/TierUpgrade`}
+                  className={`inline-block px-4 py-2 mt-2 rounded-full text-sm font-semibold hover:scale-110 ${getTierBadge(
                     usersData.tier
                   )}`}
                 >
                   {usersData.tier} Tier
-                </span>
+                </Link>
               )}
             </div>
             <p className="text-black text-lg">

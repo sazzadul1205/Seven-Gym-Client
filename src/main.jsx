@@ -51,10 +51,13 @@ createRoot(document.getElementById("root")).render(
               <Route path="/About/Testimonials" element={<Testimonials />} />
               <Route path="/About/AboutUs" element={<AboutUs />} />
               <Route path="/About/Feedback" element={<Feedback />} />
+              {/* Login Section */}
               <Route path="/Login" element={<Login />} />
               <Route path="/SignUp" element={<SignUp />} />
               <Route path="/SignUp/Details" element={<SUDetails />} />
-              <Route path="/UserProfile" element={<UserProfile />} />
+              {/* User Section */}
+              <Route path="/User/:email/UserProfile" element={<UserProfile />} />
+              <Route path="/User/:email/TierUpgrade" element={<UserProfile />} />
             </Route>
           </Routes>
         </BrowserRouter>

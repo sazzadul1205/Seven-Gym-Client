@@ -243,7 +243,7 @@ const Navbar = () => {
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-[200px] bg-white text-black rounded-lg shadow-lg z-10 px-2 py-2 ">
                   <ul>
-                    <Link to="/UserProfile">
+                    <Link to={`/User/${user.email}/UserProfile`}>
                       <li className="p-2 px-5 hover:bg-gray-100">Profile</li>
                     </Link>
                     <li className="p-2 px-5 hover:bg-gray-100">

@@ -10,9 +10,11 @@ import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../Shared/Loading/Loading";
 import UPTeachers from "./UPDetailes/UPTeachers";
 import UPAttendingClasses from "./UPDetailes/UPAttendingClasses";
+import { useParams } from "react-router";
 
 const UserProfile = () => {
   const { user } = useAuth();
+  const { email } = useParams();
   const axiosPublic = useAxiosPublic();
 
   // Fetch data
@@ -23,7 +25,7 @@ const UserProfile = () => {
   } = useQuery({
     queryKey: ["UsersData"],
     queryFn: () =>
-      axiosPublic.get(`/Users?email=${user.email}`).then((res) => res.data),
+      axiosPublic.get(`/Users?email=${email}`).then((res) => res.data),
   });
 
   if (UsersLoading) return <Loading />;
@@ -52,7 +54,7 @@ const UserProfile = () => {
       <div className="bg-[#F72C5B] py-12"></div>
 
       {/* Top section */}
-      <UPTopSection usersData={UsersData} />
+      <UPTopSection usersData={UsersData} user={user} confEmail={email} />
 
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-6 pb-10">
         {/* Info Section */}
