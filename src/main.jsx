@@ -25,6 +25,7 @@ import ClassesDetails from "./Pages/(Public Pages)/(Classes)/ClassesDetails/Clas
 import TrainersDetails from "./Pages/(Public Pages)/(Trainers)/TrainersDetails/TrainersDetails.jsx";
 import TrainersBookings from "./Pages/(Public Pages)/(Trainers)/TrainersBookings/TrainersBookings.jsx";
 import UserTearUpgrade from "./Pages/(Users)/UserTearUpgrade/UserTearUpgrade.jsx";
+import TearUpgradePayment from "./Pages/(Users)/TearUpgradePayment/TearUpgradePayment.jsx";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,10 @@ createRoot(document.getElementById("root")).render(
               <Route
                 path="/User/:email/TierUpgrade"
                 element={<UserTearUpgrade />}
+              />
+              <Route
+                path="/User/:email/:tier"
+                element={<TearUpgradePayment />}
               />
             </Route>
           </Routes>

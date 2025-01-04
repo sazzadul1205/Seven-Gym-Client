@@ -5,11 +5,37 @@ import { IoMenu } from "react-icons/io5";
 import { ImExit } from "react-icons/im";
 import Swal from "sweetalert2";
 
+// Assets
 import icon from "../../assets/Icon.png";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import useAuth from "../../Hooks/useAuth";
 import Loading from "../Loading/Loading";
 import NavDrawer from "./NavDrawer/NavDrawer";
+
+// Menu Items
+const menuItems = [
+  { name: "Home", path: "/" },
+  { name: "Gallery", path: "/Gallery" },
+  {
+    name: "Trainers",
+    path: "Trainers",
+  },
+  {
+    name: "Classes",
+    path: "/Classes",
+  },
+  { name: "Forums", path: "/Forums" },
+  {
+    name: "About",
+    path: "/About",
+    submenu: [
+      { name: "Our Mission", path: "/About/OurMission" },
+      { name: "Testimonials", path: "/About/Testimonials" },
+      { name: "About Us", path: "/About/AboutUs" },
+      { name: "Feedback", path: "/About/Feedback" },
+    ],
+  },
+];
 
 const Navbar = () => {
   const axiosPublic = useAxiosPublic();
@@ -20,14 +46,15 @@ const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Dropdown state
   const [isLoggingOut, setIsLoggingOut] = useState(false); // Loading state
   const menuRef = useRef(null);
+  const dropdownRef = useRef(null);
 
-  // Fetching data for Users
+  // Fetching data for UsersData
   const {
-    data: Users,
-    isLoading: UsersIsLoading,
-    error: UsersError,
+    data: UsersData,
+    isLoading: UsersDataIsLoading,
+    error: UsersDataError,
   } = useQuery({
-    queryKey: ["Users"],
+    queryKey: ["UsersData"],
     queryFn: () => {
       if (!user) {
         return null; // Return null if no user
@@ -45,30 +72,7 @@ const Navbar = () => {
     enabled: !!user, // Only fetch if user exists
   });
 
-  const menuItems = [
-    { name: "Home", path: "/" },
-    { name: "Gallery", path: "/Gallery" },
-    {
-      name: "Trainers",
-      path: "Trainers",
-    },
-    {
-      name: "Classes",
-      path: "/Classes",
-    },
-    { name: "Forums", path: "/Forums" },
-    {
-      name: "About",
-      path: "/About",
-      submenu: [
-        { name: "Our Mission", path: "/About/OurMission" },
-        { name: "Testimonials", path: "/About/Testimonials" },
-        { name: "About Us", path: "/About/AboutUs" },
-        { name: "Feedback", path: "/About/Feedback" },
-      ],
-    },
-  ];
-
+  // Handle scroll and click events
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -82,6 +86,9 @@ const Navbar = () => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setOpenSubmenu(null);
       }
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsDropdownOpen(false);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -93,11 +100,13 @@ const Navbar = () => {
     };
   }, []);
 
+  // Handle submenu hover events
   const handleMouseEnter = (itemName) => {
     setIsHovering(true); // Mark hover as true
     setOpenSubmenu(itemName);
   };
 
+  // Handle submenu hover events
   const handleMouseLeave = () => {
     setIsHovering(false); // Mark hover as false
     setTimeout(() => {
@@ -107,6 +116,7 @@ const Navbar = () => {
     }, 200); // Adjust the delay here (200ms is the delay)
   };
 
+  // Render NavLink with submenu
   const renderNavLink = (item) => {
     if (item.submenu) {
       return (
@@ -156,11 +166,12 @@ const Navbar = () => {
   };
 
   // Handle loading and error states
-  if (UsersIsLoading) {
+  if (UsersDataIsLoading) {
     return <Loading />;
   }
 
-  if (UsersError) {
+  // Handle error state
+  if (UsersDataError) {
     return (
       <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
         <p className="text-center text-red-500 font-bold text-3xl mb-8">
@@ -176,6 +187,7 @@ const Navbar = () => {
     );
   }
 
+  // Handle sign out
   const handleSignOut = () => {
     setIsLoggingOut(true); // Start loading state
     logOut()
@@ -197,9 +209,14 @@ const Navbar = () => {
       });
   };
 
+  // Role-based links
   const roleBasedLinks = {
     Member: [
-      { name: "Profile", path: `/User/${user?.email}/UserProfile` },
+      {
+        name: `${UsersData?.fullName}`,
+        path: `/User/${user?.email}/UserProfile`,
+      },
+      { name: "Tier Upgrade", path: `/User/${user?.email}/TierUpgrade` },
       { name: "Settings", path: "/Settings" },
     ],
     Trainer: [
@@ -227,7 +244,7 @@ const Navbar = () => {
             htmlFor="my-drawer-4"
             className="btn btn-ghost lg:hidden drawer-button"
           >
-            <IoMenu className="text-2xl" />
+            <IoMenu className="text-4xl text-white" />
           </label>
           <NavLink to="/" className="ml-2">
             <img src={icon} alt="icon" className="w-28" />
@@ -245,14 +262,14 @@ const Navbar = () => {
 
         {/* End */}
         <div className="navbar-end flex items-center">
-          {Users ? (
+          {UsersData ? (
             // Show the user avatar if user exists
-            <div className="relative">
+            <div className="relative" ref={dropdownRef}>
               <div className="bg-white p-[3px] rounded-full">
                 <img
                   src={
-                    Users.profileImage ||
-                    "https://i.ibb.co.com/XtrM9rc/Users.jpg"
+                    UsersData.profileImage ||
+                    "https://i.ibb.co.com/XtrM9rc/UsersData.jpg"
                   }
                   alt="User Avatar"
                   className="w-14 h-14 rounded-full hover:scale-105 cursor-pointer "
@@ -260,15 +277,14 @@ const Navbar = () => {
                 />
               </div>
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-[200px] bg-white text-black rounded-lg shadow-lg z-10 px-2 py-2 ">
+                <div className="absolute right-0 mt-1 w-[250px] bg-white text-black rounded-lg shadow-lg z-10 py-2">
                   <ul>
-                    {(roleBasedLinks[Users?.role] || []).map((link) => (
-                      <li
-                        key={link.name}
-                        className="p-2 px-5 hover:bg-gray-100"
-                      >
-                        <Link to={link.path}>{link.name}</Link>
-                      </li>
+                    {(roleBasedLinks[UsersData?.role] || []).map((link) => (
+                      <Link to={link.path} key={link.name}>
+                        <li className="p-2 px-5 hover:bg-gray-100 border-b border-gray-300">
+                          {link.name}
+                        </li>
+                      </Link>
                     ))}
                     <li
                       className="p-2 px-5 hover:bg-gray-100 flex items-center justify-between text-red-500 font-semibold"

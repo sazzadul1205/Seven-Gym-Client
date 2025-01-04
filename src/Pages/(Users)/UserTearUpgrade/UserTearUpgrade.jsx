@@ -1,5 +1,4 @@
-import { useParams } from "react-router";
-import useAuth from "../../../Hooks/useAuth";
+import { Link, useParams } from "react-router";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../Shared/Loading/Loading";
@@ -15,9 +14,8 @@ const tiers = [
     name: "Silver",
     perks: [
       "All Bronze perks",
-      "Access to group classes",
       "Priority support",
-      "2 Free group classes per month",
+      "2 Free group Trainer per month",
       "Access to gym locker rooms",
     ],
     price: 10,
@@ -31,7 +29,7 @@ const tiers = [
       "Free nutrition plan",
       "Monthly consultation",
       "Access to specialized fitness programs",
-      "3 Free group classes per month",
+      "3 Free group Trainer per month",
       "Priority booking for group classes",
     ],
     price: 25,
@@ -42,10 +40,8 @@ const tiers = [
     name: "Diamond",
     perks: [
       "All Gold perks",
-      "Personal trainer sessions",
       "Exclusive gym events",
       "4 Free group classes per month",
-      "Priority access to fitness workshops",
       "Exclusive member-only challenges",
     ],
     price: 50,
@@ -56,7 +52,6 @@ const tiers = [
     name: "Platinum",
     perks: [
       "All Diamond perks",
-      "Unlimited personal training",
       "VIP gym lounge access",
       "Free wellness assessments every 3 months",
       "5 Free group classes per month",
@@ -70,10 +65,10 @@ const tiers = [
 ];
 
 const UserTearUpgrade = () => {
-  const { user } = useAuth();
   const { email } = useParams();
   const axiosPublic = useAxiosPublic();
 
+  // Fetch user data
   const {
     data: UsersData,
     isLoading: UsersLoading,
@@ -84,7 +79,10 @@ const UserTearUpgrade = () => {
       axiosPublic.get(`/Users?email=${email}`).then((res) => res.data),
   });
 
+  // Loading and error handling
   if (UsersLoading) return <Loading />;
+
+  // Error handling
   if (UsersError) {
     return (
       <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
@@ -128,14 +126,18 @@ const UserTearUpgrade = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F72C5B] to-[#f72c5b7c] pt-5 pb-10">
+      {/* Title */}
       <p className="text-3xl font-bold text-center mb-6 pt-[100px] text-white border-b-2 border-white pb-2 mx-4 md:mx-40">
         Choose Your Membership
       </p>
+
+      {/* Tiers */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto p-4 space-y-3">
         {tiers.map((tier, index) => {
           const isDisabled = isCurrentUserTier(tier.name);
           return (
-            <div
+            <Link
+              to={`/User/${email}/${tier.name}`}
               key={index}
               className={`flex flex-col p-4 shadow-lg rounded-lg border border-gray-200 ${
                 tier.bgColor
@@ -178,7 +180,7 @@ const UserTearUpgrade = () => {
                     : `Buy ${tier.name}`}
                 </button>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>
