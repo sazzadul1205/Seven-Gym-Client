@@ -3,67 +3,6 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../Shared/Loading/Loading";
 
-const tiers = [
-  {
-    name: "Bronze",
-    perks: ["Access to gym equipment", "Community support"],
-    price: "Free",
-    bgColor: "bg-orange-100",
-  },
-  {
-    name: "Silver",
-    perks: [
-      "All Bronze perks",
-      "Priority support",
-      "2 Free group Trainer per month",
-      "Access to gym locker rooms",
-    ],
-    price: 10,
-    discount: "10% discount on personal trainer sessions", // Discount on trainers
-    bgColor: "bg-gray-100",
-  },
-  {
-    name: "Gold",
-    perks: [
-      "All Silver perks",
-      "Free nutrition plan",
-      "Monthly consultation",
-      "Access to specialized fitness programs",
-      "3 Free group Trainer per month",
-      "Priority booking for group classes",
-    ],
-    price: 25,
-    discount: "20% discount on personal trainer sessions", // Discount on trainers
-    bgColor: "bg-yellow-100",
-  },
-  {
-    name: "Diamond",
-    perks: [
-      "All Gold perks",
-      "Exclusive gym events",
-      "4 Free group classes per month",
-      "Exclusive member-only challenges",
-    ],
-    price: 50,
-    discount: "30% discount on personal trainer sessions", // Discount on trainers
-    bgColor: "bg-blue-100",
-  },
-  {
-    name: "Platinum",
-    perks: [
-      "All Diamond perks",
-      "VIP gym lounge access",
-      "Free wellness assessments every 3 months",
-      "5 Free group classes per month",
-      "Access to premium fitness equipment",
-      "Exclusive health retreats or events",
-    ],
-    price: 100,
-    discount: "50% discount on personal trainer sessions", // Discount on trainers
-    bgColor: "bg-gray-300",
-  },
-];
-
 const UserTearUpgrade = () => {
   const { email } = useParams();
   const axiosPublic = useAxiosPublic();
@@ -79,11 +18,21 @@ const UserTearUpgrade = () => {
       axiosPublic.get(`/Users?email=${email}`).then((res) => res.data),
   });
 
+  // Fetch tier data
+  const {
+    data: TierData,
+    isLoading: TierDataLoading,
+    error: TierDataError,
+  } = useQuery({
+    queryKey: ["TierData"],
+    queryFn: () => axiosPublic.get(`/TierData`).then((res) => res.data),
+  });
+
   // Loading and error handling
-  if (UsersLoading) return <Loading />;
+  if (UsersLoading || TierDataLoading) return <Loading />;
 
   // Error handling
-  if (UsersError) {
+  if (UsersError || TierDataError) {
     return (
       <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
         <p className="text-3xl text-red-500 font-bold mb-8">
@@ -98,10 +47,6 @@ const UserTearUpgrade = () => {
       </div>
     );
   }
-
-  const handleBuy = (tier) => {
-    alert(`You selected the ${tier} tier. Proceed to checkout!`);
-  };
 
   // Function to determine the styles for the tier badge
   const getTierBadge = (tier) => {
@@ -131,13 +76,12 @@ const UserTearUpgrade = () => {
         Choose Your Membership
       </p>
 
-      {/* Tiers */}
+      {/* TierData */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto p-4 space-y-3">
-        {tiers.map((tier, index) => {
+        {TierData.map((tier, index) => {
           const isDisabled = isCurrentUserTier(tier.name);
           return (
-            <Link
-              to={`/User/${email}/${tier.name}`}
+            <div
               key={index}
               className={`flex flex-col p-4 shadow-lg rounded-lg border border-gray-200 ${
                 tier.bgColor
@@ -168,19 +112,20 @@ const UserTearUpgrade = () => {
                   {tier.price} / month
                 </p>
                 <p className="text-sm text-gray-600 mb-4">{tier.discount}</p>
-                <button
-                  className={`px-6 py-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition ${getTierBadge(
-                    tier.name
-                  )} ${isDisabled ? "bg-gray-400 cursor-not-allowed" : ""}`}
-                  onClick={() => !isDisabled && handleBuy(tier.name)}
-                  disabled={isDisabled}
-                >
-                  {isDisabled
-                    ? "You Already Have This Tier"
-                    : `Buy ${tier.name}`}
-                </button>
+                <Link to={`/User/${email}/${tier.name}/TierUpgradePayment`}>
+                  <button
+                    className={`w-[200px] py-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition ${getTierBadge(
+                      tier.name
+                    )} ${isDisabled ? "bg-gray-400 cursor-not-allowed" : ""}`}
+                    disabled={isDisabled}
+                  >
+                    {isDisabled
+                      ? "You Already Have This Tier"
+                      : `Buy ${tier.name}`}
+                  </button>
+                </Link>
               </div>
-            </Link>
+            </div>
           );
         })}
       </div>

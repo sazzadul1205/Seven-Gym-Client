@@ -27,7 +27,7 @@ const UPTopSection = ({ usersData, user, confEmail }) => {
       />
       <div className="relative">
         {/* Settings Icon */}
-        {confEmail === user.email && (
+        {confEmail === user?.email && (
           <div className="absolute top-2 right-10 z-20">
             <Link to="/settings">
               <IoSettings className="text-red-500 text-3xl hover:text-gray-300 transition-all" />
@@ -53,7 +53,7 @@ const UPTopSection = ({ usersData, user, confEmail }) => {
             {/* Tier Badge */}
             <div className="pb-1">
               {usersData?.tier &&
-                (confEmail === user.email ? (
+                (confEmail === user?.email ? (
                   // Interactive badge for the profile owner
                   <Link
                     to={`/User/${user.email}/TierUpgrade`}

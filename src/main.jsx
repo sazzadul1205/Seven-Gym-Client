@@ -66,7 +66,7 @@ createRoot(document.getElementById("root")).render(
                 element={<UserTearUpgrade />}
               />
               <Route
-                path="/User/:email/:tier"
+                path="/User/:email/:tier/TierUpgradePayment"
                 element={<TearUpgradePayment />}
               />
             </Route>
