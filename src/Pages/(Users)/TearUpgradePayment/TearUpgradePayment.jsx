@@ -1,19 +1,14 @@
 import { useParams } from "react-router";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import Loading from "../../../Shared/Loading/Loading";
-import { useForm } from "react-hook-form";
-import { FaCcMastercard, FaCcVisa } from "react-icons/fa";
+import TUPaymentBox from "./TUPaymentBox/TUPaymentBox";
 
 const TearUpgradePayment = () => {
   const axiosPublic = useAxiosPublic();
   const { tier } = useParams();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm();
+  const [selectedDuration, setSelectedDuration] = useState(null); // Track selected card
 
   // Fetch tier data
   const {
@@ -27,6 +22,7 @@ const TearUpgradePayment = () => {
 
   // Loading and error handling
   if (CurrentTierDataLoading) return <Loading />;
+
   if (CurrentTierDataError) {
     return (
       <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
@@ -58,20 +54,15 @@ const TearUpgradePayment = () => {
     return styles[tier] || "bg-gray-200 text-gray-700";
   };
 
-  const onSubmit = async (data) => {
-    console.log("Payment Data Submitted: ", data);
-    // Handle payment submission logic here
-  };
-
   return (
     <div className="bg-gradient-to-br from-red-300 to-white min-h-screen">
       {/* Title */}
-      <p className="text-3xl font-bold text-center mb-6 pt-[100px] text-white border-b-2 border-white pb-2 mx-4 md:mx-40">
+      <p className="text-3xl font-bold text-center mb-6 pt-[100px] text-blue-500 border-b-2 border-white pb-2 mx-14">
         Payment for {CurrentTierData.name} Tier
       </p>
 
       {/* Main Section */}
-      <div className="flex flex-col lg:flex-row items-center justify-center max-w-7xl mx-auto gap-10 p-4">
+      <div className="flex flex-col lg:flex-row items-center justify-center max-w-7xl mx-auto gap-10">
         {/* Tier Information Section */}
         <div className="w-full lg:w-1/3">
           <div
@@ -107,146 +98,74 @@ const TearUpgradePayment = () => {
         </div>
 
         {/* Payment Information Section */}
-        <div className="w-full lg:w-2/3 p-4 rounded-lg border border-gray-200 bg-white min-h-[500px] shadow-xl hover:shadow-2xl transition-all duration-300">
-          <h2 className="text-xl font-semibold text-center mb-4 py-2 bg-blue-500 text-white rounded-3xl">
-            Payment Information
-          </h2>
-          <form
-            className="flex flex-col space-y-4"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            {/* Payment Method Selection */}
-            <div>
-              <label className="block text-lg font-semibold mb-2">
-                Select Payment Method
-              </label>
-              <div className="flex space-x-4 justify-between px-28">
-                <div className="form-control">
-                  <label className="label cursor-pointer gap-5">
-                    <input
-                      type="radio"
-                      value="Visa"
-                      {...register("paymentMethod", { required: true })}
-                      className="radio"
-                    />
-                    <FaCcVisa className="text-5xl" />
-                  </label>
-                </div>
-                <div className="form-control">
-                  <label className="label cursor-pointer gap-5">
-                    <input
-                      type="radio"
-                      value="MasterCard"
-                      {...register("paymentMethod", { required: true })}
-                      className="radio"
-                    />
-                    <FaCcMastercard className="text-5xl" />
-                  </label>
-                </div>
-              </div>
-              {errors.paymentMethod && (
-                <p className="text-red-500 text-sm">
-                  Please select a payment method.
-                </p>
-              )}
-            </div>
+        <div className="w-full lg:w-2/3">
+          {/* Subscription Duration Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8">
+            {[
+              {
+                name: "Basic Plan",
+                duration: "1 Month",
+                multiplier: 1,
+                icon: "📅",
+                description: "Perfect for short-term needs.",
+              },
+              {
+                name: "Value Plan",
+                duration: "5 Months",
+                multiplier: 5,
+                icon: "⏳",
+                description: "Great value for medium-term plans.",
+              },
+              {
+                name: "Premium Plan",
+                duration: "12 Months",
+                multiplier: 12,
+                icon: "🏆",
+                description: "Best for long-term commitment.",
+              },
+            ].map((option, index) => (
+              <div
+                key={index}
+                className={`px-2 py-4 border-4 rounded-xl shadow-lg bg-gradient-to-br from-white to-blue-50 transition-all duration-300 ${
+                  selectedDuration === option.duration
+                    ? "border-blue-500 shadow-2xl scale-105"
+                    : "border-gray-200 hover:border-blue-300 hover:shadow-xl"
+                }`}
+                onClick={() => setSelectedDuration(option.duration)}
+              >
+                {/* Plan Name */}
+                <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
+                  {option.name}
+                </h2>
+                <div className="flex items-center gap-2 border-b border-t border-gray-400 py-2">
+                  {/* Icon */}
+                  <div className="text-6xl mb-4 ">{option.icon}</div>
 
-            {/* New Card Details */}
-            <div className="space-y-4">
-              <div>
-                <label className="block text-lg font-semibold mb-2">
-                  Cardholder Name
-                </label>
-                <input
-                  type="text"
-                  {...register("cardholderName", {
-                    required: "Name is required.",
-                  })}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter cardholder name"
-                />
-                {errors.cardholderName && (
-                  <p className="text-red-500 text-sm">
-                    {errors.cardholderName.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="block text-lg font-semibold mb-2">
-                  Card Number
-                </label>
-                <input
-                  type="text"
-                  {...register("cardNumber", {
-                    required: "Card number is required.",
-                    pattern: {
-                      value: /^[0-9]{16}$/,
-                      message: "Card number must be 16 digits.",
-                    },
-                  })}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter card number"
-                />
-                {errors.cardNumber && (
-                  <p className="text-red-500 text-sm">
-                    {errors.cardNumber.message}
-                  </p>
-                )}
-              </div>
-              <div className="flex space-x-4">
-                <div className="w-1/2">
-                  <label className="block text-lg font-semibold mb-2">
-                    Expiry Date
-                  </label>
-                  <input
-                    type="text"
-                    {...register("expiryDate", {
-                      required: "Expiry date is required.",
-                      pattern: {
-                        value: /^(0[1-9]|1[0-2])\/\d{2}$/,
-                        message: "Enter a valid expiry date (MM/YY).",
-                      },
-                    })}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="MM/YY"
-                  />
-                  {errors.expiryDate && (
-                    <p className="text-red-500 text-sm">
-                      {errors.expiryDate.message}
+                  {/* Description */}
+                  <div>
+                    {/* Duration */}
+                    <h3 className="text-lg font-semibold text-blue-700">
+                      {option.duration}
+                    </h3>
+                    {/* Description */}
+                    <p className="text-sm text-gray-600">
+                      {option.description}
                     </p>
-                  )}
+                  </div>
                 </div>
-                <div className="w-1/2">
-                  <label className="block text-lg font-semibold mb-2">
-                    CVV
-                  </label>
-                  <input
-                    type="text"
-                    {...register("cvv", {
-                      required: "CVV is required.",
-                      pattern: {
-                        value: /^[0-9]{3,4}$/,
-                        message: "Enter a valid CVV.",
-                      },
-                    })}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="CVV"
-                  />
-                  {errors.cvv && (
-                    <p className="text-red-500 text-sm">{errors.cvv.message}</p>
-                  )}
-                </div>
+                {/* Price */}
+                <p className="text-lg font-bold text-gray-800 text-center">
+                  Price: ${CurrentTierData.price * option.multiplier}
+                </p>
               </div>
-            </div>
+            ))}
+          </div>
+          <p className="text-sm text-gray-600 text-center mt-2">
+            This plan will not automatically renew. You must manually renew it
+            buy your self after the plan ends. or before it ends.
+          </p>
 
-            <button
-              type="submit"
-              className="w-full py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition-all duration-300"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Processing..." : "Pay Now"}
-            </button>
-          </form>
+          <TUPaymentBox />
         </div>
       </div>
     </div>
