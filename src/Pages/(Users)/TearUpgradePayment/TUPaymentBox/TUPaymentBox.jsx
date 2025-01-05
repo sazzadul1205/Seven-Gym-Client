@@ -1,76 +1,146 @@
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { FaCcMastercard, FaCcVisa } from "react-icons/fa";
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
-const TUPaymentBox = () => {
+const TUPaymentBox = ({ CurrentTierData }) => {
+  const axiosPublic = useAxiosPublic();
+  const stripe = useStripe();
+  const elements = useElements();
+  const [selectedDuration, setSelectedDuration] = useState(null);
+  const [clientSecret, setClientSecret] = useState(null);
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm();
 
-  // Function to handle form submission
-  const onSubmit = (data) => {
-    console.log(data);
+  // Fetch the client secret when a plan is selected
+  useEffect(() => {
+    const fetchClientSecret = async () => {
+      try {
+        if (selectedDuration) {
+          const response = await axiosPublic.post("/Create_Payment_Intent", {
+            tier: CurrentTierData?.name,
+            totalPrice: selectedDuration.totalPrice,
+          });
+          setClientSecret(response.data.clientSecret);
+        }
+      } catch (error) {
+        console.error("Failed to fetch client secret:", error);
+        alert("Failed to initiate payment. Please try again later.");
+      }
+    };
+
+    fetchClientSecret();
+  }, [selectedDuration, CurrentTierData, axiosPublic]);
+
+  const onSubmit = async (data) => {
+    if (!stripe || !elements || !clientSecret) {
+      console.error("Stripe has not been loaded yet.");
+      alert("Stripe is not ready. Please refresh the page and try again.");
+      return;
+    }
+
+    try {
+      const cardElement = elements.getElement(CardElement);
+      const { paymentIntent, error } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: cardElement,
+            billing_details: { name: data.cardholderName },
+          },
+        }
+      );
+
+      if (error) {
+        console.error("Payment failed:", error.message);
+        alert("Payment failed: " + error.message);
+      } else if (paymentIntent) {
+        console.log("Payment successful:", paymentIntent);
+        alert("Payment successful!");
+      }
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      alert("An error occurred during payment. Please try again.");
+    }
   };
 
   return (
-    <div className="w-full  p-4 rounded-lg border border-gray-200 bg-white min-h-[500px] shadow-xl hover:shadow-2xl transition-all duration-300">
-      {/* Title */}
-      <h2 className="text-xl font-semibold text-center mb-4 py-2 bg-blue-500 text-white rounded-3xl">
-        Payment Information
-      </h2>
-      {/* Form */}
-      <form
-        className="flex flex-col space-y-4"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        {/* Payment Method Selection */}
-        <div className="mb-4">
-          {/* Title */}
-          <h3 className="block text-lg font-semibold mb-2">
-            Select Payment Method
-          </h3>
-
-          {/* Card Picker */}
-          <div className="flex space-x-4 justify-between px-28">
-            {/* Visa */}
-            <div className="form-control">
-              <label className="label cursor-pointer gap-5">
-                <input
-                  type="radio"
-                  value="Visa"
-                  {...register("paymentMethod", { required: true })}
-                  className="radio"
-                />
-                <FaCcVisa className="text-5xl" />
-              </label>
-            </div>
-            {/* Master Card */}
-            <div className="form-control">
-              <label className="label cursor-pointer gap-5">
-                <input
-                  type="radio"
-                  value="MasterCard"
-                  {...register("paymentMethod", { required: true })}
-                  className="radio"
-                />
-                <FaCcMastercard className="text-5xl" />
-              </label>
-            </div>
-          </div>
-
-          {/* Error */}
-          <p className="text-red-500 text-sm">
-            {errors.paymentMethod && (
-              <p className="text-red-500 text-sm">
-                Please select a payment method.
+    <div className="py-1">
+      <div className="space-y-3">
+        <h1 className="text-4xl italic font-bold text-center mb-2">
+          Select a Plan
+        </h1>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[
+            {
+              name: "Basic Plan",
+              duration: "1 Month",
+              multiplier: 1,
+              icon: "📅",
+              description: "Perfect for short-term needs.",
+            },
+            {
+              name: "Value Plan",
+              duration: "5 Months",
+              multiplier: 5,
+              icon: "⏳",
+              description: "Great value for medium-term plans.",
+            },
+            {
+              name: "Premium Plan",
+              duration: "12 Months",
+              multiplier: 12,
+              icon: "🏆",
+              description: "Best for long-term commitment.",
+            },
+          ].map((option, index) => (
+            <div
+              key={index}
+              className={`px-4 py-6 border-4 rounded-xl shadow-lg bg-gradient-to-br from-white to-blue-50 transition-all duration-300 cursor-pointer ${
+                selectedDuration?.duration === option.duration
+                  ? "border-blue-500 shadow-2xl scale-105"
+                  : "border-gray-200 hover:border-blue-300 hover:shadow-xl"
+              }`}
+              onClick={() =>
+                setSelectedDuration({
+                  duration: option.duration,
+                  name: option.name,
+                  totalPrice: (CurrentTierData?.price || 0) * option.multiplier,
+                })
+              }
+            >
+              <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
+                {option.name}
+              </h2>
+              <div className="flex items-center gap-4 border-b border-t border-gray-400 py-4">
+                <div className="text-5xl">{option.icon}</div>
+                <div>
+                  <h3 className="text-lg font-semibold text-blue-700">
+                    {option.duration}
+                  </h3>
+                  <p className="text-sm text-gray-600">{option.description}</p>
+                </div>
+              </div>
+              <p className="text-lg font-bold text-gray-800 text-center mt-2">
+                Price: ${(CurrentTierData?.price || 0) * option.multiplier}
               </p>
-            )}
-          </p>
+            </div>
+          ))}
         </div>
+      </div>
 
-        {/* New Card Details */}
-        <div className="space-y-4">
+      <div className="w-full p-6 rounded-lg border border-gray-200 bg-white shadow-xl hover:shadow-2xl transition-all duration-300">
+        <h2 className="text-xl font-semibold text-center mb-4 py-2 bg-blue-500 text-white rounded-3xl">
+          Payment Information
+        </h2>
+        <form
+          className="flex flex-col space-y-4"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <div>
             <label className="block text-lg font-semibold mb-2">
               Cardholder Name
@@ -78,92 +148,36 @@ const TUPaymentBox = () => {
             <input
               type="text"
               {...register("cardholderName", {
-                required: "Name is required.",
+                required: "Cardholder name is required.",
               })}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter cardholder name"
             />
             {errors.cardholderName && (
-              <p className="text-red-500 text-sm">
+              <p className="text-red-500 text-sm mt-1">
                 {errors.cardholderName.message}
               </p>
             )}
           </div>
+
           <div>
             <label className="block text-lg font-semibold mb-2">
-              Card Number
+              Card Details
             </label>
-            <input
-              type="text"
-              {...register("cardNumber", {
-                required: "Card number is required.",
-                pattern: {
-                  value: /^[0-9]{16}$/,
-                  message: "Card number must be 16 digits.",
-                },
-              })}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter card number"
-            />
-            {errors.cardNumber && (
-              <p className="text-red-500 text-sm">
-                {errors.cardNumber.message}
-              </p>
-            )}
-          </div>
-          <div className="flex space-x-4">
-            <div className="w-1/2">
-              <label className="block text-lg font-semibold mb-2">
-                Expiry Date
-              </label>
-              <input
-                type="text"
-                {...register("expiryDate", {
-                  required: "Expiry date is required.",
-                  pattern: {
-                    value: /^(0[1-9]|1[0-2])\/\d{2}$/,
-                    message: "Enter a valid expiry date (MM/YY).",
-                  },
-                })}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="MM/YY"
-              />
-              {errors.expiryDate && (
-                <p className="text-red-500 text-sm">
-                  {errors.expiryDate.message}
-                </p>
-              )}
-            </div>
-            <div className="w-1/2">
-              <label className="block text-lg font-semibold mb-2">CVV</label>
-              <input
-                type="text"
-                {...register("cvv", {
-                  required: "CVV is required.",
-                  pattern: {
-                    value: /^[0-9]{3,4}$/,
-                    message: "Enter a valid CVV.",
-                  },
-                })}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="CVV"
-              />
-              {errors.cvv && (
-                <p className="text-red-500 text-sm">{errors.cvv.message}</p>
-              )}
+            <div className="w-full px-4 py-2 border rounded-lg">
+              <CardElement options={{ hidePostalCode: true }} />
             </div>
           </div>
-        </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition-all duration-300"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Processing..." : "Pay Now"}
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="w-full py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition-all duration-300"
+            disabled={!stripe || !elements || !clientSecret || isSubmitting}
+          >
+            {isSubmitting ? "Processing..." : "Pay Now"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
