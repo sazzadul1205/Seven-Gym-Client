@@ -1,10 +1,13 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import Swal from "sweetalert2";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import { useParams } from "react-router";
 
 const TUPaymentBox = ({ CurrentTierData }) => {
+  const { email } = useParams();
   const axiosPublic = useAxiosPublic();
   const stripe = useStripe();
   const elements = useElements();
@@ -42,7 +45,22 @@ const TUPaymentBox = ({ CurrentTierData }) => {
     fetchClientSecret();
   }, [selectedDuration, CurrentTierData, axiosPublic]);
 
+  // Function to generate Payment ID
+  const generatePaymentID = () => {
+    const randomDigits = Math.floor(10000 + Math.random() * 90000); // Generate 5 random digits
+    const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, ""); // Format date as DDMMYYYY
+    return `TUP${randomDigits}${currentDate}`;
+  };
+
+  // Function to get today's date and time
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    return now.toLocaleString(); // Format as 'MM/DD/YYYY, HH:mm:ss AM/PM' or local format
+  };
+
+  // Payment submission
   const onSubmit = async (data) => {
+    // Check if Stripe is ready
     if (!stripe || !elements || !clientSecret) {
       Swal.fire(
         "Error",
@@ -51,7 +69,7 @@ const TUPaymentBox = ({ CurrentTierData }) => {
       );
       return;
     }
-
+    // Confirm payment
     Swal.fire({
       title: "Are you sure?",
       text: `You are about to spend $${
@@ -62,6 +80,7 @@ const TUPaymentBox = ({ CurrentTierData }) => {
       confirmButtonText: "Yes, pay now",
       cancelButtonText: "No, cancel",
     }).then(async (result) => {
+      // If user confirms payment
       if (result.isConfirmed) {
         try {
           const cardElement = elements.getElement(CardElement);
@@ -84,18 +103,23 @@ const TUPaymentBox = ({ CurrentTierData }) => {
               "success"
             );
 
-            // Post-success API call
+            const paymentID = generatePaymentID(); // Generate unique payment ID
+            const todayDateTime = getCurrentDateTime(); // Get today's date and time
             const postPaymentData = {
               tier: CurrentTierData?.name,
+              email: email,
               duration: selectedDuration?.duration,
               totalPrice: selectedDuration?.totalPrice,
-              demoLink: "https://example.com/demo-link", // Example demo link
+              paymentID: paymentID,
+              paymentMethod: "Card",
+              Payed: true,
+              dateTime: todayDateTime, // Add date and time to the payload
             };
             console.log(postPaymentData);
 
             try {
               const response = await axiosPublic.post(
-                "/Post_Payment_Success",
+                "/Tier_Upgrade_Payment",
                 postPaymentData
               );
               console.log("Post-payment success data:", response.data);
