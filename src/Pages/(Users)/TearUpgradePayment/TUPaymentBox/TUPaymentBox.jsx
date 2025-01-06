@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import Swal from "sweetalert2";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 const TUPaymentBox = ({ CurrentTierData }) => {
@@ -9,6 +10,7 @@ const TUPaymentBox = ({ CurrentTierData }) => {
   const elements = useElements();
   const [selectedDuration, setSelectedDuration] = useState(null);
   const [clientSecret, setClientSecret] = useState(null);
+  const [isConfirmed, setIsConfirmed] = useState(false);
 
   const {
     register,
@@ -29,7 +31,11 @@ const TUPaymentBox = ({ CurrentTierData }) => {
         }
       } catch (error) {
         console.error("Failed to fetch client secret:", error);
-        alert("Failed to initiate payment. Please try again later.");
+        Swal.fire(
+          "Error",
+          "Failed to initiate payment. Please try again later.",
+          "error"
+        );
       }
     };
 
@@ -38,99 +44,139 @@ const TUPaymentBox = ({ CurrentTierData }) => {
 
   const onSubmit = async (data) => {
     if (!stripe || !elements || !clientSecret) {
-      console.error("Stripe has not been loaded yet.");
-      alert("Stripe is not ready. Please refresh the page and try again.");
+      Swal.fire(
+        "Error",
+        "Stripe is not ready. Please refresh the page and try again.",
+        "error"
+      );
       return;
     }
 
-    try {
-      const cardElement = elements.getElement(CardElement);
-      const { paymentIntent, error } = await stripe.confirmCardPayment(
-        clientSecret,
-        {
-          payment_method: {
-            card: cardElement,
-            billing_details: { name: data.cardholderName },
-          },
-        }
-      );
+    Swal.fire({
+      title: "Are you sure?",
+      text: `You are about to spend $${
+        selectedDuration?.totalPrice || 0
+      }. Proceed?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, pay now",
+      cancelButtonText: "No, cancel",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const cardElement = elements.getElement(CardElement);
+          const { paymentIntent, error } = await stripe.confirmCardPayment(
+            clientSecret,
+            {
+              payment_method: {
+                card: cardElement,
+                billing_details: { name: data.cardholderName },
+              },
+            }
+          );
 
-      if (error) {
-        console.error("Payment failed:", error.message);
-        alert("Payment failed: " + error.message);
-      } else if (paymentIntent) {
-        console.log("Payment successful:", paymentIntent);
-        alert("Payment successful!");
+          if (error) {
+            Swal.fire("Payment Failed", error.message, "error");
+          } else if (paymentIntent) {
+            Swal.fire(
+              "Payment Successful",
+              "Your payment was processed successfully.",
+              "success"
+            );
+
+            // Post-success API call
+            const postPaymentData = {
+              tier: CurrentTierData?.name,
+              duration: selectedDuration?.duration,
+              totalPrice: selectedDuration?.totalPrice,
+              demoLink: "https://example.com/demo-link", // Example demo link
+            };
+            console.log(postPaymentData);
+
+            try {
+              const response = await axiosPublic.post(
+                "/Post_Payment_Success",
+                postPaymentData
+              );
+              console.log("Post-payment success data:", response.data);
+            } catch (postError) {
+              console.error("Post-payment API error:", postError);
+            }
+          }
+        } catch (error) {
+          console.error("Error processing payment:", error);
+          Swal.fire(
+            "Error",
+            "An error occurred during payment. Please try again.",
+            "error"
+          );
+        }
       }
-    } catch (error) {
-      console.error("Error processing payment:", error);
-      alert("An error occurred during payment. Please try again.");
-    }
+    });
   };
 
   return (
-    <div className="py-1">
-      <div className="space-y-3">
-        <h1 className="text-4xl italic font-bold text-center mb-2">
-          Select a Plan
-        </h1>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            {
-              name: "Basic Plan",
-              duration: "1 Month",
-              multiplier: 1,
-              icon: "📅",
-              description: "Perfect for short-term needs.",
-            },
-            {
-              name: "Value Plan",
-              duration: "5 Months",
-              multiplier: 5,
-              icon: "⏳",
-              description: "Great value for medium-term plans.",
-            },
-            {
-              name: "Premium Plan",
-              duration: "12 Months",
-              multiplier: 12,
-              icon: "🏆",
-              description: "Best for long-term commitment.",
-            },
-          ].map((option, index) => (
-            <div
-              key={index}
-              className={`px-4 py-6 border-4 rounded-xl shadow-lg bg-gradient-to-br from-white to-blue-50 transition-all duration-300 cursor-pointer ${
-                selectedDuration?.duration === option.duration
-                  ? "border-blue-500 shadow-2xl scale-105"
-                  : "border-gray-200 hover:border-blue-300 hover:shadow-xl"
-              }`}
-              onClick={() =>
-                setSelectedDuration({
-                  duration: option.duration,
-                  name: option.name,
-                  totalPrice: (CurrentTierData?.price || 0) * option.multiplier,
-                })
-              }
-            >
-              <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
-                {option.name}
-              </h2>
-              <div className="flex items-center gap-4 border-b border-t border-gray-400 py-4">
-                <div className="text-5xl">{option.icon}</div>
-                <div>
-                  <h3 className="text-lg font-semibold text-blue-700">
-                    {option.duration}
-                  </h3>
-                  <p className="text-sm text-gray-600">{option.description}</p>
-                </div>
+    <div className="py-5 px-4 space-y-5 bg-white rounded-lg shadow-xl mt-4">
+      <h1 className="text-4xl italic font-bold text-center mb-2">
+        Select a Plan
+      </h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {[
+          {
+            name: "Basic Plan",
+            duration: "1 Month",
+            multiplier: 1,
+            icon: "📅",
+            description: "Perfect for short-term needs.",
+          },
+          {
+            name: "Value Plan",
+            duration: "5 Months",
+            multiplier: 4.8,
+            icon: "⏳",
+            description: "Great value for medium-term plans.",
+          },
+          {
+            name: "Premium Plan",
+            duration: "12 Months",
+            multiplier: 11.5,
+            icon: "🏆",
+            description: "Best for long-term commitment.",
+          },
+        ].map((option, index) => (
+          <div
+            key={index}
+            className={`px-4 py-6 border-4 rounded-xl shadow-lg bg-gradient-to-br from-white to-blue-50 transition-all duration-300 cursor-pointer ${
+              selectedDuration?.duration === option.duration
+                ? "border-blue-500 shadow-2xl scale-105"
+                : "border-gray-200 hover:border-blue-300 hover:shadow-xl"
+            }`}
+            onClick={() =>
+              setSelectedDuration({
+                duration: option.duration,
+                name: option.name,
+                totalPrice: (CurrentTierData?.price || 0) * option.multiplier,
+              })
+            }
+          >
+            <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
+              {option.name}
+            </h2>
+            <div className="flex items-center gap-4 border-b border-t border-gray-400 py-4">
+              <div className="text-5xl">{option.icon}</div>
+              <div>
+                <h3 className="text-lg font-semibold text-blue-700">
+                  {option.duration}
+                </h3>
+                <p className="text-sm text-gray-600">{option.description}</p>
               </div>
-              <p className="text-lg font-bold text-gray-800 text-center mt-2">
-                Price: ${(CurrentTierData?.price || 0) * option.multiplier}
-              </p>
             </div>
-          ))}
-        </div>
+            <p className="text-lg font-bold text-gray-800 text-center mt-2">
+              Price: ${(CurrentTierData?.price || 0) * option.multiplier}
+            </p>
+          </div>
+        ))}
       </div>
 
       <div className="w-full p-6 rounded-lg border border-gray-200 bg-white shadow-xl hover:shadow-2xl transition-all duration-300">
@@ -159,7 +205,6 @@ const TUPaymentBox = ({ CurrentTierData }) => {
               </p>
             )}
           </div>
-
           <div>
             <label className="block text-lg font-semibold mb-2">
               Card Details
@@ -168,11 +213,27 @@ const TUPaymentBox = ({ CurrentTierData }) => {
               <CardElement options={{ hidePostalCode: true }} />
             </div>
           </div>
-
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="confirmation"
+              className="w-5 h-5"
+              onChange={(e) => setIsConfirmed(e.target.checked)}
+            />
+            <label htmlFor="confirmation" className="text-sm text-gray-700">
+              I am sure I want to proceed with this payment.
+            </label>
+          </div>
           <button
             type="submit"
             className="w-full py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition-all duration-300"
-            disabled={!stripe || !elements || !clientSecret || isSubmitting}
+            disabled={
+              !stripe ||
+              !elements ||
+              !clientSecret ||
+              isSubmitting ||
+              !isConfirmed
+            }
           >
             {isSubmitting ? "Processing..." : "Pay Now"}
           </button>

@@ -57,47 +57,62 @@ const TearUpgradePayment = () => {
   };
 
   // Stripe promise
-  const stripePromise = loadStripe(
-    "pk_test_51QdwmBFTkipGUF29jcarVd9d0nafr6NzppIV8elG4t2sh2B0HskbmqQc1Exp7C7nVkNjXaD5gwHxK1UydHTWsxy300JnB4vVVK"
-  );
+  const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PROMISE);
 
   return (
     <div className="bg-gradient-to-br from-red-300 to-white min-h-screen">
-      {/*  */}
+      {/* Page Header */}
       <p className="text-xl font-bold text-center pt-[100px] text-blue-500 border-b-2 border-white pb-2 mx-14">
         Payment for {CurrentTierData?.name || "Loading..."} Tier
       </p>
+
+      {/* Main Layout: Container for tier details and payment box */}
       <div className="flex flex-col lg:flex-row items-center justify-center max-w-7xl mx-auto gap-10">
-        {/*  */}
-        <div className="w-full lg:w-1/3">
-          <div
-            className={`flex flex-col p-4 shadow-lg rounded-lg border border-gray-200 ${
-              CurrentTierData?.bgColor || "bg-white"
-            }`}
+        {/* Tier Details Box */}
+        <div
+          className={`flex flex-col p-4 shadow-lg rounded-lg border border-gray-200 ${
+            CurrentTierData?.bgColor || "bg-white"
+          } min-h-[500px] shadow-xl hover:shadow-2xl transition-all duration-300`}
+        >
+          {/* Tier Name Badge */}
+          <h2
+            className={`text-xl font-semibold text-center rounded-3xl mb-4 py-2 ${getTierBadge(
+              CurrentTierData?.name || "Default"
+            )} transition-all duration-300`}
           >
-            <h2
-              className={`text-xl font-semibold text-center rounded-3xl mb-4 py-2 ${getTierBadge(
-                CurrentTierData?.name || "Default"
-              )}`}
-            >
-              {CurrentTierData?.name || "Loading..."}
-            </h2>
-            <ul>
-              {CurrentTierData?.perks?.map((perk, idx) => (
-                <li key={idx} className="text-lg font-semibold">
-                  <span className="text-green-500 mr-2">✔</span> {perk}
-                </li>
-              ))}
-            </ul>
-            <p className="text-lg font-bold">
+            {CurrentTierData?.name || "Loading..."}
+          </h2>
+
+          {/* List of Tier Perks */}
+          <ul className="flex-grow mb-4">
+            {CurrentTierData?.perks?.map((perk, idx) => (
+              <li
+                key={idx}
+                className="text-lg font-semibold flex items-center mb-2"
+              >
+                {/* Perk Checkmark Icon */}
+                <span className="text-green-500 mr-2">✔</span>
+                {perk}
+              </li>
+            ))}
+          </ul>
+
+          {/* Pricing and Discount Information */}
+          <div className="text-center">
+            <p className="text-lg font-bold text-gray-800 mb-2">
               ${CurrentTierData?.price || 0} / month
+            </p>
+            <p className="text-sm text-gray-600 mb-4">
+              {CurrentTierData?.discount || ""}
             </p>
           </div>
         </div>
 
-        {/*  */}
+        {/* Payment Form Box */}
         <div className="w-full lg:w-2/3">
+          {/* Stripe Elements Wrapper */}
           <Elements stripe={stripePromise}>
+            {/* Payment Component */}
             <TUPaymentBox CurrentTierData={CurrentTierData} />
           </Elements>
         </div>
