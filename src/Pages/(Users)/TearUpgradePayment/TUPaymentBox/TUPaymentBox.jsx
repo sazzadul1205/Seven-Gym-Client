@@ -1,24 +1,32 @@
 /* eslint-disable react/prop-types */
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import Swal from "sweetalert2";
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import { useParams } from "react-router";
+import Swal from "sweetalert2";
+import TUPaymentModal from "./TUPaymentModal/TUPaymentModal";
 
 const TUPaymentBox = ({ CurrentTierData }) => {
-  const { email } = useParams();
+  // Initialize hooks and state
   const axiosPublic = useAxiosPublic();
-  const stripe = useStripe();
   const elements = useElements();
+  const { email } = useParams();
+  const stripe = useStripe();
+
+  // State variables for tracking the selected plan, payment client secret, confirmation, and processing state
   const [selectedDuration, setSelectedDuration] = useState(null);
   const [clientSecret, setClientSecret] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [PaymentID, setIsPaymentID] = useState(null);
 
+  // Setup for react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    reset,
   } = useForm();
 
   // Fetch the client secret when a plan is selected
@@ -27,10 +35,10 @@ const TUPaymentBox = ({ CurrentTierData }) => {
       try {
         if (selectedDuration) {
           const response = await axiosPublic.post("/Create_Payment_Intent", {
-            tier: CurrentTierData?.name,
-            totalPrice: selectedDuration.totalPrice,
+            tier: CurrentTierData?.name, // Tier name
+            totalPrice: selectedDuration.totalPrice, // Total price based on duration
           });
-          setClientSecret(response.data.clientSecret);
+          setClientSecret(response.data.clientSecret); // Store the client secret
         }
       } catch (error) {
         console.error("Failed to fetch client secret:", error);
@@ -45,22 +53,22 @@ const TUPaymentBox = ({ CurrentTierData }) => {
     fetchClientSecret();
   }, [selectedDuration, CurrentTierData, axiosPublic]);
 
-  // Function to generate Payment ID
+  // Function to generate a unique payment ID
   const generatePaymentID = () => {
     const randomDigits = Math.floor(10000 + Math.random() * 90000); // Generate 5 random digits
-    const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, ""); // Format date as DDMMYYYY
+    const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, ""); // Format date as YYYYMMDD
     return `TUP${randomDigits}${currentDate}`;
   };
 
-  // Function to get today's date and time
+  // Function to get the current date and time in a readable format
   const getCurrentDateTime = () => {
     const now = new Date();
-    return now.toLocaleString(); // Format as 'MM/DD/YYYY, HH:mm:ss AM/PM' or local format
+    return now.toLocaleString(); // Localized date and time format
   };
 
-  // Payment submission
+  // Handle form submission and payment processing
   const onSubmit = async (data) => {
-    // Check if Stripe is ready
+    // Check if Stripe, Elements, and client secret are ready
     if (!stripe || !elements || !clientSecret) {
       Swal.fire(
         "Error",
@@ -69,7 +77,8 @@ const TUPaymentBox = ({ CurrentTierData }) => {
       );
       return;
     }
-    // Confirm payment
+
+    // Confirm payment with the user
     Swal.fire({
       title: "Are you sure?",
       text: `You are about to spend $${
@@ -80,8 +89,8 @@ const TUPaymentBox = ({ CurrentTierData }) => {
       confirmButtonText: "Yes, pay now",
       cancelButtonText: "No, cancel",
     }).then(async (result) => {
-      // If user confirms payment
       if (result.isConfirmed) {
+        setIsProcessing(true); // Mark as processing
         try {
           const cardElement = elements.getElement(CardElement);
           const { paymentIntent, error } = await stripe.confirmCardPayment(
@@ -89,7 +98,7 @@ const TUPaymentBox = ({ CurrentTierData }) => {
             {
               payment_method: {
                 card: cardElement,
-                billing_details: { name: data.cardholderName },
+                billing_details: { name: data.cardholderName }, // Cardholder's name
               },
             }
           );
@@ -97,35 +106,60 @@ const TUPaymentBox = ({ CurrentTierData }) => {
           if (error) {
             Swal.fire("Payment Failed", error.message, "error");
           } else if (paymentIntent) {
-            Swal.fire(
-              "Payment Successful",
-              "Your payment was processed successfully.",
-              "success"
-            );
+            // Calculate start and end date for the selected duration
+            const startDate = new Date(); // Start date
+            let endDate = new Date(startDate);
 
-            const paymentID = generatePaymentID(); // Generate unique payment ID
-            const todayDateTime = getCurrentDateTime(); // Get today's date and time
+            // Determine the duration in months based on selected plan
+            const durationInMonths =
+              selectedDuration?.duration === "1 Month"
+                ? 1
+                : selectedDuration?.duration === "5 Months"
+                ? 5
+                : selectedDuration?.duration === "12 Months"
+                ? 12
+                : 0;
+
+            endDate.setMonth(startDate.getMonth() + durationInMonths); // Adjust end date
+
+            const paymentID = generatePaymentID(); // Unique payment ID
+            const todayDateTime = getCurrentDateTime(); // Current date-time
+
+            // Prepare data to send to the server for payment record
             const postPaymentData = {
               tier: CurrentTierData?.name,
               email: email,
               duration: selectedDuration?.duration,
+              startDate: startDate.toISOString(),
+              endDate: endDate.toISOString(),
               totalPrice: selectedDuration?.totalPrice,
               paymentID: paymentID,
               paymentMethod: "Card",
               Payed: true,
-              dateTime: todayDateTime, // Add date and time to the payload
+              dateTime: todayDateTime,
             };
-            console.log(postPaymentData);
 
-            try {
-              const response = await axiosPublic.post(
-                "/Tier_Upgrade_Payment",
-                postPaymentData
-              );
-              console.log("Post-payment success data:", response.data);
-            } catch (postError) {
-              console.error("Post-payment API error:", postError);
-            }
+            // Send payment data to the server
+            await axiosPublic.post("/Tier_Upgrade_Payment", postPaymentData);
+
+            // Log the payment ID
+            setIsPaymentID(paymentID);
+
+            // Prepare data to update user tier
+            const userUpdateData = {
+              email: email,
+              tier: CurrentTierData?.name,
+              duration: selectedDuration?.duration,
+              updateTierStart: startDate.toISOString(),
+              updateTierEnd: endDate.toISOString(),
+            };
+
+            // Send user tier update data to the server
+            await axiosPublic.put("/Users/Update_User_Tier", userUpdateData);
+
+            reset(); // Reset the form
+            setSelectedDuration(null); // Clear selected plan
+            document.getElementById("Payment_Finished").showModal(); // Show success modal
           }
         } catch (error) {
           console.error("Error processing payment:", error);
@@ -134,18 +168,22 @@ const TUPaymentBox = ({ CurrentTierData }) => {
             "An error occurred during payment. Please try again.",
             "error"
           );
+        } finally {
+          setIsProcessing(false); // End processing
         }
       }
     });
   };
 
   return (
-    <div className="py-5 px-4 space-y-5 bg-white rounded-lg shadow-xl mt-4">
+    <div className=" px-4 space-y-5 rounded-lg shadow-xl mt-4">
+      {/* Plan selection section */}
       <h1 className="text-4xl italic font-bold text-center mb-2">
         Select a Plan
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Render available plans */}
         {[
           {
             name: "Basic Plan",
@@ -184,6 +222,7 @@ const TUPaymentBox = ({ CurrentTierData }) => {
               })
             }
           >
+            {/* Plan details */}
             <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
               {option.name}
             </h2>
@@ -203,7 +242,8 @@ const TUPaymentBox = ({ CurrentTierData }) => {
         ))}
       </div>
 
-      <div className="w-full p-6 rounded-lg border border-gray-200 bg-white shadow-xl hover:shadow-2xl transition-all duration-300">
+      {/* Payment information section */}
+      <div className="w-full p-6 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300">
         <h2 className="text-xl font-semibold text-center mb-4 py-2 bg-blue-500 text-white rounded-3xl">
           Payment Information
         </h2>
@@ -211,6 +251,7 @@ const TUPaymentBox = ({ CurrentTierData }) => {
           className="flex flex-col space-y-4"
           onSubmit={handleSubmit(onSubmit)}
         >
+          {/* Cardholder name input */}
           <div>
             <label className="block text-lg font-semibold mb-2">
               Cardholder Name
@@ -229,6 +270,8 @@ const TUPaymentBox = ({ CurrentTierData }) => {
               </p>
             )}
           </div>
+
+          {/* Card details input */}
           <div>
             <label className="block text-lg font-semibold mb-2">
               Card Details
@@ -237,6 +280,8 @@ const TUPaymentBox = ({ CurrentTierData }) => {
               <CardElement options={{ hidePostalCode: true }} />
             </div>
           </div>
+
+          {/* Confirmation checkbox */}
           <div className="flex items-center gap-2">
             <input
               type="checkbox"
@@ -248,6 +293,8 @@ const TUPaymentBox = ({ CurrentTierData }) => {
               I am sure I want to proceed with this payment.
             </label>
           </div>
+
+          {/* Submit button */}
           <button
             type="submit"
             className="w-full py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition-all duration-300"
@@ -256,13 +303,19 @@ const TUPaymentBox = ({ CurrentTierData }) => {
               !elements ||
               !clientSecret ||
               isSubmitting ||
-              !isConfirmed
+              !isConfirmed ||
+              isProcessing
             }
           >
-            {isSubmitting ? "Processing..." : "Pay Now"}
+            {isProcessing ? "Processing..." : "Pay Now"}
           </button>
         </form>
       </div>
+
+      {/* Payment success modal */}
+      <dialog id="Payment_Finished" className="modal">
+        <TUPaymentModal PaymentID={PaymentID} />
+      </dialog>
     </div>
   );
 };

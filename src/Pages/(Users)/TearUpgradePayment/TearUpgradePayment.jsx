@@ -60,14 +60,14 @@ const TearUpgradePayment = () => {
   const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PROMISE);
 
   return (
-    <div className="bg-gradient-to-br from-red-300 to-white min-h-screen">
+    <div className="bg-gradient-to-b from-red-400 to-white min-h-screen">
       {/* Page Header */}
-      <p className="text-xl font-bold text-center pt-[100px] text-blue-500 border-b-2 border-white pb-2 mx-14">
+      <p className="text-3xl font-bold text-center pt-[100px] text-white pb-2 mx-24">
         Payment for {CurrentTierData?.name || "Loading..."} Tier
       </p>
 
       {/* Main Layout: Container for tier details and payment box */}
-      <div className="flex flex-col lg:flex-row items-center justify-center max-w-7xl mx-auto gap-10">
+      <div className="flex flex-col lg:flex-row items-center justify-center max-w-7xl mx-auto gap-10 bg-white rounded-lg shadow-lg mt-2 p-4">
         {/* Tier Details Box */}
         <div
           className={`flex flex-col p-4 shadow-lg rounded-lg border border-gray-200 ${
