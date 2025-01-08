@@ -62,59 +62,61 @@ const TearUpgradePayment = () => {
   return (
     <div className="bg-gradient-to-b from-red-400 to-white min-h-screen">
       {/* Page Header */}
-      <p className="text-3xl font-bold text-center pt-[100px] text-white pb-2 mx-24">
+      <p className="text-3xl font-bold text-center pt-[100px] text-white bg-[#F72C5B] py-11 pb-4">
         Payment for {CurrentTierData?.name || "Loading..."} Tier
       </p>
 
       {/* Main Layout: Container for tier details and payment box */}
-      <div className="flex flex-col lg:flex-row items-center justify-center max-w-7xl mx-auto gap-10 bg-white rounded-lg shadow-lg mt-2 p-4">
-        {/* Tier Details Box */}
-        <div
-          className={`flex flex-col p-4 shadow-lg rounded-lg border border-gray-200 ${
-            CurrentTierData?.bgColor || "bg-white"
-          } min-h-[500px] shadow-xl hover:shadow-2xl transition-all duration-300`}
-        >
-          {/* Tier Name Badge */}
-          <h2
-            className={`text-xl font-semibold text-center rounded-3xl mb-4 py-2 ${getTierBadge(
-              CurrentTierData?.name || "Default"
-            )} transition-all duration-300`}
+      <div className="bg-white py-5 pb-10">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-4">
+          {/* Tier Details Box */}
+          <div
+            className={`flex flex-col p-4 shadow-lg rounded-lg border border-gray-200 ${
+              CurrentTierData?.bgColor || "bg-white"
+            } min-h-[500px] shadow-xl hover:shadow-2xl transition-all duration-300`}
           >
-            {CurrentTierData?.name || "Loading..."}
-          </h2>
+            {/* Tier Name Badge */}
+            <h2
+              className={`text-xl font-semibold text-center rounded-3xl mb-4 py-2 ${getTierBadge(
+                CurrentTierData?.name || "Default"
+              )} transition-all duration-300`}
+            >
+              {CurrentTierData?.name || "Loading..."}
+            </h2>
 
-          {/* List of Tier Perks */}
-          <ul className="flex-grow mb-4">
-            {CurrentTierData?.perks?.map((perk, idx) => (
-              <li
-                key={idx}
-                className="text-lg font-semibold flex items-center mb-2"
-              >
-                {/* Perk Checkmark Icon */}
-                <span className="text-green-500 mr-2">✔</span>
-                {perk}
-              </li>
-            ))}
-          </ul>
+            {/* List of Tier Perks */}
+            <ul className="flex-grow mb-4">
+              {CurrentTierData?.perks?.map((perk, idx) => (
+                <li
+                  key={idx}
+                  className="text-lg font-semibold flex items-center mb-2"
+                >
+                  {/* Perk Checkmark Icon */}
+                  <span className="text-green-500 mr-2">✔</span>
+                  {perk}
+                </li>
+              ))}
+            </ul>
 
-          {/* Pricing and Discount Information */}
-          <div className="text-center">
-            <p className="text-lg font-bold text-gray-800 mb-2">
-              ${CurrentTierData?.price || 0} / month
-            </p>
-            <p className="text-sm text-gray-600 mb-4">
-              {CurrentTierData?.discount || ""}
-            </p>
+            {/* Pricing and Discount Information */}
+            <div className="text-center">
+              <p className="text-lg font-bold text-gray-800 mb-2">
+                ${CurrentTierData?.price || 0} / month
+              </p>
+              <p className="text-sm text-gray-600 mb-4">
+                {CurrentTierData?.discount || ""}
+              </p>
+            </div>
           </div>
-        </div>
 
-        {/* Payment Form Box */}
-        <div className="w-full lg:w-2/3">
-          {/* Stripe Elements Wrapper */}
-          <Elements stripe={stripePromise}>
-            {/* Payment Component */}
-            <TUPaymentBox CurrentTierData={CurrentTierData} />
-          </Elements>
+          {/* Payment Form Box */}
+          <div className="w-full lg:w-2/3">
+            {/* Stripe Elements Wrapper */}
+            <Elements stripe={stripePromise}>
+              {/* Payment Component */}
+              <TUPaymentBox CurrentTierData={CurrentTierData} />
+            </Elements>
+          </div>
         </div>
       </div>
     </div>
