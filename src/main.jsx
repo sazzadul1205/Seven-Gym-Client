@@ -26,6 +26,7 @@ import TrainersDetails from "./Pages/(Public Pages)/(Trainers)/TrainersDetails/T
 import TrainersBookings from "./Pages/(Public Pages)/(Trainers)/TrainersBookings/TrainersBookings.jsx";
 import UserTearUpgrade from "./Pages/(Users)/UserTearUpgrade/UserTearUpgrade.jsx";
 import TearUpgradePayment from "./Pages/(Users)/TearUpgradePayment/TearUpgradePayment.jsx";
+import UserSettings from "./Pages/(Users)/UserSettings/UserSettings.jsx";
 
 const queryClient = new QueryClient();
 
@@ -56,11 +57,13 @@ createRoot(document.getElementById("root")).render(
               <Route path="/Login" element={<Login />} />
               <Route path="/SignUp" element={<SignUp />} />
               <Route path="/SignUp/Details" element={<SUDetails />} />
+
               {/* User Section */}
               <Route
                 path="/User/:email/UserProfile"
                 element={<UserProfile />}
               />
+              <Route path="/User/UserSettings" element={<UserSettings />} />
               <Route
                 path="/User/:email/TierUpgrade"
                 element={<UserTearUpgrade />}

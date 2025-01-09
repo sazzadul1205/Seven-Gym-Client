@@ -29,7 +29,7 @@ const UPTopSection = ({ usersData, user, confEmail }) => {
         {/* Settings Icon */}
         {confEmail === user?.email && (
           <div className="absolute top-2 right-10 z-20">
-            <Link to="/settings">
+            <Link to="/User/UserSettings">
               <IoSettings className="text-red-500 text-3xl hover:text-gray-300 transition-all" />
             </Link>
           </div>
