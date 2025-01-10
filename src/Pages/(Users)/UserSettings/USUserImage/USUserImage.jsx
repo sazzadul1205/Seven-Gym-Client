@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { FaImage } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
@@ -13,12 +14,13 @@ import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Key}`;
 
-const USUserImage = ({ UsersData }) => {
+const USUserImage = ({ UsersData, refetch }) => {
   const axiosPublic = useAxiosPublic();
 
   const [previewImage, setPreviewImage] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Prepare payload for the API request
   const userEmail = UsersData?.email;
@@ -71,6 +73,15 @@ const USUserImage = ({ UsersData }) => {
 
   // Function to save the image
   const handleSaveImage = async (type) => {
+    if (!userEmail) {
+      Swal.fire({
+        icon: "error",
+        title: "Missing Email",
+        text: "User email not available.",
+      });
+      return;
+    }
+
     const file = type === "profile" ? profileImage : selectedFile;
 
     if (!file) {
@@ -81,6 +92,8 @@ const USUserImage = ({ UsersData }) => {
       });
       return;
     }
+
+    setIsLoading(true); // Start loading state
 
     const formData = new FormData();
     formData.append("image", file);
@@ -98,37 +111,20 @@ const USUserImage = ({ UsersData }) => {
         throw new Error("Image hosting failed. No URL returned.");
       }
 
-      console.log("Uploaded Image URL:", imageUrl);
-
-      if (!userEmail) {
-        Swal.fire({
-          icon: "error",
-          title: "Missing Email",
-          text: "User email not available.",
-        });
-        return;
-      }
-
-      const payload =
-        type === "profile"
+      const payload = {
+        email: userEmail,
+        ...(type === "profile"
           ? { profileImage: imageUrl }
-          : { backgroundImage: imageUrl };
-
-      console.log("Payload being sent:", payload);
+          : { backgroundImage: imageUrl }),
+      };
 
       // Make the API call to update only the image type that was provided
-      const response = await axiosPublic.patch(
-        `/Users?email=${encodeURIComponent(userEmail)}`,
-        payload
-      );
+      const response = await axiosPublic.patch(`/Users`, payload);
 
-      console.log("API Response:", response.data);
-
-      // Success notification
       Swal.fire({
         icon: "success",
         title: "Image Uploaded",
-        text: `Image uploaded successfully and updated in the database!`,
+        text: "Image uploaded successfully and updated in the database!",
       });
 
       // Close the modal after successful update
@@ -142,9 +138,8 @@ const USUserImage = ({ UsersData }) => {
         setPreviewImage(null);
       }
       setSelectedFile(null);
+      refetch();
     } catch (error) {
-      console.error("Failed to save image:", error);
-
       const errorMessage =
         error.response?.data?.message ||
         "Image upload or database update failed. Please try again.";
@@ -154,17 +149,23 @@ const USUserImage = ({ UsersData }) => {
         title: "Upload Failed",
         text: errorMessage,
       });
+    } finally {
+      setIsLoading(false); // End loading state
     }
   };
 
   return (
     <div className="w-full min-h-screen mx-auto bg-gray-200">
-      {/* Banner Section */}
-      <div className="relative p-1 px-6 pb-16">
-        <p className="flex gap-2 items-center text-xl font-semibold italic text-gray-700 py-4">
+      {/* Header */}
+      <div className="bg-gray-400 px-5 py-2">
+        <p className="flex gap-2 items-center text-xl font-semibold italic text-white ">
           <FaImage />
           Banner Image
         </p>
+      </div>
+      
+      {/* Banner Section */}
+      <div className="relative p-1 px-12 pb-16">
         <img
           src={
             UsersData?.backgroundImage || "https://via.placeholder.com/1200x400"
@@ -245,10 +246,15 @@ const USUserImage = ({ UsersData }) => {
 
           <div className="flex justify-end">
             <button
-              className="bg-gradient-to-br from-green-600 to-green-400 hover:from-green-500 hover:to-green-300 text-white font-semibold px-5 py-3 rounded-lg"
+              className={`${
+                isLoading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-gradient-to-br from-green-600 to-green-400 hover:from-green-500 hover:to-green-300"
+              } text-white font-semibold px-5 py-3 rounded-lg`}
               onClick={() => handleSaveImage("background")}
+              disabled={isLoading}
             >
-              Save Background Image
+              {isLoading ? "Saving..." : "Save Background Image"}
             </button>
           </div>
         </div>
@@ -256,7 +262,7 @@ const USUserImage = ({ UsersData }) => {
 
       {/* User Image Modal */}
       <dialog id="User_Image_Modal" className="modal">
-        <div className="modal-box w-[90%] max-w-[1200px] h-[500px] space-y-4">
+        <div className="modal-box w-[90%] max-w-3xl space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="font-bold text-lg">User Image Modal</h3>
             <ImCross
@@ -272,10 +278,15 @@ const USUserImage = ({ UsersData }) => {
           <ImageCropper onImageCropped={setProfileImage} />
           <div className="flex justify-end">
             <button
-              className="bg-gradient-to-br from-green-600 to-green-400 hover:from-green-500 hover:to-green-300 text-white font-semibold px-5 py-3 rounded-lg"
+              className={`${
+                isLoading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-gradient-to-br from-green-600 to-green-400 hover:from-green-500 hover:to-green-300"
+              } text-white font-semibold px-5 py-3 rounded-lg`}
               onClick={() => handleSaveImage("profile")}
+              disabled={isLoading}
             >
-              Save Profile Image
+              {isLoading ? "Saving..." : "Save Profile Image"}
             </button>
           </div>
         </div>

@@ -15,6 +15,7 @@ const UserSettings = () => {
     data: UsersData,
     isLoading: UsersLoading,
     error: UsersError,
+    refetch,
   } = useQuery({
     queryKey: ["UsersData"],
     queryFn: () =>
@@ -45,7 +46,7 @@ const UserSettings = () => {
       id: "tab1",
       Icon: "https://i.ibb.co.com/dmNkVLF/picture.png",
       title: "User Image Settings",
-      content: <USUserImage UsersData={UsersData} />,
+      content: <USUserImage UsersData={UsersData} refetch={refetch} />,
     },
     {
       id: "tab2",
@@ -61,39 +62,40 @@ const UserSettings = () => {
     },
     // Add more tabs as needed
   ];
-  console.log(UsersData);
 
   return (
     <div className="min-h-screen bg-white bg-gradient-to-br from-[#f72c5b8a] to-[#f72c5b65]">
       {/* Header */}
       <div className="bg-[#F72C5B] py-12"></div>
 
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-6 py-3 bg-gray-400"></div>
+      <div className="mx-auto flex flex-col md:flex-row justify-between gap-6 py-3 bg-gray-400"></div>
       {/* Tabs Layout */}
-      <div className="flex min-h-screen max-w-7xl mx-auto bg-gray-100">
+      <div className="flex min-h-screen mx-auto bg-gray-100 px-3">
         {/* Tab Names */}
-        <div className="w-1/4 bg-gray-200 border-r border-l border-gray-500">
-          <p className="pl-2 text-md py-2 text-black font-semibold italic">
+        <div className="w-1/5 bg-gray-200 border-r border-l border-gray-500">
+          <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2">
             User Settings
           </p>
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold my-1 ${
-                activeTab === tab.id
-                  ? "bg-gradient-to-br from-blue-500 to-blue-300 text-white border border-gray-500"
-                  : "bg-white hover:border-gray-500 hover:bg-gradient-to-br from-blue-400 to-blue-200 hover:text-white"
-              }`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              <img src={tab.Icon} alt={tab.Icon} className="w-5" />
-              {tab.title}
-            </button>
-          ))}
+          <>
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold my-1 ${
+                  activeTab === tab.id
+                    ? "bg-gradient-to-br from-blue-500 to-blue-300 text-white border border-gray-500"
+                    : "bg-white hover:border-gray-500 hover:bg-gradient-to-br from-blue-400 to-blue-200 hover:text-white"
+                }`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <img src={tab.Icon} alt={tab.Icon} className="w-5" />
+                {tab.title}
+              </button>
+            ))}
+          </>
         </div>
 
         {/* Tab Content */}
-        <div className="w-3/4">
+        <div className="w-4/5">
           {tabs.map(
             (tab) =>
               activeTab === tab.id && <div key={tab.id}>{tab.content}</div>
