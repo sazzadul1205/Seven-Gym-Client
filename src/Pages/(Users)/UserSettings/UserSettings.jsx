@@ -4,6 +4,8 @@ import useAuth from "../../../Hooks/useAuth";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import Loading from "../../../Shared/Loading/Loading";
 import USUserImage from "./USUserImage/USUserImage";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { Link } from "react-router";
 
 const UserSettings = () => {
   const { user } = useAuth();
@@ -68,13 +70,22 @@ const UserSettings = () => {
       {/* Header */}
       <div className="bg-[#F72C5B] py-12"></div>
 
-      <div className="mx-auto flex flex-col md:flex-row justify-between gap-6 py-3 bg-gray-400"></div>
+
+      <div className="mx-auto flex flex-col md:flex-row justify-between gap-6 py-3 bg-gray-400">
+        <Link to={`/User/${user?.email}/UserProfile`}>
+          <button className="flex font-semibold items-center text-slate-100 hover:text-slate-300 gap-2 ml-5 px-5 text-2xl transition duration-300 transform hover:scale-110 hover:rotate-2 hover:shadow-2xl">
+            <IoMdArrowRoundBack className="transition duration-500 transform hover:translate-x-2" />
+            Back
+          </button>
+        </Link>
+      </div>
+
       {/* Tabs Layout */}
-      <div className="flex min-h-screen mx-auto bg-gray-100 px-3">
+      <div className="flex min-h-screen mx-auto bg-gray-100">
         {/* Tab Names */}
         <div className="w-1/5 bg-gray-200 border-r border-l border-gray-500">
           <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2">
-            User Settings
+            User Settings Options
           </p>
           <>
             {tabs.map((tab) => (
