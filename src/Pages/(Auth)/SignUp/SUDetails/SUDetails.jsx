@@ -277,10 +277,12 @@ const SUDetails = () => {
               </div>
 
               {/* Fitness Goals */}
-              <FitnessGoalsSelector
-                selectedGoals={selectedGoals}
-                setSelectedGoals={setSelectedGoals}
-              />
+              <div>
+                <FitnessGoalsSelector
+                  selectedGoals={selectedGoals}
+                  setSelectedGoals={setSelectedGoals}
+                />
+              </div>
             </div>
           </div>
 

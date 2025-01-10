@@ -30,6 +30,7 @@
     "react-router": "^7.0.2",
     "react-select": "^5.9.0",
     "react-slick": "^0.30.2",
+    "react-tabs": "^6.1.0",
     "react-to-print": "^3.0.4",
     "slick-carousel": "^1.8.1",
     "sweetalert2": "^11.15.10",

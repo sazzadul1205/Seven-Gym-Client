@@ -1,13 +1,16 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../Hooks/useAuth";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import Loading from "../../../Shared/Loading/Loading";
+import USUserImage from "./USUserImage/USUserImage";
 
 const UserSettings = () => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
+  const [activeTab, setActiveTab] = useState("tab1"); // State to manage active tab
 
-  // Fetch data
+  // Fetch user data
   const {
     data: UsersData,
     isLoading: UsersLoading,
@@ -24,9 +27,7 @@ const UserSettings = () => {
     return (
       <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
         <p className="text-3xl text-red-500 font-bold mb-8">
-          {UsersError
-            ? "Failed to load forum threads."
-            : "Failed to load categories."}
+          Failed to load user settings.
         </p>
         <button
           className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400"
@@ -38,9 +39,69 @@ const UserSettings = () => {
     );
   }
 
+  // Tab data
+  const tabs = [
+    {
+      id: "tab1",
+      Icon: "https://i.ibb.co.com/dmNkVLF/picture.png",
+      title: "User Image Settings",
+      content: <USUserImage UsersData={UsersData} />,
+    },
+    {
+      id: "tab2",
+      Icon: "https://i.ibb.co.com/dmNkVLF/picture.png",
+      title: "Title 2",
+      content: "Here is the content for Tab 2.",
+    },
+    {
+      id: "tab3",
+      Icon: "https://i.ibb.co.com/dmNkVLF/picture.png",
+      title: "Title 3",
+      content: "Here is the content for Tab 3.",
+    },
+    // Add more tabs as needed
+  ];
   console.log(UsersData);
 
-  return <div></div>;
+  return (
+    <div className="min-h-screen bg-white bg-gradient-to-br from-[#f72c5b8a] to-[#f72c5b65]">
+      {/* Header */}
+      <div className="bg-[#F72C5B] py-12"></div>
+
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-6 py-3 bg-gray-400"></div>
+      {/* Tabs Layout */}
+      <div className="flex min-h-screen max-w-7xl mx-auto bg-gray-100">
+        {/* Tab Names */}
+        <div className="w-1/4 bg-gray-200 border-r border-l border-gray-500">
+          <p className="pl-2 text-md py-2 text-black font-semibold italic">
+            User Settings
+          </p>
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold my-1 ${
+                activeTab === tab.id
+                  ? "bg-gradient-to-br from-blue-500 to-blue-300 text-white border border-gray-500"
+                  : "bg-white hover:border-gray-500 hover:bg-gradient-to-br from-blue-400 to-blue-200 hover:text-white"
+              }`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <img src={tab.Icon} alt={tab.Icon} className="w-5" />
+              {tab.title}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <div className="w-3/4">
+          {tabs.map(
+            (tab) =>
+              activeTab === tab.id && <div key={tab.id}>{tab.content}</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default UserSettings;
