@@ -59,8 +59,8 @@ const UserSettings = () => {
     },
     {
       id: "tab3",
-      Icon: "https://i.ibb.co.com/dmNkVLF/picture.png",
-      title: "Title 3",
+      Icon: "https://i.ibb.co.com/dmbrdkq/trophy.png",
+      title: "Awards Settings",
       content: "Here is the content for Tab 3.",
     },
     // Add more tabs as needed

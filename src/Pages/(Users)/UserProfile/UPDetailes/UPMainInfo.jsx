@@ -7,7 +7,7 @@ const UPMainInfo = ({ usersData }) => {
       <p className="text-lg italic text-gray-600">
         {usersData?.description || "N/A"}
       </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 pt-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 pt-5 border-t pt-5">
         {/* Phone */}
         <div className="flex items-center space-x-4 hover:scale-105 transition-transform duration-200">
           <FaPhoneAlt className="text-blue-500 text-2xl" />
