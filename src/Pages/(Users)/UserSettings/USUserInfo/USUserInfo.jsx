@@ -38,8 +38,8 @@ const USUserInfo = ({ UsersData, refetch }) => {
     validation,
     error,
   }) => (
-    <div className="bg-white p-2">
-      <label className="block text-gray-700 font-medium">{label}</label>
+    <div className="bg-white p-3 space-y-3 shadow-xl hover:scale-105">
+      <label className="block text-gray-700 font-semibold">{label}</label>
       {type === "textarea" ? (
         <textarea
           placeholder={placeholder}
@@ -76,8 +76,11 @@ const USUserInfo = ({ UsersData, refetch }) => {
       </div>
 
       {/* Form Section */}
-      <div className="px-5 py-8">
-        <form onSubmit={handleSubmit(onSubmit)} className="w-5/6 space-y-3">
+      <div className="px-5 py-4 ">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="w-5/6 space-y-3 bg-slate-100 p-5 rounded-xl"
+        >
           {/* Full Name */}
           <InputField
             label="Full Name"
@@ -112,25 +115,6 @@ const USUserInfo = ({ UsersData, refetch }) => {
             error={errors.dob}
           />
 
-          {/* Gender */}
-          <div>
-            <label className="block text-gray-700 font-medium">Gender</label>
-            <select
-              className="w-full mt-1 p-2 border rounded-lg"
-              {...register("gender", { required: "Gender is required" })}
-            >
-              <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-            {errors.gender && (
-              <span className="text-red-500 text-sm">
-                {errors.gender.message}
-              </span>
-            )}
-          </div>
-
           {/* Description */}
           <InputField
             label="Description"
@@ -148,10 +132,10 @@ const USUserInfo = ({ UsersData, refetch }) => {
           />
 
           {/* Social Links Section */}
-          <div className="px-5 py-8 bg-white shadow-lg rounded-lg mx-auto">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
+          <div className="px-5 py-8 bg-white shadow-lg rounded-lg mx-auto space-y-3 hover:scale-105">
+            <label className="block text-gray-700 font-semibold">
               Social Links
-            </h2>
+            </label>
             <div className="grid grid-cols-2 gap-5">
               {socialLinks.map(({ name, icon: Icon, placeholder }) => (
                 <div key={name} className="flex items-center">
@@ -163,6 +147,7 @@ const USUserInfo = ({ UsersData, refetch }) => {
                     {...register(`socialLinks.${name}`, {
                       pattern: {
                         value:
+                          // eslint-disable-next-line no-useless-escape
                           /^(https?:\/\/)?(www\.)?[a-zA-Z0-9(\.\?)?]+(\.com|\.me)\/[a-zA-Z0-9(\.\?)?]+/,
                         message: `Invalid ${
                           name.charAt(0).toUpperCase() + name.slice(1)
