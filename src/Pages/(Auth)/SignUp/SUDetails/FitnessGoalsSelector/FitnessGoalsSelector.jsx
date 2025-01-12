@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
-import  { useState } from "react";
+import { useState } from "react";
 import Select from "react-select";
 
 const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
+  // Initialize the list of all available fitness goals
   const [availableGoals, setAvailableGoals] = useState([
     { value: "Weight Loss", label: "Weight Loss" },
     { value: "Muscle Gain", label: "Muscle Gain" },
@@ -21,6 +22,7 @@ const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
     { value: "Posture Correction", label: "Posture Correction" },
   ]);
 
+  // Handle drop event to add a goal from the dragged item
   const handleDrop = (event) => {
     event.preventDefault();
     const goal = event.dataTransfer.getData("goal");
@@ -31,6 +33,7 @@ const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
     }
   };
 
+  // Handle selecting a goal from the dropdown
   const handleSelect = (option) => {
     if (!selectedGoals.includes(option.value)) {
       setSelectedGoals((prev) => [...prev, option.value]);
@@ -38,44 +41,46 @@ const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
     }
   };
 
+  // Remove a goal from selectedGoals and add it back to availableGoals
   const removeGoal = (goal) => {
     setSelectedGoals((prev) => prev.filter((g) => g !== goal));
     const removedGoal = { value: goal, label: goal };
-    setAvailableGoals((prev) => [...prev, removedGoal]);
+    setAvailableGoals((prev) =>
+      [...prev, removedGoal].sort((a, b) => a.label.localeCompare(b.label))
+    );
   };
 
   return (
     <div className="space-y-4">
-      <div>
-        {/* My Goals */}
-        <div
-          className="w-full border rounded-lg "
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={handleDrop}
-        >
-          <h5 className="text-lg font-semibold py-2">My Goals</h5>
-          <div className="flex flex-wrap gap-2 bg-white py-4 px-2">
-            {selectedGoals.map((goal) => (
-              <span
-                key={goal}
-                className="px-3 py-1 bg-[#F72C5B] text-white rounded-full cursor-pointer"
-                onClick={() => removeGoal(goal)}
-              >
-                {goal} ✕
-              </span>
-            ))}
-          </div>
+      {/* My Goals Section */}
+      <div
+        className="w-full"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={handleDrop}
+      >
+        <h5 className="text-lg font-semibold py-2">My Goals</h5>
+        <div className="flex flex-wrap gap-2 bg-white py-4 px-2">
+          {selectedGoals.map((goal) => (
+            <span
+              key={goal}
+              className="px-3 py-1 bg-[#F72C5B] text-white rounded-full cursor-pointer"
+              onClick={() => removeGoal(goal)}
+            >
+              {goal} ✕
+            </span>
+          ))}
         </div>
+      </div>
 
-        <div className="mb-4 pt-2">
-          <Select
-            options={availableGoals}
-            onChange={handleSelect}
-            placeholder="Search and select goals..."
-            isSearchable
-            className="basic-multi-select"
-          />
-        </div>
+      {/* Selector Dropdown */}
+      <div className="mb-4 pt-2">
+        <Select
+          options={availableGoals}
+          onChange={handleSelect}
+          placeholder="Search and select goals..."
+          isSearchable
+          className="basic-multi-select"
+        />
       </div>
     </div>
   );

@@ -175,13 +175,14 @@ const SUDetails = () => {
       }}
     >
       <div className="w-full max-w-7xl shadow-md rounded-tl-[50px] rounded-br-[50px] p-10 bg-white bg-opacity-90">
-        <div className="pb-5">
-          <h4 className="text-3xl font-bold text-center text-[#F72C5B]">
-            Data Form
-          </h4>
-        </div>
+        {/* Title */}
+        <h4 className="text-3xl font-bold text-center text-[#F72C5B] pb-5">
+          Data Form
+        </h4>
 
+        {/* Forms */}
         <form onSubmit={handleSubmit(onSubmit)}>
+          {/* Content */}
           <div className="flex gap-10 pb-10">
             {/* Left Side Data */}
             <div className="w-1/2 space-y-4">
@@ -256,7 +257,7 @@ const SUDetails = () => {
               </div>
 
               {/* Gender */}
-              <div>
+              <div className="">
                 <label className="block text-gray-700 font-semibold text-xl pb-2">
                   Gender
                 </label>
@@ -298,6 +299,7 @@ const SUDetails = () => {
               {loading ? "Submitting..." : "Create Account"}
             </button>
           </div>
+          
         </form>
       </div>
     </div>

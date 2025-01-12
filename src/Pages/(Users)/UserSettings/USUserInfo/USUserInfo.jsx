@@ -3,8 +3,20 @@ import { IoSettings } from "react-icons/io5";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import { FaFacebook, FaInstagram, FaTelegram, FaTwitter } from "react-icons/fa";
+import FitnessGoalsSelector from "../../../(Auth)/SignUp/SUDetails/FitnessGoalsSelector/FitnessGoalsSelector";
+import { useState } from "react";
+import useAuth from "../../../../Hooks/useAuth";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 const USUserInfo = ({ UsersData, refetch }) => {
+  const { user } = useAuth();
+  const axiosPublic = useAxiosPublic();
+
+  const [selectedGoals, setSelectedGoals] = useState(
+    UsersData?.selectedGoals || []
+  );
+
+  // React Hook Form setup
   const {
     register,
     handleSubmit,
@@ -20,16 +32,30 @@ const USUserInfo = ({ UsersData, refetch }) => {
     },
   });
 
-  const onSubmit = (data) => {
-    Swal.fire({
-      icon: "success",
-      title: "User Info Submitted",
-      text: "The form has been submitted successfully!",
-    });
-    console.log(data);
-    if (refetch) refetch();
+  // Submit handler
+  const onSubmit = async (data) => {
+    try {
+      const updatedData = { ...data, selectedGoals, email: user?.email };
+      const response = await axiosPublic.patch("/Users", updatedData);
+
+      if (response.status === 200) {
+        Swal.fire({
+          icon: "success",
+          title: "User Info Submitted",
+          text: response.data.message,
+        });
+        refetch();
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Update Failed",
+        text: error.response?.data?.message || "An error occurred.",
+      });
+    }
   };
 
+  // Reusable Input Field component
   const InputField = ({
     label,
     type = "text",
@@ -38,7 +64,7 @@ const USUserInfo = ({ UsersData, refetch }) => {
     validation,
     error,
   }) => (
-    <div className="bg-white p-3 space-y-3 shadow-xl hover:scale-105">
+    <div className="bg-white p-3 shadow-xl space-y-2 py-5">
       <label className="block text-gray-700 font-semibold">{label}</label>
       {type === "textarea" ? (
         <textarea
@@ -58,6 +84,7 @@ const USUserInfo = ({ UsersData, refetch }) => {
     </div>
   );
 
+  // Social links configuration
   const socialLinks = [
     { name: "facebook", icon: FaFacebook, placeholder: "Facebook URL" },
     { name: "instagram", icon: FaInstagram, placeholder: "Instagram URL" },
@@ -66,20 +93,19 @@ const USUserInfo = ({ UsersData, refetch }) => {
   ];
 
   return (
-    <div className="w-full min-h-screen mx-auto bg-gray-200">
+    <div className="w-full min-h-screen bg-gray-200">
       {/* Header */}
-      <div className="bg-gray-400 px-5 py-2">
-        <p className="flex gap-2 items-center text-xl font-semibold italic text-white">
-          <IoSettings />
-          User Info Settings
+      <header className="bg-gray-400 px-5 py-2">
+        <p className="flex items-center gap-2 text-xl font-semibold italic text-white">
+          <IoSettings /> User Info Settings
         </p>
-      </div>
+      </header>
 
       {/* Form Section */}
-      <div className="px-5 py-4 ">
+      <main className="px-5 py-4">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-5/6 space-y-3 bg-slate-100 p-5 rounded-xl"
+          className="space-y-4 bg-slate-100 p-10 rounded-xl mx-auto"
         >
           {/* Full Name */}
           <InputField
@@ -131,8 +157,16 @@ const USUserInfo = ({ UsersData, refetch }) => {
             error={errors.description}
           />
 
-          {/* Social Links Section */}
-          <div className="px-5 py-8 bg-white shadow-lg rounded-lg mx-auto space-y-3 hover:scale-105">
+          {/* Fitness Goals Selector */}
+          <div className="bg-white p-3 shadow-xl">
+            <FitnessGoalsSelector
+              selectedGoals={selectedGoals}
+              setSelectedGoals={setSelectedGoals}
+            />
+          </div>
+
+          {/* Social Links */}
+          <div className="bg-white p-5 shadow-xl">
             <label className="block text-gray-700 font-semibold">
               Social Links
             </label>
@@ -169,13 +203,13 @@ const USUserInfo = ({ UsersData, refetch }) => {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="bg-gradient-to-br from-green-600 to-green-400 hover:from-green-500 hover:to-green-300 text-white font-semibold px-5 py-3 rounded-lg"
+              className="bg-gradient-to-br from-green-600 to-green-400 hover:from-green-500 hover:to-green-300 text-white font-semibold px-12 py-3 rounded-lg"
             >
               Save Settings
             </button>
           </div>
         </form>
-      </div>
+      </main>
     </div>
   );
 };
