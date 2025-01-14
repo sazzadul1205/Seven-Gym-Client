@@ -7,6 +7,7 @@ import USUserImage from "./USUserImage/USUserImage";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { Link } from "react-router";
 import USUserInfo from "./USUserInfo/USUserInfo";
+import USAwards from "./USAwards/USAwards";
 
 const UserSettings = () => {
   const { user } = useAuth();
@@ -61,7 +62,7 @@ const UserSettings = () => {
       id: "tab3",
       Icon: "https://i.ibb.co.com/dmbrdkq/trophy.png",
       title: "Awards Settings",
-      content: "Here is the content for Tab 3.",
+      content: <USAwards UsersData={UsersData} refetch={refetch} />,
     },
     // Add more tabs as needed
   ];

@@ -102,10 +102,10 @@ const USUserInfo = ({ UsersData, refetch }) => {
       </header>
 
       {/* Form Section */}
-      <main className="px-5 py-4">
+      <main className="py-4">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4 bg-slate-100 p-10 rounded-xl mx-auto"
+          className="space-y-4 px-5 pr-28 rounded-xl mx-auto"
         >
           {/* Full Name */}
           <InputField
@@ -170,7 +170,7 @@ const USUserInfo = ({ UsersData, refetch }) => {
             <label className="block text-gray-700 font-semibold">
               Social Links
             </label>
-            <div className="grid grid-cols-2 gap-5">
+            <div className="grid grid-cols-2 gap-5 mt-5">
               {socialLinks.map(({ name, icon: Icon, placeholder }) => (
                 <div key={name} className="flex items-center">
                   <Icon className="mr-3 text-2xl text-gray-600" />
