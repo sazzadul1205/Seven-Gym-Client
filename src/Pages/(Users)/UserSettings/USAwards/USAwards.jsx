@@ -4,6 +4,7 @@ import { FaRegStar, FaStar, FaRegTrashAlt, FaTrophy } from "react-icons/fa";
 import { CiViewTable } from "react-icons/ci";
 import { IoGridOutline } from "react-icons/io5";
 import { ImCross } from "react-icons/im";
+import AddAwardModal from "./AddAwardModal/AddAwardModal";
 
 const USAwards = ({ UsersData, refetch }) => {
   // State to manage the view mode (table or grid)
@@ -23,6 +24,8 @@ const USAwards = ({ UsersData, refetch }) => {
       )
     );
   };
+
+  console.log(AddAwardData);
 
   return (
     <div className="w-full bg-gray-200 min-h-screen">
@@ -219,7 +222,7 @@ const USAwards = ({ UsersData, refetch }) => {
             />
           </div>
           {/* Content Part */}
-          <AddAwardData setAddAwardData={setAddAwardData} />
+          <AddAwardModal setAddAwardData={setAddAwardData} />
         </div>
       </dialog>
     </div>
