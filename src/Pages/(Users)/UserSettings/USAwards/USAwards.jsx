@@ -5,11 +5,11 @@ import { CiViewTable } from "react-icons/ci";
 import { IoGridOutline } from "react-icons/io5";
 import { ImCross } from "react-icons/im";
 import AddAwardModal from "./AddAwardModal/AddAwardModal";
+import { HiOutlineRefresh } from "react-icons/hi";
 
 const USAwards = ({ UsersData, refetch }) => {
   // State to manage the view mode (table or grid)
   const [viewMode, setViewMode] = useState("table");
-  const [AddAwardData, setAddAwardData] = useState();
 
   // State to manage awards with favorites
   const [awards, setAwards] = useState(
@@ -24,8 +24,6 @@ const USAwards = ({ UsersData, refetch }) => {
       )
     );
   };
-
-  console.log(AddAwardData);
 
   return (
     <div className="w-full bg-gray-200 min-h-screen">
@@ -67,6 +65,9 @@ const USAwards = ({ UsersData, refetch }) => {
               {/* Grid Icon */}
               <IoGridOutline className="swap-on h-8 w-8 text-blue-600" />
             </label>
+            <button onClick={refetch()}>
+              <HiOutlineRefresh className="h-8 w-8" />
+            </button>
           </div>
         </div>
 
@@ -222,7 +223,7 @@ const USAwards = ({ UsersData, refetch }) => {
             />
           </div>
           {/* Content Part */}
-          <AddAwardModal setAddAwardData={setAddAwardData} />
+          <AddAwardModal refetch={refetch} />
         </div>
       </dialog>
     </div>

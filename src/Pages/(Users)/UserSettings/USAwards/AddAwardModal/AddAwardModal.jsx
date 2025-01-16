@@ -6,10 +6,11 @@ import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import useAuth from "../../../../../Hooks/useAuth";
 
+// Image Hosting API configuration
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Key}`;
 
-const AddAwardModal = ({ setAddAwardData }) => {
+const AddAwardModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
   const { user } = useAuth();
 
@@ -25,6 +26,7 @@ const AddAwardModal = ({ setAddAwardData }) => {
     formState: { errors },
   } = useForm();
 
+  // Close the modal and reset the form
   const closeModal = () => {
     document.getElementById("Add_Award_Modal").close();
     reset();
@@ -32,6 +34,7 @@ const AddAwardModal = ({ setAddAwardData }) => {
     setImageFile(null);
   };
 
+  // Handle image upload preview
   const handleImageUpload = (file) => {
     if (!file) return;
     const reader = new FileReader();
@@ -43,10 +46,23 @@ const AddAwardModal = ({ setAddAwardData }) => {
     reader.readAsDataURL(file);
   };
 
+  // Generate a unique award code based on email and a 16-bit random code
+  const generateAwardCode = (email) => {
+    // Generate a 16-bit random number
+    const randomValue = Math.floor(Math.random() * 65536); // 16-bit random value (0 - 65535)
+
+    return `${email}-${randomValue.toString(16).padStart(4, "0")}`;
+  };
+
+  // Handle form submission and award creation
   const handleFormSubmit = async (data) => {
     setLoading(true);
     let uploadedImageUrl = null;
 
+    // Generate award code based on the user email and 16-bit random number
+    const awardCode = generateAwardCode(user.email);
+
+    // Image upload logic
     if (imageFile) {
       const formData = new FormData();
       formData.append("image", imageFile);
@@ -68,16 +84,46 @@ const AddAwardModal = ({ setAddAwardData }) => {
       }
     }
 
-    const formDataWithImage = { ...data, awardIcon: uploadedImageUrl };
-    setAddAwardData(formDataWithImage);
-    setLoading(false);
-    closeModal();
+    // Construct the final data to be sent
+    const formDataWithImage = {
+      ...data,
+      awardIcon: uploadedImageUrl,
+      awardCode,
+      favorite: false,
+    };
 
-    Swal.fire({
-      icon: "success",
-      title: "Award Added Successfully",
-      text: "The award has been added successfully!",
-    });
+    try {
+      // Send data to the /User/Add_Award endpoint
+      const response = await axiosPublic.post("/Users/Add_Award", {
+        email: user.email,
+        award: formDataWithImage,
+      });
+
+      if (response.status === 200) {
+        Swal.fire({
+          icon: "success",
+          title: "Award Added Successfully",
+          text: "The award has been added successfully!",
+        });
+        refetch();
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Award Addition Failed",
+          text: response.data.message || "Something went wrong.",
+        });
+      }
+    } catch (error) {
+      console.error("Error posting award data:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Award Addition Failed",
+        text: "Failed to add the award. Please try again.",
+      });
+    } finally {
+      setLoading(false);
+      closeModal();
+    }
   };
 
   return (
@@ -219,7 +265,14 @@ const AddAwardModal = ({ setAddAwardData }) => {
           } font-semibold rounded-xl`}
           disabled={loading}
         >
-          {loading ? "Saving..." : "Save"}
+          {loading ? (
+            <div className="flex gap-3">
+              <p>Saving...</p>
+              <span className="loading loading-spinner loading-sm"></span>
+            </div>
+          ) : (
+            "Save"
+          )}
         </button>
       </div>
     </form>
