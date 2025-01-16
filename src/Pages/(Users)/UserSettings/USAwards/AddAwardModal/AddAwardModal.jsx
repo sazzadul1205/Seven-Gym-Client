@@ -2,9 +2,20 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FcAddImage } from "react-icons/fc";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import Swal from "sweetalert2";
+import useAuth from "../../../../../Hooks/useAuth";
+
+const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
+const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Key}`;
 
 const AddAwardModal = ({ setAddAwardData }) => {
+  const axiosPublic = useAxiosPublic();
+  const { user } = useAuth();
+
   const [previewImage, setPreviewImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -16,41 +27,74 @@ const AddAwardModal = ({ setAddAwardData }) => {
 
   const closeModal = () => {
     document.getElementById("Add_Award_Modal").close();
-    reset(); // Reset form after closing the modal
-    setPreviewImage(null); // Clear the preview image
-  };
-
-  const handleFormSubmit = (data) => {
-    setAddAwardData(data); // Pass form data to parent or handle directly
-    closeModal();
+    reset();
+    setPreviewImage(null);
+    setImageFile(null);
   };
 
   const handleImageUpload = (file) => {
+    if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      setPreviewImage(reader.result); // Set the image preview
-      setValue("icon", reader.result); // Update the form state
+      setPreviewImage(reader.result);
+      setValue("awardIcon", reader.result);
+      setImageFile(file);
     };
     reader.readAsDataURL(file);
   };
 
+  const handleFormSubmit = async (data) => {
+    setLoading(true);
+    let uploadedImageUrl = null;
+
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("image", imageFile);
+
+      try {
+        const res = await axiosPublic.post(Image_Hosting_API, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        uploadedImageUrl = res.data.data.display_url;
+      } catch (error) {
+        console.error("Failed to upload image:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Image Upload Failed",
+          text: "Failed to upload the image. Please try again.",
+        });
+        setLoading(false);
+        return;
+      }
+    }
+
+    const formDataWithImage = { ...data, awardIcon: uploadedImageUrl };
+    setAddAwardData(formDataWithImage);
+    setLoading(false);
+    closeModal();
+
+    Swal.fire({
+      icon: "success",
+      title: "Award Added Successfully",
+      text: "The award has been added successfully!",
+    });
+  };
+
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-      {/* Icon URL */}
+      {/* Award Icon */}
       <div className="border-y border-gray-300 my-2 py-3">
         <label className="block text-lg font-medium text-center pb-2">
-          Icon URL
+          Award Icon
         </label>
         <div
           className="mx-auto w-[200px] h-[200px] border border-dashed border-black p-5 rounded-full cursor-pointer flex items-center justify-center overflow-hidden relative"
           onClick={() => document.getElementById("iconUploadInput").click()}
-          onDragOver={(e) => e.preventDefault()} // Allow drag-over event
+          onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => {
             e.preventDefault();
             const file = e.dataTransfer.files[0];
-            if (file) {
-              handleImageUpload(file);
-            }
+            handleImageUpload(file);
           }}
         >
           {previewImage ? (
@@ -68,49 +112,66 @@ const AddAwardModal = ({ setAddAwardData }) => {
           id="iconUploadInput"
           accept="image/*"
           style={{ display: "none" }}
-          onChange={(e) => {
-            const file = e.target.files[0];
-            if (file) {
-              handleImageUpload(file);
-            }
-          }}
+          onChange={(e) => handleImageUpload(e.target.files[0])}
         />
         <input
           type="hidden"
-          {...register("icon", {
-            required: "Icon is required",
-          })}
+          {...register("awardIcon", { required: "Award Icon is required" })}
         />
-        {errors.icon && (
-          <span className="text-red-500 text-sm">{errors.icon.message}</span>
+        {errors.awardIcon && (
+          <span className="text-red-500 text-sm">
+            {errors.awardIcon.message}
+          </span>
         )}
       </div>
 
-      {/* Class Name */}
+      {/* Award Name */}
       <div>
-        <label className="block text-sm font-medium">Class Name</label>
+        <label className="block text-sm font-medium pb-2">Award Name</label>
         <input
           type="text"
-          {...register("className", {
-            required: "Class Name is required",
-          })}
-          className="input input-bordered w-full"
+          {...register("awardName", { required: "Award Name is required" })}
+          className="input input-bordered rounded-2xl w-full"
         />
-        {errors.className && (
+        {errors.awardName && (
           <span className="text-red-500 text-sm">
-            {errors.className.message}
+            {errors.awardName.message}
+          </span>
+        )}
+      </div>
+
+      {/* Award Ranking */}
+      <div>
+        <label className="block text-sm font-medium pb-2">Award Ranking</label>
+        <input
+          list="awardRankings"
+          {...register("awardRanking", {
+            required: "Award Ranking is required",
+          })}
+          className="input input-bordered rounded-2xl w-full"
+          placeholder="Select or type Award Ranking"
+        />
+        <datalist id="awardRankings">
+          <option value="Bronze" />
+          <option value="Silver" />
+          <option value="Gold" />
+          <option value="1st" />
+          <option value="2nd" />
+          <option value="3rd" />
+        </datalist>
+        {errors.awardRanking && (
+          <span className="text-red-500 text-sm">
+            {errors.awardRanking.message}
           </span>
         )}
       </div>
 
       {/* Description */}
       <div>
-        <label className="block text-sm font-medium">Description</label>
+        <label className="block text-sm font-medium pb-2">Description</label>
         <textarea
-          {...register("description", {
-            required: "Description is required",
-          })}
-          className="textarea textarea-bordered w-full"
+          {...register("description", { required: "Description is required" })}
+          className="textarea textarea-bordered rounded-2xl w-full"
         ></textarea>
         {errors.description && (
           <span className="text-red-500 text-sm">
@@ -121,13 +182,11 @@ const AddAwardModal = ({ setAddAwardData }) => {
 
       {/* Date Awarded */}
       <div>
-        <label className="block text-sm font-medium">Date Awarded</label>
+        <label className="block text-sm font-medium pb-2">Date Awarded</label>
         <input
           type="date"
-          {...register("dateAwarded", {
-            required: "Date Awarded is required",
-          })}
-          className="input input-bordered w-full"
+          {...register("dateAwarded", { required: "Date Awarded is required" })}
+          className="input input-bordered rounded-2xl w-full"
         />
         {errors.dateAwarded && (
           <span className="text-red-500 text-sm">
@@ -136,47 +195,31 @@ const AddAwardModal = ({ setAddAwardData }) => {
         )}
       </div>
 
-      {/* Instructor */}
+      {/* Awarded By */}
       <div>
-        <label className="block text-sm font-medium">Instructor</label>
+        <label className="block text-sm font-medium pb-2">Awarded By</label>
         <input
           type="text"
-          {...register("instructor", {
-            required: "Instructor is required",
-          })}
-          className="input input-bordered w-full"
+          {...register("awardedBy", { required: "Awarded By is required" })}
+          className="input input-bordered rounded-2xl w-full"
         />
-        {errors.instructor && (
+        {errors.awardedBy && (
           <span className="text-red-500 text-sm">
-            {errors.instructor.message}
+            {errors.awardedBy.message}
           </span>
         )}
       </div>
 
-      {/* Level */}
-      <div>
-        <label className="block text-sm font-medium">Level</label>
-        <select
-          {...register("level", { required: "Level is required" })}
-          className="select select-bordered w-full"
-        >
-          <option value="">Select Level</option>
-          <option value="Bronze">Bronze</option>
-          <option value="Silver">Silver</option>
-          <option value="Gold">Gold</option>
-        </select>
-        {errors.level && (
-          <span className="text-red-500 text-sm">{errors.level.message}</span>
-        )}
-      </div>
-
-      {/* Submit and Close Buttons */}
+      {/* Submit Button */}
       <div className="modal-action">
-        <button type="submit" className="btn btn-primary">
-          Save
-        </button>
-        <button type="button" className="btn" onClick={closeModal}>
-          Close
+        <button
+          type="submit"
+          className={`py-3 mt-3 px-10 ${
+            loading ? "bg-gray-400" : "bg-emerald-400 hover:bg-emerald-500"
+          } font-semibold rounded-xl`}
+          disabled={loading}
+        >
+          {loading ? "Saving..." : "Save"}
         </button>
       </div>
     </form>
