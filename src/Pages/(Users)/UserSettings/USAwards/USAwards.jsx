@@ -8,6 +8,7 @@ import { HiOutlineRefresh } from "react-icons/hi";
 
 import AddAwardModal from "./AddAwardModal/AddAwardModal";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import Swal from "sweetalert2";
 
 const USAwards = ({ UsersData, refetch }) => {
   const axiosPublic = useAxiosPublic();
@@ -47,12 +48,56 @@ const USAwards = ({ UsersData, refetch }) => {
             i === index ? { ...award, favorite: !award.favorite } : award
           )
         );
+        refetch();
       } else {
         alert(response.data.message || "Failed to update favorite status.");
       }
     } catch (error) {
       console.error("Error updating favorite status:", error);
       alert("Failed to update favorite status. Please try again.");
+    }
+  };
+
+  // Delete an award
+  const deleteAward = async (index, awardCode) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await axiosPublic.delete("/Users/delete-award", {
+          data: {
+            email: UsersData.email,
+            awardCode: awardCode,
+          },
+        });
+
+        if (response.status === 200) {
+          // Update the awards list by removing the deleted award
+          setAwards((prevAwards) => prevAwards.filter((_, i) => i !== index));
+          refetch();
+        } else {
+          Swal.fire(
+            "Error",
+            response.data.message || "Failed to delete the award.",
+            "error"
+          );
+        }
+      } catch (error) {
+        console.error("Error deleting award:", error);
+        Swal.fire(
+          "Error",
+          "Failed to delete the award. Please try again.",
+          "error"
+        );
+      }
     }
   };
 
@@ -151,7 +196,10 @@ const USAwards = ({ UsersData, refetch }) => {
                       </button>
                     </td>
                     <td className="p-3 border border-gray-200">
-                      <button className="bg-gradient-to-br hover:bg-gradient-to-tl from-[#F72C5B] to-[#f72c5bb4] p-3 rounded-xl w-full">
+                      <button
+                        className="bg-gradient-to-br hover:bg-gradient-to-tl from-[#F72C5B] to-[#f72c5bb4] p-3 rounded-xl w-full"
+                        onClick={() => deleteAward(index, award.awardCode)}
+                      >
                         <FaRegTrashAlt className="text-white justify-center mx-auto" />
                       </button>
                     </td>
@@ -174,20 +222,30 @@ const USAwards = ({ UsersData, refetch }) => {
                 />
                 <h2 className="text-lg font-bold mt-3">{award.awardName}</h2>
                 <p className="text-gray-600 mt-2">{award.description}</p>
-                <button onClick={() => toggleFavorite(index, award.awardCode)}>
-                  {award.favorite ? (
-                    <FaStar className="text-yellow-400 text-2xl" />
-                  ) : (
-                    <FaRegStar className="text-gray-500 text-2xl" />
-                  )}
-                </button>
+                <div className="mt-4 flex gap-2">
+                  <button
+                    onClick={() => toggleFavorite(index, award.awardCode)}
+                  >
+                    {award.favorite ? (
+                      <FaStar className="text-yellow-400 text-2xl" />
+                    ) : (
+                      <FaRegStar className="text-gray-500 text-2xl" />
+                    )}
+                  </button>
+                  <button
+                    className="bg-gradient-to-br hover:bg-gradient-to-tl from-[#F72C5B] to-[#f72c5bb4] p-2 rounded-full"
+                    onClick={() => deleteAward(index, award.awardCode)}
+                  >
+                    <FaRegTrashAlt className="text-white text-xl" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Modal */}
+      {/* Modal */}   
       <dialog id="Add_Award_Modal" className="modal">
         <div className="modal-box">
           <div className="flex justify-between items-center">
