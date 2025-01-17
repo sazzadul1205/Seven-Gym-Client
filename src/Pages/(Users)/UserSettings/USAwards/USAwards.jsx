@@ -25,6 +25,11 @@ const USAwards = ({ UsersData, refetch }) => {
     );
   };
 
+  // Open and close modal
+  const openModal = () =>
+    document.getElementById("Add_Award_Modal").showModal();
+  const closeModal = () => document.getElementById("Add_Award_Modal").close();
+
   return (
     <div className="w-full bg-gray-200 min-h-screen">
       {/* Header Section */}
@@ -41,9 +46,7 @@ const USAwards = ({ UsersData, refetch }) => {
           <div>
             <button
               className="flex gap-3 items-center bg-gradient-to-br hover:bg-gradient-to-tr from-green-500 to-green-300 text-gray-100 hover:text-gray-500 font-semibold px-16 py-3 rounded-lg"
-              onClick={() =>
-                document.getElementById("Add_Award_Modal").showModal()
-              }
+              onClick={openModal}
             >
               + Add Awards <FaTrophy />
             </button>
@@ -65,7 +68,7 @@ const USAwards = ({ UsersData, refetch }) => {
               {/* Grid Icon */}
               <IoGridOutline className="swap-on h-8 w-8 text-blue-600" />
             </label>
-            <button onClick={refetch()}>
+            <button onClick={refetch}>
               <HiOutlineRefresh className="h-8 w-8" />
             </button>
           </div>
@@ -93,7 +96,7 @@ const USAwards = ({ UsersData, refetch }) => {
                   {/* Mapping over awards to render rows */}
                   {awards.map((award, index) => (
                     <tr
-                      key={index}
+                      key={award.id || index}
                       className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
                     >
                       <td className="p-3 border border-gray-200">
@@ -143,7 +146,7 @@ const USAwards = ({ UsersData, refetch }) => {
               {/* Mapping over awards to render cards */}
               {awards.map((award, index) => (
                 <div
-                  key={index}
+                  key={award.id || index}
                   className="bg-gradient-to-br pt-5 from-white via-gray-100 to-gray-200 shadow-lg rounded-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center text-center"
                 >
                   {/* Icon */}
@@ -219,7 +222,7 @@ const USAwards = ({ UsersData, refetch }) => {
             <h3 className="font-bold text-lg">Add Award</h3>
             <ImCross
               className="text-xl hover:text-[#F72C5B] cursor-pointer"
-              onClick={() => document.getElementById("Add_Award_Modal").close()}
+              onClick={closeModal}
             />
           </div>
           {/* Content Part */}

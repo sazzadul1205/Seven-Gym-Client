@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router";
+import { IoMdArrowRoundBack } from "react-icons/io";
+
 import useAuth from "../../../Hooks/useAuth";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import Loading from "../../../Shared/Loading/Loading";
 import USUserImage from "./USUserImage/USUserImage";
-import { IoMdArrowRoundBack } from "react-icons/io";
-import { Link } from "react-router";
 import USUserInfo from "./USUserInfo/USUserInfo";
 import USAwards from "./USAwards/USAwards";
 
@@ -23,10 +24,11 @@ const UserSettings = () => {
   } = useQuery({
     queryKey: ["UsersData"],
     queryFn: () =>
-      axiosPublic.get(`/Users?email=${user.email}`).then((res) => res.data),
+      axiosPublic.get(`/Users?email=${user?.email}`).then((res) => res.data),
   });
 
   if (UsersLoading) return <Loading />;
+
   if (UsersError) {
     console.error("Error fetching data:", UsersError);
     return (
@@ -88,22 +90,20 @@ const UserSettings = () => {
           <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2">
             User Settings Options
           </p>
-          <>
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold my-1 ${
-                  activeTab === tab.id
-                    ? "bg-gradient-to-br from-blue-500 to-blue-300 text-white border border-gray-500"
-                    : "bg-white hover:border-gray-500 hover:bg-gradient-to-br from-blue-400 to-blue-200 hover:text-white"
-                }`}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                <img src={tab.Icon} alt={tab.Icon} className="w-5" />
-                {tab.title}
-              </button>
-            ))}
-          </>
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold my-1 ${
+                activeTab === tab.id
+                  ? "bg-gradient-to-br from-blue-500 to-blue-300 text-white border border-gray-500"
+                  : "bg-white hover:border-gray-500 hover:bg-gradient-to-br from-blue-400 to-blue-200 hover:text-white"
+              }`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <img src={tab.Icon} alt="Tab Icon" className="w-5" />
+              {tab.title}
+            </button>
+          ))}
         </div>
 
         {/* Tab Content */}

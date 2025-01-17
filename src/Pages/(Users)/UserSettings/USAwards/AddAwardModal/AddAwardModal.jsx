@@ -122,6 +122,7 @@ const AddAwardModal = ({ refetch }) => {
       });
     } finally {
       setLoading(false);
+      refetch();
       closeModal();
     }
   };
