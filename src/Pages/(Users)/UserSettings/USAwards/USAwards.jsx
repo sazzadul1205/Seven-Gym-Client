@@ -4,25 +4,56 @@ import { FaRegStar, FaStar, FaRegTrashAlt, FaTrophy } from "react-icons/fa";
 import { CiViewTable } from "react-icons/ci";
 import { IoGridOutline } from "react-icons/io5";
 import { ImCross } from "react-icons/im";
-import AddAwardModal from "./AddAwardModal/AddAwardModal";
 import { HiOutlineRefresh } from "react-icons/hi";
 
+import AddAwardModal from "./AddAwardModal/AddAwardModal";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+
 const USAwards = ({ UsersData, refetch }) => {
+  const axiosPublic = useAxiosPublic();
+
   // State to manage the view mode (table or grid)
   const [viewMode, setViewMode] = useState("table");
 
-  // State to manage awards with favorites
+  // Initialize awards state with favorites
   const [awards, setAwards] = useState(
-    UsersData?.awards?.map((award) => ({ ...award, favorite: false })) || []
+    UsersData?.awards?.map((award) => ({
+      ...award,
+      favorite: award.favorite || false,
+    })) || []
   );
 
   // Toggle favorite status for an award
-  const toggleFavorite = (index) => {
-    setAwards((prevAwards) =>
-      prevAwards.map((award, i) =>
-        i === index ? { ...award, favorite: !award.favorite } : award
-      )
-    );
+  const toggleFavorite = async (index, awardCode) => {
+    const selectedAward = awards[index];
+
+    if (
+      !selectedAward.favorite &&
+      awards.filter((a) => a.favorite).length >= 5
+    ) {
+      alert("You can only mark up to 5 awards as favorites.");
+      return;
+    }
+
+    try {
+      const response = await axiosPublic.put("/Users/toggle-award-favorite", {
+        email: UsersData.email,
+        awardCode: awardCode,
+      });
+
+      if (response.status === 200) {
+        setAwards((prevAwards) =>
+          prevAwards.map((award, i) =>
+            i === index ? { ...award, favorite: !award.favorite } : award
+          )
+        );
+      } else {
+        alert(response.data.message || "Failed to update favorite status.");
+      }
+    } catch (error) {
+      console.error("Error updating favorite status:", error);
+      alert("Failed to update favorite status. Please try again.");
+    }
   };
 
   // Open and close modal
@@ -39,22 +70,19 @@ const USAwards = ({ UsersData, refetch }) => {
         </p>
       </header>
 
-      {/* Page Section */}
+      {/* Main Content */}
       <div className="p-5">
         {/* View Mode Selector */}
         <div className="flex justify-between items-center mb-5">
-          <div>
-            <button
-              className="flex gap-3 items-center bg-gradient-to-br hover:bg-gradient-to-tr from-green-500 to-green-300 text-gray-100 hover:text-gray-500 font-semibold px-16 py-3 rounded-lg"
-              onClick={openModal}
-            >
-              + Add Awards <FaTrophy />
-            </button>
-          </div>
+          <button
+            className="flex gap-3 items-center bg-gradient-to-br hover:bg-gradient-to-tr from-green-500 to-green-300 text-gray-100 hover:text-gray-500 font-semibold px-16 py-3 rounded-lg"
+            onClick={openModal}
+          >
+            + Add Award <FaTrophy />
+          </button>
           <div className="flex items-center gap-3">
             <p className="text-xl font-semibold italic">Format:</p>
             <label className="swap swap-rotate bg-blue-200 rounded-full p-2">
-              {/* Hidden Checkbox */}
               <input
                 type="checkbox"
                 checked={viewMode === "grid"}
@@ -62,10 +90,7 @@ const USAwards = ({ UsersData, refetch }) => {
                   setViewMode(viewMode === "table" ? "grid" : "table")
                 }
               />
-              {/* Table Icon */}
               <CiViewTable className="swap-off h-8 w-8 text-blue-700" />
-
-              {/* Grid Icon */}
               <IoGridOutline className="swap-on h-8 w-8 text-blue-600" />
             </label>
             <button onClick={refetch}>
@@ -75,149 +100,96 @@ const USAwards = ({ UsersData, refetch }) => {
         </div>
 
         {/* Awards Display */}
-        <>
-          {viewMode === "table" ? (
-            // Table View
-            <div className="overflow-x-auto bg-white shadow-lg rounded-lg">
-              <table className="w-full text-left border-collapse border border-gray-200">
-                <thead className="bg-blue-100">
-                  <tr>
-                    <th className="p-3 border border-gray-200">Icon</th>
-                    <th className="p-3 border border-gray-200">Class Name</th>
-                    <th className="p-3 border border-gray-200">Description</th>
-                    <th className="p-3 border border-gray-200">Date Awarded</th>
-                    <th className="p-3 border border-gray-200">Instructor</th>
-                    <th className="p-3 border border-gray-200">Level</th>
-                    <th className="p-3 border border-gray-200">Favorite</th>
-                    <th className="p-3 border border-gray-200">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* Mapping over awards to render rows */}
-                  {awards.map((award, index) => (
-                    <tr
-                      key={award.id || index}
-                      className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
-                    >
-                      <td className="p-3 border border-gray-200">
-                        <img
-                          src={award.icon}
-                          alt={`${award.className} icon`}
-                          className="w-10 h-10"
-                        />
-                      </td>
-                      <td className="p-3 border border-gray-200">
-                        {award.className}
-                      </td>
-                      <td className="p-3 border border-gray-200">
-                        {award.description}
-                      </td>
-                      <td className="p-3 border border-gray-200">
-                        {award.dateAwarded}
-                      </td>
-                      <td className="p-3 border border-gray-200">
-                        {award.instructor}
-                      </td>
-                      <td className="p-3 border border-gray-200">
-                        {award.level}
-                      </td>
-                      <td className="p-3 border border-gray-200 text-center">
-                        <button onClick={() => toggleFavorite(index)}>
-                          {award.favorite ? (
-                            <FaStar className="text-yellow-400 text-2xl" />
-                          ) : (
-                            <FaRegStar className="text-gray-500 text-2xl" />
-                          )}
-                        </button>
-                      </td>
-                      <td className="p-3 border border-gray-200">
-                        <button className="bg-gradient-to-br hover:bg-gradient-to-tl from-[#F72C5B] to-[#f72c5bb4] p-3 rounded-xl w-full">
-                          <FaRegTrashAlt className="text-white justify-center mx-auto" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            // Grid View
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Mapping over awards to render cards */}
-              {awards.map((award, index) => (
-                <div
-                  key={award.id || index}
-                  className="bg-gradient-to-br pt-5 from-white via-gray-100 to-gray-200 shadow-lg rounded-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center text-center"
-                >
-                  {/* Icon */}
-                  <div className="bg-blue-100 p-3 rounded-full shadow-md">
-                    <img
-                      src={award.icon}
-                      alt={`${award.className} icon`}
-                      className="w-20 h-20 object-contain"
-                    />
-                  </div>
-
-                  {/* Title and Description */}
-                  <div className="py-2">
-                    <h2 className="text-lg font-bold text-gray-800 mt-4">
-                      {award.className}
-                    </h2>
-                    <p className="text-sm text-gray-600 mt-2">
+        {viewMode === "table" ? (
+          <div className="overflow-x-auto bg-white shadow-lg rounded-lg">
+            <table className="w-full text-left border-collapse border border-gray-200">
+              <thead className="bg-blue-100">
+                <tr>
+                  <th className="p-3 border border-gray-200">Icon</th>
+                  <th className="p-3 border border-gray-200">Award Name</th>
+                  <th className="p-3 border border-gray-200">Description</th>
+                  <th className="p-3 border border-gray-200">Date Awarded</th>
+                  <th className="p-3 border border-gray-200">Awarded By</th>
+                  <th className="p-3 border border-gray-200">Favorite</th>
+                  <th className="p-3 border border-gray-200">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {awards.map((award, index) => (
+                  <tr
+                    key={award.awardCode || index}
+                    className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
+                  >
+                    <td className="p-3 border border-gray-200">
+                      <img
+                        src={award.awardIcon || ""}
+                        alt={award.awardName || "Award"}
+                        className="w-10 h-10"
+                      />
+                    </td>
+                    <td className="p-3 border border-gray-200">
+                      {award.awardName}
+                    </td>
+                    <td className="p-3 border border-gray-200">
                       {award.description}
-                    </p>
-                  </div>
-
-                  {/* Award Details */}
-                  <div className="w-full border-t border-gray-300 pt-5 px-5">
-                    <div className="flex justify-between">
-                      <div className="text-left">
-                        <p className="text-sm font-medium text-gray-700">
-                          Date Awarded:
-                        </p>
-                        <p className="text-sm font-medium text-gray-700">
-                          Instructor:
-                        </p>
-                        <p className="text-sm font-medium text-gray-700">
-                          Level:
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm text-gray-500">
-                          {award.dateAwarded}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {award.instructor}
-                        </p>
-                        <p className="text-sm text-gray-500">{award.level}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Favorite and Delete Actions */}
-                  <div className="flex justify-between mt-4 w-full bg-gray-200 py-3 px-5">
-                    <button onClick={() => toggleFavorite(index)}>
-                      {award.favorite ? (
-                        <FaStar className="text-yellow-400 text-2xl" />
-                      ) : (
-                        <FaRegStar className="text-gray-500 text-2xl" />
-                      )}
-                    </button>
-                    <button className="bg-gradient-to-br hover:bg-gradient-to-tl from-[#F72C5B] to-[#f72c5bb4] p-3 rounded-xl px-10">
-                      <FaRegTrashAlt className="text-white justify-center mx-auto" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
+                    </td>
+                    <td className="p-3 border border-gray-200">
+                      {award.dateAwarded}
+                    </td>
+                    <td className="p-3 border border-gray-200">
+                      {award.awardedBy}
+                    </td>
+                    <td className="p-3 border border-gray-200 text-center">
+                      <button
+                        onClick={() => toggleFavorite(index, award.awardCode)}
+                      >
+                        {award.favorite ? (
+                          <FaStar className="text-yellow-400 text-2xl" />
+                        ) : (
+                          <FaRegStar className="text-gray-500 text-2xl" />
+                        )}
+                      </button>
+                    </td>
+                    <td className="p-3 border border-gray-200">
+                      <button className="bg-gradient-to-br hover:bg-gradient-to-tl from-[#F72C5B] to-[#f72c5bb4] p-3 rounded-xl w-full">
+                        <FaRegTrashAlt className="text-white justify-center mx-auto" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {awards.map((award, index) => (
+              <div
+                key={award.awardCode || index}
+                className="bg-white shadow-lg rounded-lg p-4 flex flex-col items-center"
+              >
+                <img
+                  src={award.awardIcon || ""}
+                  alt={award.awardName || "Award"}
+                  className="w-20 h-20 object-contain"
+                />
+                <h2 className="text-lg font-bold mt-3">{award.awardName}</h2>
+                <p className="text-gray-600 mt-2">{award.description}</p>
+                <button onClick={() => toggleFavorite(index, award.awardCode)}>
+                  {award.favorite ? (
+                    <FaStar className="text-yellow-400 text-2xl" />
+                  ) : (
+                    <FaRegStar className="text-gray-500 text-2xl" />
+                  )}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Modal */}
       <dialog id="Add_Award_Modal" className="modal">
         <div className="modal-box">
-          {/* Top Part */}
           <div className="flex justify-between items-center">
             <h3 className="font-bold text-lg">Add Award</h3>
             <ImCross
@@ -225,7 +197,6 @@ const USAwards = ({ UsersData, refetch }) => {
               onClick={closeModal}
             />
           </div>
-          {/* Content Part */}
           <AddAwardModal refetch={refetch} />
         </div>
       </dialog>
