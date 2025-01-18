@@ -16,6 +16,7 @@ const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Ke
 
 const USUserImage = ({ UsersData, refetch }) => {
   const axiosPublic = useAxiosPublic();
+  refetch();
 
   const [previewImage, setPreviewImage] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -163,7 +164,7 @@ const USUserImage = ({ UsersData, refetch }) => {
           Banner and profile Image Settings
         </p>
       </div>
-      
+
       {/* Banner Section */}
       <div className="relative p-1 px-12 pb-16 mt-5">
         <img

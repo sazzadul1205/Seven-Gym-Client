@@ -9,7 +9,7 @@ const AwardModal = ({ award, closeModal }) => {
       <div className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 p-6 rounded-lg max-w-md mx-auto shadow-2xl">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-2xl font-bold text-white">
-            {award.className} Award
+            {award.awardName} Award
           </h3>
           <button
             onClick={closeModal}
@@ -19,17 +19,17 @@ const AwardModal = ({ award, closeModal }) => {
           </button>
         </div>
         <img
-          src={award.icon}
-          alt={award.className}
+          src={award.awardIcon}
+          alt={award.awardName}
           className="w-20 h-20 mx-auto mb-4 rounded-full border-4 border-white"
         />
-        <p className="text-white text-lg">Level: {award.level}</p>
+        <p className="text-white text-lg">Level: {award.awardRanking}</p>
         <p className="mt-2 text-white">{award.description}</p>
         <p className="mt-2 text-white">
           <strong>Date Awarded:</strong> {award.dateAwarded}
         </p>
         <p className="mt-2 text-white">
-          <strong>Awarded By:</strong> {award.instructor}
+          <strong>Awarded By:</strong> {award.awardedBy}
         </p>
         <div className="flex justify-center mt-4">
           <button
@@ -85,14 +85,16 @@ const UPAchievements = ({ usersData }) => {
             className="flex items-center space-x-2 bg-white p-4 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer w-full md:w-[180px] h-[80px]" // Ensure consistent size
           >
             <img
-              src={award.icon}
-              alt={award.className}
+              src={award.awardIcon}
+              alt={award.awardName}
               className="w-12 h-12 rounded-full" // Consistent icon size
             />
             <div className="text-sm">
-              <div className="font-semibold">{award.className}</div>
-              <div className={`text-gray-600 ${getLevelColor(award.level)}`}>
-                {award.level} Rank
+              <div className="font-semibold">{award.awardName}</div>
+              <div
+                className={`text-gray-600 ${getLevelColor(award.awardRanking)}`}
+              >
+                {award.awardRanking} Rank
               </div>
             </div>
           </div>

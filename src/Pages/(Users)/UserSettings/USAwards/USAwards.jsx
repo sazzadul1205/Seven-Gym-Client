@@ -3,7 +3,6 @@ import { useState } from "react";
 import { FaRegStar, FaStar, FaRegTrashAlt, FaTrophy } from "react-icons/fa";
 import { CiViewTable } from "react-icons/ci";
 import { IoGridOutline } from "react-icons/io5";
-import { ImCross } from "react-icons/im";
 import { HiOutlineRefresh } from "react-icons/hi";
 
 import AddAwardModal from "./AddAwardModal/AddAwardModal";
@@ -12,11 +11,12 @@ import Swal from "sweetalert2";
 
 const USAwards = ({ UsersData, refetch }) => {
   const axiosPublic = useAxiosPublic();
+  refetch();
 
-  // State to manage the view mode (table or grid)
+  // State for view mode (table or grid)
   const [viewMode, setViewMode] = useState("table");
 
-  // Initialize awards state with favorites
+  // State for managing awards
   const [awards, setAwards] = useState(
     UsersData?.awards?.map((award) => ({
       ...award,
@@ -32,14 +32,18 @@ const USAwards = ({ UsersData, refetch }) => {
       !selectedAward.favorite &&
       awards.filter((a) => a.favorite).length >= 5
     ) {
-      alert("You can only mark up to 5 awards as favorites.");
+      Swal.fire(
+        "Limit Reached",
+        "You can only mark up to 5 awards as favorites.",
+        "warning"
+      );
       return;
     }
 
     try {
       const response = await axiosPublic.put("/Users/toggle-award-favorite", {
         email: UsersData.email,
-        awardCode: awardCode,
+        awardCode,
       });
 
       if (response.status === 200) {
@@ -50,11 +54,19 @@ const USAwards = ({ UsersData, refetch }) => {
         );
         refetch();
       } else {
-        alert(response.data.message || "Failed to update favorite status.");
+        Swal.fire(
+          "Error",
+          response.data.message || "Failed to update favorite status.",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Error updating favorite status:", error);
-      alert("Failed to update favorite status. Please try again.");
+      Swal.fire(
+        "Error",
+        "Failed to update favorite status. Please try again.",
+        "error"
+      );
     }
   };
 
@@ -73,14 +85,10 @@ const USAwards = ({ UsersData, refetch }) => {
     if (result.isConfirmed) {
       try {
         const response = await axiosPublic.delete("/Users/delete-award", {
-          data: {
-            email: UsersData.email,
-            awardCode: awardCode,
-          },
+          data: { email: UsersData.email, awardCode },
         });
 
         if (response.status === 200) {
-          // Update the awards list by removing the deleted award
           setAwards((prevAwards) => prevAwards.filter((_, i) => i !== index));
           refetch();
         } else {
@@ -101,14 +109,13 @@ const USAwards = ({ UsersData, refetch }) => {
     }
   };
 
-  // Open and close modal
+  // Modal management
   const openModal = () =>
     document.getElementById("Add_Award_Modal").showModal();
-  const closeModal = () => document.getElementById("Add_Award_Modal").close();
 
   return (
     <div className="w-full bg-gray-200 min-h-screen">
-      {/* Header Section */}
+      {/* Header */}
       <header className="bg-gray-400 px-5 py-2">
         <p className="flex items-center gap-2 text-xl font-semibold italic text-white">
           <FaTrophy /> User Awards Settings
@@ -245,18 +252,9 @@ const USAwards = ({ UsersData, refetch }) => {
         )}
       </div>
 
-      {/* Modal */}   
+      {/* Modal */}
       <dialog id="Add_Award_Modal" className="modal">
-        <div className="modal-box">
-          <div className="flex justify-between items-center">
-            <h3 className="font-bold text-lg">Add Award</h3>
-            <ImCross
-              className="text-xl hover:text-[#F72C5B] cursor-pointer"
-              onClick={closeModal}
-            />
-          </div>
-          <AddAwardModal refetch={refetch} />
-        </div>
+        <AddAwardModal RefetchData={refetch} />
       </dialog>
     </div>
   );
