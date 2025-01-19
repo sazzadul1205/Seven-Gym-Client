@@ -4,7 +4,7 @@ import UPMainInfo from "./UPDetailes/UPMainInfo";
 import UPSocialLinks from "./UPDetailes/UPSocialLinks";
 import UPTopSection from "./UPDetailes/UPTopSection";
 import UPSelectedGoals from "./UPDetailes/UPSelectedGoals";
-import UPAchievements from "./UPDetailes/UPAchievements";
+import UPAchievements from "./UPDetailes/UPAchievements/UPAchievements";
 import UPRecentWorkout from "./UPDetailes/UPRecentWorkout";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../Shared/Loading/Loading";
@@ -22,6 +22,7 @@ const UserProfile = () => {
     data: UsersData,
     isLoading: UsersLoading,
     error: UsersError,
+    refetch,
   } = useQuery({
     queryKey: ["UsersData"],
     queryFn: () =>
@@ -83,7 +84,7 @@ const UserProfile = () => {
         {/* Achievements and Notifications */}
         <div className="w-full md:w-1/2">
           {/* Achievements */}
-          <UPAchievements usersData={UsersData} />
+          <UPAchievements usersData={UsersData} refetch={refetch} />
 
           {/* Recent Workouts */}
           <UPRecentWorkout usersData={UsersData} />

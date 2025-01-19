@@ -27,15 +27,6 @@ const AddAwardModal = ({ refetch }) => {
     formState: { errors },
   } = useForm();
 
-  // Close the modal and reset the form
-  const closeModal = () => {
-    refetch();
-    document.getElementById("Add_Award_Modal").close();
-    reset();
-    setPreviewImage(null);
-    setImageFile(null);
-  };
-
   // Handle image upload preview
   const handleImageUpload = (file) => {
     if (!file) return;
@@ -107,7 +98,6 @@ const AddAwardModal = ({ refetch }) => {
           title: "Award Added Successfully",
           text: "The award has been added successfully!",
         });
-        refetch();
       } else {
         Swal.fire({
           icon: "error",
@@ -128,13 +118,22 @@ const AddAwardModal = ({ refetch }) => {
     }
   };
 
+  // Close the modal and reset the form
+  const closeModal = () => {
+    document.getElementById("Add_Award_Modal").close();
+    reset();
+    refetch();
+    setPreviewImage(null);
+    setImageFile(null);
+  };
+
   return (
     <div className="modal-box">
       <div className="flex justify-between items-center">
         <h3 className="font-bold text-lg">Add Award</h3>
         <ImCross
           className="text-xl hover:text-[#F72C5B] cursor-pointer"
-          onClick={closeModal}
+          onClick={() => document.getElementById("Add_Award_Modal").close()}
         />
       </div>
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
@@ -283,7 +282,6 @@ const AddAwardModal = ({ refetch }) => {
           >
             {loading ? (
               <div className="flex gap-3">
-                <p>Saving...</p>
                 <span className="loading loading-spinner loading-sm"></span>
               </div>
             ) : (

@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router";
+import { useNavigate, useLocation, Link } from "react-router";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
-import useAuth from "../../../Hooks/useAuth";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import Loading from "../../../Shared/Loading/Loading";
+import useAuth from "../../../Hooks/useAuth";
+
 import USUserImage from "./USUserImage/USUserImage";
 import USUserInfo from "./USUserInfo/USUserInfo";
 import USAwards from "./USAwards/USAwards";
@@ -13,7 +14,22 @@ import USAwards from "./USAwards/USAwards";
 const UserSettings = () => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
-  const [activeTab, setActiveTab] = useState("tab1"); // State to manage active tab
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Extract tab parameter from URL
+  const searchParams = new URLSearchParams(location.search);
+  const initialTab = searchParams.get("tab") || "Settings_Image";
+
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  // Update URL when activeTab changes
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set("tab", activeTab);
+    navigate({ search: params.toString() }, { replace: true });
+    window.scrollTo(0, 0); // Scroll to top
+  }, [activeTab, navigate]);
 
   // Fetch user data
   const {
@@ -49,19 +65,19 @@ const UserSettings = () => {
   // Tab data
   const tabs = [
     {
-      id: "tab1",
+      id: "Settings_Image",
       Icon: "https://i.ibb.co.com/dmNkVLF/picture.png",
       title: "User Image Settings",
       content: <USUserImage UsersData={UsersData} refetch={refetch} />,
     },
     {
-      id: "tab2",
+      id: "Settings_Info",
       Icon: "https://i.ibb.co.com/dmhH696/settings.png",
       title: "User Info Settings",
       content: <USUserInfo UsersData={UsersData} refetch={refetch} />,
     },
     {
-      id: "tab3",
+      id: "Settings_Awards",
       Icon: "https://i.ibb.co.com/dmbrdkq/trophy.png",
       title: "Awards Settings",
       content: <USAwards UsersData={UsersData} refetch={refetch} />,

@@ -11,7 +11,6 @@ import Swal from "sweetalert2";
 
 const USAwards = ({ UsersData, refetch }) => {
   const axiosPublic = useAxiosPublic();
-  refetch();
 
   // State for view mode (table or grid)
   const [viewMode, setViewMode] = useState("table");
@@ -30,11 +29,11 @@ const USAwards = ({ UsersData, refetch }) => {
 
     if (
       !selectedAward.favorite &&
-      awards.filter((a) => a.favorite).length >= 5
+      awards.filter((a) => a.favorite).length >= 6
     ) {
       Swal.fire(
         "Limit Reached",
-        "You can only mark up to 5 awards as favorites.",
+        "You can only mark up to 6 awards as favorites.",
         "warning"
       );
       return;
@@ -145,7 +144,7 @@ const USAwards = ({ UsersData, refetch }) => {
               <CiViewTable className="swap-off h-8 w-8 text-blue-700" />
               <IoGridOutline className="swap-on h-8 w-8 text-blue-600" />
             </label>
-            <button onClick={refetch}>
+            <button onClick={() => refetch()}>
               <HiOutlineRefresh className="h-8 w-8" />
             </button>
           </div>
