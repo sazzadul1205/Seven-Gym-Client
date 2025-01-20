@@ -10,6 +10,7 @@ import useAuth from "../../../Hooks/useAuth";
 import USUserImage from "./USUserImage/USUserImage";
 import USUserInfo from "./USUserInfo/USUserInfo";
 import USAwards from "./USAwards/USAwards";
+import USWorkout from "./USWorkout/USWorkout";
 
 const UserSettings = () => {
   const { user } = useAuth();
@@ -81,6 +82,12 @@ const UserSettings = () => {
       Icon: "https://i.ibb.co.com/dmbrdkq/trophy.png",
       title: "Awards Settings",
       content: <USAwards UsersData={UsersData} refetch={refetch} />,
+    },
+    {
+      id: "Settings_Workouts",
+      Icon: "https://i.ibb.co.com/nznGSDB/running.png",
+      title: "Workouts Settings",
+      content: <USWorkout UsersData={UsersData} refetch={refetch} />,
     },
     // Add more tabs as needed
   ];

@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 
 const USAwards = ({ UsersData, refetch }) => {
   const axiosPublic = useAxiosPublic();
+  refetch();
 
   // State for view mode (table or grid)
   const [viewMode, setViewMode] = useState("table");
