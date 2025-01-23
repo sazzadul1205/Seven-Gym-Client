@@ -1,9 +1,58 @@
 /* eslint-disable react/prop-types */
+import { useState } from "react";
 import { MdOutlineWorkOutline } from "react-icons/md";
 import AddWorkoutModal from "./AddWorkoutModal/AddWorkoutModal";
 
 const USWorkout = ({ UsersData, refetch }) => {
-  const { recentWorkouts = [] } = UsersData || {}; // Default to an empty array if `recentWorkouts` is undefined.
+  const { recentWorkouts = [] } = UsersData || [];
+  const [sortedWorkouts, setSortedWorkouts] = useState(recentWorkouts);
+  const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
+
+  // Function to format date
+  const formatDate = (date) => {
+    const newDate = new Date(date);
+    return newDate.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    });
+  };
+
+  // Sorting function
+  const handleSort = (key) => {
+    const newDirection =
+      sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
+    setSortConfig({ key, direction: newDirection });
+
+    const sortedData = [...recentWorkouts].sort((a, b) => {
+      if (key === "date") {
+        // Sort dates
+        return newDirection === "asc"
+          ? new Date(a[key]) - new Date(b[key])
+          : new Date(b[key]) - new Date(a[key]);
+      }
+      if (key === "intensity") {
+        // Sort intensity (Low, Moderate, High)
+        const intensityOrder = { Low: 1, Moderate: 2, High: 3 };
+        return newDirection === "asc"
+          ? intensityOrder[a[key]] - intensityOrder[b[key]]
+          : intensityOrder[b[key]] - intensityOrder[a[key]];
+      }
+      if (key === "calories" || key === "duration") {
+        // Sort numbers
+        return newDirection === "asc" ? a[key] - b[key] : b[key] - a[key];
+      }
+      // Default: Sort strings alphabetically
+      return newDirection === "asc"
+        ? a[key].localeCompare(b[key])
+        : b[key].localeCompare(a[key]);
+    });
+
+    setSortedWorkouts(sortedData);
+  };
 
   return (
     <div className="w-full bg-gray-200 min-h-screen">
@@ -34,18 +83,53 @@ const USWorkout = ({ UsersData, refetch }) => {
             <thead>
               <tr className="bg-gray-400 text-white">
                 <th className="px-4 py-2 border border-gray-300">#</th>
-                <th className="px-4 py-2 border border-gray-300">Name</th>
-                <th className="px-4 py-2 border border-gray-300">Duration</th>
-                <th className="px-4 py-2 border border-gray-300">Date</th>
-                <th className="px-4 py-2 border border-gray-300">Calories</th>
-                <th className="px-4 py-2 border border-gray-300">Location</th>
-                <th className="px-4 py-2 border border-gray-300">Type</th>
-                <th className="px-4 py-2 border border-gray-300">Intensity</th>
+                <th
+                  className="px-4 py-2 border border-gray-300 cursor-pointer"
+                  onClick={() => handleSort("name")}
+                >
+                  Name
+                </th>
+                <th
+                  className="px-4 py-2 border border-gray-300 cursor-pointer"
+                  onClick={() => handleSort("duration")}
+                >
+                  Duration
+                </th>
+                <th
+                  className="px-4 py-2 border border-gray-300 cursor-pointer"
+                  onClick={() => handleSort("date")}
+                >
+                  Date
+                </th>
+                <th
+                  className="px-4 py-2 border border-gray-300 cursor-pointer"
+                  onClick={() => handleSort("calories")}
+                >
+                  Calories
+                </th>
+                <th
+                  className="px-4 py-2 border border-gray-300 cursor-pointer"
+                  onClick={() => handleSort("location")}
+                >
+                  Location
+                </th>
+                <th
+                  className="px-4 py-2 border border-gray-300 cursor-pointer"
+                  onClick={() => handleSort("type")}
+                >
+                  Type
+                </th>
+                <th
+                  className="px-4 py-2 border border-gray-300 cursor-pointer"
+                  onClick={() => handleSort("intensity")}
+                >
+                  Intensity
+                </th>
                 <th className="px-4 py-2 border border-gray-300">Notes</th>
               </tr>
             </thead>
             <tbody>
-              {recentWorkouts.map((workout, index) => (
+              {sortedWorkouts.map((workout, index) => (
                 <tr
                   key={index}
                   className={`${
@@ -62,10 +146,10 @@ const USWorkout = ({ UsersData, refetch }) => {
                     {workout.duration}
                   </td>
                   <td className="px-4 py-2 border border-gray-300">
-                    {workout.date}
+                    {formatDate(workout.date)}
                   </td>
                   <td className="px-4 py-2 border border-gray-300">
-                    {workout.calories}
+                    {workout.calories} Kcal
                   </td>
                   <td className="px-4 py-2 border border-gray-300">
                     {workout.location}
@@ -87,7 +171,7 @@ const USWorkout = ({ UsersData, refetch }) => {
       </div>
 
       <dialog id="Add_Workout_Modal" className="modal">
-        <AddWorkoutModal />
+        <AddWorkoutModal refetch={refetch} />
       </dialog>
     </div>
   );
