@@ -1,67 +1,58 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { FaAward, FaChevronRight } from "react-icons/fa";
-import AllAwardsModal from "./AllAwardsModal/AllAwardsModal";
 import SelectedAwardModal from "./SelectedAwardModal/SelectedAwardModal";
 
+// Main component for displaying user achievements
 const UPAchievements = ({ usersData, refetch }) => {
+  // State to manage the selected award
   const [selectedAward, setSelectedAward] = useState(null);
-  const [isAllAwardsModalOpen, setIsAllAwardsModalOpen] = useState(false);
-  const [isSelectedAwardModalOpen, setIsSelectedAwardModalOpen] =
-    useState(false);
 
-  // Function to open the selected award modal
-  const openSelectedAwardModal = (award) => {
-    setSelectedAward(award);
-    setIsSelectedAwardModalOpen(true);
-  };
-
-  // Function to close the selected award modal
-  const closeSelectedAwardModal = () => {
-    setIsSelectedAwardModalOpen(false);
-    setSelectedAward(null);
-  };
-
-  // Function to get the color for each award level
+  // Function to determine the color based on the award level
   const getLevelColor = (level) => {
     switch (level) {
       case "Gold Rank":
-        return "text-[#FFD700]"; // Gold Color
+        return "text-[#FFD700]";
       case "Silver Rank":
-        return "text-[#C0C0C0]"; // Silver Color
+        return "text-[#C0C0C0]";
       case "Bronze Rank":
-        return "text-[#CD7F32]"; // Bronze Color
+        return "text-[#CD7F32]";
       default:
-        return "text-[#A9A9A9]"; // Default gray color
+        return "text-[#A9A9A9]";
     }
   };
 
-  // Filter favorite awards
+  // Function to handle when an award is clicked
+  const handleAwardClick = (award) => {
+    setSelectedAward(award); // Set the selected award
+    document.getElementById("Selected_Award_Modal").showModal(); // Show the modal
+  };
+
+  // Filter favorite awards from the usersData
   const favoriteAwards = usersData?.awards?.filter((award) => award.favorite);
 
   return (
-    <div className=" bg-[#F8F9FA] py-2 px-8 pb-10 rounded-xl shadow-lg">
+    <div className="bg-[#F8F9FA] py-2 px-8 pb-10 rounded-xl shadow-lg">
+      {/* Header section with title and "View More" button */}
       <div className="flex items-center justify-between border-b py-2">
         <div className="flex items-center space-x-2">
           <FaAward className="text-[#FFD700] text-xl" />
           <h2 className="text-xl font-semibold">Favorite Awards</h2>
         </div>
-        <button
-          className="flex items-center space-x-2 hover:text-gray-400"
-          onClick={() => setIsAllAwardsModalOpen(true)}
-        >
+        <button className="flex items-center space-x-2 hover:text-gray-400">
           <h2 className="text-xl font-semibold">View More</h2>
           <FaChevronRight className="text-xl" />
         </button>
       </div>
 
-      {/* Favorite Awards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Grid to display favorite awards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
         {favoriteAwards?.length > 0 ? (
+          // Map through favorite awards and render each one
           favoriteAwards.map((award, index) => (
             <div
               key={index}
-              onClick={() => openSelectedAwardModal(award)}
+              onClick={() => handleAwardClick(award)}
               className="flex items-center space-x-2 bg-white p-4 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer w-full md:w-[180px] h-[80px]"
             >
               <img
@@ -82,26 +73,15 @@ const UPAchievements = ({ usersData, refetch }) => {
             </div>
           ))
         ) : (
+          // Display message if no favorite awards are available
           <p className="text-[#6C757D]">No favorite awards to display.</p>
         )}
       </div>
 
-      {/* All Awards Modal */}
-      {isAllAwardsModalOpen && (
-        <AllAwardsModal
-          usersData={usersData}
-          refetch={refetch}
-          onClose={() => setIsAllAwardsModalOpen(false)}
-        />
-      )}
-
-      {/* Selected Award Modal */}
-      {isSelectedAwardModalOpen && selectedAward && (
-        <SelectedAwardModal
-          award={selectedAward}
-          onClose={closeSelectedAwardModal}
-        />
-      )}
+      {/* Modal for displaying details of the selected award */}
+      <dialog id="Selected_Award_Modal" className="modal">
+        <SelectedAwardModal award={selectedAward} />
+      </dialog>
     </div>
   );
 };
