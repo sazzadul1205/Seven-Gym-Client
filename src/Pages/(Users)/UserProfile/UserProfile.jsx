@@ -1,15 +1,15 @@
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import useAuth from "../../../Hooks/useAuth";
-import UPMainInfo from "./UPDetailes/UPMainInfo";
-import UPSocialLinks from "./UPDetailes/UPSocialLinks";
-import UPTopSection from "./UPDetailes/UPTopSection";
-import UPSelectedGoals from "./UPDetailes/UPSelectedGoals";
+import UPMainInfo from "./UPDetailes/UPMainInfo/UPMainInfo";
+import UPSocialLinks from "./UPDetailes/UPSocialLinks/UPSocialLinks";
+import UPTopSection from "./UPDetailes/UPTopSection/UPTopSection";
+import UPSelectedGoals from "./UPDetailes/UPSelectedGoals/UPSelectedGoals";
 import UPAchievements from "./UPDetailes/UPAchievements/UPAchievements";
 import UPRecentWorkout from "./UPDetailes/UPRecentWorkout/UPRecentWorkout";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../Shared/Loading/Loading";
-import UPTeachers from "./UPDetailes/UPTeachers";
-import UPAttendingClasses from "./UPDetailes/UPAttendingClasses";
+import UPTeachers from "./UPDetailes/UPTeachers/UPTeachers";
+import UPAttendingClasses from "./UPDetailes/UPAttendingClasses/UPAttendingClasses";
 import { useParams } from "react-router";
 
 const UserProfile = () => {
@@ -50,20 +50,21 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <div className="bg-[#F72C5B] py-12"></div>
 
       {/* Top section */}
       <UPTopSection usersData={UsersData} user={user} confEmail={email} />
 
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-6 pb-10">
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-5 pb-5">
         {/* Info Section */}
-        <div className="w-full md:w-1/2 bg-slate-50 p-8 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-semibold text-black border-b">
-            User Information
+        <div className="w-full md:w-1/2 ">
+          <h2 className="text-2xl font-semibold text-gray-800 border-b border-black pb-2">
+            {UsersData?.fullName || "Default Name"} Information
           </h2>
-          <div className="space-y-5">
+          <div className="space-y-6 pt-2">
             {/* Main Info */}
             <UPMainInfo usersData={UsersData} />
 
@@ -82,7 +83,7 @@ const UserProfile = () => {
         </div>
 
         {/* Achievements and Notifications */}
-        <div className="w-full md:w-1/2">
+        <div className="w-full md:w-1/2 space-y-8">
           {/* Achievements */}
           <UPAchievements usersData={UsersData} refetch={refetch} />
 
