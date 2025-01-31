@@ -5,7 +5,7 @@ import UPSocialLinks from "./UPDetailes/UPSocialLinks";
 import UPTopSection from "./UPDetailes/UPTopSection";
 import UPSelectedGoals from "./UPDetailes/UPSelectedGoals";
 import UPAchievements from "./UPDetailes/UPAchievements/UPAchievements";
-import UPRecentWorkout from "./UPDetailes/UPRecentWorkout";
+import UPRecentWorkout from "./UPDetailes/UPRecentWorkout/UPRecentWorkout";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../Shared/Loading/Loading";
 import UPTeachers from "./UPDetailes/UPTeachers";
