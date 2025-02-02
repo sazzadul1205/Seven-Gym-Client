@@ -22,79 +22,64 @@ const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
   </li>
 );
 
-const RecentWorkoutDetailsModal = ({ selectedWorkout, onClose }) => {
+const RecentWorkoutDetailsModal = ({ selectedWorkout }) => {
   return (
-    <dialog
-      id="Recent_Workout_Details_Modal"
-      className="modal"
-      open
-      aria-modal="true"
-      role="dialog"
-    >
-      {/* Modal Backdrop */}
-      <div
-        className="modal-backdrop bg-black opacity-50"
-        onClick={onClose}
-      ></div>
-
-      {/* Modal Content */}
-      <div className="modal-box bg-white rounded-lg shadow-xl max-w-md mx-auto p-6">
-        {/* Modal Header */}
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-2xl font-bold text-gray-800">
-            {selectedWorkout?.name}
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close modal"
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 focus:outline-none"
-          >
-            <ImCross className="text-xl text-gray-500 hover:text-gray-700" />
-          </button>
-        </div>
-
-        {/* Workout Details */}
-        <ul className="space-y-2">
-          <WorkoutDetailItem
-            icon={<FaClock />}
-            label="Duration"
-            value={selectedWorkout?.duration}
-            iconColor="text-blue-500"
-          />
-          <WorkoutDetailItem
-            icon={<FaFire />}
-            label="Calories Burned"
-            value={selectedWorkout?.calories}
-            iconColor="text-red-500"
-          />
-          <WorkoutDetailItem
-            icon={<FaMapMarkerAlt />}
-            label="Location"
-            value={selectedWorkout?.location}
-            iconColor="text-purple-500"
-          />
-          <WorkoutDetailItem
-            icon={<FaHeartbeat />}
-            label="Workout Type"
-            value={selectedWorkout?.type}
-            iconColor="text-green-500"
-          />
-          <WorkoutDetailItem
-            icon={<FaWeight />}
-            label="Intensity"
-            value={selectedWorkout?.intensity}
-            iconColor="text-orange-500"
-          />
-          <WorkoutDetailItem
-            icon={<FaStickyNote />}
-            label="Notes"
-            value={selectedWorkout?.notes}
-            iconColor="text-yellow-500"
-          />
-        </ul>
+    <div className="modal-box bg-gradient-to-br from-gray-300 to-white rounded-lg shadow-xl max-w-md mx-auto p-6">
+      {/* Modal Header */}
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-2xl font-bold text-gray-800">
+          {selectedWorkout?.name}
+        </h2>
+        <button
+          onClick={() =>
+            document.getElementById("Recent_Workout_Details_Modal").close()
+          }
+          className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 focus:outline-none"
+        >
+          <ImCross className="text-xl text-gray-500 hover:text-gray-700" />
+        </button>
       </div>
-    </dialog>
+
+      {/* Workout Details */}
+      <ul className="space-y-1">
+        <WorkoutDetailItem
+          icon={<FaClock />}
+          label="Duration"
+          value={selectedWorkout?.duration}
+          iconColor="text-blue-500"
+        />
+        <WorkoutDetailItem
+          icon={<FaFire />}
+          label="Calories Burned"
+          value={selectedWorkout?.calories}
+          iconColor="text-red-500"
+        />
+        <WorkoutDetailItem
+          icon={<FaMapMarkerAlt />}
+          label="Location"
+          value={selectedWorkout?.location}
+          iconColor="text-purple-500"
+        />
+        <WorkoutDetailItem
+          icon={<FaHeartbeat />}
+          label="Workout Type"
+          value={selectedWorkout?.type}
+          iconColor="text-green-500"
+        />
+        <WorkoutDetailItem
+          icon={<FaWeight />}
+          label="Intensity"
+          value={selectedWorkout?.intensity}
+          iconColor="text-orange-500"
+        />
+        <WorkoutDetailItem
+          icon={<FaStickyNote />}
+          label="Notes"
+          value={selectedWorkout?.notes}
+          iconColor="text-yellow-500"
+        />
+      </ul>
+    </div>
   );
 };
 

@@ -16,7 +16,6 @@ const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
 
 const UPRecentWorkout = ({ usersData }) => {
   const [selectedWorkout, setSelectedWorkout] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Get the 5 most recent workouts
   const recentWorkouts = usersData?.recentWorkouts?.slice(0, 5) || [];
@@ -28,16 +27,11 @@ const UPRecentWorkout = ({ usersData }) => {
     return isNaN(parsedDate.getTime()) ? null : parsedDate; // Validate date
   };
 
-  // Handle workout click to open modal
+  // Function to handle when a workout is clicked
   const handleWorkoutClick = (workout) => {
     setSelectedWorkout(workout);
-    setIsModalOpen(true);
-  };
-
-  // Close modal
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedWorkout(null);
+    console.log("Selected Workout:", workout);
+    document.getElementById("Recent_Workout_Details_Modal").showModal();
   };
 
   return (
@@ -85,7 +79,6 @@ const UPRecentWorkout = ({ usersData }) => {
                       .replace(" hour", " hr")}
                     iconColor="text-blue-500"
                   />
-
                   <WorkoutDetailItem
                     icon={<FaFire />}
                     label="Calories"
@@ -109,13 +102,9 @@ const UPRecentWorkout = ({ usersData }) => {
         )}
       </div>
 
-      {/* Modal */}
-      {isModalOpen && (
-        <RecentWorkoutDetailsModal
-          selectedWorkout={selectedWorkout}
-          onClose={closeModal}
-        />
-      )}
+      <dialog id="Recent_Workout_Details_Modal" className="modal">
+        <RecentWorkoutDetailsModal selectedWorkout={selectedWorkout} />
+      </dialog>
     </div>
   );
 };

@@ -89,6 +89,9 @@ const UserProfile = () => {
 
           {/* Recent Workouts */}
           <UPRecentWorkout usersData={UsersData} />
+
+          {/* Recent Workouts */}
+          <UPRecentWorkout usersData={UsersData} />
         </div>
       </div>
     </div>
