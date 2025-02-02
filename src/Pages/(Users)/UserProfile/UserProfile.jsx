@@ -11,6 +11,7 @@ import Loading from "../../../Shared/Loading/Loading";
 import UPTeachers from "./UPDetailes/UPTeachers/UPTeachers";
 import UPAttendingClasses from "./UPDetailes/UPAttendingClasses/UPAttendingClasses";
 import { useParams } from "react-router";
+import UPTodaysWorkout from "./UPDetailes/UPTodaysWorkout/UPTodaysWorkout";
 
 const UserProfile = () => {
   const { user } = useAuth();
@@ -88,7 +89,7 @@ const UserProfile = () => {
           <UPAchievements usersData={UsersData} refetch={refetch} />
 
           {/* Recent Workouts */}
-          <UPRecentWorkout usersData={UsersData} />
+          <UPTodaysWorkout usersData={UsersData} />
 
           {/* Recent Workouts */}
           <UPRecentWorkout usersData={UsersData} />
