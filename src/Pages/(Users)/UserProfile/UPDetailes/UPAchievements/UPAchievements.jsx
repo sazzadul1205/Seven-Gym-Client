@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { FaAward, FaChevronRight } from "react-icons/fa";
 import SelectedAwardModal from "./SelectedAwardModal/SelectedAwardModal";
+import AwardViewMoreModal from "./AwardViewMoreModal/AwardViewMoreModal";
 
 // Main component for displaying user achievements
 const UPAchievements = ({ usersData, refetch }) => {
@@ -33,13 +34,20 @@ const UPAchievements = ({ usersData, refetch }) => {
 
   return (
     <div className="bg-[#F8F9FA] py-2 px-8 pb-10 rounded-xl shadow-lg">
-      {/* Header section with title and "View More" button */}
+      {/* Header section */}
       <div className="flex items-center justify-between border-b py-2">
+        {/* Title */}
         <div className="flex items-center space-x-2">
           <FaAward className="text-[#FFD700] text-xl" />
           <h2 className="text-xl font-semibold">Favorite Awards</h2>
         </div>
-        <button className="flex items-center space-x-2 hover:text-gray-400">
+        {/* View More  */}
+        <button
+          className="flex items-center space-x-2 hover:text-gray-400"
+          onClick={() =>
+            document.getElementById("Award_View_More_Modal").showModal()
+          }
+        >
           <h2 className="text-xl font-semibold">View More</h2>
           <FaChevronRight className="text-xl" />
         </button>
@@ -81,6 +89,11 @@ const UPAchievements = ({ usersData, refetch }) => {
       {/* Modal for displaying details of the selected award */}
       <dialog id="Selected_Award_Modal" className="modal">
         <SelectedAwardModal award={selectedAward} />
+      </dialog>
+
+      {/* Modal for View More */}
+      <dialog id="Award_View_More_Modal" className="modal">
+        <AwardViewMoreModal usersData={usersData} refetch={refetch} />
       </dialog>
     </div>
   );
