@@ -89,10 +89,10 @@ const UserProfile = () => {
           <UPAchievements usersData={UsersData} refetch={refetch} />
 
           {/* Recent Workouts */}
-          <UPTodaysWorkout usersData={UsersData} />
+          <UPTodaysWorkout usersData={UsersData} refetch={refetch} />
 
           {/* Recent Workouts */}
-          <UPRecentWorkout usersData={UsersData} />
+          <UPRecentWorkout usersData={UsersData} refetch={refetch} />
         </div>
       </div>
     </div>

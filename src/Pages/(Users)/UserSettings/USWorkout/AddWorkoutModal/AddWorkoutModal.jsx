@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import Swal from "sweetalert2";
 import { useState } from "react";
 import { ImCross } from "react-icons/im";
@@ -7,6 +5,7 @@ import { useForm } from "react-hook-form";
 import useAuth from "../../../../../Hooks/useAuth";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
+// eslint-disable-next-line react/prop-types
 const AddWorkoutModal = ({ refetch }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
@@ -47,13 +46,15 @@ const AddWorkoutModal = ({ refetch }) => {
 
     // Prepare workout data payload
     const workoutData = {
-      workoutId: uniqueId, // Unique workout ID
-      ...data, // Spread form data into workoutData
-      date: workoutDateTime, // Combine date and time
+      workoutId: uniqueId,
+      ...data,
+      duration: `${data.durationValue} ${data.durationUnit}`,
+      date: workoutDateTime,
     };
 
     try {
       // Make API POST request to save workout
+      // eslint-disable-next-line no-unused-vars
       const response = await axiosPublic.post("/Users/Add_Workout", {
         email: user.email,
         workout: workoutData,
@@ -118,18 +119,38 @@ const AddWorkoutModal = ({ refetch }) => {
               )}
             </div>
 
-            {/* Input for Duration */}
+            {/* Duration Input */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">Duration</label>
-              <input
-                type="text"
-                {...register("duration", { required: "Duration is required" })}
-                className="input input-bordered rounded-2xl w-[460px]"
-                placeholder="e.g., 45 minutes"
-              />
-              {errors.duration && (
+              <div className="flex gap-3">
+                <input
+                  type="number"
+                  {...register("durationValue", {
+                    required: "Duration is required",
+                  })}
+                  className="input input-bordered rounded-2xl w-[220px]"
+                  placeholder="Enter value"
+                />
+                <select
+                  {...register("durationUnit", {
+                    required: "Unit is required",
+                  })}
+                  className="select select-bordered rounded-2xl w-[220px]"
+                >
+                  <option value="minutes">Minutes</option>
+                  <option value="minute">Minute</option>
+                  <option value="hours">Hours</option>
+                  <option value="hour">Hour</option>
+                </select>
+              </div>
+              {errors.durationValue && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.duration.message}
+                  {errors.durationValue.message}
+                </p>
+              )}
+              {errors.durationUnit && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.durationUnit.message}
                 </p>
               )}
             </div>
