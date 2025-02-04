@@ -11,7 +11,7 @@ const getTierBadge = (tier) => {
     Diamond: "bg-blue-600 text-white ring-2 ring-blue-300 shadow-lg",
     Platinum: "bg-gray-800 text-white ring-2 ring-gray-500 shadow-lg",
   };
-  return styles[tier] || "bg-gray-200 text-gray-700"; // Default style if no tier matches
+  return styles[tier] || "bg-gray-200 text-gray-700";
 };
 
 const UPTopSection = ({ usersData, user, confEmail }) => {
@@ -25,15 +25,18 @@ const UPTopSection = ({ usersData, user, confEmail }) => {
         alt="Background Image"
         className="w-full h-[300px] sm:h-[400px] object-cover rounded-lg shadow-lg"
       />
+
       <div className="relative">
         {/* Settings Icon */}
-        {confEmail === user?.email && (
-          <div className="absolute top-2 right-10 z-20">
-            <Link to="/User/UserSettings">
-              <IoSettings className="text-red-500 text-4xl transition-all duration-500 hover:rotate-180 hover:text-red-300" />
-            </Link>
-          </div>
-        )}
+        <div>
+          {confEmail === user?.email && (
+            <div className="absolute top-2 right-10 sm:top-2 sm:right-10 md:top-2 md:right-10 z-20 sm:left-0 sm:ml-4 sm:mb-4">
+              <Link to="/User/UserSettings">
+                <IoSettings className="text-red-500 text-4xl transition-all duration-500 hover:rotate-180 hover:text-red-300" />
+              </Link>
+            </div>
+          )}
+        </div>
 
         {/* User Section */}
         <div className="absolute bottom-[-60px] left-4 sm:left-16 flex flex-col sm:flex-row items-center sm:items-start sm:space-x-4 sm:space-y-0 space-y-4">

@@ -9,9 +9,8 @@ import RecentWorkoutDetailsModal from "./RecentWorkoutDetailsModal/RecentWorkout
 import AddWorkoutModal from "../../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
 import ViewAllRecentWorkoutModal from "./ViewAllRecentWorkoutModal/ViewAllRecentWorkoutModal";
 
-// Reusable component for workout details
 const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
-  <li className="flex items-center gap-3">
+  <li className="flex items-center gap-2 sm:gap-3 text-sm sm:text-base">
     {React.cloneElement(icon, { className: `text-lg ${iconColor}` })}
     <span className="font-medium">{label}:</span>
     <span>{String(value ?? "N/A")}</span>
@@ -20,42 +19,38 @@ const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
 
 const UPRecentWorkout = ({ usersData, refetch }) => {
   const [selectedWorkout, setSelectedWorkout] = useState(null);
-
-  // Get the 5 most recent workouts
   const recentWorkouts = usersData?.recentWorkouts?.slice(0, 5) || [];
 
-  // Function to safely parse dates
   const safeParseDate = (dateStr) => {
-    if (!dateStr) return null; // Handle missing values
-    const parsedDate = new Date(dateStr); // Direct parsing
-    return isNaN(parsedDate.getTime()) ? null : parsedDate; // Validate date
+    if (!dateStr) return null;
+    const parsedDate = new Date(dateStr);
+    return isNaN(parsedDate.getTime()) ? null : parsedDate;
   };
 
-  // Function to handle when a workout is clicked
   const handleWorkoutClick = (workout) => {
     setSelectedWorkout(workout);
-    console.log("Selected Workout:", workout);
     document.getElementById("Recent_Workout_Details_Modal").showModal();
   };
 
   return (
-    <div className="mt-8 bg-white p-6 rounded-xl shadow-2xl">
-      {/* Header */}
-      <div className="flex items-center justify-between space-x-2 border-b-2 border-gray-400 pb-2">
+    <div className="mt-6 bg-white p-4 sm:p-6 rounded-xl shadow-2xl">
+      <div className="flex items-center justify-between border-b-2 border-gray-400 pb-2">
         <div className="flex items-center gap-3">
-          <MdOutlineRecentActors className="text-[#EFBF04] text-2xl" />
-          <h2 className="text-xl font-semibold text-black">Recent Workouts</h2>
+          <MdOutlineRecentActors className="text-[#EFBF04] text-2xl sm:text-3xl" />
+          <h2 className="text-lg sm:text-xl font-semibold text-black">
+            Recent Workouts
+          </h2>
         </div>
-        <div className="flex justify-between gap-5">
+        <div className="flex gap-4">
           <MdOutlineLibraryAdd
-            className="text-3xl transition-all duration-300 hover:scale-110"
+            className="text-2xl sm:text-3xl transition-all duration-300 hover:scale-110 cursor-pointer"
             title="Add New Workout"
             onClick={() =>
               document.getElementById("Add_Workout_Modal").showModal()
             }
           />
           <FcViewDetails
-            className="text-3xl transition-all duration-300 hover:scale-110"
+            className="text-2xl sm:text-3xl transition-all duration-300 hover:scale-110 cursor-pointer"
             title="Show All"
             onClick={() =>
               document
@@ -66,7 +61,6 @@ const UPRecentWorkout = ({ usersData, refetch }) => {
         </div>
       </div>
 
-      {/* Workout List */}
       <div className="space-y-3 pt-2">
         {recentWorkouts.length > 0 ? (
           recentWorkouts.map((workout, index) => {
@@ -75,7 +69,6 @@ const UPRecentWorkout = ({ usersData, refetch }) => {
               ? formatDistanceToNowStrict(workoutDate, { addSuffix: false })
               : "Unknown Date";
 
-            // Replace words with shorter versions
             timeAgo = timeAgo
               .replace(" minutes", " min")
               .replace(" minute", " min")
@@ -88,20 +81,17 @@ const UPRecentWorkout = ({ usersData, refetch }) => {
               <div
                 key={index}
                 onClick={() => handleWorkoutClick(workout)}
-                className="cursor-pointer items-center justify-between bg-gray-100 px-3 py-3 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-300"
+                className="cursor-pointer bg-gray-100 px-3 py-3 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-300"
                 role="button"
                 tabIndex={0}
                 aria-label={`View details of ${workout.name}`}
               >
-                {/* Workout Name */}
                 <div className="py-1">
-                  <p className="text-lg font-semibold text-gray-800">
+                  <p className="text-base sm:text-lg font-semibold text-gray-800">
                     {workout.name}
                   </p>
                 </div>
-
-                {/* Workout Details */}
-                <div className="grid grid-cols-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4">
                   <WorkoutDetailItem
                     icon={<FaClock />}
                     label="Duration"
@@ -130,11 +120,11 @@ const UPRecentWorkout = ({ usersData, refetch }) => {
           })
         ) : (
           <div className="flex flex-col items-center justify-center">
-            <p className="text-gray-500 italic text-center">
+            <p className="text-gray-500 italic text-center text-sm sm:text-base">
               No Recent workouts to display.
             </p>
             <button
-              className="bg-green-400 hover:bg-green-300 font-bold text-gray-600 hover:text-gray-500 px-10 py-2 rounded-lg mt-4"
+              className="bg-green-400 hover:bg-green-300 font-bold text-gray-600 hover:text-gray-500 px-8 py-2 rounded-lg mt-4 text-sm sm:text-base"
               onClick={() =>
                 document.getElementById("Add_Workout_Modal").showModal()
               }

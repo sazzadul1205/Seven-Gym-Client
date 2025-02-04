@@ -1,62 +1,11 @@
 /* eslint-disable react/prop-types */
-import { useQuery } from "@tanstack/react-query";
+
 import { Link } from "react-router";
-import Loading from "../../../../../Shared/Loading/Loading";
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import groupClass from "../../../../../assets/group-class.png";
 
-const UPAttendingClasses = ({ usersData }) => {
-  const axiosPublic = useAxiosPublic();
-
-  // Extract class names from usersData.attendingClasses
-  const classesName =
-    usersData?.attendingClasses?.map((classItem) => classItem.className) || [];
-
-  // Fetch class details
-  const {
-    data: ClassesData,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["ClassesData", classesName],
-    queryFn: async () => {
-      if (classesName.length === 0) return [];
-      const res = await axiosPublic.get(
-        `/Class_Details/multi?modules=${classesName.join(",")}`
-      );
-      return res.data;
-    },
-    enabled: classesName.length > 0,
-  });
-
-  // Handle loading state
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-60">
-        <Loading />
-      </div>
-    );
-  }
-
-  // Handle error state
-  if (error) {
-    return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
-        <p className="text-center text-red-500 font-bold text-3xl mb-6">
-          Something went wrong. Please try again.
-        </p>
-        <button
-          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
-          onClick={() => window.location.reload()}
-        >
-          Reload
-        </button>
-      </div>
-    );
-  }
-
+const UPAttendingClasses = ({ ClassesData }) => {
   return (
-    <div className="space-y-4 bg-white p-5 shadow-xl rounded-xl transition-transform duration-300 hover:scale-105 hover:shadow-lg">
+    <div className="space-y-4 bg-white p-5 shadow-xl rounded-xl transition-transform duration-300 md:hover:scale-105 hover:shadow-lg">
       {/* Header */}
       <div className="flex items-center space-x-2 border-b pb-2">
         <img src={groupClass} alt="Group Class Icon" className="w-6 h-6" />
@@ -66,17 +15,19 @@ const UPAttendingClasses = ({ usersData }) => {
       </div>
 
       {/* No Classes Message */}
-      {(!ClassesData || ClassesData.length === 0) && (
-        <div className="text-center mt-8">
-          <p className="text-gray-500">No classes available at the moment.</p>
-          <Link
-            to="/Classes"
-            className="mt-4 inline-block px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
-          >
-            Join a Class
-          </Link>
-        </div>
-      )}
+      <div>
+        {(!ClassesData || ClassesData.length === 0) && (
+          <div className="text-center mt-8">
+            <p className="text-gray-500">No classes available at the moment.</p>
+            <Link
+              to="/Classes"
+              className="mt-4 inline-block px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
+            >
+              Join a Class
+            </Link>
+          </div>
+        )}
+      </div>
 
       {/* Class List */}
       {ClassesData?.length > 0 && (

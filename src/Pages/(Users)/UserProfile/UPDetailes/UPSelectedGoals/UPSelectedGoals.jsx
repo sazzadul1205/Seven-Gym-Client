@@ -3,7 +3,7 @@ import { FaBullseye, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 const UPSelectedGoals = ({ usersData }) => {
   return (
-    <div className="py-5 bg-white p-5 shadow-xl rounded-xl transition-transform duration-300 hover:scale-105 hover:shadow-lg">
+    <div className="py-5 bg-white p-5 shadow-xl rounded-xl transition-transform duration-300 md:hover:scale-105 hover:shadow-lg">
       {/* Header */}
       <div className="flex items-center space-x-2 border-b pb-2">
         <FaBullseye className="text-red-500 text-lg" />

@@ -2,8 +2,7 @@
 import React, { useState } from "react";
 import { FcViewDetails } from "react-icons/fc";
 import { formatDistanceToNowStrict } from "date-fns";
-import { MdOutlineLibraryAdd } from "react-icons/md";
-import { MdOutlineRecentActors } from "react-icons/md";
+import { MdOutlineLibraryAdd, MdOutlineRecentActors } from "react-icons/md";
 import { FaClock, FaFire, FaWeight } from "react-icons/fa";
 
 import AddWorkoutModal from "../../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
@@ -12,7 +11,7 @@ import RecentWorkoutDetailsModal from "../UPRecentWorkout/RecentWorkoutDetailsMo
 
 // Reusable component for workout details
 const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
-  <li className="flex items-center gap-3">
+  <li className="flex items-center gap-2 sm:gap-3 text-sm sm:text-base">
     {React.cloneElement(icon, { className: `text-lg ${iconColor}` })}
     <span className="font-medium">{label}:</span>
     <span>{String(value ?? "N/A")}</span>
@@ -22,56 +21,50 @@ const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
 const UPTodaysWorkout = ({ usersData, refetch }) => {
   const [selectedWorkout, setSelectedWorkout] = useState(null);
 
-  // Function to safely parse dates
   const safeParseDate = (dateStr) => {
-    if (!dateStr) return null; // Handle missing values
-    const parsedDate = new Date(dateStr); // Direct parsing
-    return isNaN(parsedDate.getTime()) ? null : parsedDate; // Validate date
+    if (!dateStr) return null;
+    const parsedDate = new Date(dateStr);
+    return isNaN(parsedDate.getTime()) ? null : parsedDate;
   };
 
-  // Get today's date in YYYY-MM-DD format
   const getTodayDate = () => {
     const today = new Date();
-    return today.toISOString().split("T")[0]; // Extract YYYY-MM-DD
+    return today.toISOString().split("T")[0];
   };
 
-  // Filter workouts for today and limit to 5 most recent
   const todaysWorkouts = usersData?.recentWorkouts
     ?.filter((workout) => {
       const workoutDate = safeParseDate(workout.date);
-      if (!workoutDate) return false; // Skip invalid dates
-      const workoutDateStr = workoutDate.toISOString().split("T")[0]; // Extract YYYY-MM-DD
-      return workoutDateStr === getTodayDate(); // Keep only today's workouts
+      if (!workoutDate) return false;
+      return workoutDate.toISOString().split("T")[0] === getTodayDate();
     })
-    .slice(0, 5); // Limit to 5 most recent
+    .slice(0, 5);
 
-  // Function to handle when a workout is clicked
   const handleWorkoutClick = (workout) => {
     setSelectedWorkout(workout);
-    console.log("Selected Workout:", workout);
     document.getElementById("Recent_Workout_Details_Modal").showModal();
   };
 
   return (
-    <div className="mt-8 bg-white p-6 rounded-xl shadow-2xl">
+    <div className="mt-6 bg-white p-4 sm:p-6 rounded-xl shadow-2xl">
       {/* Header */}
-      <div className="flex items-center justify-between space-x-2 border-b-2 border-gray-400 pb-2">
+      <div className="flex items-center justify-between border-b-2 border-gray-400 pb-2">
         <div className="flex items-center gap-3">
-          <MdOutlineRecentActors className="text-[#EFBF04] text-2xl" />
-          <h2 className="text-xl font-semibold text-black">
+          <MdOutlineRecentActors className="text-[#EFBF04] text-2xl sm:text-3xl" />
+          <h2 className="text-lg sm:text-xl font-semibold text-black">
             Today&apos;s Workouts
           </h2>
         </div>
-        <div className="flex justify-between gap-5">
+        <div className="flex gap-4">
           <MdOutlineLibraryAdd
-            className="text-3xl transition-all duration-300 hover:scale-110"
+            className="text-2xl sm:text-3xl transition-all duration-300 hover:scale-110 cursor-pointer"
             title="Add New Workout"
             onClick={() =>
               document.getElementById("Add_Workout_Modal").showModal()
             }
           />
           <FcViewDetails
-            className="text-3xl transition-all duration-300 hover:scale-110"
+            className="text-2xl sm:text-3xl transition-all duration-300 hover:scale-110 cursor-pointer"
             title="Show All"
             onClick={() =>
               document
@@ -91,7 +84,6 @@ const UPTodaysWorkout = ({ usersData, refetch }) => {
               ? formatDistanceToNowStrict(workoutDate, { addSuffix: false })
               : "Unknown Date";
 
-            // Replace words with shorter versions
             timeAgo = timeAgo
               .replace(" minutes", " min")
               .replace(" minute", " min")
@@ -111,13 +103,13 @@ const UPTodaysWorkout = ({ usersData, refetch }) => {
               >
                 {/* Workout Name */}
                 <div className="py-1">
-                  <p className="text-lg font-semibold text-gray-800">
+                  <p className="text-base sm:text-lg font-semibold text-gray-800">
                     {workout.name}
                   </p>
                 </div>
 
                 {/* Workout Details */}
-                <div className="grid grid-cols-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4">
                   <WorkoutDetailItem
                     icon={<FaClock />}
                     label="Duration"
@@ -146,11 +138,11 @@ const UPTodaysWorkout = ({ usersData, refetch }) => {
           })
         ) : (
           <div className="flex flex-col items-center justify-center">
-            <p className="text-gray-500 italic text-center">
+            <p className="text-gray-500 italic text-center text-sm sm:text-base">
               No Today&apos;s workouts to display.
             </p>
             <button
-              className="bg-green-400 hover:bg-green-300 font-bold text-gray-600 hover:text-gray-500 px-10 py-2 rounded-lg mt-4"
+              className="bg-green-400 hover:bg-green-300 font-bold text-gray-600 hover:text-gray-500 px-8 py-2 rounded-lg mt-4 text-sm sm:text-base"
               onClick={() =>
                 document.getElementById("Add_Workout_Modal").showModal()
               }
@@ -161,6 +153,7 @@ const UPTodaysWorkout = ({ usersData, refetch }) => {
         )}
       </div>
 
+      {/* Modals */}
       <dialog id="Recent_Workout_Details_Modal" className="modal">
         <RecentWorkoutDetailsModal selectedWorkout={selectedWorkout} />
       </dialog>

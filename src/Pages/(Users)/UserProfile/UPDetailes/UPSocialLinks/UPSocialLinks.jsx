@@ -10,7 +10,7 @@ const UPSocialLinks = ({ usersData }) => {
     socialLinks && Object.values(socialLinks).some((link) => link);
 
   return (
-    <div className="pt-4 bg-white p-5 shadow-xl rounded-xl transition-transform duration-300 hover:scale-105 hover:delay-150">
+    <div className="pt-4 bg-white p-5 shadow-xl rounded-xl transition-transform duration-300 md:hover:scale-105 hover:delay-150">
       {/* Header */}
       <div className="flex items-center space-x-2 border-b pb-2">
         <FaLink className="text-blue-500 text-lg" />
