@@ -33,7 +33,7 @@ const UPAchievements = ({ usersData, refetch }) => {
   const favoriteAwards = usersData?.awards?.filter((award) => award.favorite);
 
   return (
-    <div className="bg-[#F8F9FA] py-2 px-8 pb-10 rounded-xl shadow-lg">
+    <div className="bg-white py-2 px-8 pb-10 rounded-xl shadow-lg">
       {/* Header section */}
       <div className="flex items-center justify-between border-b py-2">
         {/* Title */}

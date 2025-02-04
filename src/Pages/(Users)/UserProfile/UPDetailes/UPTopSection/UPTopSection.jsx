@@ -30,7 +30,7 @@ const UPTopSection = ({ usersData, user, confEmail }) => {
         {confEmail === user?.email && (
           <div className="absolute top-2 right-10 z-20">
             <Link to="/User/UserSettings">
-              <IoSettings className="text-red-500 text-3xl hover:text-gray-300 transition-all" />
+              <IoSettings className="text-red-500 text-4xl transition-all duration-500 hover:rotate-180 hover:text-red-300" />
             </Link>
           </div>
         )}

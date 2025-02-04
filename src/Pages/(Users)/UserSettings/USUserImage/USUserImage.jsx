@@ -155,7 +155,7 @@ const USUserImage = ({ UsersData, refetch }) => {
   };
 
   return (
-    <div className="w-full min-h-screen mx-auto bg-gray-200">
+    <div className="w-full min-h-screen mx-auto bg-white">
       {/* Header */}
       <div className="bg-gray-400 px-5 py-2">
         <p className="flex gap-2 items-center text-xl font-semibold italic text-white ">
@@ -163,30 +163,47 @@ const USUserImage = ({ UsersData, refetch }) => {
           Banner and profile Image Settings
         </p>
       </div>
-      
+
       {/* Banner Section */}
-      <div className="relative p-1 px-12 pb-16 mt-5">
-        <img
-          src={
-            UsersData?.backgroundImage || "https://via.placeholder.com/1200x400"
-          }
-          alt="Background"
-          className="w-full h-[400px] object-cover rounded-lg shadow-lg hover:scale-105 transition-transform duration-500 border-2 border-dashed border-gray-500 hover:border-black"
+      <div className="px-5 py-3">
+        <p className="text-xl font-semibold underline pb-1">Background :</p>
+        <div
+          className="relative group w-full h-[400px] rounded-lg shadow-lg overflow-hidden"
           onClick={() =>
             document.getElementById("Background_Image_Modal").showModal()
           }
-        />
+        >
+          <img
+            src={
+              UsersData?.backgroundImage ||
+              "https://via.placeholder.com/1200x400"
+            }
+            alt="Background"
+            className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-50"
+          />
+          <p className="absolute inset-0 flex items-center justify-center text-white text-lg font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Change Image
+          </p>
+        </div>
 
         {/* User Image positioned over the Banner */}
-        <div className="absolute bottom-[-10px] left-[150px] transform -translate-x-1/2">
-          <img
-            src={UsersData?.profileImage || "https://via.placeholder.com/150"}
-            alt="User Profile"
-            className="w-32 h-32 object-cover rounded-full shadow-lg hover:scale-125 transition-transform duration-500 border-2 border-dashed border-gray-500 hover:border-black"
+        <div className="pt-5">
+          <p className="text-xl font-semibold underline pb-1">Avatar :</p>
+          <div
+            className="relative group w-32 h-32 rounded-lg shadow-lg overflow-hidden"
             onClick={() =>
               document.getElementById("User_Image_Modal").showModal()
             }
-          />
+          >
+            <img
+              src={UsersData?.profileImage || "https://via.placeholder.com/150"}
+              alt="User Profile"
+              className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-50"
+            />
+            <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              Change Image
+            </p>
+          </div>
         </div>
       </div>
 

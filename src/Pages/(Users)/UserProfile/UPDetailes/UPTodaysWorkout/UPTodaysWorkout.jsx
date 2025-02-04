@@ -6,9 +6,9 @@ import { MdOutlineLibraryAdd } from "react-icons/md";
 import { MdOutlineRecentActors } from "react-icons/md";
 import { FaClock, FaFire, FaWeight } from "react-icons/fa";
 
-import RecentWorkoutDetailsModal from "../UPRecentWorkout/RecentWorkoutDetailsModal/RecentWorkoutDetailsModal";
 import AddWorkoutModal from "../../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
 import ViewAllTodaysWorkoutModal from "./ViewAllTodaysWorkoutModal/ViewAllTodaysWorkoutModal";
+import RecentWorkoutDetailsModal from "../UPRecentWorkout/RecentWorkoutDetailsModal/RecentWorkoutDetailsModal";
 
 // Reusable component for workout details
 const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
@@ -53,7 +53,7 @@ const UPTodaysWorkout = ({ usersData, refetch }) => {
   };
 
   return (
-    <div className="mt-8 bg-slate-50 p-6 rounded-xl shadow-2xl">
+    <div className="mt-8 bg-white p-6 rounded-xl shadow-2xl">
       {/* Header */}
       <div className="flex items-center justify-between space-x-2 border-b-2 border-gray-400 pb-2">
         <div className="flex items-center gap-3">
@@ -64,14 +64,14 @@ const UPTodaysWorkout = ({ usersData, refetch }) => {
         </div>
         <div className="flex justify-between gap-5">
           <MdOutlineLibraryAdd
-            className="text-2xl hover:scale-105"
+            className="text-3xl transition-all duration-300 hover:scale-110"
             title="Add New Workout"
             onClick={() =>
               document.getElementById("Add_Workout_Modal").showModal()
             }
           />
           <FcViewDetails
-            className="text-2xl hover:scale-125"
+            className="text-3xl transition-all duration-300 hover:scale-110"
             title="Show All"
             onClick={() =>
               document

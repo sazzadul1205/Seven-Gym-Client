@@ -64,7 +64,7 @@ const USUserInfo = ({ UsersData, refetch }) => {
     validation,
     error,
   }) => (
-    <div className="bg-white p-3 shadow-xl space-y-2 py-5">
+    <div className="bg-slate-200 p-3 shadow-xl hover:shadow-2xl space-y-2 py-5">
       <label className="block text-gray-700 font-semibold">{label}</label>
       {type === "textarea" ? (
         <textarea
@@ -93,7 +93,7 @@ const USUserInfo = ({ UsersData, refetch }) => {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-gray-200">
+    <div className="w-full min-h-screen bg-white">
       {/* Header */}
       <header className="bg-gray-400 px-5 py-2">
         <p className="flex items-center gap-2 text-xl font-semibold italic text-white">
@@ -105,7 +105,7 @@ const USUserInfo = ({ UsersData, refetch }) => {
       <main className="py-4">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4 px-5 pr-28 rounded-xl mx-auto"
+          className="space-y-4 px-5 rounded-xl mx-auto"
         >
           {/* Full Name */}
           <InputField
@@ -158,7 +158,7 @@ const USUserInfo = ({ UsersData, refetch }) => {
           />
 
           {/* Fitness Goals Selector */}
-          <div className="bg-white p-3 shadow-xl">
+          <div className="bg-slate-200 p-3 shadow-xl hover:shadow-2xl">
             <FitnessGoalsSelector
               selectedGoals={selectedGoals}
               setSelectedGoals={setSelectedGoals}
@@ -166,7 +166,7 @@ const USUserInfo = ({ UsersData, refetch }) => {
           </div>
 
           {/* Social Links */}
-          <div className="bg-white p-5 shadow-xl">
+          <div className="bg-slate-200 p-3 shadow-xl hover:shadow-2xl">
             <label className="block text-gray-700 font-semibold">
               Social Links
             </label>

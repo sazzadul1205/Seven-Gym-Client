@@ -84,7 +84,7 @@ const UserProfile = () => {
         </div>
 
         {/* Achievements and Notifications */}
-        <div className="w-full md:w-1/2 space-y-8">
+        <div className="w-full md:w-1/2 space-y-8 pt-10">
           {/* Achievements */}
           <UPAchievements usersData={UsersData} refetch={refetch} />
 
