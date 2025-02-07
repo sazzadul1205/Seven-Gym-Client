@@ -1,8 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, NavLink } from "react-router";
-import { IoMenu } from "react-icons/io5";
+import { IoMenu, IoSettingsOutline } from "react-icons/io5";
 import { ImExit } from "react-icons/im";
+import { FaUser } from "react-icons/fa";
+import { GiUpgrade } from "react-icons/gi";
+import { AiTwotoneSchedule } from "react-icons/ai";
+
 import Swal from "sweetalert2";
 
 // Assets
@@ -215,9 +219,23 @@ const Navbar = () => {
       {
         name: `${UsersData?.fullName}`,
         path: `/User/${user?.email}/UserProfile`,
+        icon: <FaUser />,
       },
-      { name: "Tier Upgrade", path: `/User/${user?.email}/TierUpgrade` },
-      { name: "Settings", path: "/Settings" },
+      {
+        name: "Tier Upgrade",
+        path: `/User/${user?.email}/TierUpgrade`,
+        icon: <GiUpgrade />,
+      },
+      {
+        name: "Schedule Planner",
+        path: `/User/${user?.email}/UserSchedulePlanner`,
+        icon: <AiTwotoneSchedule />,
+      },
+      {
+        name: "Settings",
+        path: "/User/UserSettings",
+        icon: <IoSettingsOutline />,
+      },
     ],
     Trainer: [
       { name: "Trainer Dashboard", path: "/TrainerDashboard" },
@@ -277,17 +295,17 @@ const Navbar = () => {
                 />
               </div>
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-1 w-[250px] bg-white text-black rounded-lg shadow-lg z-10 py-2">
+                <div className="absolute right-0 mt-1 w-[250px] bg-white text-black rounded-lg shadow-lg z-10">
                   <ul>
                     {(roleBasedLinks[UsersData?.role] || []).map((link) => (
-                      <Link to={link.path} key={link.name}>
-                        <li className="p-2 px-5 hover:bg-gray-100 border-b border-gray-300">
-                          {link.name}
+                      <Link to={link?.path} key={link?.name}>
+                        <li className="flex py-3 px-5 gap-2 hover:bg-gray-100 border-b border-gray-300">
+                          <span>{link?.icon}</span> {link?.name}
                         </li>
                       </Link>
                     ))}
                     <li
-                      className="p-2 px-5 hover:bg-gray-100 flex items-center justify-between text-red-500 font-semibold"
+                      className="p-2 py-3 px-5 hover:bg-gray-100 flex items-center justify-between text-red-500 font-semibold"
                       onClick={handleSignOut}
                     >
                       {isLoggingOut ? (

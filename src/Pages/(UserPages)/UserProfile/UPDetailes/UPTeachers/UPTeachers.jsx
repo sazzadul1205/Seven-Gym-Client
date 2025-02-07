@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Link } from "react-router";
 import USTrainer from "../../../../../assets/USTrainer.png";
-import ClassTrainersCard from "../../../../(Public Pages)/(Classes)/ClassesDetails/ClassTrainersCard/ClassTrainersCard";
+import ClassTrainersCard from "../../../../(PublicPages)/(Classes)/ClassesDetails/ClassTrainersCard/ClassTrainersCard";
 
 const UPTeachers = ({ TrainerDetailsData }) => {
   return (

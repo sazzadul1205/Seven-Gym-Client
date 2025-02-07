@@ -7,26 +7,33 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Route Links
+import PageNotFound from "./Pages/PageNotFound/PageNotFound.jsx";
+
+// Auth Import
 import Login from "./Pages/(Auth)/Login/Login.jsx";
 import SignUp from "./Pages/(Auth)/SignUp/SignUp.jsx";
-import Home from "./Pages/(Public Pages)/Home/Home.jsx";
-import Forums from "./Pages/(Public Pages)/Forums/Forums.jsx";
-import Gallery from "./Pages/(Public Pages)/Gallery/Gallery.jsx";
-import PageNotFound from "./Pages/PageNotFound/PageNotFound.jsx";
-import UserProfile from "./Pages/(Users)/UserProfile/UserProfile.jsx";
 import SUDetails from "./Pages/(Auth)/SignUp/SUDetails/SUDetails.jsx";
-import AboutUs from "./Pages/(Public Pages)/(About)/AboutUs/AboutUs.jsx";
-import Classes from "./Pages/(Public Pages)/(Classes)/Classes/Classes.jsx";
-import Feedback from "./Pages/(Public Pages)/(About)/Feedback/Feedback.jsx";
-import Trainers from "./Pages/(Public Pages)/(Trainers)/Trainers/Trainers.jsx";
-import OurMission from "./Pages/(Public Pages)/(About)/OurMission/OurMission.jsx";
-import Testimonials from "./Pages/(Public Pages)/Home/Testimonials/Testimonials.jsx";
-import ClassesDetails from "./Pages/(Public Pages)/(Classes)/ClassesDetails/ClassesDetails.jsx";
-import TrainersDetails from "./Pages/(Public Pages)/(Trainers)/TrainersDetails/TrainersDetails.jsx";
-import TrainersBookings from "./Pages/(Public Pages)/(Trainers)/TrainersBookings/TrainersBookings.jsx";
-import UserTearUpgrade from "./Pages/(Users)/UserTearUpgrade/UserTearUpgrade.jsx";
-import TearUpgradePayment from "./Pages/(Users)/TearUpgradePayment/TearUpgradePayment.jsx";
-import UserSettings from "./Pages/(Users)/UserSettings/UserSettings.jsx";
+
+// Public Pages Import
+import Home from "./Pages/(PublicPages)/Home/Home.jsx";
+import Forums from "./Pages/(PublicPages)/Forums/Forums.jsx";
+import Gallery from "./Pages/(PublicPages)/Gallery/Gallery.jsx";
+import AboutUs from "./Pages/(PublicPages)/(About)/AboutUs/AboutUs.jsx";
+import Classes from "./Pages/(PublicPages)/(Classes)/Classes/Classes.jsx";
+import Feedback from "./Pages/(PublicPages)/(About)/Feedback/Feedback.jsx";
+import Trainers from "./Pages/(PublicPages)/(Trainers)/Trainers/Trainers.jsx";
+import OurMission from "./Pages/(PublicPages)/(About)/OurMission/OurMission.jsx";
+import Testimonials from "./Pages/(PublicPages)/Home/Testimonials/Testimonials.jsx";
+import ClassesDetails from "./Pages/(PublicPages)/(Classes)/ClassesDetails/ClassesDetails.jsx";
+import TrainersDetails from "./Pages/(PublicPages)/(Trainers)/TrainersDetails/TrainersDetails.jsx";
+import TrainersBookings from "./Pages/(PublicPages)/(Trainers)/TrainersBookings/TrainersBookings.jsx";
+
+// User Pages Import
+import UserProfile from "./Pages/(UserPages)/UserProfile/UserProfile.jsx";
+import UserSettings from "./Pages/(UserPages)/UserSettings/UserSettings.jsx";
+import UserTearUpgrade from "./Pages/(UserPages)/UserTearUpgrade/UserTearUpgrade.jsx";
+import TearUpgradePayment from "./Pages/(UserPages)/TearUpgradePayment/TearUpgradePayment.jsx";
+import UserSchedulePlanner from "./Pages/(UserPages)/UserSchedulePlanner/UserSchedulePlanner.jsx";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +45,7 @@ createRoot(document.getElementById("root")).render(
           <Routes>
             <Route path="*" element={<PageNotFound />} />
             <Route element={<PublicLayout />}>
+              {/* Public Pages Link */}
               <Route path="/" element={<Home />} />
               <Route path="/Gallery" element={<Gallery />} />
               <Route path="/Trainers" element={<Trainers />} />
@@ -53,12 +61,13 @@ createRoot(document.getElementById("root")).render(
               <Route path="/About/Testimonials" element={<Testimonials />} />
               <Route path="/About/AboutUs" element={<AboutUs />} />
               <Route path="/About/Feedback" element={<Feedback />} />
-              {/* Login Section */}
+
+              {/* Auth Pages Link */}
               <Route path="/Login" element={<Login />} />
               <Route path="/SignUp" element={<SignUp />} />
               <Route path="/SignUp/Details" element={<SUDetails />} />
 
-              {/* User Section */}
+              {/* User Pages Link */}
               <Route
                 path="/User/:email/UserProfile"
                 element={<UserProfile />}
@@ -67,6 +76,10 @@ createRoot(document.getElementById("root")).render(
               <Route
                 path="/User/:email/TierUpgrade"
                 element={<UserTearUpgrade />}
+              />
+              <Route
+                path="/User/:email/UserSchedulePlanner"
+                element={<UserSchedulePlanner />}
               />
               <Route
                 path="/User/:email/:tier/TierUpgradePayment"

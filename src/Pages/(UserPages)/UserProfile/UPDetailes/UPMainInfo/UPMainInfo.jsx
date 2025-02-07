@@ -11,32 +11,23 @@ const UPMainInfo = ({ usersData }) => {
       </p>
 
       {/* Info Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-5 border-t">
+      <div className="justify-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-5 border-t ">
         {/* Phone */}
         <div className="flex items-center space-x-4 transition-transform duration-300 hover:scale-105 hover:delay-150">
           <FaPhoneAlt className="text-blue-500 text-2xl" />
-          <p className="text-gray-600">
-            <strong>Phone:</strong>
-            <span className="ml-2 sm:ml-4">{usersData?.phone || "N/A"}</span>
-          </p>
+          <span className="ml-2 sm:ml-4">{usersData?.phone || "N/A"}</span>
         </div>
 
         {/* Date of Birth */}
         <div className="flex items-center space-x-4 transition-transform duration-300 hover:scale-105 hover:delay-150">
           <FaBirthdayCake className="text-pink-500 text-2xl" />
-          <p className="text-gray-600">
-            <strong>Date of Birth:</strong>
-            <span className="ml-2 sm:ml-4">{usersData?.dob || "N/A"}</span>
-          </p>
+          <span className="ml-2 sm:ml-4">{usersData?.dob || "N/A"}</span>
         </div>
 
         {/* Gender */}
         <div className="flex items-center space-x-4 transition-transform duration-300 hover:scale-105 hover:delay-150">
           <FaVenusMars className="text-green-500 text-2xl" />
-          <p className="text-gray-600">
-            <strong>Gender:</strong>
-            <span className="ml-2 sm:ml-4">{usersData?.gender || "N/A"}</span>
-          </p>
+          <span className="ml-2 sm:ml-4">{usersData?.gender || "N/A"}</span>
         </div>
       </div>
     </div>
