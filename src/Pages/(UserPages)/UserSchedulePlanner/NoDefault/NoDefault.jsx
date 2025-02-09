@@ -1,8 +1,98 @@
+import { useState } from "react";
 import { FcHighPriority } from "react-icons/fc";
 import { IoIosCreate } from "react-icons/io";
 import { RiCalendarTodoLine } from "react-icons/ri";
+import useAuth from "../../../../Hooks/useAuth";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
-const NoDefault = () => {
+const NoDefault = ({ refetch }) => {
+  const axiosPublic = useAxiosPublic();
+  const { user } = useAuth();
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [setGeneratedSchedule] = useState(null);
+
+  const generateSchedule = async () => {
+    if (!startTime || !endTime) {
+      alert("Please select both start and end times.");
+      return;
+    }
+
+    const userEmail = user?.email || "example@gmail.com";
+    const today = new Date();
+
+    // Get the start of the week (Sunday)
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay());
+
+    const fullWeekdays = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+
+    const convertTimeTo24Hour = (time) => {
+      const [hours, minutes] = time.split(":").map(Number);
+      return hours + minutes / 60;
+    };
+
+    const startHour = convertTimeTo24Hour(startTime);
+    const endHour = convertTimeTo24Hour(endTime);
+
+    const generateTimeSlots = (start, end, dayId) => {
+      let timeSlots = {};
+      for (let hour = start; hour <= end; hour++) {
+        const formattedTime = `${String(Math.floor(hour)).padStart(2, "0")}:00`; // Ensure hour is formatted like "08:00"
+        timeSlots[formattedTime] = {
+          id: `${dayId}-${formattedTime}`,
+        };
+      }
+      return timeSlots;
+    };
+
+    let schedule = {
+      email: userEmail,
+      schedule: {
+        dateSchedule: {},
+        reminder: {},
+        todo: {},
+        notes: {},
+      },
+    };
+
+    fullWeekdays.forEach((day, index) => {
+      // Get the correct date for each day in the week
+      let currentDate = new Date(startOfWeek);
+      currentDate.setDate(startOfWeek.getDate() + index);
+
+      const formattedDate = currentDate
+        .toLocaleDateString("en-GB")
+        .replace(/\//g, "-"); // Format DD-MM-YYYY
+      const dayId = `${day}-${formattedDate}`;
+
+      schedule.schedule.dateSchedule[day] = {
+        id: dayId, // The unique ID for the day
+        schedule: generateTimeSlots(startHour, endHour, dayId),
+      };
+    });
+
+    // Posting the schedule data to your backend
+    try {
+      await axiosPublic.post("/Schedule", schedule); // Make sure to replace the URL with your actual endpoint
+      console.log("Schedule successfully posted to the server.");
+      setGeneratedSchedule(schedule);
+      refetch();
+      document.getElementById("New_Schedule_Time_Picker").close();
+    } catch (error) {
+      console.error("Error posting schedule:", error);
+      alert("Failed to post schedule. Please try again.");
+    }
+  };
+
   // Weekday labels
   const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
 
@@ -17,7 +107,7 @@ const NoDefault = () => {
   });
 
   return (
-    <div>
+    <div className="bg-white min-h-screen relative">
       {/* Header */}
       <div className="bg-[#F72C5B] py-12"></div>
 
@@ -138,6 +228,76 @@ const NoDefault = () => {
           </div>
         </div>
       </main>
+
+      {/* Modal Overlay */}
+      <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center">
+        {/* First Modal - New Schedule Question */}
+        <dialog id="New_Schedule_Question" className="modal" open>
+          <div className="modal-box bg-white p-6 rounded-lg shadow-lg text-center">
+            <h3 className="font-bold text-lg">Create Schedule</h3>
+            <p className="py-4">Create a New Schedule</p>
+            <button
+              className="bg-gradient-to-tr from-red-400 to-red-500 hover:from-red-500 hover:to-red-400 text-white font-semibold rounded-xl shadow-xl hover:shadow-2xl py-3 px-10 transition-all duration-300"
+              onClick={() => {
+                document.getElementById("New_Schedule_Question").close();
+                document.getElementById("New_Schedule_Time_Picker").showModal();
+              }}
+            >
+              Create Schedule
+            </button>
+          </div>
+        </dialog>
+
+        {/* Second Modal - Time Picker */}
+        <dialog id="New_Schedule_Time_Picker" className="modal">
+          <div className="modal-box bg-white p-6 rounded-lg shadow-lg text-center">
+            {/* Header */}
+            <h3 className="font-bold text-lg mb-2">Select Time Range</h3>
+            <p className="text-gray-500 mb-4">
+              Choose a start and end time for your schedule
+            </p>
+
+            {/* Time Picker Inputs */}
+            <div className="flex justify-center gap-4 items-center mb-6">
+              {/* Start Time */}
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">
+                  Start Time
+                </label>
+                <input
+                  type="time"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                  className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                />
+              </div>
+
+              <span className="text-lg font-bold text-gray-600">-</span>
+
+              {/* End Time */}
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">
+                  End Time
+                </label>
+                <input
+                  type="time"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                  className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                />
+              </div>
+            </div>
+
+            {/* Confirm Button */}
+            <button
+              className="bg-gradient-to-tr from-red-400 to-red-500 hover:from-red-500 hover:to-red-400 text-white font-semibold rounded-xl shadow-xl hover:shadow-2xl py-3 px-10 transition-all duration-300"
+              onClick={generateSchedule}
+            >
+              Confirm Time
+            </button>
+          </div>
+        </dialog>
+      </div>
     </div>
   );
 };
