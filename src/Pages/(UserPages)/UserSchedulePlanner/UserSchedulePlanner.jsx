@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import TodaysSchedule from "./TodaysSchedule/TodaysSchedule";
+import TodaysNotes from "./TodaysNotes/TodaysNotes";
 
 const UserSchedulePlanner = () => {
   // State for live clock
@@ -26,36 +28,30 @@ const UserSchedulePlanner = () => {
     hour12: true,
   });
 
-  // Get current month and week number
-  const currentMonth = today.toLocaleDateString("en-US", { month: "long" });
-  const startOfYear = new Date(today.getFullYear(), 0, 1);
-  const weekNumber = Math.ceil(
-    ((today - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7
-  );
-
   // Weekday labels
   const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
 
   return (
     <div className="bg-white">
       {/* Header */}
-      <div className="bg-[#F72C5B] py-10"></div>
+      <div className="bg-[#F72C5B] py-12"></div>
 
       {/* Title */}
       <div className="text-center">
         <p className="text-3xl font-semibold py-2 underline underline-offset-4">
           DAILY SCHEDULE PLANNER
         </p>
-        <p className="text-lg text-gray-600">{formattedDate}</p>
-        <p className="text-2xl font-bold text-blue-500 mt-2">{formattedTime}</p>
+        <p className="text-2xl font-bold text-gray-500">{formattedTime}</p>
       </div>
 
       {/* Week & Date Selector */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center p-4 border-b border-gray-300">
-        {/* Month and Week Number */}
-        <div className="flex flex-col items-center md:items-start">
-          <p className="text-lg font-medium text-gray-800">{currentMonth}</p>
-          <p className="text-md text-gray-600">Week {weekNumber}</p>
+        {/* Today's Date */}
+        <div className="flex gap-2 items-center md:items-start">
+          <p className="text-lg font-semibold text-gray-800">Date:</p>
+          <p className="text-lg text-gray-600 font-semibold underline underline-offset-4">
+            {formattedDate}
+          </p>
         </div>
 
         {/* Week Selector */}
@@ -78,6 +74,19 @@ const UserSchedulePlanner = () => {
           })}
         </div>
       </div>
+
+      {/* Main Section */}
+      <main className="max-w-7xl mx-auto flex gap-5">
+        {/* Todays schedule */}
+        <div className="w-1/2">
+          <TodaysSchedule />
+        </div>
+
+        {/* Priority, To-Do, Notes  */}
+        <div className="w-1/2">
+          <TodaysNotes />
+        </div>
+      </main>
     </div>
   );
 };
