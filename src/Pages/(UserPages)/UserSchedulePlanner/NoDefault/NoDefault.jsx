@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { FcHighPriority } from "react-icons/fc";
 import { IoIosCreate } from "react-icons/io";
@@ -18,7 +19,7 @@ const NoDefault = ({ refetch }) => {
       return;
     }
 
-    const userEmail = user?.email || "example@gmail.com";
+    const userEmail = user?.email;
     const today = new Date();
 
     // Get the start of the week (Sunday)
@@ -83,6 +84,7 @@ const NoDefault = ({ refetch }) => {
     // Posting the schedule data to your backend
     try {
       await axiosPublic.post("/Schedule", schedule); // Make sure to replace the URL with your actual endpoint
+      console.log(schedule);
       console.log("Schedule successfully posted to the server.");
       setGeneratedSchedule(schedule);
       refetch();
