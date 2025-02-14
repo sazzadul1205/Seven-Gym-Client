@@ -1,8 +1,13 @@
 import { useState } from "react";
 import AddPlanModal from "./AddPlanModal/AddPlanModal";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import useAuth from "../../../../Hooks/useAuth";
 
 /* eslint-disable react/prop-types */
 const TodaysSchedule = ({ scheduleData }) => {
+  const { user } = useAuth();
+  const axiosPublic = useAxiosPublic();
+
   const [selectedID, setSelectedID] = useState(null);
 
   const scheduledTimes = Object.keys(scheduleData).map((time) => {
