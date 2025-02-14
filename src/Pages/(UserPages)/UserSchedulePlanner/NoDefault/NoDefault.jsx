@@ -1,30 +1,34 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import { FcHighPriority } from "react-icons/fc";
+import Swal from "sweetalert2";
 import { IoIosCreate } from "react-icons/io";
+import { FcHighPriority } from "react-icons/fc";
 import { RiCalendarTodoLine } from "react-icons/ri";
+
 import useAuth from "../../../../Hooks/useAuth";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 const NoDefault = ({ refetch }) => {
-  const axiosPublic = useAxiosPublic();
   const { user } = useAuth();
-  const [startTime, setStartTime] = useState("");
+  const axiosPublic = useAxiosPublic();
+
+  // UseState
   const [endTime, setEndTime] = useState("");
-  const [setGeneratedSchedule] = useState(null);
+  const [startTime, setStartTime] = useState("");
 
   const generateSchedule = async () => {
     if (!startTime || !endTime) {
-      alert("Please select both start and end times.");
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Time Selection",
+        text: "Please select both start and end times.",
+      });
       return;
     }
 
+    const currentDayIndex = today.getDay();
     const userEmail = user?.email;
     const today = new Date();
-
-    // Get the start of the week (Sunday)
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay());
 
     const fullWeekdays = [
       "Sunday",
@@ -36,9 +40,12 @@ const NoDefault = ({ refetch }) => {
       "Saturday",
     ];
 
+    // Generate schedules from today until Saturday
+    let daysToGenerate = fullWeekdays.slice(currentDayIndex);
+
     const convertTimeTo24Hour = (time) => {
-      const [hours, minutes] = time.split(":").map(Number);
-      return hours + minutes / 60;
+      const [hours] = time.split(":").map(Number);
+      return hours;
     };
 
     const startHour = convertTimeTo24Hour(startTime);
@@ -47,9 +54,13 @@ const NoDefault = ({ refetch }) => {
     const generateTimeSlots = (start, end, dayId) => {
       let timeSlots = {};
       for (let hour = start; hour <= end; hour++) {
-        const formattedTime = `${String(Math.floor(hour)).padStart(2, "0")}:00`; // Ensure hour is formatted like "08:00"
+        const formattedTime = `${String(hour).padStart(2, "0")}:00`; // Ensure "08:00" format
         timeSlots[formattedTime] = {
-          id: `${dayId}-${formattedTime}`,
+          id: `sche-${dayId}-${formattedTime}`,
+          title: "",
+          notes: "",
+          location: "",
+          status: "",
         };
       }
       return timeSlots;
@@ -57,49 +68,52 @@ const NoDefault = ({ refetch }) => {
 
     let schedule = {
       email: userEmail,
-      schedule: {
-        dateSchedule: {},
-        reminder: {},
-        todo: {},
-        notes: {},
-      },
+      schedule: {},
+      reminder: {},
+      notes: {},
+      todo: {},
     };
 
-    fullWeekdays.forEach((day, index) => {
-      // Get the correct date for each day in the week
-      let currentDate = new Date(startOfWeek);
-      currentDate.setDate(startOfWeek.getDate() + index);
+    daysToGenerate.forEach((day, index) => {
+      let currentDate = new Date();
+      currentDate.setDate(today.getDate() + index); // Move forward in days
 
       const formattedDate = currentDate
         .toLocaleDateString("en-GB")
         .replace(/\//g, "-"); // Format DD-MM-YYYY
       const dayId = `${day}-${formattedDate}`;
 
-      schedule.schedule.dateSchedule[day] = {
-        id: dayId, // The unique ID for the day
+      schedule.schedule[day] = {
+        id: dayId,
+        dayName: day,
+        date: formattedDate,
         schedule: generateTimeSlots(startHour, endHour, dayId),
       };
     });
 
+    // console.log(schedule);
     // Posting the schedule data to your backend
     try {
-      await axiosPublic.post("/Schedule", schedule); // Make sure to replace the URL with your actual endpoint
-      console.log(schedule);
-      console.log("Schedule successfully posted to the server.");
-      setGeneratedSchedule(schedule);
+      await axiosPublic.post("/Schedule", schedule);
       refetch();
+      Swal.fire({
+        icon: "success",
+        title: "Schedule Created!",
+        text: "Your schedule has been successfully saved.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
       document.getElementById("New_Schedule_Time_Picker").close();
     } catch (error) {
       console.error("Error posting schedule:", error);
-      alert("Failed to post schedule. Please try again.");
+      Swal.fire({
+        icon: "error",
+        title: "Failed to Save",
+        text: "There was an error saving your schedule. Please try again.",
+      });
     }
   };
-
-  // Weekday labels
-  const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
-
-  // Default placeholders
-  const defaultEvents = ["No Event", "No Event", "No Event"];
 
   // Generate time slots from 12:00 AM to 11:00 PM in 12-hour format
   const timeSlots = Array.from({ length: 24 }, (_, index) => {
@@ -107,6 +121,10 @@ const NoDefault = ({ refetch }) => {
     const period = index < 12 ? "AM" : "PM";
     return `${hour}:00 ${period}`;
   });
+
+  // Weekday labels
+  const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
+  const defaultEvents = ["No Event", "No Event", "No Event"];
 
   return (
     <div className="bg-white min-h-screen relative">
