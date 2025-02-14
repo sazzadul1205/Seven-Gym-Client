@@ -26,9 +26,9 @@ const NoDefault = ({ refetch }) => {
       return;
     }
 
+    const today = new Date();
     const currentDayIndex = today.getDay();
     const userEmail = user?.email;
-    const today = new Date();
 
     const fullWeekdays = [
       "Sunday",

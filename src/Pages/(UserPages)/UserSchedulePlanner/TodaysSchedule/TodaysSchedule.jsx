@@ -1,11 +1,30 @@
+import { useState } from "react";
+import AddPlanModal from "./AddPlanModal/AddPlanModal";
+
+/* eslint-disable react/prop-types */
 const TodaysSchedule = ({ scheduleData }) => {
-  // Generate time slots from 12:00 AM to 11:00 PM in 12-hour format
-  const timeSlots = Array.from({ length: 24 }, (_, index) => {
-    const hour = index % 12 || 12; // Convert 0 to 12 for AM format
-    const period = index < 12 ? "AM" : "PM";
-    const timeKey = `${index.toString().padStart(2, "0")}:00`; // Format as "08:00", "14:00"
-    return { display: `${hour}:00 ${period}`, key: timeKey };
+  const [selectedID, setSelectedID] = useState(null);
+
+  const scheduledTimes = Object.keys(scheduleData).map((time) => {
+    const hour = parseInt(time.split(":")[0], 10);
+    const period = hour < 12 ? "AM" : "PM";
+    const displayHour = hour % 12 || 12; // Convert 0 to 12 for AM format
+    return {
+      display: `${displayHour}:00 ${period}`,
+      key: time,
+      event: scheduleData[time],
+    };
   });
+
+  // Function to handle event click
+  const handleEventClick = (event) => {
+    if (event.title) {
+      document.getElementById("Details_view_Modal").showModal();
+    } else {
+      setSelectedID(event.id);
+      document.getElementById("Add_Plan_Modal").showModal();
+    }
+  };
 
   return (
     <div className="p-4">
@@ -16,32 +35,41 @@ const TodaysSchedule = ({ scheduleData }) => {
 
       {/* Schedule List */}
       <div className="pt-4 space-y-3">
-        {timeSlots.map(({ display, key }, index) => {
-          const event = scheduleData[key]; // Get event for this time slot
+        {scheduledTimes.map(({ display, event }, index) => (
+          <div key={index} className="flex items-center gap-3 w-full">
+            {/* Time Label */}
+            <p className="font-semibold text-gray-700 w-20 text-right">
+              {display}
+            </p>
 
-          return (
-            <div key={index} className="flex items-center gap-3 w-full">
-              {/* Time Label */}
-              <p className="font-semibold text-gray-700 w-20 text-right">
-                {display}
-              </p>
-
-              {/* Event Information */}
-              {event ? (
-                <div className="bg-green-300 text-gray-800 px-4 py-2 w-full rounded-full shadow-md hover:scale-105">
-                  <p className="font-bold">{event.title}</p>
-                  <p className="text-sm text-gray-600">{event.notes}</p>
-                  <p className="text-xs text-gray-500">{event.status}</p>
-                </div>
-              ) : (
-                <p className="bg-blue-300 text-gray-800 px-4 py-2 w-full rounded-full shadow-md hover:scale-105">
-                  No Event
-                </p>
-              )}
+            {/* Event Information */}
+            <div
+              className="bg-green-300 text-gray-800 px-4 py-2 w-full rounded-full shadow-md hover:scale-105 cursor-pointer"
+              onClick={() => handleEventClick(event)}
+            >
+              <p className="font-bold">{event.title || "No Event Planned"}</p>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
+
+      {/* Details View Modal */}
+      <dialog id="Details_view_Modal" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Event Details</h3>
+          <p className="py-4">This is where event details will be displayed.</p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+
+      {/* Add Plan Modal */}
+      <dialog id="Add_Plan_Modal" className="modal">
+        <AddPlanModal selectedID={selectedID} />
+      </dialog>
     </div>
   );
 };
