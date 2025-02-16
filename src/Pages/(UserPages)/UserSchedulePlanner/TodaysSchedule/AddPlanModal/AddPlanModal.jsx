@@ -1,18 +1,18 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useState, useEffect } from "react";
 import { ImCross } from "react-icons/im";
 import Swal from "sweetalert2";
 
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../../Hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
 
 const AddPlanModal = ({ selectedID, refetch }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [multiHour, setMultiHour] = useState(false);
   const [selectedTimes, setSelectedTimes] = useState([]);
   const [scheduleIDs, setScheduleIDs] = useState([]);
@@ -32,6 +32,7 @@ const AddPlanModal = ({ selectedID, refetch }) => {
   useEffect(() => {
     setValue("from", initialFromTime);
     setValue("to", getNextHour(initialFromTime));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedID, setValue]);
 
   const toTime = watch("to");
@@ -61,9 +62,10 @@ const AddPlanModal = ({ selectedID, refetch }) => {
     return ids;
   };
 
-  // ✅ Use `useEffect` to update `scheduleIDs`
+  // `useEffect` to update `scheduleIDs`
   useEffect(() => {
     setScheduleIDs(generateScheduleIDs());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [multiHour, toTime]);
 
   const getNextHour = (time) => {
@@ -94,7 +96,11 @@ const AddPlanModal = ({ selectedID, refetch }) => {
       )
     );
 
+  // On Submit Function
   const onSubmit = async (data) => {
+    if (isSubmitting) return; // Prevent multiple submissions
+    setIsSubmitting(true); // Start submitting
+
     const scheduleIDs = generateScheduleIDs();
     console.log("Generated Schedule IDs:", scheduleIDs);
 
@@ -104,32 +110,22 @@ const AddPlanModal = ({ selectedID, refetch }) => {
         title: "Invalid Selection",
         text: "Please check your selected times and try again.",
       });
+      setIsSubmitting(false);
       return;
     }
 
-    // Extract necessary fields from form data
-    // eslint-disable-next-line no-unused-vars
-    const { from, to, ...filteredData } = data;
-
     // Prepare the request payload
     const planData = {
-      email: user?.email, // Ensure user is logged in
+      email: user?.email,
       scheduleIDs,
-      title: filteredData.title || "",
-      notes: filteredData.notes || "",
-      location: filteredData.location || "",
+      title: data.title || "",
+      notes: data.notes || "",
+      location: data.location || "",
       status: "planned",
     };
 
-    // console.log("Sending Data:", planData);
-    console.log(scheduleIDs);
-
     try {
-      // eslint-disable-next-line no-unused-vars
-      const response = await axiosPublic.put(
-        "/Schedule/AddSchedules",
-        planData
-      );
+      await axiosPublic.put("/Schedule/AddSchedules", planData);
       refetch();
       reset();
       document.getElementById("Add_Plan_Modal").close();
@@ -139,7 +135,7 @@ const AddPlanModal = ({ selectedID, refetch }) => {
         icon: "success",
         title: "Schedule Updated",
         text: "Your schedule has been successfully updated!",
-        timer: 3000, // Auto close after 3 seconds
+        timer: 3000,
         showConfirmButton: false,
       });
     } catch (error) {
@@ -152,6 +148,8 @@ const AddPlanModal = ({ selectedID, refetch }) => {
         text: "Failed to update schedule. Please try again.",
       });
     }
+
+    setIsSubmitting(false); // End submitting
   };
 
   return (
@@ -278,10 +276,17 @@ const AddPlanModal = ({ selectedID, refetch }) => {
         <div className="modal-action">
           <button
             type="submit"
-            className="btn btn-success"
-            disabled={!allAvailable} // Disable if any slot is occupied
+            className={`font-semibold rounded-xl px-10 py-2 transition-all duration-300
+                  ${
+                    isSubmitting
+                      ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                      : allAvailable
+                      ? "bg-gradient-to-br from-green-600 to-green-400 hover:bg-gradient-to-tl text-gray-100 cursor-pointer"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
+            disabled={!allAvailable || isSubmitting}
           >
-            Submit
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </div>
       </form>
