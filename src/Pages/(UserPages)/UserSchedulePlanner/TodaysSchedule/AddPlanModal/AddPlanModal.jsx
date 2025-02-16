@@ -1,7 +1,8 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { ImCross } from "react-icons/im";
 import Swal from "sweetalert2";
 
@@ -11,7 +12,10 @@ import useAuth from "../../../../../Hooks/useAuth";
 const AddPlanModal = ({ selectedID, refetch }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
+
   const [multiHour, setMultiHour] = useState(false);
+  const [selectedTimes, setSelectedTimes] = useState([]);
+  const [scheduleIDs, setScheduleIDs] = useState([]);
 
   const {
     register,
@@ -22,46 +26,73 @@ const AddPlanModal = ({ selectedID, refetch }) => {
     formState: { errors },
   } = useForm();
 
-  // Extract base ID and initial "From" time
   const baseID = selectedID ? selectedID.split("-").slice(0, -1).join("-") : "";
   const initialFromTime = selectedID ? selectedID.split("-").pop() : "00:00";
 
   useEffect(() => {
-    setValue("from", initialFromTime); // Set "From" value when modal opens
-    setValue("to", getNextHour(initialFromTime)); // Default "To" time is +1 hour
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setValue("from", initialFromTime);
+    setValue("to", getNextHour(initialFromTime));
   }, [selectedID, setValue]);
 
-  // Watch "To" time
   const toTime = watch("to");
 
-  // Generate schedule IDs
   const generateScheduleIDs = () => {
     if (!initialFromTime || !toTime || !baseID) return [];
 
     const fromHour = parseInt(initialFromTime.split(":")[0], 10);
     const toHour = parseInt(toTime.split(":")[0], 10);
 
-    const scheduleIDs = [];
+    const ids = [];
+    const times = [];
 
     if (multiHour) {
       if (fromHour >= toHour) return [];
       for (let hour = fromHour; hour <= toHour; hour++) {
         const formattedHour = hour.toString().padStart(2, "0") + ":00";
-        scheduleIDs.push(`${baseID}-${formattedHour}`);
+        ids.push(`${baseID}-${formattedHour}`);
+        times.push(formattedHour);
       }
     } else {
-      scheduleIDs.push(`${baseID}-${initialFromTime}`);
+      ids.push(`${baseID}-${initialFromTime}`);
+      times.push(initialFromTime);
     }
 
-    return scheduleIDs;
+    setSelectedTimes(times);
+    return ids;
   };
+
+  // ✅ Use `useEffect` to update `scheduleIDs`
+  useEffect(() => {
+    setScheduleIDs(generateScheduleIDs());
+  }, [multiHour, toTime]);
 
   const getNextHour = (time) => {
     const hour = parseInt(time.split(":")[0], 10);
-    const nextHour = (hour + 1).toString().padStart(2, "0") + ":00";
-    return nextHour;
+    return (hour + 1).toString().padStart(2, "0") + ":00";
   };
+
+  // ✅ Now use `scheduleIDs` in `useQuery`
+  const { data: IndividualPlansIdsData } = useQuery({
+    queryKey: ["IndividualPlansIdsData", scheduleIDs], // Make it reactive
+    queryFn: () =>
+      axiosPublic
+        .get(
+          `Schedule/SchedulesById?email=${
+            user?.email
+          }&scheduleIDs=${scheduleIDs.join("&scheduleIDs=")}`
+        )
+        .then((res) => res.data),
+    enabled: scheduleIDs.length > 0, // Prevents fetching when empty
+  });
+
+  // Check if all selected times are available
+  const allAvailable =
+    scheduleIDs.length > 0 &&
+    scheduleIDs.every((scheduleID) =>
+      IndividualPlansIdsData?.every(
+        (item) => item.id !== scheduleID || !item.title
+      )
+    );
 
   const onSubmit = async (data) => {
     const scheduleIDs = generateScheduleIDs();
@@ -77,6 +108,7 @@ const AddPlanModal = ({ selectedID, refetch }) => {
     }
 
     // Extract necessary fields from form data
+    // eslint-disable-next-line no-unused-vars
     const { from, to, ...filteredData } = data;
 
     // Prepare the request payload
@@ -89,9 +121,11 @@ const AddPlanModal = ({ selectedID, refetch }) => {
       status: "planned",
     };
 
-    console.log("Sending Data:", planData);
+    // console.log("Sending Data:", planData);
+    console.log(scheduleIDs);
 
     try {
+      // eslint-disable-next-line no-unused-vars
       const response = await axiosPublic.put(
         "/Schedule/AddSchedules",
         planData
@@ -108,8 +142,6 @@ const AddPlanModal = ({ selectedID, refetch }) => {
         timer: 3000, // Auto close after 3 seconds
         showConfirmButton: false,
       });
-
-      // Optionally, refresh or update UI state here
     } catch (error) {
       console.error("Error updating schedule:", error.response?.data || error);
 
@@ -191,7 +223,6 @@ const AddPlanModal = ({ selectedID, refetch }) => {
 
         {/* Duration Selection (From - To) */}
         <div className="flex gap-4">
-          {/* From Time (Fixed) */}
           <div className="w-1/2">
             <label className="block font-bold ml-1">From</label>
             <input
@@ -202,7 +233,6 @@ const AddPlanModal = ({ selectedID, refetch }) => {
             />
           </div>
 
-          {/* To Time */}
           <div className="w-1/2">
             <label className="block font-bold ml-1">To</label>
             <input
@@ -216,11 +246,40 @@ const AddPlanModal = ({ selectedID, refetch }) => {
           </div>
         </div>
 
-        {/* Submit Button */}
+        {/* Display Selected Time Slots (Only if Multi-Hour is Enabled) */}
+        {multiHour && selectedTimes.length > 0 && (
+          <div className="p-3 bg-gray-100 rounded-lg">
+            <h4 className="font-bold mb-2">Selected Times:</h4>
+            <div className="flex flex-wrap gap-2">
+              {selectedTimes.map((time, index) => {
+                const scheduleID = `${baseID}-${time}`;
+                const isFull = IndividualPlansIdsData?.some(
+                  (item) => item.id === scheduleID && item.title
+                );
+
+                return (
+                  <span
+                    key={index}
+                    className={`px-3 py-1 rounded-md text-sm font-semibold ${
+                      isFull
+                        ? "bg-red-300 text-red-800"
+                        : "bg-green-300 text-green-800"
+                    }`}
+                  >
+                    {time}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Submit Button - Disabled if any schedule ID is full */}
         <div className="modal-action">
           <button
             type="submit"
-            className="bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-500 text-white font-semibold rounded-lg px-10 py-2"
+            className="btn btn-success"
+            disabled={!allAvailable} // Disable if any slot is occupied
           >
             Submit
           </button>

@@ -272,10 +272,12 @@ const NoDefault = ({ refetch }) => {
         <dialog id="New_Schedule_Time_Picker" className="modal">
           <div className="modal-box bg-white p-6 rounded-lg shadow-lg text-center">
             {/* Header */}
-            <h3 className="font-bold text-lg mb-2">Select Time Range</h3>
-            <p className="text-gray-500 mb-4">
-              Choose a start and end time for your schedule
-            </p>
+            <div>
+              <h3 className="font-bold text-lg mb-2">Select Time Range</h3>
+              <p className="text-gray-500 mb-4">
+                Choose a start and end time for your schedule
+              </p>
+            </div>
 
             {/* Time Picker Inputs */}
             <div className="flex justify-center gap-4 items-center mb-6">
@@ -286,8 +288,12 @@ const NoDefault = ({ refetch }) => {
                 </label>
                 <input
                   type="time"
+                  step="3600" // Only allows selecting full hours
                   value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
+                  onChange={(e) => {
+                    const hour = e.target.value.split(":")[0]; // Extract only the hour
+                    setStartTime(`${hour}:00`); // Force minutes to be "00"
+                  }}
                   className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400"
                 />
               </div>
@@ -301,8 +307,12 @@ const NoDefault = ({ refetch }) => {
                 </label>
                 <input
                   type="time"
+                  step="3600" // Only allows selecting full hours
                   value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
+                  onChange={(e) => {
+                    const hour = e.target.value.split(":")[0]; // Extract only the hour
+                    setEndTime(`${hour}:00`); // Force minutes to be "00"
+                  }}
                   className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400"
                 />
               </div>

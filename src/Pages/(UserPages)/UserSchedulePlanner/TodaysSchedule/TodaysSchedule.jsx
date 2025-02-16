@@ -2,7 +2,6 @@ import { useState } from "react";
 import AddPlanModal from "./AddPlanModal/AddPlanModal";
 
 const TodaysSchedule = ({ scheduleData, refetch }) => {
-
   const [selectedID, setSelectedID] = useState(null);
 
   const scheduledTimes = Object.keys(scheduleData).map((time) => {
@@ -68,7 +67,11 @@ const TodaysSchedule = ({ scheduleData, refetch }) => {
 
       {/* Add Plan Modal */}
       <dialog id="Add_Plan_Modal" className="modal">
-        <AddPlanModal selectedID={selectedID} refetch={refetch} />
+        <AddPlanModal
+          selectedID={selectedID}
+          refetch={refetch}
+          scheduleData={scheduleData}
+        />
       </dialog>
     </div>
   );
