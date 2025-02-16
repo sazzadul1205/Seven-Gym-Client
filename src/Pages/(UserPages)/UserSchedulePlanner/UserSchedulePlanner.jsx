@@ -45,7 +45,9 @@ const UserSchedulePlanner = () => {
 
   // Set default selected day to today
   useEffect(() => {
-    const todayName = new Date().toLocaleDateString("en-US", { weekday: "long" });
+    const todayName = new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+    });
     setSelectedDay(todayName); // Always set selectedDay
   }, []);
 
@@ -131,7 +133,11 @@ const UserSchedulePlanner = () => {
                 onClick={() => setSelectedDay(day)}
                 className={`rounded-full border border-black w-10 h-10 flex items-center justify-center text-lg font-medium cursor-pointer
                   ${isSelected ? "bg-blue-500 text-white font-bold" : ""}
-                  ${isAvailable ? "hover:bg-gray-400" : "opacity-50 cursor-not-allowed"}`}
+                  ${
+                    isAvailable
+                      ? "hover:bg-gray-400"
+                      : "opacity-50 cursor-not-allowed"
+                  }`}
               >
                 {day[0]}
               </p>
@@ -145,7 +151,10 @@ const UserSchedulePlanner = () => {
         {/* Selected Day's Schedule */}
         <div className="w-1/2">
           {selectedSchedule ? (
-            <TodaysSchedule scheduleData={selectedSchedule.schedule} />
+            <TodaysSchedule
+              scheduleData={selectedSchedule.schedule}
+              refetch={refetch}
+            />
           ) : (
             <p className="text-center text-gray-500 text-xl">
               No schedule available for {selectedDay}.

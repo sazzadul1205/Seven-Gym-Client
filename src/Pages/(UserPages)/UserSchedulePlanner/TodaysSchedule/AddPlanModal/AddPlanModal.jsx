@@ -1,9 +1,16 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { ImCross } from "react-icons/im";
+import Swal from "sweetalert2";
 
-const AddPlanModal = ({ selectedID }) => {
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import useAuth from "../../../../../Hooks/useAuth";
+
+const AddPlanModal = ({ selectedID, refetch }) => {
+  const { user } = useAuth();
+  const axiosPublic = useAxiosPublic();
   const [multiHour, setMultiHour] = useState(false);
 
   const {
@@ -11,6 +18,7 @@ const AddPlanModal = ({ selectedID }) => {
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -21,7 +29,8 @@ const AddPlanModal = ({ selectedID }) => {
   useEffect(() => {
     setValue("from", initialFromTime); // Set "From" value when modal opens
     setValue("to", getNextHour(initialFromTime)); // Default "To" time is +1 hour
-  }, [initialFromTime, selectedID, setValue]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedID, setValue]);
 
   // Watch "To" time
   const toTime = watch("to");
@@ -54,25 +63,63 @@ const AddPlanModal = ({ selectedID }) => {
     return nextHour;
   };
 
-  const formattedDate = selectedID
-    ? selectedID.split("-").slice(1, 5).join("-")
-    : "";
-  console.log(formattedDate);
-
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const scheduleIDs = generateScheduleIDs();
-    console.log(scheduleIDs);
+    console.log("Generated Schedule IDs:", scheduleIDs);
 
-    // Remove `from` and `to` from submission
-    // eslint-disable-next-line no-unused-vars
+    if (!scheduleIDs.length) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Selection",
+        text: "Please check your selected times and try again.",
+      });
+      return;
+    }
+
+    // Extract necessary fields from form data
     const { from, to, ...filteredData } = data;
 
+    // Prepare the request payload
     const planData = {
-      ...filteredData,
+      email: user?.email, // Ensure user is logged in
+      scheduleIDs,
+      title: filteredData.title || "",
+      notes: filteredData.notes || "",
+      location: filteredData.location || "",
       status: "planned",
     };
 
-    console.log("Form Data:", planData);
+    console.log("Sending Data:", planData);
+
+    try {
+      const response = await axiosPublic.put(
+        "/Schedule/AddSchedules",
+        planData
+      );
+      refetch();
+      reset();
+      document.getElementById("Add_Plan_Modal").close();
+
+      // Success Alert
+      Swal.fire({
+        icon: "success",
+        title: "Schedule Updated",
+        text: "Your schedule has been successfully updated!",
+        timer: 3000, // Auto close after 3 seconds
+        showConfirmButton: false,
+      });
+
+      // Optionally, refresh or update UI state here
+    } catch (error) {
+      console.error("Error updating schedule:", error.response?.data || error);
+
+      // Error Alert
+      Swal.fire({
+        icon: "error",
+        title: "Update Failed",
+        text: "Failed to update schedule. Please try again.",
+      });
+    }
   };
 
   return (

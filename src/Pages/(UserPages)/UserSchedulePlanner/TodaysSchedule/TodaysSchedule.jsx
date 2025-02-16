@@ -1,12 +1,7 @@
 import { useState } from "react";
 import AddPlanModal from "./AddPlanModal/AddPlanModal";
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-import useAuth from "../../../../Hooks/useAuth";
 
-/* eslint-disable react/prop-types */
-const TodaysSchedule = ({ scheduleData }) => {
-  const { user } = useAuth();
-  const axiosPublic = useAxiosPublic();
+const TodaysSchedule = ({ scheduleData, refetch }) => {
 
   const [selectedID, setSelectedID] = useState(null);
 
@@ -73,7 +68,7 @@ const TodaysSchedule = ({ scheduleData }) => {
 
       {/* Add Plan Modal */}
       <dialog id="Add_Plan_Modal" className="modal">
-        <AddPlanModal selectedID={selectedID} />
+        <AddPlanModal selectedID={selectedID} refetch={refetch} />
       </dialog>
     </div>
   );
