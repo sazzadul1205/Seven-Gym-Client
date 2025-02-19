@@ -153,6 +153,7 @@ const UserSchedulePlanner = () => {
           {selectedSchedule ? (
             <TodaysSchedule
               scheduleData={selectedSchedule.schedule}
+              scheduleInfo={selectedSchedule}
               refetch={refetch}
             />
           ) : (

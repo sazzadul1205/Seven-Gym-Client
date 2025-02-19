@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { ImCross } from "react-icons/im";
 import Loading from "../../../../../Shared/Loading/Loading";
@@ -108,6 +109,7 @@ const ViewPlanModal = ({ eventDetails, isLoading, refetch }) => {
 
   return (
     <div className="modal-box p-6 rounded-lg shadow-lg bg-white bg-gradient-to-br from-gray-300 to-gray-200 relative">
+      {/* Title Part */}
       <div className="flex justify-between items-center border-b border-gray-300 pb-3">
         <h3 className="font-bold text-xl text-gray-800">📅 View Plans</h3>
         <ImCross

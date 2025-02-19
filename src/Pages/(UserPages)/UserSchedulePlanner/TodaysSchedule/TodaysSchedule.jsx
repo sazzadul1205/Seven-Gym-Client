@@ -1,16 +1,40 @@
-import AddPlanModal from "./AddPlanModal/AddPlanModal";
+/* eslint-disable react/prop-types */
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import ViewPlanModal from "./ViewPlanModal/ViewPlanModal";
+import AddPlanModal from "./AddPlanModal/AddPlanModal";
 import useAuth from "../../../../Hooks/useAuth";
 
-const TodaysSchedule = ({ scheduleData, refetch }) => {
+const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
+  const { date, dayName } = scheduleInfo;
 
   const [selectedID, setSelectedID] = useState(null);
+
+  const today = new Date();
+  const providedDate = new Date(date.split("-").reverse().join("-"));
+
+  const isToday = today.toDateString() === providedDate.toDateString();
+  const isFuture = providedDate > today;
+  const isPast = providedDate < today && !isToday;
+
+  // Determine the title dynamically
+  let title = "TODAY'S SCHEDULE";
+  let titleClass = "bg-yellow-500";
+
+  if (!isToday) {
+    title = `${dayName.toUpperCase()}'S SCHEDULE`;
+
+    if (isFuture) {
+      title += " (Future)";
+      titleClass = "bg-yellow-500"; // Future highlight
+    } else if (isPast) {
+      titleClass = "bg-yellow-500 opacity-60"; // Past days fade out
+    }
+  }
 
   const scheduledTimes = Object.keys(scheduleData).map((time) => {
     const hour = parseInt(time.split(":")[0], 10);
@@ -25,6 +49,7 @@ const TodaysSchedule = ({ scheduleData, refetch }) => {
 
   // Function to handle event click
   const handleEventClick = (event) => {
+    if (isPast) return; // Prevent interaction with past events
     setSelectedID(event.id);
     if (event.title) {
       document.getElementById("Details_view_Modal").showModal();
@@ -47,9 +72,11 @@ const TodaysSchedule = ({ scheduleData, refetch }) => {
 
   return (
     <div className="p-4">
-      {/* Title */}
-      <p className="bg-yellow-500 text-center py-2 font-semibold rounded-full">
-        TODAY&apos;S SCHEDULE
+      {/* Dynamic Title */}
+      <p
+        className={`text-center py-2 font-semibold rounded-full ${titleClass}`}
+      >
+        {title}
       </p>
 
       {/* Schedule List */}
@@ -63,7 +90,11 @@ const TodaysSchedule = ({ scheduleData, refetch }) => {
 
             {/* Event Information */}
             <div
-              className="bg-green-300 text-gray-800 px-4 py-2 w-full rounded-full shadow-md hover:scale-105 cursor-pointer"
+              className={`px-4 py-2 w-full rounded-full shadow-md transition ${
+                isPast
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed opacity-60"
+                  : "bg-green-300 text-gray-800 hover:scale-105 cursor-pointer"
+              }`}
               onClick={() => handleEventClick(event)}
             >
               <p className="font-bold">{event.title || "No Event Planned"}</p>
