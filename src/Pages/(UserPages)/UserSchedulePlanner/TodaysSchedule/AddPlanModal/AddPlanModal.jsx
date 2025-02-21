@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
-import { useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { ImCross } from "react-icons/im";
 import Swal from "sweetalert2";
 
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../../Hooks/useAuth";
-import { useQuery } from "@tanstack/react-query";
 
 const AddPlanModal = ({ selectedID, refetch }) => {
   const { user } = useAuth();
@@ -155,7 +155,7 @@ const AddPlanModal = ({ selectedID, refetch }) => {
   return (
     <div className="modal-box p-0">
       {/* Top Section */}
-      <div className="flex justify-between items-center border-b-2 border-black px-5 py-4">
+      <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
         <h3 className="font-bold text-lg">Add New Plan</h3>
         <ImCross
           className="text-xl hover:text-[#F72C5B] cursor-pointer"

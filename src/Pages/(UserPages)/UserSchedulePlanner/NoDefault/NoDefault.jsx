@@ -69,7 +69,7 @@ const NoDefault = ({ refetch }) => {
     let schedule = {
       email: userEmail,
       schedule: {},
-      reminder: {},
+      priority: {},
       notes: {},
       todo: {},
     };

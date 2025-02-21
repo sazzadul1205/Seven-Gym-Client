@@ -23,13 +23,14 @@ const UserSchedulePlanner = () => {
 
   // Fetching Schedule Data
   const {
-    data: schedulesData,
+    data: mySchedulesData,
     isLoading: scheduleDataIsLoading,
     error: scheduleDataError,
     refetch,
   } = useQuery({
     queryKey: ["ScheduleData"],
-    queryFn: () => axiosPublic.get(`/Schedule`).then((res) => res.data),
+    queryFn: () =>
+      axiosPublic.get(`/Schedule?email=${email}`).then((res) => res.data),
   });
 
   // Define the full week
@@ -53,7 +54,7 @@ const UserSchedulePlanner = () => {
 
   if (scheduleDataIsLoading) return <Loading />;
 
-  if (scheduleDataError || !schedulesData?.length) {
+  if (scheduleDataError || !mySchedulesData?.length) {
     return (
       <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
         <p className="text-center text-red-500 font-bold text-3xl mb-8">
@@ -69,8 +70,7 @@ const UserSchedulePlanner = () => {
     );
   }
 
-  // Find the schedule for the provided email
-  const userSchedule = schedulesData.find((sch) => sch.email === email);
+  const userSchedule = mySchedulesData[0];
 
   if (!userSchedule) {
     return <NoDefault refetch={refetch} />;
@@ -120,7 +120,7 @@ const UserSchedulePlanner = () => {
             {formattedDate}
           </p>
         </div>
- 
+
         {/* Week Selector (All 7 days) */}
         <div className="flex gap-2 mt-4 md:mt-0">
           {weekDays.map((day, index) => {
@@ -165,8 +165,12 @@ const UserSchedulePlanner = () => {
 
         {/* Notes Section */}
         <div className="w-1/2">
-          {selectedSchedule ? (
-            <TodaysNotes notesData={selectedSchedule.schedule.notes} />
+          {userSchedule ? (
+            <TodaysNotes
+              priority={userSchedule.priority}
+              notes={userSchedule.notes}
+              todo={userSchedule.todo}
+            />
           ) : (
             <p className="text-center text-gray-500 text-xl">
               No notes available.
