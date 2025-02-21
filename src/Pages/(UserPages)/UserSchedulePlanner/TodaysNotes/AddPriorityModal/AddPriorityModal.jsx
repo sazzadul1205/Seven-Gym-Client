@@ -1,7 +1,9 @@
 import { ImCross } from "react-icons/im";
-import { useForm } from "react-hook-form"; // Importing react-hook-form
-import { useState } from "react"; // Import useState for tag management
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { useParams } from "react-router";
 
+// Reusable input field component
 const InputField = ({
   label,
   id,
@@ -10,9 +12,6 @@ const InputField = ({
   register,
   errors,
   options = [],
-  value,
-  handleAddTag,
-  handleRemoveTag,
 }) => (
   <div>
     <label htmlFor={id} className="block text-md font-semibold pb-1">
@@ -30,52 +29,74 @@ const InputField = ({
           </option>
         ))}
       </select>
-    ) : type === "checkbox" ? (
-      <input {...register(id)} type={type} id={id} className="checkbox" />
     ) : (
       <input
         {...register(id, options)}
         type={type}
         id={id}
-        className="input input-bordered rounded-xl w-full"
+        className={`input input-bordered rounded-xl w-full`}
         placeholder={placeholder}
-        value={value} // Controlled input for tags
-        onChange={(e) => handleAddTag(e.target.value)} // Handle adding tags
       />
     )}
-    {errors[id] && <p className="text-red-500 text-sm">{errors[id].message}</p>}
+    {errors[id] && (
+      <p className="text-red-500 text-sm">{errors[id]?.message}</p>
+    )}
   </div>
 );
 
 const AddPriorityModal = () => {
+  const { email } = useParams();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
-  } = useForm();
-  const [tags, setTags] = useState([]); // State to manage tags
+    watch,
+  } = useForm(); // React Hook Form for form handling
+  const [tags, setTags] = useState([]); // State for storing tags
 
-  // Handle form submission
-  const onSubmit = (data) => {
-    console.log("Form submitted: ", { ...data, tags });
-    document.getElementById("Add_Priority_Modal").close();
-  };
+  // Watch the "Very Important" checkbox value to apply dynamic styling
+  const isVeryImportant = watch("isImportant", false);
 
-  // Add tag to the state
+  // Function to add a tag to the list
   const handleAddTag = (newTag) => {
     if (newTag && !tags.includes(newTag)) {
       setTags((prevTags) => [...prevTags, newTag]);
     }
   };
 
-  // Remove tag from the state
+  // Function to remove a tag from the list
   const handleRemoveTag = (tagToRemove) => {
     setTags((prevTags) => prevTags.filter((tag) => tag !== tagToRemove));
   };
 
+  // Function to generate unique ID
+  const generateUniqueId = (email) => {
+    const date = new Date();
+
+    // Get formatted date (DD-MM-YYYY)
+    const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-");
+
+    // Get formatted time (HH:MM)
+    const formattedTime = date.toTimeString().split(" ")[0].slice(0, 5); // HH:MM format
+
+    // Generate a random 3-digit number (between 100 and 999)
+    const randomNumber = Math.floor(Math.random() * 900) + 100;
+
+    // Construct the ID
+    return `pri-${email}-${formattedDate}-${formattedTime}-${randomNumber}`;
+  };
+
+  // Form submission handler
+  const onSubmit = (data) => {
+    const uniqueId = generateUniqueId(email); // Generate unique ID
+    console.log("Form submitted: ", { id: uniqueId, ...data, tags });
+    document.getElementById("Add_Priority_Modal").close(); // Close modal after submission
+  };
+
   return (
     <div className="modal-box p-0">
+      {/* Header with title and close button */}
       <div className="flex justify-between items-center border-b border-gray-300 p-4 pb-2">
         <h3 className="font-bold text-lg">Add New Priority</h3>
         <ImCross
@@ -84,6 +105,7 @@ const AddPriorityModal = () => {
         />
       </div>
 
+      {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
         <InputField
           label="Title"
@@ -104,24 +126,6 @@ const AddPriorityModal = () => {
           options={{ required: "Content is required" }}
         />
         <InputField
-          label="Created By"
-          id="createdBy"
-          type="email"
-          placeholder="Enter creator's email"
-          register={register}
-          errors={errors}
-          options={{ required: "Creator is required" }}
-        />
-        <InputField
-          label="Assigned To"
-          id="assignedTo"
-          type="email"
-          placeholder="Enter assignee's email"
-          register={register}
-          errors={errors}
-          options={{ required: "Assignee is required" }}
-        />
-        <InputField
           label="Reminder"
           id="reminder"
           type="datetime-local"
@@ -129,64 +133,80 @@ const AddPriorityModal = () => {
           errors={errors}
           options={{ required: "Reminder time is required" }}
         />
-        <InputField
-          label="Is Important"
-          id="isImportant"
-          type="checkbox"
-          register={register}
-          errors={errors}
-        />
-        <InputField
-          label="Status"
-          id="status"
-          type="select"
-          register={register}
-          errors={errors}
-          options={{ required: "Status is required" }}
-          options={["not started", "in progress", "completed"]}
-        />
+
+        {/* Very Important Checkbox with Glowing Effect */}
+        <div className="flex items-center space-x-2 bg-yellow-200 p-1">
+          <input
+            {...register("isImportant")}
+            type="checkbox"
+            id="isImportant"
+            className="checkbox border-black"
+          />
+          <label
+            htmlFor="isImportant"
+            className={`font-semibold px-3 py-1 rounded-lg transition-all ${
+              isVeryImportant
+                ? "bg-red-500 text-white animate-pulse shadow-lg"
+                : "bg-gray-200"
+            }`}
+          >
+            Very Important? Check here!
+          </label>
+        </div>
 
         {/* Tags Input Section */}
         <div>
-          <label htmlFor="tags" className="block text-md font-semibold pb-1">
-            Tags (comma separated)
-          </label>
+          <label className="block text-md font-semibold pb-1">Tags</label>
           <div className="flex items-center space-x-2">
             <input
               id="tags"
               type="text"
               className="input input-bordered rounded-xl w-full"
               placeholder="Enter tag"
-              onBlur={(e) => handleAddTag(e.target.value)} // Add tag on blur
+              onBlur={(e) => {
+                handleAddTag(e.target.value);
+                e.target.value = ""; // Clear input after adding
+              }}
             />
             <button
               type="button"
-              className="btn btn-primary"
-              onClick={() =>
-                handleAddTag(document.getElementById("tags").value)
-              } // Add tag on button click
+              className="font-semibold bg-green-400 hover:bg-green-500 shadow-lg py-2 px-8"
+              onClick={() => {
+                const tagInput = document.getElementById("tags");
+                handleAddTag(tagInput.value);
+                tagInput.value = ""; // Clear input after adding
+              }}
             >
               Add
             </button>
           </div>
-          <div className="mt-2 flex flex-wrap gap-2">
+
+          {/* Displaying added tags */}
+          <div className="mt-2 flex flex-wrap gap-2 border border-gray-300 rounded-xl p-2 ">
             {tags.map((tag, index) => (
               <span
                 key={index}
-                className="flex justify-between items-center gap-3 bg-red-300 py-2 px-2 rounded-lg"
+                className="flex justify-between items-center gap-3 py-2 px-3 rounded-2xl"
+                style={{
+                  backgroundColor: `hsl(${index * 45}, 80%, 70%)`, // Different bright colors
+                }}
               >
-                {tag}
+                <span className="font-semibold">{tag}</span>
                 <ImCross
-                  className="ml-2 cursor-pointer"
-                  onClick={() => handleRemoveTag(tag)} // Remove tag on cross click
+                  className="text-xs text-gray-700 cursor-pointer hover:text-gray-900"
+                  onClick={() => handleRemoveTag(tag)}
                 />
               </span>
             ))}
           </div>
         </div>
 
-        <div className="flex justify-center mt-6">
-          <button type="submit" className="btn btn-primary w-full">
+        {/* Submit Button */}
+        <div className="mt-6 flex justify-end">
+          <button
+            type="submit"
+            className="font-semibold bg-gradient-to-br hover:bg-gradient-to-tl from-green-400 to-green-500 rounded-xl shadow-xl px-10 py-3"
+          >
             Add Priority
           </button>
         </div>
