@@ -120,7 +120,7 @@ const UserSchedulePlanner = () => {
             {formattedDate}
           </p>
         </div>
-
+ 
         {/* Week Selector (All 7 days) */}
         <div className="flex gap-2 mt-4 md:mt-0">
           {weekDays.map((day, index) => {

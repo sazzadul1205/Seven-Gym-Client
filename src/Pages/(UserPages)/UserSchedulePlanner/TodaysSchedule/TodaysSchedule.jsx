@@ -6,6 +6,7 @@ import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import ViewPlanModal from "./ViewPlanModal/ViewPlanModal";
 import AddPlanModal from "./AddPlanModal/AddPlanModal";
 import useAuth from "../../../../Hooks/useAuth";
+import Swal from "sweetalert2";
 
 const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   const { user } = useAuth();
@@ -29,10 +30,9 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     title = `${dayName.toUpperCase()}'S SCHEDULE`;
 
     if (isFuture) {
-      title += " (Future)";
-      titleClass = "bg-yellow-500"; // Future highlight
+      titleClass = "bg-yellow-500";
     } else if (isPast) {
-      titleClass = "bg-yellow-500 opacity-60"; // Past days fade out
+      titleClass = "bg-yellow-500 opacity-60";
     }
   }
 
@@ -58,7 +58,109 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     }
   };
 
-  // ✅ Fetch Individual Plan Details
+  // Function to get the next occurrence of the same weekday and its exact date
+  const getNextOccurrence = (day) => {
+    const daysOfWeek = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    const todayIndex = today.getDay();
+    const targetIndex = daysOfWeek.indexOf(day);
+    let daysToAdd = (targetIndex - todayIndex + 7) % 7;
+    if (daysToAdd === 0) daysToAdd = 7; // Move to the next week
+
+    const nextDate = new Date(today);
+    nextDate.setDate(today.getDate() + daysToAdd);
+
+    // Format date as YYYY-MM-DD
+    const formattedDate = nextDate.toISOString().split("T")[0];
+
+    return {
+      nextDayName: daysOfWeek[nextDate.getDay()],
+      nextDate: formattedDate,
+    };
+  };
+
+  // Get the next occurrence of the selected day
+  const { nextDayName, nextDate } = getNextOccurrence(dayName);
+
+  // Function to handle schedule regeneration
+  const handleRegenerateClick = async () => {
+    // Update schedule ID with the new date (keep other parts unchanged)
+    const updatedScheduleID = `${nextDayName}-${nextDate
+      .split("-")
+      .reverse()
+      .join("-")}`;
+
+    // Log the updated schedule ID
+    console.log(`Updated schedule ID: ${updatedScheduleID}`);
+
+    // Update the schedule data with the new date and clear the event details
+    const updatedScheduleData = {};
+
+    // Iterate through each time slot and update it
+    Object.keys(scheduleData).forEach((time) => {
+      const newEventID = `sche-${updatedScheduleID}-${time}`;
+
+      // Clear out title, notes, location, and status if they have content
+      updatedScheduleData[time] = {
+        id: newEventID,
+        title: "",
+        notes: "",
+        location: "",
+        status: "",
+      };
+    });
+
+    const regeneratedUpdatedCode = {
+      id: updatedScheduleID,
+      dayName: nextDayName,
+      date: nextDate,
+      schedule: updatedScheduleData,
+    };
+
+    // Log the updated schedule data
+    console.log("Updated schedule data:", regeneratedUpdatedCode);
+
+    try {
+      // Send the updated schedule data to the server
+      // eslint-disable-next-line no-unused-vars
+      const response = await axiosPublic.put(
+        "/Schedule/RegenerateNewDaySchedule",
+        {
+          email: user.email, // Assuming user object contains the email
+          dayName: nextDayName,
+          scheduleData: regeneratedUpdatedCode, // The updated schedule
+        }
+      );
+
+      // Success alert
+      Swal.fire({
+        title: "Success!",
+        text: "Schedule has been updated successfully.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+      refetch();
+    } catch (error) {
+      console.error("Error updating schedule:", error);
+
+      // Error alert
+      Swal.fire({
+        title: "Error!",
+        text: "There was an issue updating the schedule. Please try again later.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
+  // Fetch Individual Plan Details
   const { data: eventDetails, isLoading } = useQuery({
     queryKey: ["IndividualPlansIdsData", selectedID],
     queryFn: () =>
@@ -78,6 +180,23 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
       >
         {title}
       </p>
+
+      {/* Glowing prompt for past schedules */}
+      {isPast && (
+        <div className="mt-2 p-2 text-center text-white bg-red-500 animate-pulse rounded-lg shadow-md">
+          <p>
+            This schedule has passed. Do you want to regenerate for{" "}
+            <span className="text-lg font-semibold">next {nextDayName}</span>?
+          </p>
+          <p>({nextDate})</p>
+          <button
+            onClick={handleRegenerateClick}
+            className="mt-2 px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition"
+          >
+            Regenerate
+          </button>
+        </div>
+      )}
 
       {/* Schedule List */}
       <div className="pt-4 space-y-3">
