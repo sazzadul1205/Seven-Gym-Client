@@ -5,7 +5,7 @@ import { useParams } from "react-router";
 import TodaysSchedule from "./TodaysSchedule/TodaysSchedule";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import Loading from "../../../Shared/Loading/Loading";
-import TodaysNotes from "./TodaysNotes/TodaysNotes";
+import TodaysNotes from "./TodaysNotes/ExtraList";
 import NoDefault from "./NoDefault/NoDefault";
 
 const UserSchedulePlanner = () => {
@@ -166,7 +166,7 @@ const UserSchedulePlanner = () => {
         {/* Notes Section */}
         <div className="w-1/2">
           {userSchedule ? (
-            <TodaysNotes
+            <ExtraList
               priority={userSchedule.priority}
               notes={userSchedule.notes}
               todo={userSchedule.todo}
