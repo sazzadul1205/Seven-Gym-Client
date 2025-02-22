@@ -2,13 +2,19 @@ import { RiCalendarTodoLine } from "react-icons/ri";
 import { IoIosCreate } from "react-icons/io";
 import { FaPlus, FaList } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
+import { useState } from "react";
 
+import ViewPriorityModal from "./ViewPriorityModal/ViewPriorityModal";
 import AddPriorityModal from "./AddPriorityModal/AddPriorityModal";
+import ViewNotesModal from "./ViewNotesModal/ViewNotesModal";
 import AddNotesModal from "./AddNotesModal/AddNotesModal";
+import ViewToDoModal from "./ViewToDoModal/ViewToDoModal";
 import AddToDoModal from "./AddToDoModal/AddToDoModal";
 
 // eslint-disable-next-line react/prop-types
 const TodaysNotes = ({ priority, notes, todo, refetch }) => {
+  // State to store the selected priority item for viewing
+  const [selectedPriority, setSelectedPriority] = useState(null);
   return (
     <div className="p-4 space-y-6">
       {/* Priority List */}
@@ -34,7 +40,9 @@ const TodaysNotes = ({ priority, notes, todo, refetch }) => {
             {/* Details Button */}
             <button
               className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition"
-              onClick={() => console.log("View All Clicked")} // Replace with your view function
+              onClick={() =>
+                document.getElementById("View_Priority_Modal").showModal()
+              }
               data-tooltip-id="detailsTooltip"
             >
               <FaList />
@@ -53,7 +61,14 @@ const TodaysNotes = ({ priority, notes, todo, refetch }) => {
             .sort((a, b) => new Date(b.reminder) - new Date(a.reminder)) // Sort by most recent first
             .sort((a, b) => b.isImportant - a.isImportant) // Prioritize important ones
             .map((event, index) => (
-              <div key={index} className="flex items-center gap-3 w-full">
+              <div
+                key={index}
+                className="flex items-center gap-3 w-full cursor-pointer"
+                onClick={() => {
+                  setSelectedPriority(event);
+                  document.getElementById("View_Priority_Modal").showModal();
+                }}
+              >
                 <div className="flex justify-between bg-blue-300 text-gray-800 px-4 py-3 w-full rounded-full shadow-md hover:scale-105 transition">
                   <p className="font-semibold">
                     {event.title}
@@ -155,6 +170,21 @@ const TodaysNotes = ({ priority, notes, todo, refetch }) => {
       {/* Add Notes Modal  */}
       <dialog id="Add_Notes_Modal" className="modal">
         <AddNotesModal refetch={refetch} />
+      </dialog>
+
+      {/* View Priority Modal  */}
+      <dialog id="View_Priority_Modal" className="modal">
+        <ViewPriorityModal refetch={refetch} Priority={selectedPriority} />
+      </dialog>
+
+      {/* View To-Do Modal  */}
+      <dialog id="View_To-Do_Modal" className="modal">
+        <ViewToDoModal refetch={refetch} />
+      </dialog>
+
+      {/* View Notes Modal  */}
+      <dialog id="View_Notes_Modal" className="modal">
+        <ViewNotesModal refetch={refetch} />
       </dialog>
     </div>
   );
