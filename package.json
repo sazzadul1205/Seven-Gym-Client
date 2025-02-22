@@ -33,6 +33,7 @@
     "react-slick": "^0.30.2",
     "react-tabs": "^6.1.0",
     "react-to-print": "^3.0.4",
+    "react-tooltip": "^5.28.0",
     "slick-carousel": "^1.8.1",
     "sweetalert2": "^11.15.10",
     "swiper": "^11.1.15"

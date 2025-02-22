@@ -1,30 +1,75 @@
-import { FcHighPriority } from "react-icons/fc";
 import { RiCalendarTodoLine } from "react-icons/ri";
 import { IoIosCreate } from "react-icons/io";
+import { FaPlus, FaList } from "react-icons/fa";
+import { Tooltip } from "react-tooltip";
+
 import AddPriorityModal from "./AddPriorityModal/AddPriorityModal";
 import AddNotesModal from "./AddNotesModal/AddNotesModal";
 import AddToDoModal from "./AddToDoModal/AddToDoModal";
 
-const TodaysNotes = ({ priority = [], notes = [], todo = [] }) => {
+// eslint-disable-next-line react/prop-types
+const TodaysNotes = ({ priority, notes, todo, refetch }) => {
   return (
     <div className="p-4 space-y-6">
-      {/* Priority */}
+      {/* Priority List */}
       <div className="space-y-3">
-        <p className="bg-yellow-500 text-center py-2 font-semibold rounded-full">
-          PRIORITY
-        </p>
+        {/* Title Bar with Buttons on the Right */}
+        <div className="flex justify-between items-center bg-yellow-500 text-center py-2 px-6 font-semibold rounded-full relative">
+          <p className="w-full text-center">PRIORITY LIST</p>
 
-        {priority.length ? (
-          priority.map((event, index) => (
-            <div key={index} className="flex items-center gap-3 w-full">
-              <FcHighPriority className="text-3xl" />
-              <p className="bg-blue-300 text-gray-800 px-4 py-2 w-full rounded-full shadow-md hover:scale-105 transition">
-                {event}
-              </p>
-            </div>
-          ))
+          {/* Buttons on the right */}
+          <div className="absolute right-4 flex gap-3">
+            {/* Add Button */}
+            <button
+              className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition"
+              onClick={() =>
+                document.getElementById("Add_Priority_Modal").showModal()
+              }
+              data-tooltip-id="addTooltip"
+            >
+              <FaPlus />
+            </button>
+            <Tooltip id="addTooltip" place="top" content="Add Priority" />
+
+            {/* Details Button */}
+            <button
+              className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition"
+              onClick={() => console.log("View All Clicked")} // Replace with your view function
+              data-tooltip-id="detailsTooltip"
+            >
+              <FaList />
+            </button>
+            <Tooltip
+              id="detailsTooltip"
+              place="top"
+              content="View All Priorities"
+            />
+          </div>
+        </div>
+
+        {/* Priority List */}
+        {priority?.length ? (
+          [...priority]
+            .sort((a, b) => new Date(b.reminder) - new Date(a.reminder)) // Sort by most recent first
+            .sort((a, b) => b.isImportant - a.isImportant) // Prioritize important ones
+            .map((event, index) => (
+              <div key={index} className="flex items-center gap-3 w-full">
+                <div className="flex justify-between bg-blue-300 text-gray-800 px-4 py-3 w-full rounded-full shadow-md hover:scale-105 transition">
+                  <p className="font-semibold">
+                    {event.title}
+                    {event.isImportant && (
+                      <span className="text-red-500 font-bold ml-4">★</span>
+                    )}
+                  </p>
+                  -
+                  <p className="font-semibold">
+                    {new Date(event.reminder).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            ))
         ) : (
-          <div className="flex min-h-[100px] justify-center items-center ">
+          <div className="flex min-h-[100px] justify-center items-center">
             <button
               className="px-16 py-2 bg-gradient-to-br hover:bg-gradient-to-tl from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition"
               onClick={() =>
@@ -66,10 +111,10 @@ const TodaysNotes = ({ priority = [], notes = [], todo = [] }) => {
         )}
       </div>
 
-      {/* Notes / Reminders */}
+      {/* Notes / Reminders List */}
       <div className="space-y-3">
         <p className="bg-yellow-500 text-center py-2 font-semibold rounded-full">
-          NOTES / REMINDERS
+          NOTES / REMINDERS LIST
         </p>
 
         <div className="p-4 bg-gray-200 rounded-xl shadow-md min-h-[250px] flex flex-col gap-3">
@@ -99,17 +144,17 @@ const TodaysNotes = ({ priority = [], notes = [], todo = [] }) => {
 
       {/* Add Priority Modal  */}
       <dialog id="Add_Priority_Modal" className="modal">
-        <AddPriorityModal />
+        <AddPriorityModal refetch={refetch} />
       </dialog>
 
       {/* Add To-Do Modal  */}
       <dialog id="Add_To-Do_Modal" className="modal">
-        <AddToDoModal />
+        <AddToDoModal refetch={refetch} />
       </dialog>
 
       {/* Add Notes Modal  */}
       <dialog id="Add_Notes_Modal" className="modal">
-        <AddNotesModal />
+        <AddNotesModal refetch={refetch} />
       </dialog>
     </div>
   );

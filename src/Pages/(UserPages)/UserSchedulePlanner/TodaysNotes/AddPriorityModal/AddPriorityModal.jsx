@@ -1,59 +1,25 @@
-import { ImCross } from "react-icons/im";
+/* eslint-disable react/prop-types */
 import { useForm } from "react-hook-form";
-import { useState } from "react";
 import { useParams } from "react-router";
+import { ImCross } from "react-icons/im";
+import { useState } from "react";
+import Swal from "sweetalert2";
 
-// Reusable input field component
-const InputField = ({
-  label,
-  id,
-  type,
-  placeholder,
-  register,
-  errors,
-  options = [],
-}) => (
-  <div>
-    <label htmlFor={id} className="block text-md font-semibold pb-1">
-      {label}
-    </label>
-    {type === "select" ? (
-      <select
-        {...register(id, options)}
-        id={id}
-        className="input input-bordered rounded-xl w-full"
-      >
-        {options.map((opt, idx) => (
-          <option key={idx} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
-    ) : (
-      <input
-        {...register(id, options)}
-        type={type}
-        id={id}
-        className={`input input-bordered rounded-xl w-full`}
-        placeholder={placeholder}
-      />
-    )}
-    {errors[id] && (
-      <p className="text-red-500 text-sm">{errors[id]?.message}</p>
-    )}
-  </div>
-);
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
-const AddPriorityModal = () => {
+const AddPriorityModal = ({ refetch }) => {
+  const axiosPublic = useAxiosPublic();
   const { email } = useParams();
+
+  const [tags, setTags] = useState([]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm(); // React Hook Form for form handling
-  const [tags, setTags] = useState([]); // State for storing tags
+    reset,
+  } = useForm();
 
   // Watch the "Very Important" checkbox value to apply dynamic styling
   const isVeryImportant = watch("isImportant", false);
@@ -88,10 +54,40 @@ const AddPriorityModal = () => {
   };
 
   // Form submission handler
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const uniqueId = generateUniqueId(email); // Generate unique ID
-    console.log("Form submitted: ", { id: uniqueId, ...data, tags });
-    document.getElementById("Add_Priority_Modal").close(); // Close modal after submission
+    const newPriority = {
+      email: email,
+      newPriority: { id: uniqueId, ...data, tags },
+    };
+
+    try {
+      // eslint-disable-next-line no-unused-vars
+      const response = await axiosPublic.put(
+        "/Schedule/AddPriority",
+        newPriority
+      );
+
+      // Show success alert
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "Priority updated successfully.",
+      });
+
+      document.getElementById("Add_Priority_Modal").close();
+      refetch();
+      reset();
+    } catch (error) {
+      console.error("Error updating priority:", error);
+
+      // Show error alert
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong! Please try again.",
+      });
+    }
   };
 
   return (
@@ -216,3 +212,44 @@ const AddPriorityModal = () => {
 };
 
 export default AddPriorityModal;
+
+// Reusable input field component
+const InputField = ({
+  label,
+  id,
+  type,
+  placeholder,
+  register,
+  errors,
+  options = [],
+}) => (
+  <div>
+    <label htmlFor={id} className="block text-md font-semibold pb-1">
+      {label}
+    </label>
+    {type === "select" ? (
+      <select
+        {...register(id, options)}
+        id={id}
+        className="input input-bordered rounded-xl w-full"
+      >
+        {options.map((opt, idx) => (
+          <option key={idx} value={opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
+    ) : (
+      <input
+        {...register(id, options)}
+        type={type}
+        id={id}
+        className={`input input-bordered rounded-xl w-full`}
+        placeholder={placeholder}
+      />
+    )}
+    {errors[id] && (
+      <p className="text-red-500 text-sm">{errors[id]?.message}</p>
+    )}
+  </div>
+);

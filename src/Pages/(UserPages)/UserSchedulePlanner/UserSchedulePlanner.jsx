@@ -170,6 +170,7 @@ const UserSchedulePlanner = () => {
               priority={userSchedule.priority}
               notes={userSchedule.notes}
               todo={userSchedule.todo}
+              refetch={refetch}
             />
           ) : (
             <p className="text-center text-gray-500 text-xl">

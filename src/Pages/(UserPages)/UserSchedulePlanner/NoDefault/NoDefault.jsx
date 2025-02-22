@@ -69,9 +69,9 @@ const NoDefault = ({ refetch }) => {
     let schedule = {
       email: userEmail,
       schedule: {},
-      priority: {},
-      notes: {},
-      todo: {},
+      priority: [],
+      notes: [],
+      todo: [],
     };
 
     daysToGenerate.forEach((day, index) => {

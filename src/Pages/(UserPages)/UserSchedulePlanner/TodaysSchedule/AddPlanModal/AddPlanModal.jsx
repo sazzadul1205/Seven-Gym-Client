@@ -73,7 +73,7 @@ const AddPlanModal = ({ selectedID, refetch }) => {
     return (hour + 1).toString().padStart(2, "0") + ":00";
   };
 
-  // ✅ Now use `scheduleIDs` in `useQuery`
+  // Now use `scheduleIDs` in `useQuery`
   const { data: IndividualPlansIdsData } = useQuery({
     queryKey: ["IndividualPlansIdsData", scheduleIDs], // Make it reactive
     queryFn: () =>
