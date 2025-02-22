@@ -10,6 +10,9 @@ import ViewNotesModal from "./ViewNotesModal/ViewNotesModal";
 import AddNotesModal from "./AddNotesModal/AddNotesModal";
 import ViewToDoModal from "./ViewToDoModal/ViewToDoModal";
 import AddToDoModal from "./AddToDoModal/AddToDoModal";
+import ViewAllPriorityModal from "./ViewAllPriorityModal/ViewAllPriorityModal";
+import ViewAllToDoModal from "./ViewAllToDoModal/ViewAllToDoModal";
+import ViewAllNotesModal from "./ViewAllNotesModal/ViewAllNotesModal";
 
 // eslint-disable-next-line react/prop-types
 const TodaysNotes = ({ priority, notes, todo, refetch }) => {
@@ -41,7 +44,7 @@ const TodaysNotes = ({ priority, notes, todo, refetch }) => {
             <button
               className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition"
               onClick={() =>
-                document.getElementById("View_Priority_Modal").showModal()
+                document.getElementById("View_All_Priority_Modal").showModal()
               }
               data-tooltip-id="detailsTooltip"
             >
@@ -56,45 +59,48 @@ const TodaysNotes = ({ priority, notes, todo, refetch }) => {
         </div>
 
         {/* Priority List */}
-        {priority?.length ? (
-          [...priority]
-            .sort((a, b) => new Date(b.reminder) - new Date(a.reminder)) // Sort by most recent first
-            .sort((a, b) => b.isImportant - a.isImportant) // Prioritize important ones
-            .map((event, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-3 w-full cursor-pointer"
-                onClick={() => {
-                  setSelectedPriority(event);
-                  document.getElementById("View_Priority_Modal").showModal();
-                }}
-              >
-                <div className="flex justify-between bg-blue-300 text-gray-800 px-4 py-3 w-full rounded-full shadow-md hover:scale-105 transition">
-                  <p className="font-semibold">
-                    {event.title}
-                    {event.isImportant && (
-                      <span className="text-red-500 font-bold ml-4">★</span>
-                    )}
-                  </p>
-                  -
-                  <p className="font-semibold">
-                    {new Date(event.reminder).toLocaleString()}
-                  </p>
+        <div className="space-y-3">
+          {priority?.length ? (
+            [...priority]
+              .sort((a, b) => new Date(b.reminder) - new Date(a.reminder)) // Sort by most recent first
+              .sort((a, b) => b.isImportant - a.isImportant) // Prioritize important ones
+              .slice(0, 5) // Limit to top 5
+              .map((event, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 w-full cursor-pointer"
+                  onClick={() => {
+                    setSelectedPriority(event);
+                    document.getElementById("View_Priority_Modal").showModal();
+                  }}
+                >
+                  <div className="flex justify-between bg-blue-300 text-gray-800 px-4 py-3 w-full rounded-full shadow-md hover:scale-105 transition">
+                    <p className="font-semibold">
+                      {event.title}
+                      {event.isImportant && (
+                        <span className="text-red-500 font-bold ml-4">★</span>
+                      )}
+                    </p>
+                    -
+                    <p className="font-semibold">
+                      {new Date(event.reminder).toLocaleString()}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))
-        ) : (
-          <div className="flex min-h-[100px] justify-center items-center">
-            <button
-              className="px-16 py-2 bg-gradient-to-br hover:bg-gradient-to-tl from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition"
-              onClick={() =>
-                document.getElementById("Add_Priority_Modal").showModal()
-              }
-            >
-              + Add Priority
-            </button>
-          </div>
-        )}
+              ))
+          ) : (
+            <div className="flex min-h-[100px] justify-center items-center">
+              <button
+                className="px-16 py-2 bg-gradient-to-br hover:bg-gradient-to-tl from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition"
+                onClick={() =>
+                  document.getElementById("Add_Priority_Modal").showModal()
+                }
+              >
+                + Add Priority
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* To-Do List */}
@@ -185,6 +191,21 @@ const TodaysNotes = ({ priority, notes, todo, refetch }) => {
       {/* View Notes Modal  */}
       <dialog id="View_Notes_Modal" className="modal">
         <ViewNotesModal refetch={refetch} />
+      </dialog>
+
+      {/* View All Priority Modal  */}
+      <dialog id="View_All_Priority_Modal" className="modal">
+        <ViewAllPriorityModal refetch={refetch} priority={priority} />
+      </dialog>
+
+      {/* View All To-Do Modal  */}
+      <dialog id="View_All_To-Do_Modal" className="modal">
+        <ViewAllToDoModal refetch={refetch} />
+      </dialog>
+
+      {/* View All Notes Modal  */}
+      <dialog id="View_All_Notes_Modal" className="modal">
+        <ViewAllNotesModal refetch={refetch} />
       </dialog>
     </div>
   );
