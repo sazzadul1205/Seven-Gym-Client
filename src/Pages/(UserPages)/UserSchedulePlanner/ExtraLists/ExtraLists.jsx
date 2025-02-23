@@ -13,7 +13,6 @@ import ViewAllPriorityModal from "./ViewAllPriorityModal/ViewAllPriorityModal";
 import ViewAllToDoModal from "./ViewAllToDoModal/ViewAllToDoModal";
 import ViewAllNotesModal from "./ViewAllNotesModal/ViewAllNotesModal";
 
-// eslint-disable-next-line react/prop-types
 const ExtraList = ({ priority, notes, todo, refetch }) => {
   // State to store the selected priority item for viewing
   const [selectedPriority, setSelectedPriority] = useState(null);

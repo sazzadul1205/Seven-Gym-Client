@@ -24,33 +24,30 @@ const AddNotesModal = ({ refetch }) => {
   // Watch the "Very Important" checkbox value to apply dynamic styling
   const isVeryImportant = watch("isImportant", false);
 
-  // Function to add a tag to the list
+  // Function to add a tag
   const handleAddTag = (newTag) => {
-    if (newTag && !tags.includes(newTag)) {
-      setTags((prevTags) => [...prevTags, newTag]);
+    const trimmedTag = newTag.trim();
+    if (trimmedTag && !tags.includes(trimmedTag)) {
+      setTags((prevTags) => [...prevTags, trimmedTag]);
     }
   };
 
-  // Function to remove a tag from the list
+  // Function to remove a tag
   const handleRemoveTag = (tagToRemove) => {
     setTags((prevTags) => prevTags.filter((tag) => tag !== tagToRemove));
   };
 
-  // Function to generate unique ID
-  const generateUniqueId = (email) => {
+  // Generate a unique ID
+  const generateUniqueId = (userEmail) => {
+    if (!userEmail) return `pri-unknown-${Date.now()}`;
     const date = new Date();
-
-    // Get formatted date (DD-MM-YYYY)
     const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-");
-
-    // Get formatted time (HH:MM)
-    const formattedTime = date.toTimeString().split(" ")[0].slice(0, 5); // HH:MM format
-
-    // Generate a random 3-digit number (between 100 and 999)
-    const randomNumber = Math.floor(Math.random() * 900) + 100;
-
-    // Construct the ID
-    return `note-${email}-${formattedDate}-${formattedTime}-${randomNumber}`;
+    const formattedTime = date.toTimeString().slice(0, 5).replace(":", "-");
+    const randomNumber = String(Math.floor(Math.random() * 900) + 100).padStart(
+      3,
+      "0"
+    );
+    return `note-${userEmail}-${formattedDate}-${formattedTime}-${randomNumber}`;
   };
 
   // Form submission handler
@@ -62,8 +59,7 @@ const AddNotesModal = ({ refetch }) => {
     };
 
     try {
-      // eslint-disable-next-line no-unused-vars
-      const response = await axiosPublic.put("/Schedule/AddNotes", newNote);
+      await axiosPublic.put("/Schedule/AddNotes", newNote);
 
       // Show success alert
       Swal.fire({
@@ -90,6 +86,7 @@ const AddNotesModal = ({ refetch }) => {
 
   return (
     <div className="modal-box p-0">
+      {/* Top Section */}
       <div className="flex justify-between items-center border-b border-gray-300 p-4 pb-2">
         <h3 className="font-bold text-lg">Add New Note</h3>
         <ImCross
@@ -98,6 +95,7 @@ const AddNotesModal = ({ refetch }) => {
         />
       </div>
 
+      {/* Form Section */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
         <InputField
           label="Title"
@@ -148,7 +146,7 @@ const AddNotesModal = ({ refetch }) => {
           </label>
         </div>
 
-        {/* Tags Input */}
+        {/* Tags Input Section */}
         <div>
           <label className="block text-md font-semibold pb-1">Tags</label>
           <div className="flex items-center space-x-2">
@@ -159,27 +157,31 @@ const AddNotesModal = ({ refetch }) => {
               placeholder="Enter tag"
               onBlur={(e) => {
                 handleAddTag(e.target.value);
-                e.target.value = "";
+                e.target.value = ""; // Clear input after adding
               }}
             />
             <button
               type="button"
-              className="font-semibold bg-green-400 hover:bg-green-500 shadow-lg py-2 px-4 rounded-xl"
+              className="font-semibold bg-green-400 hover:bg-green-500 shadow-lg py-2 px-8"
               onClick={() => {
                 const tagInput = document.getElementById("tags");
                 handleAddTag(tagInput.value);
-                tagInput.value = "";
+                tagInput.value = ""; // Clear input after adding
               }}
             >
               Add
             </button>
           </div>
-          <div className="mt-2 flex flex-wrap gap-2 border border-gray-300 rounded-xl p-2">
+
+          {/* Displaying added tags */}
+          <div className="mt-2 flex flex-wrap gap-2 border border-gray-300 rounded-xl p-2 ">
             {tags.map((tag, index) => (
               <span
                 key={index}
-                className="flex justify-between items-center gap-2 py-1 px-3 rounded-2xl"
-                style={{ backgroundColor: `hsl(${index * 45}, 80%, 70%)` }}
+                className="flex justify-between items-center gap-3 py-2 px-3 rounded-2xl"
+                style={{
+                  backgroundColor: `hsl(${index * 45}, 80%, 70%)`, // Different bright colors
+                }}
               >
                 <span className="font-semibold">{tag}</span>
                 <ImCross
@@ -205,7 +207,9 @@ const AddNotesModal = ({ refetch }) => {
   );
 };
 
-// Reusable Input Component
+export default AddNotesModal;
+
+// Reusable input field component
 const InputField = ({
   label,
   id,
@@ -219,17 +223,24 @@ const InputField = ({
     <label htmlFor={id} className="block text-md font-semibold pb-1">
       {label}
     </label>
-    <input
-      {...register(id, options)}
-      type={type}
-      id={id}
-      className="input input-bordered rounded-xl w-full"
-      placeholder={placeholder}
-    />
+    {type === "textarea" ? (
+      <textarea
+        {...register(id, options)}
+        id={id}
+        className="textarea textarea-bordered rounded-xl w-full"
+        placeholder={placeholder}
+      />
+    ) : (
+      <input
+        {...register(id, options)}
+        type={type}
+        id={id}
+        className="input input-bordered rounded-xl w-full"
+        placeholder={placeholder}
+      />
+    )}
     {errors[id] && (
       <p className="text-red-500 text-sm">{errors[id]?.message}</p>
     )}
   </div>
 );
-
-export default AddNotesModal;

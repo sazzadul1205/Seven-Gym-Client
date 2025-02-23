@@ -16,12 +16,27 @@ const predefinedCategories = [
   "Finance",
   "Education",
   "Travel",
+  "Fitness",
+  "Hobbies",
+  "Entertainment",
+  "Self-Improvement",
+  "Social",
+  "Family",
+  "Home",
+  "Spirituality",
+  "Technology",
+  "Projects",
+  "Events",
+  "Volunteering",
   "Other",
 ];
 
 const AddToDoModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
   const { email } = useParams();
+
+  const [category, setCategory] = useState("");
+  const [tags, setTags] = useState([]);
 
   const {
     register,
@@ -30,37 +45,43 @@ const AddToDoModal = ({ refetch }) => {
     reset,
   } = useForm();
 
-  const [tags, setTags] = useState([]);
-  const [category, setCategory] = useState("");
-
-  const handleAddTag = (value) => {
-    if (value.trim() && !tags.includes(value)) {
-      setTags([...tags, value]);
+  // Function to add a tag
+  const handleAddTag = (newTag) => {
+    const trimmedTag = newTag.trim();
+    if (trimmedTag && !tags.includes(trimmedTag)) {
+      setTags((prevTags) => [...prevTags, trimmedTag]);
     }
   };
 
+  // Function to remove a tag
   const handleRemoveTag = (tagToRemove) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
+    setTags((prevTags) => prevTags.filter((tag) => tag !== tagToRemove));
   };
 
-  // Function to generate unique ID
-  const generateUniqueId = (email) => {
+  // Generate a unique ID
+  const generateUniqueId = (userEmail) => {
+    if (!userEmail) return `todo-unknown-${Date.now()}`;
     const date = new Date();
-
-    // Get formatted date (DD-MM-YYYY)
     const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-");
-
-    // Get formatted time (HH:MM)
-    const formattedTime = date.toTimeString().split(" ")[0].slice(0, 5); // HH:MM format
-
-    // Generate a random 3-digit number (between 100 and 999)
-    const randomNumber = Math.floor(Math.random() * 900) + 100;
-
-    // Construct the ID
-    return `todo-${email}-${formattedDate}-${formattedTime}-${randomNumber}`;
+    const formattedTime = date.toTimeString().slice(0, 5).replace(":", "-");
+    const randomNumber = String(Math.floor(Math.random() * 900) + 100).padStart(
+      3,
+      "0"
+    );
+    return `todo-${userEmail}-${formattedDate}-${formattedTime}-${randomNumber}`;
   };
 
   const onSubmit = async (data) => {
+    if (!email) {
+      console.error("Error: Email is missing.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "User email is missing. Please try again.",
+      });
+      return;
+    }
+
     const uniqueId = generateUniqueId(email);
     const newToDo = {
       email: email,
@@ -68,23 +89,23 @@ const AddToDoModal = ({ refetch }) => {
     };
 
     try {
-      // eslint-disable-next-line no-unused-vars
-      const response = await axiosPublic.put("/Schedule/AddToDo", newToDo);
+      await axiosPublic.put("/Schedule/AddToDo", newToDo);
 
       // Show success alert
       Swal.fire({
         icon: "success",
         title: "Success!",
-        text: "Priority updated successfully.",
+        text: "To-Do added successfully.",
       });
 
       reset();
       refetch();
       setTags([]);
       setCategory("");
+
       document.getElementById("Add_To-Do_Modal").close();
     } catch (error) {
-      console.error("Error updating priority:", error);
+      console.error("Error adding To-Do:", error);
 
       // Show error alert
       Swal.fire({
@@ -97,6 +118,7 @@ const AddToDoModal = ({ refetch }) => {
 
   return (
     <div className="modal-box p-0">
+      {/* Top Section */}
       <div className="flex justify-between items-center border-b border-gray-300 p-4 pb-2">
         <h3 className="font-bold text-lg">Add New To-Do</h3>
         <ImCross
@@ -105,6 +127,7 @@ const AddToDoModal = ({ refetch }) => {
         />
       </div>
 
+      {/* Form Section */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
         <InputField
           label="Task"
@@ -182,27 +205,31 @@ const AddToDoModal = ({ refetch }) => {
               placeholder="Enter tag"
               onBlur={(e) => {
                 handleAddTag(e.target.value);
-                e.target.value = "";
+                e.target.value = ""; // Clear input after adding
               }}
             />
             <button
               type="button"
-              className="font-semibold bg-green-400 hover:bg-green-500 shadow-lg py-2 px-4 rounded-xl"
+              className="font-semibold bg-green-400 hover:bg-green-500 shadow-lg py-2 px-8"
               onClick={() => {
                 const tagInput = document.getElementById("tags");
                 handleAddTag(tagInput.value);
-                tagInput.value = "";
+                tagInput.value = ""; // Clear input after adding
               }}
             >
               Add
             </button>
           </div>
-          <div className="mt-2 flex flex-wrap gap-2 border border-gray-300 rounded-xl p-2">
+
+          {/* Displaying added tags */}
+          <div className="mt-2 flex flex-wrap gap-2 border border-gray-300 rounded-xl p-2 ">
             {tags.map((tag, index) => (
               <span
                 key={index}
-                className="flex justify-between items-center gap-2 py-1 px-3 rounded-2xl"
-                style={{ backgroundColor: `hsl(${index * 45}, 80%, 70%)` }}
+                className="flex justify-between items-center gap-3 py-2 px-3 rounded-2xl"
+                style={{
+                  backgroundColor: `hsl(${index * 45}, 80%, 70%)`, // Different bright colors
+                }}
               >
                 <span className="font-semibold">{tag}</span>
                 <ImCross
@@ -228,6 +255,8 @@ const AddToDoModal = ({ refetch }) => {
   );
 };
 
+export default AddToDoModal;
+
 // Reusable input field component
 const InputField = ({
   label,
@@ -242,22 +271,16 @@ const InputField = ({
     <label htmlFor={id} className="block text-md font-semibold pb-1">
       {label}
     </label>
-    {type === "select" ? (
-      <select
-        {...register(id)}
+    {type === "textarea" ? (
+      <textarea
+        {...register(id, options)}
         id={id}
-        className="input input-bordered rounded-xl w-full"
-      >
-        <option value="">Select {label}</option>
-        {options.map((opt, idx) => (
-          <option key={idx} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
+        className="textarea textarea-bordered rounded-xl w-full"
+        placeholder={placeholder}
+      />
     ) : (
       <input
-        {...register(id)}
+        {...register(id, options)}
         type={type}
         id={id}
         className="input input-bordered rounded-xl w-full"
@@ -269,5 +292,3 @@ const InputField = ({
     )}
   </div>
 );
-
-export default AddToDoModal;
