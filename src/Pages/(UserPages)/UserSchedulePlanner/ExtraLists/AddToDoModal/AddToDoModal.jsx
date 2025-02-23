@@ -34,6 +34,8 @@ const AddToDoModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
   const { email } = useParams();
 
+  const [tags, setTags] = useState([]);
+  const [category, setCategory] = useState("");
   const {
     register,
     handleSubmit,
@@ -41,16 +43,14 @@ const AddToDoModal = ({ refetch }) => {
     reset,
   } = useForm();
 
-  const [tags, setTags] = useState([]);
-  const [category, setCategory] = useState("");
-
-  const handleAddTag = (value) => {
-    if (value.trim() && !tags.includes(value)) {
-      setTags([...tags, value]);
+  // Function to add a tag to the list
+  const handleAddTag = (newTag) => {
+    if (newTag && !tags.includes(newTag)) {
+      setTags((prevTags) => [...prevTags, newTag]);
     }
-    event.target.value = ""; // Clear input after adding
   };
 
+  // Function to remove a tag
   const handleRemoveTag = (tagToRemove) => {
     setTags((prevTags) => prevTags.filter((tag) => tag !== tagToRemove));
   };
@@ -105,6 +105,7 @@ const AddToDoModal = ({ refetch }) => {
 
   return (
     <div className="modal-box p-0">
+      {/* Header with title and close button */}
       <div className="flex justify-between items-center border-b border-gray-300 p-4 pb-2">
         <h3 className="font-bold text-lg">Add New To-Do</h3>
         <ImCross
@@ -250,7 +251,7 @@ const InputField = ({
   placeholder,
   register,
   errors,
-  options = {},
+  options = [],
 }) => (
   <div>
     <label htmlFor={id} className="block text-md font-semibold pb-1">

@@ -7,10 +7,10 @@ import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import { useParams } from "react-router";
 
 const AddNotesModal = ({ refetch }) => {
-  const { email } = useParams();
   const axiosPublic = useAxiosPublic();
-  const [tags, setTags] = useState([]);
+  const { email } = useParams();
 
+  const [tags, setTags] = useState([]);
   const {
     register,
     handleSubmit,
@@ -27,7 +27,6 @@ const AddNotesModal = ({ refetch }) => {
     if (newTag && !tags.includes(newTag)) {
       setTags((prevTags) => [...prevTags, newTag]);
     }
-    event.target.value = ""; // Clear input after adding
   };
 
   // Function to remove a tag
@@ -52,21 +51,14 @@ const AddNotesModal = ({ refetch }) => {
   };
 
   const onSubmit = async (data) => {
-    if (!email) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "User email is missing. Please try again.",
-      });
-      return;
-    }
-
     const uniqueId = generateUniqueId(email);
-    const newNote = { email, newNote: { id: uniqueId, ...data, tags } };
+    const newNote = {
+      email,
+      newNote: { id: uniqueId, ...data, tags },
+    };
 
     try {
-      // eslint-disable-next-line no-unused-vars
-      const response = await axiosPublic.put("/Schedule/AddNotes", newNote);
+      await axiosPublic.put("/Schedule/AddNotes", newNote);
 
       // Show success alert
       Swal.fire({
@@ -78,9 +70,7 @@ const AddNotesModal = ({ refetch }) => {
       reset();
       refetch();
       setTags([]);
-
-      const modal = document.getElementById("Add_Notes_Modal");
-      if (modal) modal.close();
+      document.getElementById("Add_Notes_Modal").close();
     } catch (error) {
       console.error("Error adding note:", error);
       Swal.fire({
@@ -93,6 +83,7 @@ const AddNotesModal = ({ refetch }) => {
 
   return (
     <div className="modal-box p-0">
+      {/* Header with title and close button */}
       <div className="flex justify-between items-center border-b border-gray-300 p-4 pb-2">
         <h3 className="font-bold text-lg">Add New Note</h3>
         <ImCross
@@ -101,6 +92,7 @@ const AddNotesModal = ({ refetch }) => {
         />
       </div>
 
+      {/* Form Section */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
         <InputField
           label="Title"
@@ -127,6 +119,7 @@ const AddNotesModal = ({ refetch }) => {
           register={register}
           errors={errors}
         />
+
         {/* Very Important Checkbox */}
         <div className="flex items-center space-x-2 bg-yellow-200 p-1">
           <input
@@ -147,7 +140,7 @@ const AddNotesModal = ({ refetch }) => {
           </label>
         </div>
 
-        {/* Tags Input */}
+        {/* Tags Input Section */}
         <div>
           <label className="block text-md font-semibold pb-1">Tags</label>
           <div className="flex items-center space-x-2">
@@ -173,6 +166,8 @@ const AddNotesModal = ({ refetch }) => {
               Add
             </button>
           </div>
+
+          {/* Displaying added tags */}
           <div className="mt-2 flex flex-wrap gap-2 border border-gray-300 rounded-xl p-2">
             {tags.map((tag, index) => (
               <span
@@ -189,7 +184,8 @@ const AddNotesModal = ({ refetch }) => {
             ))}
           </div>
         </div>
-        {/* Submit Button */}s
+
+        {/* Submit Button */}
         <div className="mt-6 flex justify-end">
           <button
             type="submit"
@@ -213,7 +209,7 @@ const InputField = ({
   placeholder,
   register,
   errors,
-  options = {},
+  options = [],
 }) => (
   <div>
     <label htmlFor={id} className="block text-md font-semibold pb-1">

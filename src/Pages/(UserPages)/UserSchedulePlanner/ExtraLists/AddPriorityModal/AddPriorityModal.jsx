@@ -1,9 +1,10 @@
 /* eslint-disable react/prop-types */
 import { useForm } from "react-hook-form";
 import { ImCross } from "react-icons/im";
-import { useParams } from "re-act-router";
+import { useParams } from "react-router";
 import { useState } from "react";
 import Swal from "sweetalert2";
+
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
 const AddPriorityModal = ({ refetch }) => {
@@ -27,7 +28,6 @@ const AddPriorityModal = ({ refetch }) => {
     if (newTag && !tags.includes(newTag)) {
       setTags((prevTags) => [...prevTags, newTag]);
     }
-    event.target.value = ""; // Clear input after adding
   };
 
   // Function to remove a tag
@@ -35,9 +35,9 @@ const AddPriorityModal = ({ refetch }) => {
     setTags((prevTags) => prevTags.filter((tag) => tag !== tagToRemove));
   };
 
-  // Generate a unique ID
+  // Generate a unique ID for the new priority
   const generateUniqueId = (userEmail) => {
-    if (!userEmail) return `pri-unknown-${Date.now()}`;
+    if (!userEmail) return `pri-unknown-${Date.now()}`; // Handle missing email
     const date = new Date();
     const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-");
 
@@ -48,10 +48,9 @@ const AddPriorityModal = ({ refetch }) => {
     const randomNumber = Math.floor(Math.random() * 900) + 100;
 
     // Construct the ID
-    return `pri-${email}-${formattedDate}-${formattedTime}-${randomNumber}`;
+    return `pri-${userEmail}-${formattedDate}-${formattedTime}-${randomNumber}`;
   };
 
-  // Form submission handler
   const onSubmit = async (data) => {
     const uniqueId = generateUniqueId(email); // Generate unique ID
     const newPriority = {
@@ -71,11 +70,10 @@ const AddPriorityModal = ({ refetch }) => {
       reset();
       refetch();
       setTags([]);
-      document.getElementById("Add_Priority_Modal")?.close();
+      document.getElementById("Add_Priority_Modal")?.close(); // Ensure modal exists
     } catch (error) {
       console.error("Error updating priority:", error);
 
-      // Show error alert
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -155,7 +153,7 @@ const AddPriorityModal = ({ refetch }) => {
               placeholder="Enter tag"
               onBlur={(e) => {
                 handleAddTag(e.target.value);
-                e.target.value = ""; // Clear input after adding
+                e.target.value = "";
               }}
             />
             <button
@@ -164,7 +162,7 @@ const AddPriorityModal = ({ refetch }) => {
               onClick={() => {
                 const tagInput = document.getElementById("tags");
                 handleAddTag(tagInput.value);
-                tagInput.value = ""; // Clear input after adding
+                tagInput.value = "";
               }}
             >
               Add
