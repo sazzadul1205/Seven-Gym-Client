@@ -19,6 +19,9 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
   // State to store the selected priority item for viewing
   const [selectedPriority, setSelectedPriority] = useState(null);
   const [selectedToDo, setSelectedToDo] = useState(null);
+  const [selectedNote, setSelectedNote] = useState(null);
+
+  console.log(selectedNote);
 
   return (
     <div className="p-4 space-y-6">
@@ -185,26 +188,74 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
 
       {/* Notes / Reminders List */}
       <div className="space-y-3">
-        <p className="bg-yellow-500 text-center py-2 font-semibold rounded-full">
-          NOTES / REMINDERS LIST
-        </p>
+        {/* Title Bar with Buttons on the Right */}
+        <div className="flex justify-between items-center bg-yellow-500 text-center py-2 px-6 font-semibold rounded-full relative">
+          <p className="w-full text-center"> NOTES / REMINDERS LIST</p>
 
-        <div className="p-4 bg-gray-200 rounded-xl shadow-md min-h-[250px] flex flex-col gap-3">
-          {notes.length ? (
-            notes.map((note, index) => (
-              <div key={index} className="flex items-center gap-3 w-full">
-                <IoIosCreate className="text-2xl text-purple-500" />
-                <p className="bg-white text-gray-800 px-4 py-2 w-full rounded-lg shadow-md border">
-                  {note}
-                </p>
-              </div>
-            ))
+          {/* Buttons on the right */}
+          <div className="absolute right-4 flex gap-3">
+            {/* Add Button */}
+            <button
+              className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition"
+              onClick={() =>
+                document.getElementById("Add_Notes_Modal").showModal()
+              }
+              data-tooltip-id="addTooltip"
+            >
+              <FaPlus />
+            </button>
+            <Tooltip id="addTooltip" place="top" content="Add Notes" />
+
+            {/* Details Button */}
+            <button
+              className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition"
+              onClick={() =>
+                document.getElementById("View_All_Notes_Modal").showModal()
+              }
+              data-tooltip-id="detailsTooltip"
+            >
+              <FaList />
+            </button>
+            <Tooltip id="detailsTooltip" place="top" content="View All Notes" />
+          </div>
+        </div>
+
+        {/* Notes List */}
+        <div className="space-y-3">
+          {notes?.length ? (
+            [...notes]
+              .sort((a, b) => new Date(b.reminder) - new Date(a.reminder)) // Sort by most recent first
+              .sort((a, b) => b.isImportant - a.isImportant) // Prioritize important ones
+              .slice(0, 5) // Limit to top 5
+              .map((event, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 w-full cursor-pointer"
+                  onClick={() => {
+                    setSelectedNote(event);
+                    document.getElementById("View_Notes_Modal").showModal();
+                  }}
+                >
+                  <div className="flex justify-between bg-blue-300 text-gray-800 px-4 py-3 w-full rounded-full shadow-md hover:scale-105 transition">
+                    <p className="font-semibold">
+                      {event.title}
+                      {event.isImportant && (
+                        <span className="text-red-500 font-bold ml-4">★</span>
+                      )}
+                    </p>
+                    -
+                    <p className="font-semibold">
+                      {new Date(event.reminder).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              ))
           ) : (
-            <div className="flex min-h-[100px] justify-center items-center ">
+            <div className="flex min-h-[100px] justify-center items-center">
               <button
                 className="px-16 py-2 bg-gradient-to-br hover:bg-gradient-to-tl from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition"
                 onClick={() =>
-                  document.getElementById("Add_Notes_Modal").showModal()
+                  document.getElementById("Add_Priority_Modal").showModal()
                 }
               >
                 + Add Notes
