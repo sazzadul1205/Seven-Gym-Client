@@ -75,7 +75,7 @@ const AddNotesModal = ({ refetch }) => {
       reset();
       refetch();
       setTags([]);
-      document.getElementById("Add_Priority_Modal").close();
+      document.getElementById("Add_Notes_Modal").close();
     } catch (error) {
       console.error("Error updating priority:", error);
 

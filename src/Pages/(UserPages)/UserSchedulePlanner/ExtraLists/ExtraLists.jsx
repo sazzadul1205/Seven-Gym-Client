@@ -1,5 +1,4 @@
-import { RiCalendarTodoLine } from "react-icons/ri";
-import { IoIosCreate } from "react-icons/io";
+/* eslint-disable react/prop-types */
 import { FaPlus, FaList } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
 import { useState } from "react";
@@ -20,8 +19,6 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
   const [selectedPriority, setSelectedPriority] = useState(null);
   const [selectedToDo, setSelectedToDo] = useState(null);
   const [selectedNote, setSelectedNote] = useState(null);
-
-  console.log(selectedNote);
 
   return (
     <div className="p-4 space-y-6">
@@ -187,7 +184,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
       </div>
 
       {/* Notes / Reminders List */}
-      <div className="space-y-3">
+      <div className="space-y-3 bg-gray-200 rounded-xl pb-5">
         {/* Title Bar with Buttons on the Right */}
         <div className="flex justify-between items-center bg-yellow-500 text-center py-2 px-6 font-semibold rounded-full relative">
           <p className="w-full text-center"> NOTES / REMINDERS LIST</p>
@@ -221,7 +218,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
         </div>
 
         {/* Notes List */}
-        <div className="space-y-3">
+        <div className="space-y-3 px-2">
           {notes?.length ? (
             [...notes]
               .sort((a, b) => new Date(b.reminder) - new Date(a.reminder)) // Sort by most recent first
@@ -292,7 +289,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
 
       {/* View Notes Modal  */}
       <dialog id="View_Notes_Modal" className="modal">
-        <ViewNotesModal refetch={refetch} />
+        <ViewNotesModal refetch={refetch} Notes={selectedNote} />
       </dialog>
 
       {/* View All Priority Modal  */}
@@ -307,7 +304,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
 
       {/* View All Notes Modal  */}
       <dialog id="View_All_Notes_Modal" className="modal">
-        <ViewAllNotesModal refetch={refetch} />
+        <ViewAllNotesModal refetch={refetch} notes={notes} />
       </dialog>
     </div>
   );
