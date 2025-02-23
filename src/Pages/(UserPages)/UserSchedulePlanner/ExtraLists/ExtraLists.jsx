@@ -3,17 +3,21 @@ import { FaPlus, FaList } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
 import { useState } from "react";
 
+// View Modal
 import ViewPriorityModal from "./ViewPriorityModal/ViewPriorityModal";
-import AddPriorityModal from "./AddPriorityModal/AddPriorityModal";
 import ViewNotesModal from "./ViewNotesModal/ViewNotesModal";
-import AddNotesModal from "./AddNotesModal/AddNotesModal";
 import ViewToDoModal from "./ViewToDoModal/ViewToDoModal";
-import AddToDoModal from "./AddToDoModal/AddToDoModal";
-import ViewAllPriorityModal from "./ViewAllPriorityModal/ViewAllPriorityModal";
-import ViewAllToDoModal from "./ViewAllToDoModal/ViewAllToDoModal";
-import ViewAllNotesModal from "./ViewAllNotesModal/ViewAllNotesModal";
 
-// eslint-disable-next-line react/prop-types
+// Add Modal
+import AddPriorityModal from "./AddPriorityModal/AddPriorityModal";
+import AddNotesModal from "./AddNotesModal/AddNotesModal";
+import AddToDoModal from "./AddToDoModal/AddToDoModal";
+
+// View All Modal
+import ViewAllPriorityModal from "./ViewAllPriorityModal/ViewAllPriorityModal";
+import ViewAllNotesModal from "./ViewAllNotesModal/ViewAllNotesModal";
+import ViewAllToDoModal from "./ViewAllToDoModal/ViewAllToDoModal";
+
 const ExtraList = ({ priority, notes, todo, refetch }) => {
   // State to store the selected priority item for viewing
   const [selectedPriority, setSelectedPriority] = useState(null);

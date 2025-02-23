@@ -1,9 +1,8 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
-
 import { useForm } from "react-hook-form";
 import { ImCross } from "react-icons/im";
 import { useParams } from "react-router";
+import { useState } from "react";
 import Swal from "sweetalert2";
 
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
@@ -16,12 +15,27 @@ const predefinedCategories = [
   "Finance",
   "Education",
   "Travel",
+  "Fitness",
+  "Hobbies",
+  "Entertainment",
+  "Self-Improvement",
+  "Social",
+  "Family",
+  "Home",
+  "Spirituality",
+  "Technology",
+  "Projects",
+  "Events",
+  "Volunteering",
   "Other",
 ];
 
 const AddToDoModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
-  const { email } = useParams();
+  const { email } = useParams() || {};
+
+  const [tags, setTags] = useState([]);
+  const [category, setCategory] = useState("");
 
   const {
     register,
@@ -30,17 +44,18 @@ const AddToDoModal = ({ refetch }) => {
     reset,
   } = useForm();
 
-  const [tags, setTags] = useState([]);
-  const [category, setCategory] = useState("");
-
-  const handleAddTag = (value) => {
-    if (value.trim() && !tags.includes(value)) {
-      setTags([...tags, value]);
+  // Function to add a tag to the list
+  const handleAddTag = (event) => {
+    const newTag = event.target.value.trim();
+    if (newTag && !tags.includes(newTag)) {
+      setTags((prevTags) => [...prevTags, newTag]);
     }
+    event.target.value = ""; // Clear input after adding
   };
 
+  // Function to remove a tag from the list
   const handleRemoveTag = (tagToRemove) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
+    setTags((prevTags) => prevTags.filter((tag) => tag !== tagToRemove));
   };
 
   // Function to generate unique ID
@@ -51,42 +66,47 @@ const AddToDoModal = ({ refetch }) => {
     const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-");
 
     // Get formatted time (HH:MM)
-    const formattedTime = date.toTimeString().split(" ")[0].slice(0, 5); // HH:MM format
+    const formattedTime = date.toTimeString().slice(0, 5); // HH:MM format
 
     // Generate a random 3-digit number (between 100 and 999)
     const randomNumber = Math.floor(Math.random() * 900) + 100;
 
-    // Construct the ID
     return `todo-${email}-${formattedDate}-${formattedTime}-${randomNumber}`;
   };
 
   const onSubmit = async (data) => {
+    if (!email) {
+      Swal.fire({
+        icon: "error",
+        title: "Missing Email",
+        text: "Email parameter is missing. Please try again.",
+      });
+      return;
+    }
+
     const uniqueId = generateUniqueId(email);
     const newToDo = {
-      email: email,
+      email,
       newTodo: { id: uniqueId, ...data, category, tags },
     };
 
     try {
-      // eslint-disable-next-line no-unused-vars
-      const response = await axiosPublic.put("/Schedule/AddToDo", newToDo);
+      await axiosPublic.put("/Schedule/AddToDo", newToDo);
 
-      // Show success alert
       Swal.fire({
         icon: "success",
         title: "Success!",
-        text: "Priority updated successfully.",
+        text: "To-Do added successfully.",
       });
 
       reset();
       refetch();
       setTags([]);
       setCategory("");
-      document.getElementById("Add_To-Do_Modal").close();
+      document.getElementById("Add_To-Do_Modal")?.close();
     } catch (error) {
-      console.error("Error updating priority:", error);
+      console.error("Error updating to-do:", error);
 
-      // Show error alert
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -97,14 +117,16 @@ const AddToDoModal = ({ refetch }) => {
 
   return (
     <div className="modal-box p-0">
+      {/* Header */}
       <div className="flex justify-between items-center border-b border-gray-300 p-4 pb-2">
         <h3 className="font-bold text-lg">Add New To-Do</h3>
         <ImCross
           className="hover:text-[#F72C5B] cursor-pointer transition duration-200"
-          onClick={() => document.getElementById("Add_To-Do_Modal").close()}
+          onClick={() => document.getElementById("Add_To-Do_Modal")?.close()}
         />
       </div>
 
+      {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
         <InputField
           label="Task"
@@ -144,7 +166,7 @@ const AddToDoModal = ({ refetch }) => {
           errors={errors}
         />
 
-        {/* Combined Category Input */}
+        {/* Category Selection */}
         <div>
           <label className="block text-md font-semibold pb-1">Category</label>
           <input
@@ -228,6 +250,8 @@ const AddToDoModal = ({ refetch }) => {
   );
 };
 
+export default AddToDoModal;
+
 // Reusable input field component
 const InputField = ({
   label,
@@ -236,28 +260,22 @@ const InputField = ({
   placeholder,
   register,
   errors,
-  options,
+  options = {},
 }) => (
   <div>
     <label htmlFor={id} className="block text-md font-semibold pb-1">
       {label}
     </label>
-    {type === "select" ? (
-      <select
-        {...register(id)}
+    {type === "textarea" ? (
+      <textarea
+        {...register(id, options)}
         id={id}
-        className="input input-bordered rounded-xl w-full"
-      >
-        <option value="">Select {label}</option>
-        {options.map((opt, idx) => (
-          <option key={idx} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
+        className="textarea textarea-bordered rounded-xl w-full"
+        placeholder={placeholder}
+      />
     ) : (
       <input
-        {...register(id)}
+        {...register(id, options)}
         type={type}
         id={id}
         className="input input-bordered rounded-xl w-full"
@@ -269,5 +287,3 @@ const InputField = ({
     )}
   </div>
 );
-
-export default AddToDoModal;
