@@ -11,6 +11,7 @@ import { FiClock, FiEdit } from "react-icons/fi";
 import { IoMdPricetag } from "react-icons/io";
 import { ImCross } from "react-icons/im";
 import { useState } from "react";
+
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../../Hooks/useAuth";
 
@@ -72,31 +73,33 @@ const ViewToDoModal = ({ ToDo, refetch }) => {
       </div>
 
       {/* Delete Confirmation Ribbon */}
-      {showDeleteConfirm && (
-        <div className="absolute top-0 left-0 w-full bg-red-500 text-white p-3 flex justify-between items-center animate-fadeIn">
-          <p className="font-semibold">
-            ⚠️ Are you sure you want to delete this event?
-          </p>
-          <div className="flex space-x-3">
-            <button
-              onClick={handleConfirmDelete}
-              className="p-2 bg-green-600 rounded-lg hover:bg-green-700 transition"
-            >
-              <FaCheck className="text-white" />
-            </button>
-            <button
-              onClick={handleCancelDelete}
-              className="p-2 bg-gray-700 rounded-lg hover:bg-gray-800 transition"
-            >
-              <FaTimes className="text-white" />
-            </button>
+      <div className="p-0">
+        {showDeleteConfirm && (
+          <div className="absolute top-0 left-0 w-full bg-red-500 text-white p-3 flex justify-between items-center animate-fadeIn">
+            <p className="font-semibold">
+              ⚠️ Are you sure you want to delete this task?
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={handleConfirmDelete}
+                className="p-2 bg-green-600 rounded-lg hover:bg-green-700 transition"
+              >
+                <FaCheck className="text-white" />
+              </button>
+              <button
+                onClick={handleCancelDelete}
+                className="p-2 bg-gray-700 rounded-lg hover:bg-gray-800 transition"
+              >
+                <FaTimes className="text-white" />
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Priority Importance */}
       <div
-        className={`flex items-center gap-2 mb-4 px-5 py-2 ${
+        className={`flex items-center gap-2 mb-4 px-5 py-2 rounded-xl ${
           ToDo?.priority === "High"
             ? "bg-red-200"
             : ToDo?.priority === "Medium"
@@ -117,7 +120,9 @@ const ViewToDoModal = ({ ToDo, refetch }) => {
           <FiEdit className="text-blue-500 text-xl" />
           <div>
             <span className="font-semibold">Description: </span>
-            <p>{ToDo?.description || "No description available"}</p>
+            <p className="text-gray-700">
+              {ToDo?.description || "No description available"}
+            </p>
           </div>
         </div>
 
@@ -126,7 +131,7 @@ const ViewToDoModal = ({ ToDo, refetch }) => {
           <FiClock className="text-yellow-500 text-xl" />
           <div>
             <span className="font-semibold">Due Date: </span>
-            <p>
+            <p className="text-gray-700">
               {ToDo?.dueDate
                 ? new Date(ToDo?.dueDate).toLocaleString()
                 : "No due date"}
@@ -139,7 +144,9 @@ const ViewToDoModal = ({ ToDo, refetch }) => {
           <FaClock className="text-gray-500 text-xl" />
           <div>
             <span className="font-semibold">Estimated Time: </span>
-            <p>{ToDo?.estimatedTime || "Not specified"}</p>
+            <p className="text-gray-700">
+              {ToDo?.estimatedTime || "Not specified"}
+            </p>
           </div>
         </div>
 
@@ -148,7 +155,7 @@ const ViewToDoModal = ({ ToDo, refetch }) => {
           <IoMdPricetag className="text-green-500 text-xl" />
           <div>
             <span className="font-semibold">Category: </span>
-            <p>{ToDo?.category || "No category"}</p>
+            <p className="text-gray-700">{ToDo?.category || "No category"}</p>
           </div>
         </div>
 

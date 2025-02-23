@@ -266,6 +266,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
         </div>
       </div>
 
+      {/* Add Modal's  */}
       {/* Add Priority Modal  */}
       <dialog id="Add_Priority_Modal" className="modal">
         <AddPriorityModal refetch={refetch} />
@@ -281,6 +282,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
         <AddNotesModal refetch={refetch} />
       </dialog>
 
+      {/* View Modal's  */}
       {/* View Priority Modal  */}
       <dialog id="View_Priority_Modal" className="modal">
         <ViewPriorityModal refetch={refetch} Priority={selectedPriority} />

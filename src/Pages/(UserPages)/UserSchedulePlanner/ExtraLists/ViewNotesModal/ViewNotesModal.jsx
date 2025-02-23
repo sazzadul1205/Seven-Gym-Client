@@ -72,27 +72,29 @@ const ViewNotesModal = ({ Notes, refetch }) => {
       </div>
 
       {/* Delete Confirmation Ribbon */}
-      {showDeleteConfirm && (
-        <div className="absolute top-0 left-0 w-full bg-red-500 text-white p-3 flex justify-between items-center animate-fadeIn">
-          <p className="font-semibold">
-            ⚠️ Are you sure you want to delete this note?
-          </p>
-          <div className="flex space-x-3">
-            <button
-              onClick={handleConfirmDelete}
-              className="p-2 bg-green-600 rounded-lg hover:bg-green-700 transition"
-            >
-              <FaCheck className="text-white" />
-            </button>
-            <button
-              onClick={handleCancelDelete}
-              className="p-2 bg-gray-700 rounded-lg hover:bg-gray-800 transition"
-            >
-              <FaTimes className="text-white" />
-            </button>
+      <div className="p-0">
+        {showDeleteConfirm && (
+          <div className="absolute top-0 left-0 w-full bg-red-500 text-white p-3 flex justify-between items-center animate-fadeIn">
+            <p className="font-semibold">
+              ⚠️ Are you sure you want to delete this note?
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={handleConfirmDelete}
+                className="p-2 bg-green-600 rounded-lg hover:bg-green-700 transition"
+              >
+                <FaCheck className="text-white" />
+              </button>
+              <button
+                onClick={handleCancelDelete}
+                className="p-2 bg-gray-700 rounded-lg hover:bg-gray-800 transition"
+              >
+                <FaTimes className="text-white" />
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Notes Importance */}
       <div className="flex items-center gap-2 mb-4 bg-red-200 px-5 py-2">

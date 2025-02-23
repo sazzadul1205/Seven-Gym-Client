@@ -74,45 +74,48 @@ const ViewPriorityModal = ({ Priority, refetch }) => {
       </div>
 
       {/* Delete Confirmation Ribbon */}
-      {showDeleteConfirm && (
-        <div className="absolute top-0 left-0 w-full bg-red-500 text-white p-3 flex justify-between items-center animate-fadeIn">
-          <p className="font-semibold">
-            ⚠️ Are you sure you want to delete this event?
-          </p>
-          <div className="flex space-x-3">
-            <button
-              onClick={handleConfirmDelete}
-              className="p-2 bg-green-600 rounded-lg hover:bg-green-700 transition"
-            >
-              <FaCheck className="text-white" />
-            </button>
-            <button
-              onClick={handleCancelDelete}
-              className="p-2 bg-gray-700 rounded-lg hover:bg-gray-800 transition"
-            >
-              <FaTimes className="text-white" />
-            </button>
+      <div className="p-0">
+        {showDeleteConfirm && (
+          <div className="absolute top-0 left-0 w-full bg-red-500 text-white p-3 flex justify-between items-center animate-fadeIn">
+            <p className="font-semibold">
+              ⚠️ Are you sure you want to delete this event?
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={handleConfirmDelete}
+                className="p-2 bg-green-600 rounded-lg hover:bg-green-700 transition"
+              >
+                <FaCheck className="text-white" />
+              </button>
+              <button
+                onClick={handleCancelDelete}
+                className="p-2 bg-gray-700 rounded-lg hover:bg-gray-800 transition"
+              >
+                <FaTimes className="text-white" />
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Priority Importance */}
-      <div className="flex items-center gap-2 mb-4 bg-red-200 px-5 py-2">
+      <div className="flex items-center gap-2 bg-red-200 px-5 py-2 rounded-xl">
         {Priority?.isImportant && (
           <FaExclamationCircle className="text-red-500 text-2xl" />
         )}
-        <p className="text-xl">
+        <p className="text-xl font-semibold">
           {Priority?.isImportant ? "High Importance" : "Normal Priority"}
         </p>
       </div>
 
       {/* Content Section */}
       <div className="space-y-4 py-4 px-5">
+        {/* Content */}
         <div className="flex items-center gap-2">
           <FiEdit className="text-blue-500 text-xl" />
           <div>
             <span className="font-semibold">Content: </span>
-            <p>{Priority?.content}</p>
+            <p className="text-gray-700">{Priority?.content}</p>
           </div>
         </div>
 
@@ -121,7 +124,9 @@ const ViewPriorityModal = ({ Priority, refetch }) => {
           <FiClock className="text-yellow-500 text-xl" />
           <div>
             <span className="font-semibold">Reminder: </span>
-            <p>{new Date(Priority?.reminder).toLocaleString()}</p>
+            <p className="text-gray-700">
+              {new Date(Priority?.reminder).toLocaleString()}
+            </p>
           </div>
         </div>
 

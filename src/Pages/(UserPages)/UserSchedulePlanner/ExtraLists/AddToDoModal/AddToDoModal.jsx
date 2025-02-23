@@ -243,7 +243,6 @@ const AddToDoModal = ({ refetch }) => {
 
 export default AddToDoModal;
 
-// Reusable input field component
 const InputField = ({
   label,
   id,
@@ -259,14 +258,26 @@ const InputField = ({
     </label>
     {type === "textarea" ? (
       <textarea
-        {...register(id, options)}
+        {...register(id)}
         id={id}
         className="textarea textarea-bordered rounded-xl w-full"
         placeholder={placeholder}
       />
+    ) : type === "select" ? (
+      <select
+        {...register(id)}
+        id={id}
+        className="select select-bordered rounded-xl w-full"
+      >
+        {options.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
     ) : (
       <input
-        {...register(id, options)}
+        {...register(id)}
         type={type}
         id={id}
         className="input input-bordered rounded-xl w-full"
