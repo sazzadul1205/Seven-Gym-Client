@@ -75,10 +75,10 @@ const AddPriorityModal = ({ refetch }) => {
         text: "Priority updated successfully.",
       });
 
-      document.getElementById("Add_Priority_Modal").close();
-      refetch();
       reset();
-      setTags([])
+      refetch();
+      setTags([]);
+      document.getElementById("Add_Priority_Modal").close();
     } catch (error) {
       console.error("Error updating priority:", error);
 

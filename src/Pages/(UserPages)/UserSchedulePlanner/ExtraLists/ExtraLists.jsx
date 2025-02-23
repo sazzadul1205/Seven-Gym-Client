@@ -20,8 +20,6 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
   const [selectedPriority, setSelectedPriority] = useState(null);
   const [selectedToDo, setSelectedToDo] = useState(null);
 
-  console.log(selectedToDo);
-
   return (
     <div className="p-4 space-y-6">
       {/* Priority List */}
@@ -150,7 +148,6 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
           {todo?.length ? (
             [...todo]
               .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate)) // Sort by most recent first
-              .sort((a, b) => b.isImportant - a.isImportant) // Prioritize important ones
               .slice(0, 5) // Limit to top 5
               .map((task, index) => (
                 <div
@@ -239,7 +236,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
 
       {/* View To-Do Modal  */}
       <dialog id="View_To-Do_Modal" className="modal">
-        <ViewToDoModal refetch={refetch} />
+        <ViewToDoModal refetch={refetch} ToDo={selectedToDo} />
       </dialog>
 
       {/* View Notes Modal  */}
@@ -254,7 +251,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
 
       {/* View All To-Do Modal  */}
       <dialog id="View_All_To-Do_Modal" className="modal">
-        <ViewAllToDoModal refetch={refetch} />
+        <ViewAllToDoModal refetch={refetch} todo={todo} />
       </dialog>
 
       {/* View All Notes Modal  */}
