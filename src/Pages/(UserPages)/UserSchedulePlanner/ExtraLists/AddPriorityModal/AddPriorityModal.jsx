@@ -1,14 +1,14 @@
 /* eslint-disable react/prop-types */
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router";
 import { ImCross } from "react-icons/im";
+import { useParams } from "re-act-router";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
 const AddPriorityModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
-  const { email } = useParams() || {}; // Ensure safe destructuring
+  const { email } = useParams();
 
   const [tags, setTags] = useState([]);
   const {
@@ -22,12 +22,12 @@ const AddPriorityModal = ({ refetch }) => {
   // Watch the "Very Important" checkbox value to apply dynamic styling
   const isVeryImportant = watch("isImportant", false);
 
-  // Function to add a tag
+  // Function to add a tag to the list
   const handleAddTag = (newTag) => {
-    const trimmedTag = newTag.trim();
-    if (trimmedTag && !tags.includes(trimmedTag)) {
-      setTags((prevTags) => [...prevTags, trimmedTag]);
+    if (newTag && !tags.includes(newTag)) {
+      setTags((prevTags) => [...prevTags, newTag]);
     }
+    event.target.value = ""; // Clear input after adding
   };
 
   // Function to remove a tag
@@ -40,26 +40,28 @@ const AddPriorityModal = ({ refetch }) => {
     if (!userEmail) return `pri-unknown-${Date.now()}`;
     const date = new Date();
     const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-");
-    const formattedTime = date.toTimeString().slice(0, 5).replace(":", "-");
-    const randomNumber = String(Math.floor(Math.random() * 900) + 100).padStart(
-      3,
-      "0"
-    );
-    return `pri-${userEmail}-${formattedDate}-${formattedTime}-${randomNumber}`;
+
+    // Get formatted time (HH:MM)
+    const formattedTime = date.toTimeString().split(" ")[0].slice(0, 5); // HH:MM format
+
+    // Generate a random 3-digit number (between 100 and 999)
+    const randomNumber = Math.floor(Math.random() * 900) + 100;
+
+    // Construct the ID
+    return `pri-${email}-${formattedDate}-${formattedTime}-${randomNumber}`;
   };
 
   // Form submission handler
   const onSubmit = async (data) => {
-    const uniqueId = generateUniqueId(email);
+    const uniqueId = generateUniqueId(email); // Generate unique ID
     const newPriority = {
-      email: email,
+      email,
       newPriority: { id: uniqueId, ...data, tags },
     };
 
     try {
       await axiosPublic.put("/Schedule/AddPriority", newPriority);
 
-      // Show success alert
       Swal.fire({
         icon: "success",
         title: "Success!",
@@ -69,9 +71,11 @@ const AddPriorityModal = ({ refetch }) => {
       reset();
       refetch();
       setTags([]);
-      document.getElementById("Add_Priority_Modal").close();
+      document.getElementById("Add_Priority_Modal")?.close();
     } catch (error) {
       console.error("Error updating priority:", error);
+
+      // Show error alert
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -82,12 +86,12 @@ const AddPriorityModal = ({ refetch }) => {
 
   return (
     <div className="modal-box p-0">
-      {/* Top Section */}
+      {/* Header with title and close button */}
       <div className="flex justify-between items-center border-b border-gray-300 p-4 pb-2">
         <h3 className="font-bold text-lg">Add New Priority</h3>
         <ImCross
           className="hover:text-[#F72C5B] cursor-pointer transition duration-200"
-          onClick={() => document.getElementById("Add_Priority_Modal").close()}
+          onClick={() => document.getElementById("Add_Priority_Modal")?.close()}
         />
       </div>
 
@@ -140,7 +144,7 @@ const AddPriorityModal = ({ refetch }) => {
           </label>
         </div>
 
-        {/* Tags Section */}
+        {/* Tags Input Section */}
         <div>
           <label className="block text-md font-semibold pb-1">Tags</label>
           <div className="flex items-center space-x-2">
@@ -149,16 +153,9 @@ const AddPriorityModal = ({ refetch }) => {
               type="text"
               className="input input-bordered rounded-xl w-full"
               placeholder="Enter tag"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleAddTag(e.target.value);
-                  e.target.value = "";
-                }
-              }}
               onBlur={(e) => {
                 handleAddTag(e.target.value);
-                e.target.value = "";
+                e.target.value = ""; // Clear input after adding
               }}
             />
             <button
@@ -167,20 +164,22 @@ const AddPriorityModal = ({ refetch }) => {
               onClick={() => {
                 const tagInput = document.getElementById("tags");
                 handleAddTag(tagInput.value);
-                tagInput.value = "";
+                tagInput.value = ""; // Clear input after adding
               }}
             >
               Add
             </button>
           </div>
 
-          {/* Display Tags */}
-          <div className="mt-2 flex flex-wrap gap-2 border border-gray-300 rounded-xl p-2">
+          {/* Displaying added tags */}
+          <div className="mt-2 flex flex-wrap gap-2 border border-gray-300 rounded-xl p-2 ">
             {tags.map((tag, index) => (
               <span
                 key={index}
-                className="flex items-center gap-2 py-2 px-3 rounded-2xl"
-                style={{ backgroundColor: `hsl(${index * 45}, 80%, 70%)` }}
+                className="flex justify-between items-center gap-3 py-2 px-3 rounded-2xl"
+                style={{
+                  backgroundColor: `hsl(${index * 45}, 80%, 70%)`, // Different bright colors
+                }}
               >
                 <span className="font-semibold">{tag}</span>
                 <ImCross
@@ -216,7 +215,7 @@ const InputField = ({
   placeholder,
   register,
   errors,
-  options,
+  options = [],
 }) => (
   <div>
     <label htmlFor={id} className="block text-md font-semibold pb-1">

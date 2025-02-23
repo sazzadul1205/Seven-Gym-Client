@@ -1,9 +1,8 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
-
 import { useForm } from "react-hook-form";
 import { ImCross } from "react-icons/im";
 import { useParams } from "react-router";
+import { useState } from "react";
 import Swal from "sweetalert2";
 
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
@@ -35,9 +34,6 @@ const AddToDoModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
   const { email } = useParams();
 
-  const [category, setCategory] = useState("");
-  const [tags, setTags] = useState([]);
-
   const {
     register,
     handleSubmit,
@@ -45,15 +41,16 @@ const AddToDoModal = ({ refetch }) => {
     reset,
   } = useForm();
 
-  // Function to add a tag
-  const handleAddTag = (newTag) => {
-    const trimmedTag = newTag.trim();
-    if (trimmedTag && !tags.includes(trimmedTag)) {
-      setTags((prevTags) => [...prevTags, trimmedTag]);
+  const [tags, setTags] = useState([]);
+  const [category, setCategory] = useState("");
+
+  const handleAddTag = (value) => {
+    if (value.trim() && !tags.includes(value)) {
+      setTags([...tags, value]);
     }
+    event.target.value = ""; // Clear input after adding
   };
 
-  // Function to remove a tag
   const handleRemoveTag = (tagToRemove) => {
     setTags((prevTags) => prevTags.filter((tag) => tag !== tagToRemove));
   };
@@ -63,35 +60,27 @@ const AddToDoModal = ({ refetch }) => {
     if (!userEmail) return `todo-unknown-${Date.now()}`;
     const date = new Date();
     const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-");
-    const formattedTime = date.toTimeString().slice(0, 5).replace(":", "-");
-    const randomNumber = String(Math.floor(Math.random() * 900) + 100).padStart(
-      3,
-      "0"
-    );
-    return `todo-${userEmail}-${formattedDate}-${formattedTime}-${randomNumber}`;
+
+    // Get formatted time (HH:MM)
+    const formattedTime = date.toTimeString().split(" ")[0].slice(0, 5); // HH:MM format
+
+    // Generate a random 3-digit number (between 100 and 999)
+    const randomNumber = Math.floor(Math.random() * 900) + 100;
+
+    // Construct the ID
+    return `todo-${email}-${formattedDate}-${formattedTime}-${randomNumber}`;
   };
 
   const onSubmit = async (data) => {
-    if (!email) {
-      console.error("Error: Email is missing.");
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "User email is missing. Please try again.",
-      });
-      return;
-    }
-
     const uniqueId = generateUniqueId(email);
     const newToDo = {
-      email: email,
+      email,
       newTodo: { id: uniqueId, ...data, category, tags },
     };
 
     try {
       await axiosPublic.put("/Schedule/AddToDo", newToDo);
 
-      // Show success alert
       Swal.fire({
         icon: "success",
         title: "Success!",
@@ -102,12 +91,10 @@ const AddToDoModal = ({ refetch }) => {
       refetch();
       setTags([]);
       setCategory("");
-
       document.getElementById("Add_To-Do_Modal").close();
     } catch (error) {
-      console.error("Error adding To-Do:", error);
+      console.error("Error updating priority:", error);
 
-      // Show error alert
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -118,16 +105,14 @@ const AddToDoModal = ({ refetch }) => {
 
   return (
     <div className="modal-box p-0">
-      {/* Top Section */}
       <div className="flex justify-between items-center border-b border-gray-300 p-4 pb-2">
         <h3 className="font-bold text-lg">Add New To-Do</h3>
         <ImCross
           className="hover:text-[#F72C5B] cursor-pointer transition duration-200"
-          onClick={() => document.getElementById("Add_To-Do_Modal").close()}
+          onClick={() => document.getElementById("Add_To-Do_Modal")?.close()}
         />
       </div>
 
-      {/* Form Section */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
         <InputField
           label="Task"
@@ -167,7 +152,7 @@ const AddToDoModal = ({ refetch }) => {
           errors={errors}
         />
 
-        {/* Combined Category Input */}
+        {/* Category Selection */}
         <div>
           <label className="block text-md font-semibold pb-1">Category</label>
           <input
@@ -265,7 +250,7 @@ const InputField = ({
   placeholder,
   register,
   errors,
-  options,
+  options = {},
 }) => (
   <div>
     <label htmlFor={id} className="block text-md font-semibold pb-1">
