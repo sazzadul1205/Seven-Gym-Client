@@ -32,14 +32,27 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
       {/* Priority List */}
       <div className="space-y-3">
         {/* Title Bar with Buttons on the Right */}
-        <div className="flex flex-col sm:flex-row justify-between items-center bg-yellow-500 text-center py-2 px-6 font-semibold rounded-full relative">
-          <p className="w-full text-center">PRIORITY LIST</p>
+        <div className="flex flex-row justify-between items-center bg-yellow-500 text-center py-2 px-6 font-semibold rounded-full">
+          {/* Left Button (Mobile Only) */}
+          <button
+            className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition sm:hidden"
+            onClick={() =>
+              document.getElementById("Add_Priority_Modal").showModal()
+            }
+            data-tooltip-id="addTooltip"
+          >
+            <FaPlus />
+          </button>
+          <Tooltip id="addTooltip" place="top" content="Add Priority" />
 
-          {/* Buttons on the right */}
-          <div className="absolute sm:relative sm:right-4 flex gap-3 sm:gap-6 mt-2 sm:mt-0">
-            {/* Add Button */}
+          {/* Title in the Center */}
+          <p className="text-center flex-grow">PRIORITY LIST</p>
+
+          {/* Right Button (Mobile & Desktop) */}
+          <div className="flex gap-3 sm:gap-6">
+            {/* Add Button (Visible on Desktop) */}
             <button
-              className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition"
+              className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition hidden sm:block"
               onClick={() =>
                 document.getElementById("Add_Priority_Modal").showModal()
               }
@@ -47,7 +60,6 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
             >
               <FaPlus />
             </button>
-            <Tooltip id="addTooltip" place="top" content="Add Priority" />
 
             {/* Details Button */}
             <button
@@ -77,19 +89,21 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
               .map((event, index) => (
                 <div
                   key={index}
-                  className="flex flex-col sm:flex-row items-center gap-3 w-full cursor-pointer"
+                  className="flex items-center gap-3 w-full cursor-pointer"
                   onClick={() => {
                     setSelectedPriority(event);
                     document.getElementById("View_Priority_Modal").showModal();
                   }}
                 >
                   <FcHighPriority className="text-4xl border border-red-500 rounded-full p-1" />
-                  <div className="flex justify-between bg-blue-300 text-gray-800 px-4 py-3 w-full rounded-full shadow-md hover:scale-105 transition">
-                    <p className="font-semibold">{event.title}</p>
-                    {event.isImportant && (
-                      <span className="text-red-500 font-bold ml-4">★</span>
-                    )}
-                    -
+                  <div className="flex flex-col md:flex-row justify-between bg-blue-300 text-gray-800 px-4 py-3 space-y-2 w-full rounded-3xl md:rounded-full shadow-md hover:scale-105 transition">
+                    <p className="flex font-bold md:font-semibold text-lg">
+                      {event.title}{" "}
+                      {event.isImportant && (
+                        <span className="text-red-500 font-bold ml-4">★</span>
+                      )}
+                    </p>
+                    <p className="hidden md:flex">-</p>
                     <p className="font-semibold">
                       {new Date(event.reminder).toLocaleString()}
                     </p>
@@ -113,15 +127,28 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
 
       {/* To-Do List */}
       <div className="space-y-3">
-        {/* Title Bar with Buttons on the Right */}
-        <div className="flex flex-col sm:flex-row justify-between items-center bg-yellow-500 text-center py-2 px-6 font-semibold rounded-full relative">
-          <p className="w-full text-center">TO-DO LIST</p>
+        {/* Title Bar with Buttons on the Sides */}
+        <div className="flex flex-row justify-between items-center bg-yellow-500 text-center py-2 px-6 font-semibold rounded-full">
+          {/* Left Button (Mobile Only) */}
+          <button
+            className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition sm:hidden"
+            onClick={() =>
+              document.getElementById("Add_To-Do_Modal").showModal()
+            }
+            data-tooltip-id="addToDoTooltip"
+          >
+            <FaPlus />
+          </button>
+          <Tooltip id="addToDoTooltip" place="top" content="Add To-Do" />
 
-          {/* Buttons on the right */}
-          <div className="absolute sm:relative sm:right-4 flex gap-3 sm:gap-6 mt-2 sm:mt-0">
-            {/* Add Button */}
+          {/* Title in the Center */}
+          <p className="text-center flex-grow">TO-DO LIST</p>
+
+          {/* Right Buttons */}
+          <div className="flex gap-3 sm:gap-6">
+            {/* Add Button (Desktop Only) */}
             <button
-              className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition"
+              className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition hidden sm:block"
               onClick={() =>
                 document.getElementById("Add_To-Do_Modal").showModal()
               }
@@ -129,7 +156,6 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
             >
               <FaPlus />
             </button>
-            <Tooltip id="addToDoTooltip" place="top" content="Add To-Do" />
 
             {/* Details Button */}
             <button
@@ -149,7 +175,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
           </div>
         </div>
 
-        {/* To-Do List */}
+        {/* To-Do Items */}
         <div className="space-y-3">
           {todo?.length ? (
             [...todo]
@@ -158,15 +184,18 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
               .map((task, index) => (
                 <div
                   key={index}
-                  className="flex flex-col sm:flex-row items-center gap-3 w-full cursor-pointer"
+                  className="flex items-center gap-3 w-full cursor-pointer"
                   onClick={() => {
                     setSelectedToDo(task);
                     document.getElementById("View_To-Do_Modal").showModal();
                   }}
                 >
                   <RiCalendarTodoLine className="text-4xl text-green-500 border border-green-500 rounded-full font-semibold p-1" />
-                  <div className="flex justify-between bg-blue-300 text-gray-800 px-4 py-3 w-full rounded-full shadow-md hover:scale-105 transition">
-                    <p className="font-semibold">{task.task}</p>-
+                  <div className="flex flex-col md:flex-row justify-between bg-blue-300 text-gray-800 px-4 py-3 space-y-2 w-full rounded-3xl md:rounded-full shadow-md hover:scale-105 transition">
+                    <p className="flex font-bold md:font-semibold text-lg">
+                      {task.task}
+                    </p>
+                    <p className="hidden md:flex">-</p>
                     <p className="font-semibold">
                       {task.dueDate
                         ? new Date(task.dueDate).toLocaleString()
@@ -192,15 +221,28 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
 
       {/* Notes / Reminders List */}
       <div className="space-y-3 bg-gray-200 rounded-xl pb-5">
-        {/* Title Bar with Buttons on the Right */}
-        <div className="flex flex-col sm:flex-row justify-between items-center bg-yellow-500 text-center py-2 px-6 font-semibold rounded-full relative">
-          <p className="w-full text-center"> NOTES / REMINDERS LIST</p>
+        {/* Title Bar with Buttons on the Sides */}
+        <div className="flex flex-row justify-between items-center bg-yellow-500 text-center py-2 px-6 font-semibold rounded-full">
+          {/* Left Button (Mobile Only) */}
+          <button
+            className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition sm:hidden"
+            onClick={() =>
+              document.getElementById("Add_Notes_Modal").showModal()
+            }
+            data-tooltip-id="addTooltip"
+          >
+            <FaPlus />
+          </button>
+          <Tooltip id="addTooltip" place="top" content="Add Notes" />
 
-          {/* Buttons on the right */}
-          <div className="absolute sm:relative sm:right-4 flex gap-3 sm:gap-6 mt-2 sm:mt-0">
-            {/* Add Button */}
+          {/* Title in the Center */}
+          <p className="text-center flex-grow">NOTES / REMINDERS LIST</p>
+
+          {/* Right Buttons */}
+          <div className="flex gap-3 sm:gap-6">
+            {/* Add Button (Desktop Only) */}
             <button
-              className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition"
+              className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition hidden sm:block"
               onClick={() =>
                 document.getElementById("Add_Notes_Modal").showModal()
               }
@@ -208,7 +250,6 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
             >
               <FaPlus />
             </button>
-            <Tooltip id="addTooltip" place="top" content="Add Notes" />
 
             {/* Details Button */}
             <button
@@ -234,19 +275,21 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
               .map((event, index) => (
                 <div
                   key={index}
-                  className="flex flex-col sm:flex-row items-center gap-3 w-full cursor-pointer"
+                  className="flex items-center gap-3 w-full cursor-pointer"
                   onClick={() => {
                     setSelectedNote(event);
                     document.getElementById("View_Notes_Modal").showModal();
                   }}
                 >
                   <IoIosCreate className="text-4xl text-purple-500 border border-purple-500 rounded-full font-semibold p-1" />
-                  <div className="flex justify-between bg-blue-300 text-gray-800 px-4 py-3 w-full rounded-full shadow-md hover:scale-105 transition">
-                    <p className="font-semibold">{event.title}</p>
-                    {event.isImportant && (
-                      <span className="text-red-500 font-bold ml-4">★</span>
-                    )}
-                    -
+                  <div className="flex flex-col md:flex-row justify-between bg-blue-300 text-gray-800 px-4 py-3 space-y-2 w-full rounded-3xl md:rounded-full shadow-md hover:scale-105 transition">
+                    <p className="flex font-bold md:font-semibold text-lg">
+                      {event.title}
+                      {event.isImportant && (
+                        <span className="text-red-500 font-bold ml-4">★</span>
+                      )}
+                    </p>
+                    <p className="hidden md:flex">-</p>
                     <p className="font-semibold">
                       {new Date(event.reminder).toLocaleString()}
                     </p>
@@ -258,7 +301,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
               <button
                 className="px-16 py-2 bg-gradient-to-br hover:bg-gradient-to-tl from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition"
                 onClick={() =>
-                  document.getElementById("Add_Priority_Modal").showModal()
+                  document.getElementById("Add_Notes_Modal").showModal()
                 }
               >
                 + Add Notes
@@ -273,47 +316,39 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
       <dialog id="Add_Priority_Modal" className="modal">
         <AddPriorityModal refetch={refetch} />
       </dialog>
-
       {/* Add To-Do Modal  */}
       <dialog id="Add_To-Do_Modal" className="modal">
         <AddToDoModal refetch={refetch} />
       </dialog>
-
       {/* Add Notes Modal  */}
       <dialog id="Add_Notes_Modal" className="modal">
         <AddNotesModal refetch={refetch} />
       </dialog>
-
       {/* View Modal's  */}
       {/* View Priority Modal  */}
       <dialog id="View_Priority_Modal" className="modal">
         <ViewPriorityModal refetch={refetch} Priority={selectedPriority} />
       </dialog>
-
       {/* View To-Do Modal  */}
       <dialog id="View_To-Do_Modal" className="modal">
         <ViewToDoModal refetch={refetch} ToDo={selectedToDo} />
       </dialog>
-
       {/* View Notes Modal  */}
       <dialog id="View_Notes_Modal" className="modal">
         <ViewNotesModal refetch={refetch} Notes={selectedNote} />
       </dialog>
-
       {/* View All Modal's  */}
       {/* View All Priority Modal */}
       <dialog id="View_All_Priority_Modal" className="modal">
-        <ViewAllPriorityModal refetch={refetch} />
+        <ViewAllPriorityModal refetch={refetch} priority={priority} />
       </dialog>
-
       {/* View All To-Do Modal */}
       <dialog id="View_All_To-Do_Modal" className="modal">
-        <ViewAllToDoModal refetch={refetch} />
+        <ViewAllToDoModal refetch={refetch} todo={todo} />
       </dialog>
-
       {/* View All Notes Modal */}
       <dialog id="View_All_Notes_Modal" className="modal">
-        <ViewAllNotesModal refetch={refetch} />
+        <ViewAllNotesModal refetch={refetch} notes={notes} />
       </dialog>
     </div>
   );

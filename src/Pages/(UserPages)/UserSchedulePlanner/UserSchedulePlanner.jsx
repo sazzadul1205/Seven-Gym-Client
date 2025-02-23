@@ -153,7 +153,7 @@ const UserSchedulePlanner = () => {
       </div>
 
       {/* Main Section */}
-      <main className="max-w-7xl flex flex-col md:flex-row mx-auto gap-5 p-4">
+      <main className="max-w-7xl flex flex-col md:flex-row mx-auto gap-5 p-1 md:p-4">
         {/* Selected Day's Schedule */}
         <div className="w-full md:w-1/2">
           {selectedSchedule ? (

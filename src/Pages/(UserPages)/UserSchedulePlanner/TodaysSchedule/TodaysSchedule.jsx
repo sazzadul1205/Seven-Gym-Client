@@ -173,7 +173,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   });
 
   return (
-    <div className="p-4">
+    <div className="p-1 md:p-4">
       {/* Dynamic Title */}
       <p
         className={`text-center py-2 font-semibold rounded-full ${titleClass}`}
@@ -182,32 +182,34 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
       </p>
 
       {/* Glowing prompt for past schedules */}
-      {isPast && (
-        <div className="mt-2 p-2 text-center text-white bg-red-500 animate-pulse rounded-lg shadow-md">
-          <p>
-            This schedule has passed. Do you want to regenerate for{" "}
-            <span className="text-lg font-semibold">next {nextDayName}</span>?
-          </p>
-          <p>({nextDate})</p>
-          <button
-            onClick={handleRegenerateClick}
-            className="mt-2 px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition"
-          >
-            Regenerate
-          </button>
-        </div>
-      )}
+      <div className="p-0">
+        {isPast && (
+          <div className="mt-2 p-2 text-center text-white bg-red-500 animate-pulse rounded-lg shadow-md">
+            <p>
+              This schedule has passed. Do you want to regenerate for{" "}
+              <span className="text-lg font-semibold">next {nextDayName}</span>?
+            </p>
+            <p>({nextDate})</p>
+            <button
+              onClick={handleRegenerateClick}
+              className="mt-2 px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition"
+            >
+              Regenerate
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Schedule List */}
       <div className="pt-4 space-y-3">
         {scheduledTimes.map(({ display, event }, index) => (
           <div
             key={index}
-            className="flex flex-col sm:flex-row items-center gap-3 w-full"
+            className="flex flex-col md:flex-row md:items-center gap-3 w-full border-t md:border-none border-gray-400 p-1"
           >
             {/* Time Label */}
-            <p className="font-semibold text-gray-700 w-20 text-right">
-              {display}
+            <p className="font-bold md:font-semibold text-gray-700 w-24 text-right">
+              {display} :
             </p>
 
             {/* Event Information */}
@@ -215,7 +217,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
               className={`px-4 py-2 w-full rounded-full shadow-md transition ${
                 isPast
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed opacity-60"
-                  : "bg-green-300 text-gray-800 hover:scale-105 cursor-pointer"
+                  : "bg-green-300 text-gray-800 md:hover:scale-105 cursor-pointer"
               }`}
               onClick={() => handleEventClick(event)}
             >
@@ -237,9 +239,9 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
       {/* Add Plan Modal */}
       <dialog id="Add_Plan_Modal" className="modal">
         <AddPlanModal
+          scheduleData={scheduleData}
           selectedID={selectedID}
           refetch={refetch}
-          scheduleData={scheduleData}
         />
       </dialog>
     </div>
