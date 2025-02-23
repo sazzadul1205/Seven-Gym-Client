@@ -201,7 +201,10 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
       {/* Schedule List */}
       <div className="pt-4 space-y-3">
         {scheduledTimes.map(({ display, event }, index) => (
-          <div key={index} className="flex items-center gap-3 w-full">
+          <div
+            key={index}
+            className="flex flex-col sm:flex-row items-center gap-3 w-full"
+          >
             {/* Time Label */}
             <p className="font-semibold text-gray-700 w-20 text-right">
               {display}

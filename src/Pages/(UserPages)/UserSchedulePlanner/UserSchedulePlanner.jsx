@@ -120,15 +120,15 @@ const UserSchedulePlanner = () => {
       {/* Week & Date Selector */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center p-4 border-b border-gray-300">
         {/* Today's Date */}
-        <div className="flex gap-2 items-center md:items-start">
-          <p className="text-lg font-semibold text-gray-800">Date:</p>
-          <p className="text-lg text-gray-600 font-semibold underline underline-offset-4">
+        <div className="flex gap-2 items-center md:items-start text-md md:text-lg">
+          <p className="font-semibold text-gray-800">Date:</p>
+          <p className="text-gray-600 font-semibold underline underline-offset-4">
             {formattedDate}
           </p>
         </div>
 
         {/* Week Selector (All 7 days) */}
-        <div className="flex gap-2 mt-4 md:mt-0">
+        <div className="flex gap-2 mt-4 md:mt-0 flex-wrap justify-center">
           {weekDays.map((day, index) => {
             const isAvailable = availableDays.includes(day);
             const isSelected = selectedDay === day;
@@ -138,12 +138,12 @@ const UserSchedulePlanner = () => {
                 key={index}
                 onClick={() => setSelectedDay(day)}
                 className={`rounded-full border border-black w-10 h-10 flex items-center justify-center text-lg font-medium cursor-pointer
-                  ${isSelected ? "bg-blue-500 text-white font-bold" : ""}
-                  ${
-                    isAvailable
-                      ? "hover:bg-gray-400"
-                      : "opacity-50 cursor-not-allowed"
-                  }`}
+              ${isSelected ? "bg-blue-500 text-white font-bold" : ""}
+              ${
+                isAvailable
+                  ? "hover:bg-gray-400"
+                  : "opacity-50 cursor-not-allowed"
+              }`}
               >
                 {day[0]}
               </p>
@@ -153,9 +153,9 @@ const UserSchedulePlanner = () => {
       </div>
 
       {/* Main Section */}
-      <main className="max-w-7xl mx-auto flex gap-5">
+      <main className="max-w-7xl flex flex-col md:flex-row mx-auto gap-5 p-4">
         {/* Selected Day's Schedule */}
-        <div className="w-1/2">
+        <div className="w-full md:w-1/2">
           {selectedSchedule ? (
             <TodaysSchedule
               scheduleData={selectedSchedule.schedule}
@@ -170,7 +170,7 @@ const UserSchedulePlanner = () => {
         </div>
 
         {/* Notes Section */}
-        <div className="w-1/2">
+        <div className="w-full md:w-1/2">
           {userSchedule ? (
             <ExtraList
               priority={userSchedule.priority}

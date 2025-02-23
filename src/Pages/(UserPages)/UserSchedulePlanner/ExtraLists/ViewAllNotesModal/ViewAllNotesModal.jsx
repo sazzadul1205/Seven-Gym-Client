@@ -64,27 +64,29 @@ const ViewAllNotesModal = ({ refetch, notes }) => {
   return (
     <div className="modal-box p-0" ref={modalRef}>
       {/* Delete Confirmation Banner */}
-      {showDeleteConfirm && selectedNote && (
-        <div className="absolute top-0 left-0 w-full bg-red-500 text-white p-3 flex justify-between items-center animate-fadeIn">
-          <p className="font-semibold">
-            ⚠️ Are you sure you want to delete <b>{selectedNote.title}</b>?
-          </p>
-          <div className="flex space-x-3">
-            <button
-              onClick={handleConfirmDelete}
-              className="p-2 bg-green-600 rounded-lg hover:bg-green-700 transition"
-            >
-              <FaCheck className="text-white" />
-            </button>
-            <button
-              onClick={handleCancelDelete}
-              className="p-2 bg-gray-700 rounded-lg hover:bg-gray-800 transition"
-            >
-              <FaTimes className="text-white" />
-            </button>
+      <div className="p-0">
+        {showDeleteConfirm && selectedNote && (
+          <div className="absolute top-0 left-0 w-full bg-red-500 text-white p-3 flex justify-between items-center animate-fadeIn">
+            <p className="font-semibold">
+              ⚠️ Are you sure you want to delete <b>{selectedNote.title}</b>?
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={handleConfirmDelete}
+                className="p-2 bg-green-600 rounded-lg hover:bg-green-700 transition"
+              >
+                <FaCheck className="text-white" />
+              </button>
+              <button
+                onClick={handleCancelDelete}
+                className="p-2 bg-gray-700 rounded-lg hover:bg-gray-800 transition"
+              >
+                <FaTimes className="text-white" />
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Top Section */}
       <div className="flex justify-between items-center border-b border-gray-300 px-4 py-3">
@@ -99,7 +101,7 @@ const ViewAllNotesModal = ({ refetch, notes }) => {
 
       {/* Notes List */}
       <div className="p-4 space-y-3">
-        {notes.length > 0 ? (
+        {notes?.length > 0 ? (
           notes
             .sort(
               (a, b) =>
