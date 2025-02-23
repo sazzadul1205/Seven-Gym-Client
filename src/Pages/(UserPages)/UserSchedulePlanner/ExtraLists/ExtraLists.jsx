@@ -17,6 +17,9 @@ import AddToDoModal from "./AddToDoModal/AddToDoModal";
 import ViewAllPriorityModal from "./ViewAllPriorityModal/ViewAllPriorityModal";
 import ViewAllNotesModal from "./ViewAllNotesModal/ViewAllNotesModal";
 import ViewAllToDoModal from "./ViewAllToDoModal/ViewAllToDoModal";
+import { FcHighPriority } from "react-icons/fc";
+import { RiCalendarTodoLine } from "react-icons/ri";
+import { IoIosCreate } from "react-icons/io";
 
 const ExtraList = ({ priority, notes, todo, refetch }) => {
   // State to store the selected priority item for viewing
@@ -80,6 +83,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
                     document.getElementById("View_Priority_Modal").showModal();
                   }}
                 >
+                  <FcHighPriority className="text-4xl border border-red-500 rounded-full p-1" />
                   <div className="flex justify-between bg-blue-300 text-gray-800 px-4 py-3 w-full rounded-full shadow-md hover:scale-105 transition">
                     <p className="font-semibold">
                       {event.title}
@@ -162,6 +166,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
                     document.getElementById("View_To-Do_Modal").showModal();
                   }}
                 >
+                  <RiCalendarTodoLine className="text-4xl text-green-500 border border-green-500 rounded-full font-semibold p-1" />
                   <div className="flex justify-between bg-blue-300 text-gray-800 px-4 py-3 w-full rounded-full shadow-md hover:scale-105 transition">
                     <p className="font-semibold">{task.task}</p>-
                     <p className="font-semibold">
@@ -237,6 +242,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
                     document.getElementById("View_Notes_Modal").showModal();
                   }}
                 >
+                  <IoIosCreate className="text-4xl text-purple-500 border border-purple-500 rounded-full font-semibold p-1" />
                   <div className="flex justify-between bg-blue-300 text-gray-800 px-4 py-3 w-full rounded-full shadow-md hover:scale-105 transition">
                     <p className="font-semibold">
                       {event.title}

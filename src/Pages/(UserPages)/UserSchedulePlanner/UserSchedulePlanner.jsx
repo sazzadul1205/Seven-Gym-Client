@@ -7,9 +7,12 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import Loading from "../../../Shared/Loading/Loading";
 import NoDefault from "./NoDefault/NoDefault";
 import ExtraList from "./ExtraLists/ExtraLists";
+import useAuth from "../../../Hooks/useAuth";
+import WrongUser from "./WrongUser/WrongUser";
 
 const UserSchedulePlanner = () => {
   const { email } = useParams();
+  const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
   // Live Clock State
@@ -52,26 +55,11 @@ const UserSchedulePlanner = () => {
     setSelectedDay(todayName); // Always set selectedDay
   }, []);
 
-  if (scheduleDataIsLoading) return <Loading />;
-
-  if (scheduleDataError || !mySchedulesData?.length) {
-    return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
-        <p className="text-center text-red-500 font-bold text-3xl mb-8">
-          Something went wrong. Please reload the page.
-        </p>
-        <button
-          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
-          onClick={() => window.location.reload()}
-        >
-          Reload
-        </button>
-      </div>
-    );
+  // Check if the email from the params matches the user's email
+  if (user?.email !== email) {
+    return <WrongUser />;
   }
-
   const userSchedule = mySchedulesData[0];
-
   if (!userSchedule) {
     return <NoDefault refetch={refetch} />;
   }
@@ -98,8 +86,26 @@ const UserSchedulePlanner = () => {
     hour12: true,
   });
 
+  if (scheduleDataIsLoading) return <Loading />;
+
+  if (scheduleDataError || !mySchedulesData?.length) {
+    return (
+      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+        <p className="text-center text-red-500 font-bold text-3xl mb-8">
+          Something went wrong. Please reload the page.
+        </p>
+        <button
+          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
+          onClick={() => window.location.reload()}
+        >
+          Reload
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-[#f6eee3] min-h-screen">
       {/* Header */}
       <div className="bg-[#F72C5B] py-12"></div>
 
