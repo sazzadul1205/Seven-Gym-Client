@@ -26,7 +26,7 @@ const UserSchedulePlanner = () => {
 
   // Fetching Schedule Data
   const {
-    data: mySchedulesData,
+    data: mySchedulesData = [], // Default to an empty array to prevent undefined issues
     isLoading: scheduleDataIsLoading,
     error: scheduleDataError,
     refetch,
@@ -52,23 +52,32 @@ const UserSchedulePlanner = () => {
     const todayName = new Date().toLocaleDateString("en-US", {
       weekday: "long",
     });
-    setSelectedDay(todayName); // Always set selectedDay
+    setSelectedDay(todayName);
   }, []);
 
   // Check if the email from the params matches the user's email
   if (user?.email !== email) {
     return <WrongUser />;
   }
-  const userSchedule = mySchedulesData[0];
+
+  // Ensure mySchedulesData is not empty before accessing mySchedulesData[0]
+  if (scheduleDataIsLoading) return <Loading />;
+
+  if (scheduleDataError || !mySchedulesData || mySchedulesData.length === 0) {
+    return <NoDefault refetch={refetch} />;
+  }
+
+  const userSchedule = mySchedulesData[0]; // Safe access after checking
+
   if (!userSchedule) {
     return <NoDefault refetch={refetch} />;
   }
 
   // Extract available schedule days from the data
-  const availableDays = Object.keys(userSchedule.schedule);
+  const availableDays = Object.keys(userSchedule.schedule || {});
 
   // Get selected day's schedule
-  const selectedSchedule = userSchedule.schedule[selectedDay] || null;
+  const selectedSchedule = userSchedule.schedule?.[selectedDay] || null;
 
   // Format date
   const formattedDate = new Date().toLocaleDateString("en-US", {
@@ -85,24 +94,6 @@ const UserSchedulePlanner = () => {
     second: "2-digit",
     hour12: true,
   });
-
-  if (scheduleDataIsLoading) return <Loading />;
-
-  if (scheduleDataError || !mySchedulesData?.length) {
-    return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
-        <p className="text-center text-red-500 font-bold text-3xl mb-8">
-          Something went wrong. Please reload the page.
-        </p>
-        <button
-          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
-          onClick={() => window.location.reload()}
-        >
-          Reload
-        </button>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-[#f6eee3] min-h-screen">
@@ -136,7 +127,7 @@ const UserSchedulePlanner = () => {
             return (
               <p
                 key={index}
-                onClick={() => setSelectedDay(day)}
+                onClick={() => isAvailable && setSelectedDay(day)}
                 className={`rounded-full border border-black w-10 h-10 flex items-center justify-center text-lg font-medium cursor-pointer
               ${isSelected ? "bg-blue-500 text-white font-bold" : ""}
               ${

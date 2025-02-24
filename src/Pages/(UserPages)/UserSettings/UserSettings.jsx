@@ -11,6 +11,7 @@ import USUserImage from "./USUserImage/USUserImage";
 import USUserInfo from "./USUserInfo/USUserInfo";
 import USAwards from "./USAwards/USAwards";
 import USWorkout from "./USWorkout/USWorkout";
+import USSchedule from "./USSchedule/USSchedule";
 
 const UserSettings = () => {
   const { user } = useAuth();
@@ -35,7 +36,7 @@ const UserSettings = () => {
   // Fetch user data
   const {
     data: UsersData,
-    isLoading: UsersLoading,
+    isLoading: UsersIsLoading,
     error: UsersError,
     refetch,
   } = useQuery({
@@ -44,24 +45,17 @@ const UserSettings = () => {
       axiosPublic.get(`/Users?email=${user?.email}`).then((res) => res.data),
   });
 
-  if (UsersLoading) return <Loading />;
-
-  if (UsersError) {
-    console.error("Error fetching data:", UsersError);
-    return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
-        <p className="text-3xl text-red-500 font-bold mb-8">
-          Failed to load user settings.
-        </p>
-        <button
-          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400"
-          onClick={() => window.location.reload()}
-        >
-          Reload
-        </button>
-      </div>
-    );
-  }
+  // Fetching Schedule Data
+  const {
+    data: schedulesData = [],
+    isLoading: scheduleDataIsLoading,
+    error: scheduleDataError,
+  } = useQuery({
+    queryKey: ["ScheduleData"],
+    queryFn: () =>
+      axiosPublic.get(`/Schedule?email=${user?.email}`).then((res) => res.data),
+  });
+  const userSchedule = schedulesData[0]; // Safe access after checking
 
   // Tab data
   const tabs = [
@@ -89,8 +83,33 @@ const UserSettings = () => {
       title: "Workouts Settings",
       content: <USWorkout UsersData={UsersData} refetch={refetch} />,
     },
+    {
+      id: "Settings_Schedule",
+      Icon: "https://i.ibb.co.com/C3WB5f3R/shedule.png",
+      title: "Schedule Settings",
+      content: <USSchedule userSchedule={userSchedule} refetch={refetch} />,
+    },
     // Add more tabs as needed
   ];
+
+  if (UsersIsLoading || scheduleDataIsLoading) return <Loading />;
+
+  if (UsersError || scheduleDataError) {
+    console.error("Error fetching data:", UsersError);
+    return (
+      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+        <p className="text-3xl text-red-500 font-bold mb-8">
+          Failed to load user settings.
+        </p>
+        <button
+          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400"
+          onClick={() => window.location.reload()}
+        >
+          Reload
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white bg-gradient-to-br from-[#f72c5b8a] to-[#f72c5b65]">
