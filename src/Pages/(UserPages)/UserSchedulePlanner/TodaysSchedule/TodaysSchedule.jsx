@@ -13,8 +13,6 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   const axiosPublic = useAxiosPublic();
   const { date, dayName } = scheduleInfo;
 
-  console.log(scheduleInfo);
-
   const [selectedID, setSelectedID] = useState(null);
 
   const today = new Date();

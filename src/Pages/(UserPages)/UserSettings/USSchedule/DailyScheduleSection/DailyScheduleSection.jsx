@@ -23,13 +23,21 @@ const DailyScheduleSection = ({ MySchedule, refetch }) => {
 
   if (!MySchedule) return <div>No Schedule Available</div>;
 
-  const today = new Date().toISOString().split("T")[0];
-
   const getDayStatus = (dayDate) => {
-    const dateWithoutTime = dayDate.split("T")[0];
-    if (dateWithoutTime < today) return "passed";
-    if (dateWithoutTime === today) return "today";
-    return "future";
+    const today = new Date(); // Get today's date
+    const providedDate = new Date(dayDate.split("-").reverse().join("-")); // Convert the provided date to a Date object
+
+    // Fixing isToday and isPast logic
+    const isToday = today.toDateString() === providedDate.toDateString(); // Compare full date
+    const isPast = providedDate < today && !isToday; // If provided date is before today and not today
+
+    if (isPast) {
+      return "passed"; // If the date is in the past
+    }
+    if (isToday) {
+      return "today"; // If the date is today
+    }
+    return "future"; // If the date is in the future
   };
 
   const toggleSection = (dayId) => {
@@ -134,12 +142,19 @@ const DailyScheduleSection = ({ MySchedule, refetch }) => {
       const today = new Date();
       const todayIndex = today.getDay();
       const targetIndex = daysOfWeek.indexOf(day);
+
+      // Calculate days to add
       let daysToAdd = (targetIndex - todayIndex + 7) % 7;
-      if (daysToAdd === 0) daysToAdd = 7; // Move to the next week
+      if (daysToAdd === 0) daysToAdd = 7; // Ensure it moves to the next week
 
       const nextDate = new Date();
       nextDate.setDate(today.getDate() + daysToAdd);
-      const formattedDate = nextDate.toISOString().split("T")[0];
+
+      // Convert date to DD-MM-YYYY format
+      const formattedDate = nextDate
+        .toLocaleDateString("en-GB")
+        .split("/")
+        .join("-");
 
       return {
         nextDayName: daysOfWeek[nextDate.getDay()],
@@ -151,10 +166,7 @@ const DailyScheduleSection = ({ MySchedule, refetch }) => {
     const { nextDayName, nextDate } = getNextOccurrence(dayName);
 
     // Generate new schedule ID
-    const updatedScheduleID = `${nextDayName}-${nextDate
-      .split("-")
-      .reverse()
-      .join("-")}`;
+    const updatedScheduleID = `${nextDayName}-${nextDate}`;
 
     // Create a new empty schedule
     const updatedScheduleData = {};
@@ -202,9 +214,51 @@ const DailyScheduleSection = ({ MySchedule, refetch }) => {
     }
   };
 
-  const handleDeleteSelected = () => {
-    console.log("Deleting selected events:", Array.from(selectedEvents));
-    // Implement logic to delete selected events from the schedule
+  import Swal from "sweetalert2";
+
+  const handleDeleteSelected = async () => {
+    if (!user?.email || selectedEvents.size === 0) return;
+
+    // Show confirmation alert
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to recover these schedules!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete them!",
+    });
+
+    if (!result.isConfirmed) return; // Stop if user cancels
+
+    try {
+      await axiosPublic.put("/Schedule/DeleteSchedules", {
+        email: user.email,
+        scheduleIDs: Array.from(selectedEvents),
+      });
+
+      // Show success alert
+      Swal.fire({
+        title: "Deleted!",
+        text: "The selected schedules have been deleted.",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      setSelectedEvents(new Set()); // Clear selection
+      refetch(); // Refresh schedule data
+    } catch (error) {
+      console.error("Error deleting schedules:", error);
+
+      // Show error alert
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to delete schedules. Please try again.",
+        icon: "error",
+      });
+    }
   };
 
   const handleExportSelected = () => {
@@ -234,7 +288,7 @@ const DailyScheduleSection = ({ MySchedule, refetch }) => {
         console.log("Imported Schedule:", importedData);
         // Implement logic to merge or replace schedule with importedData
       } catch (error) {
-        alert("Invalid JSON file!");
+        alert("Invalid JSON file!", error);
       }
     };
     reader.readAsText(file);

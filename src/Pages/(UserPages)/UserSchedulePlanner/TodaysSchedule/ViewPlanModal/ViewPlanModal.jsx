@@ -12,35 +12,34 @@ const ViewPlanModal = ({ eventDetails, isLoading, refetch }) => {
   const axiosPublic = useAxiosPublic();
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [scheduleIDs, setScheduleIDs] = useState([]);
+  const [scheduleID, setScheduleID] = useState(null);
 
   // Open delete confirmation
   const handleDeleteClick = (id) => {
-    setScheduleIDs([id]); // Set the schedule ID for deletion
+    setScheduleID(id);
     setShowDeleteConfirm(true);
   };
 
   // Close delete confirmation
   const handleCancelDelete = () => {
     setShowDeleteConfirm(false);
-    setScheduleIDs([]); // Clear selected schedule IDs
+    setScheduleID(null);
   };
 
   // Confirm delete (send request)
   const handleConfirmDelete = async () => {
-    const email = user?.email;
-    if (!email || !scheduleIDs.length) return; // Guard clause for safety
+    if (!user?.email || !scheduleID) return;
 
     try {
-      // eslint-disable-next-line no-unused-vars
-      const response = await axiosPublic.put("/Schedule/DeleteSchedules", {
-        email,
-        scheduleIDs,
+      await axiosPublic.put("/Schedule/DeleteSchedules", {
+        email: user.email,
+        scheduleIDs: [scheduleID],
       });
+
       document.getElementById("Details_view_Modal").close();
       setShowDeleteConfirm(false);
+      setScheduleID(null);
       refetch();
-      setScheduleIDs([]); // Clear the list after deletion
     } catch (error) {
       console.error("Error deleting schedules:", error);
     }
@@ -51,7 +50,7 @@ const ViewPlanModal = ({ eventDetails, isLoading, refetch }) => {
     if (isLoading) return <Loading />;
     if (!eventDetails?.length) return renderNoEventUI();
 
-    const event = eventDetails[0]; // Since we're only using the first event
+    const event = eventDetails[0]; // Using the first event
     return (
       <div className="space-y-4">
         <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
@@ -119,27 +118,29 @@ const ViewPlanModal = ({ eventDetails, isLoading, refetch }) => {
       </div>
 
       {/* Delete Confirmation Ribbon */}
-      {showDeleteConfirm && (
-        <div className="absolute top-0 left-0 w-full bg-red-500 text-white p-3 rounded-t-lg flex justify-between items-center animate-fadeIn">
-          <p className="font-semibold">
-            ⚠️ Are you sure you want to delete this event?
-          </p>
-          <div className="flex space-x-3">
-            <button
-              onClick={handleConfirmDelete}
-              className="p-2 bg-green-600 rounded-lg hover:bg-green-700 transition"
-            >
-              <FaCheck className="text-white" />
-            </button>
-            <button
-              onClick={handleCancelDelete}
-              className="p-2 bg-gray-700 rounded-lg hover:bg-gray-800 transition"
-            >
-              <FaTimes className="text-white" />
-            </button>
+      <div>
+        {showDeleteConfirm && (
+          <div className="absolute top-0 left-0 w-full bg-red-500 text-white p-3 rounded-t-lg flex justify-between items-center animate-fadeIn">
+            <p className="font-semibold">
+              ⚠️ Are you sure you want to delete this event?
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={handleConfirmDelete}
+                className="p-2 bg-green-600 rounded-lg hover:bg-green-700 transition"
+              >
+                <FaCheck className="text-white" />
+              </button>
+              <button
+                onClick={handleCancelDelete}
+                className="p-2 bg-gray-700 rounded-lg hover:bg-gray-800 transition"
+              >
+                <FaTimes className="text-white" />
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Modal Content */}
       <div className="py-4">{renderEventDetails()}</div>
