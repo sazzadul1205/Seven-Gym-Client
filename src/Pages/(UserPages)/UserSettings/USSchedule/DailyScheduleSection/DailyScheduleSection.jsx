@@ -9,9 +9,11 @@ import { FaLocationDot } from "react-icons/fa6";
 import { Tooltip } from "react-tooltip";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../../Hooks/useAuth";
+import Swal from "sweetalert2";
+import { FiRefreshCcw } from "react-icons/fi";
 
 // eslint-disable-next-line react/prop-types
-const DailyScheduleSection = ({ MySchedule }) => {
+const DailyScheduleSection = ({ MySchedule, refetch }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
@@ -107,10 +109,87 @@ const DailyScheduleSection = ({ MySchedule }) => {
     ({ date }) => getDayStatus(date) === "passed"
   );
 
-  const handleGeneratePassedSchedules = ({ id }) => {
-    console.log("Generating new schedules for all passed dates...");
-    // Logic to regenerate schedules for past dates
-    console.log(id);
+  // Function to handle schedule regeneration
+  const handleRegenerateClick = async (dayName, scheduleData) => {
+    const getNextOccurrence = (day) => {
+      const daysOfWeek = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+      const today = new Date();
+      const todayIndex = today.getDay();
+      const targetIndex = daysOfWeek.indexOf(day);
+      let daysToAdd = (targetIndex - todayIndex + 7) % 7;
+      if (daysToAdd === 0) daysToAdd = 7; // Move to the next week
+
+      const nextDate = new Date();
+      nextDate.setDate(today.getDate() + daysToAdd);
+      const formattedDate = nextDate.toISOString().split("T")[0];
+
+      return {
+        nextDayName: daysOfWeek[nextDate.getDay()],
+        nextDate: formattedDate,
+      };
+    };
+
+    // Get the next occurrence of the day
+    const { nextDayName, nextDate } = getNextOccurrence(dayName);
+
+    // Generate new schedule ID
+    const updatedScheduleID = `${nextDayName}-${nextDate
+      .split("-")
+      .reverse()
+      .join("-")}`;
+
+    // Create a new empty schedule
+    const updatedScheduleData = {};
+    Object.keys(scheduleData).forEach((time) => {
+      updatedScheduleData[time] = {
+        id: `sche-${updatedScheduleID}-${time}`,
+        title: "",
+        notes: "",
+        location: "",
+        status: "",
+      };
+    });
+
+    const regeneratedSchedule = {
+      id: updatedScheduleID,
+      dayName: nextDayName,
+      date: nextDate,
+      schedule: updatedScheduleData,
+    };
+
+    try {
+      await axiosPublic.put("/Schedule/RegenerateNewDaySchedule", {
+        email: user.email,
+        dayName: nextDayName,
+        scheduleData: regeneratedSchedule,
+      });
+
+      Swal.fire({
+        title: "Success!",
+        text: "Schedule has been updated successfully.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+
+      refetch();
+    } catch (error) {
+      console.error("Error updating schedule:", error);
+
+      Swal.fire({
+        title: "Error!",
+        text: "There was an issue updating the schedule. Please try again later.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   const handleDeleteSelected = () => {
@@ -178,70 +257,88 @@ const DailyScheduleSection = ({ MySchedule }) => {
             </div>
 
             {/* Delete Selected Events Button */}
-            <button
-              className={`text-lg text-white px-4 py-2 rounded-lg ${
-                selectedEvents.size > 0
-                  ? "bg-red-500 hover:bg-red-600"
-                  : "bg-red-400 text-gray-700 cursor-not-allowed"
-              }`}
-              disabled={selectedEvents.size === 0}
-              onClick={handleDeleteSelected}
-              data-tooltip-id="deleteTooltip"
-            >
-              <FaRegTrashAlt />
-            </button>
-            <Tooltip
-              id="deleteTooltip"
-              place="top"
-              content="Delete Selected Events"
-            />
+            <div>
+              <button
+                className={`text-lg text-white px-4 py-2 rounded-lg ${
+                  selectedEvents.size > 0
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-red-400 text-gray-700 cursor-not-allowed"
+                }`}
+                disabled={selectedEvents.size === 0}
+                onClick={handleDeleteSelected}
+                data-tooltip-id="deleteTooltip"
+              >
+                <FaRegTrashAlt />
+              </button>
+              <Tooltip
+                id="deleteTooltip"
+                place="top"
+                content="Delete Selected Events"
+              />
+            </div>
           </div>
 
           {/* Generate All Passed Dates Button */}
-          <button
-            className={`text-sm px-4 py-2 rounded-lg ${
-              hasPassedDates
-                ? "bg-blue-500 hover:bg-blue-600 text-white"
-                : "bg-gray-400 text-gray-700 cursor-not-allowed"
-            }`}
-            disabled={!hasPassedDates}
-            onClick={handleGeneratePassedSchedules}
-          >
-            Generate Passed Schedules
-          </button>
+          <div>
+            <button
+              className={`text-sm px-4 py-2 rounded-lg  ${
+                hasPassedDates
+                  ? "bg-blue-500 hover:bg-blue-600 text-white"
+                  : "bg-gray-400 text-gray-700 cursor-not-allowed"
+              }`}
+              disabled={!hasPassedDates}
+              data-tooltip-id="ReGenerateToolTip"
+              // onClick={handleGeneratePassedSchedules}
+            >
+              <FiRefreshCcw className="text-lg font-semibold hover:animate-spin" />
+            </button>
+            <Tooltip
+              id="ReGenerateToolTip"
+              place="top"
+              content="Generate All 'Passed' Schedules"
+            />
+          </div>
 
           {/* Right Side */}
           <div className="flex items-center gap-4">
             {/* Export Selected Events Button */}
-            <button
-              className="text-lg px-4 py-2 border border-red-500 hover:border-red-600 bg-red-300 hover:bg-red-400 text-white rounded-xl hover:shadow-xl"
-              onClick={handleExportSelected}
-              data-tooltip-id="exportTooltip"
-            >
-              <FaFileExport />
-            </button>
-            <Tooltip
-              id="exportTooltip"
-              place="top"
-              content="Export Selected Events"
-            />
+            <div>
+              <button
+                className="text-lg px-4 py-2 border border-red-500 hover:border-red-600 bg-red-300 hover:bg-red-400 text-white rounded-xl hover:shadow-xl"
+                onClick={handleExportSelected}
+                data-tooltip-id="exportTooltip"
+              >
+                <FaFileExport />
+              </button>
+              <Tooltip
+                id="exportTooltip"
+                place="top"
+                content="Export Selected Events"
+              />
+            </div>
 
             {/* Import Schedule from JSON */}
-            <label className="cursor-pointer">
-              <input
-                type="file"
-                accept=".json"
-                className="hidden"
-                onChange={handleImportSchedule}
+            <div>
+              <label className="cursor-pointer">
+                <input
+                  type="file"
+                  accept=".json"
+                  className="hidden"
+                  onChange={handleImportSchedule}
+                />
+                <button
+                  className="text-lg px-4 py-2 border border-green-500 hover:border-green-600 bg-green-300 hover:bg-green-400 text-white rounded-xl hover:shadow-xl"
+                  data-tooltip-id="importTooltip"
+                >
+                  <FaFileImport />
+                </button>
+              </label>
+              <Tooltip
+                id="importTooltip"
+                place="top"
+                content="Import Schedule"
               />
-              <button
-                className="text-lg px-4 py-2 border border-green-500 hover:border-green-600 bg-green-300 hover:bg-green-400 text-white rounded-xl hover:shadow-xl"
-                data-tooltip-id="importTooltip"
-              >
-                <FaFileImport />
-              </button>
-            </label>
-            <Tooltip id="importTooltip" place="top" content="Import Schedule" />
+            </div>
           </div>
         </div>
       </div>
@@ -305,7 +402,9 @@ const DailyScheduleSection = ({ MySchedule }) => {
                         </p>
                         <button
                           className="text-sm text-white bg-gradient-to-br hover:bg-gradient-to-tl from-red-400 to-red-500 rounded-lg px-5 py-2 pointer-events-auto"
-                          onClick={handleGeneratePassedSchedules(id)}
+                          onClick={() =>
+                            handleRegenerateClick(dayName, schedule)
+                          }
                         >
                           Generate
                         </button>

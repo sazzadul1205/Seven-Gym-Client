@@ -2,7 +2,7 @@ import { GrSchedules } from "react-icons/gr";
 
 import DailyScheduleSection from "./DailyScheduleSection/DailyScheduleSection";
 
-const USSchedule = ({ userSchedule }) => {
+const USSchedule = ({ userSchedule, refetch }) => {
   console.log(userSchedule);
 
   // Schedule Content
@@ -18,7 +18,7 @@ const USSchedule = ({ userSchedule }) => {
       </header>
 
       {/* Schedule Container */}
-      <DailyScheduleSection MySchedule={MySchedule} />
+      <DailyScheduleSection refetch={refetch} MySchedule={MySchedule} />
     </div>
   );
 };

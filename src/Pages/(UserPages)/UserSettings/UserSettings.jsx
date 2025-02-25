@@ -38,7 +38,7 @@ const UserSettings = () => {
     data: UsersData,
     isLoading: UsersIsLoading,
     error: UsersError,
-    refetch,
+    refetch: UsersDataRefetch,
   } = useQuery({
     queryKey: ["UsersData"],
     queryFn: () =>
@@ -50,6 +50,7 @@ const UserSettings = () => {
     data: schedulesData = [],
     isLoading: scheduleDataIsLoading,
     error: scheduleDataError,
+    refetch: schedulesDataRefetch,
   } = useQuery({
     queryKey: ["ScheduleData"],
     queryFn: () =>
@@ -63,31 +64,36 @@ const UserSettings = () => {
       id: "Settings_Image",
       Icon: "https://i.ibb.co.com/dmNkVLF/picture.png",
       title: "User Image Settings",
-      content: <USUserImage UsersData={UsersData} refetch={refetch} />,
+      content: <USUserImage UsersData={UsersData} refetch={UsersDataRefetch} />,
     },
     {
       id: "Settings_Info",
       Icon: "https://i.ibb.co.com/dmhH696/settings.png",
       title: "User Info Settings",
-      content: <USUserInfo UsersData={UsersData} refetch={refetch} />,
+      content: <USUserInfo UsersData={UsersData} refetch={UsersDataRefetch} />,
     },
     {
       id: "Settings_Awards",
       Icon: "https://i.ibb.co.com/dmbrdkq/trophy.png",
       title: "Awards Settings",
-      content: <USAwards UsersData={UsersData} refetch={refetch} />,
+      content: <USAwards UsersData={UsersData} refetch={UsersDataRefetch} />,
     },
     {
       id: "Settings_Workouts",
       Icon: "https://i.ibb.co.com/nznGSDB/running.png",
       title: "Workouts Settings",
-      content: <USWorkout UsersData={UsersData} refetch={refetch} />,
+      content: <USWorkout UsersData={UsersData} refetch={UsersDataRefetch} />,
     },
     {
       id: "Settings_Schedule",
       Icon: "https://i.ibb.co.com/C3WB5f3R/shedule.png",
       title: "Schedule Settings",
-      content: <USSchedule userSchedule={userSchedule} refetch={refetch} />,
+      content: (
+        <USSchedule
+          userSchedule={userSchedule}
+          refetch={schedulesDataRefetch}
+        />
+      ),
     },
     // Add more tabs as needed
   ];

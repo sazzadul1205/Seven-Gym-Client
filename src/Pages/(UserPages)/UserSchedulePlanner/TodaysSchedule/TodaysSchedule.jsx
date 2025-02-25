@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import ViewPlanModal from "./ViewPlanModal/ViewPlanModal";
 import AddPlanModal from "./AddPlanModal/AddPlanModal";
 import useAuth from "../../../../Hooks/useAuth";
-import Swal from "sweetalert2";
 
 const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   const { user } = useAuth();
@@ -18,28 +18,23 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   const today = new Date();
   const providedDate = new Date(date.split("-").reverse().join("-"));
 
+  // Determine if the provided date is today, in the future, or in the past
   const isToday = today.toDateString() === providedDate.toDateString();
-  const isFuture = providedDate > today;
   const isPast = providedDate < today && !isToday;
 
-  // Determine the title dynamically
+  // Dynamically set the title and styling
   let title = "TODAY'S SCHEDULE";
   let titleClass = "bg-yellow-500";
-
   if (!isToday) {
     title = `${dayName.toUpperCase()}'S SCHEDULE`;
-
-    if (isFuture) {
-      titleClass = "bg-yellow-500";
-    } else if (isPast) {
-      titleClass = "bg-yellow-500 opacity-60";
-    }
+    if (isPast) titleClass = "bg-yellow-500 opacity-60";
   }
 
+  // Transform schedule data into a structured format
   const scheduledTimes = Object.keys(scheduleData).map((time) => {
     const hour = parseInt(time.split(":")[0], 10);
     const period = hour < 12 ? "AM" : "PM";
-    const displayHour = hour % 12 || 12; // Convert 0 to 12 for AM format
+    const displayHour = hour % 12 || 12; // Convert 0 to 12 AM
     return {
       display: `${displayHour}:00 ${period}`,
       key: time,
@@ -47,9 +42,9 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     };
   });
 
-  // Function to handle event click
+  // Handle clicking on an event
   const handleEventClick = (event) => {
-    if (isPast) return; // Prevent interaction with past events
+    if (isPast) return; // Prevent interaction with past schedules
     setSelectedID(event.id);
     if (event.title) {
       document.getElementById("Details_view_Modal").showModal();
@@ -58,7 +53,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     }
   };
 
-  // Function to get the next occurrence of the same weekday and its exact date
+  // Get next occurrence of a given weekday
   const getNextOccurrence = (day) => {
     const daysOfWeek = [
       "Sunday",
@@ -71,45 +66,30 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     ];
     const todayIndex = today.getDay();
     const targetIndex = daysOfWeek.indexOf(day);
-    let daysToAdd = (targetIndex - todayIndex + 7) % 7;
-    if (daysToAdd === 0) daysToAdd = 7; // Move to the next week
+    let daysToAdd = (targetIndex - todayIndex + 7) % 7 || 7; // Ensure next occurrence
 
     const nextDate = new Date(today);
     nextDate.setDate(today.getDate() + daysToAdd);
-
-    // Format date as YYYY-MM-DD
-    const formattedDate = nextDate.toISOString().split("T")[0];
-
     return {
       nextDayName: daysOfWeek[nextDate.getDay()],
-      nextDate: formattedDate,
+      nextDate: nextDate.toISOString().split("T")[0],
     };
   };
 
-  // Get the next occurrence of the selected day
   const { nextDayName, nextDate } = getNextOccurrence(dayName);
 
-  // Function to handle schedule regeneration
+  // Handle regenerating schedule for the next occurrence
   const handleRegenerateClick = async () => {
-    // Update schedule ID with the new date (keep other parts unchanged)
     const updatedScheduleID = `${nextDayName}-${nextDate
       .split("-")
       .reverse()
       .join("-")}`;
-
-    // Log the updated schedule ID
-    console.log(`Updated schedule ID: ${updatedScheduleID}`);
-
-    // Update the schedule data with the new date and clear the event details
     const updatedScheduleData = {};
 
-    // Iterate through each time slot and update it
+    // Create new schedule entries with cleared details
     Object.keys(scheduleData).forEach((time) => {
-      const newEventID = `sche-${updatedScheduleID}-${time}`;
-
-      // Clear out title, notes, location, and status if they have content
       updatedScheduleData[time] = {
-        id: newEventID,
+        id: `sche-${updatedScheduleID}-${time}`,
         title: "",
         notes: "",
         location: "",
@@ -117,50 +97,38 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
       };
     });
 
-    const regeneratedUpdatedCode = {
+    const regeneratedSchedule = {
       id: updatedScheduleID,
       dayName: nextDayName,
       date: nextDate,
       schedule: updatedScheduleData,
     };
 
-    // Log the updated schedule data
-    console.log("Updated schedule data:", regeneratedUpdatedCode);
-
     try {
-      // Send the updated schedule data to the server
-      // eslint-disable-next-line no-unused-vars
-      const response = await axiosPublic.put(
-        "/Schedule/RegenerateNewDaySchedule",
-        {
-          email: user.email, // Assuming user object contains the email
-          dayName: nextDayName,
-          scheduleData: regeneratedUpdatedCode, // The updated schedule
-        }
-      );
-
-      // Success alert
+      await axiosPublic.put("/Schedule/RegenerateNewDaySchedule", {
+        email: user.email,
+        dayName: nextDayName,
+        scheduleData: regeneratedSchedule,
+      });
       Swal.fire({
         title: "Success!",
-        text: "Schedule has been updated successfully.",
+        text: "Schedule updated successfully.",
         icon: "success",
         confirmButtonText: "OK",
       });
       refetch();
     } catch (error) {
       console.error("Error updating schedule:", error);
-
-      // Error alert
       Swal.fire({
         title: "Error!",
-        text: "There was an issue updating the schedule. Please try again later.",
+        text: "Could not update schedule. Try again later.",
         icon: "error",
         confirmButtonText: "OK",
       });
     }
   };
 
-  // Fetch Individual Plan Details
+  // Fetch event details when an ID is selected
   const { data: eventDetails, isLoading } = useQuery({
     queryKey: ["IndividualPlansIdsData", selectedID],
     queryFn: () =>
@@ -169,50 +137,42 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
           `Schedule/SchedulesById?email=${user?.email}&scheduleIDs=${selectedID}`
         )
         .then((res) => res.data),
-    enabled: !!selectedID, // Only fetch when an ID is selected
+    enabled: !!selectedID,
   });
 
   return (
     <div className="p-1 md:p-4">
-      {/* Dynamic Title */}
       <p
         className={`text-center py-2 font-semibold rounded-full ${titleClass}`}
       >
         {title}
       </p>
 
-      {/* Glowing prompt for past schedules */}
-      <div className="p-0">
-        {isPast && (
-          <div className="mt-2 p-2 text-center text-white bg-red-500 animate-pulse rounded-lg shadow-md">
-            <p>
-              This schedule has passed. Do you want to regenerate for{" "}
-              <span className="text-lg font-semibold">next {nextDayName}</span>?
-            </p>
-            <p>({nextDate})</p>
-            <button
-              onClick={handleRegenerateClick}
-              className="mt-2 px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition"
-            >
-              Regenerate
-            </button>
-          </div>
-        )}
-      </div>
+      {isPast && (
+        <div className="mt-2 p-2 text-center text-white bg-red-500 animate-pulse rounded-lg shadow-md">
+          <p>
+            This schedule has passed. Regenerate for{" "}
+            <span className="text-lg font-semibold">next {nextDayName}</span>?
+          </p>
+          <p>({nextDate})</p>
+          <button
+            onClick={handleRegenerateClick}
+            className="mt-2 px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition"
+          >
+            Regenerate
+          </button>
+        </div>
+      )}
 
-      {/* Schedule List */}
       <div className="pt-4 space-y-3">
         {scheduledTimes.map(({ display, event }, index) => (
           <div
             key={index}
             className="flex flex-col md:flex-row md:items-center gap-3 w-full border-t md:border-none border-gray-400 p-1"
           >
-            {/* Time Label */}
             <p className="font-bold md:font-semibold text-gray-700 w-24 text-right">
               {display} :
             </p>
-
-            {/* Event Information */}
             <div
               className={`px-4 py-2 w-full rounded-full shadow-md transition ${
                 isPast
@@ -227,7 +187,6 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
         ))}
       </div>
 
-      {/* Details View Modal */}
       <dialog id="Details_view_Modal" className="modal">
         <ViewPlanModal
           eventDetails={eventDetails}
@@ -235,8 +194,6 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
           refetch={refetch}
         />
       </dialog>
-
-      {/* Add Plan Modal */}
       <dialog id="Add_Plan_Modal" className="modal">
         <AddPlanModal
           scheduleData={scheduleData}
