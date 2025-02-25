@@ -109,6 +109,16 @@ const DailyScheduleSection = ({ MySchedule, refetch }) => {
     ({ date }) => getDayStatus(date) === "passed"
   );
 
+  const handleGenerateAllPassedSchedules = async () => {
+    const passedDays = sortedSchedule.filter(
+      ({ date }) => getDayStatus(date) === "passed"
+    );
+
+    for (const { dayName, schedule } of passedDays) {
+      await handleRegenerateClick(dayName, schedule);
+    }
+  };
+
   // Function to handle schedule regeneration
   const handleRegenerateClick = async (dayName, scheduleData) => {
     const getNextOccurrence = (day) => {
@@ -234,9 +244,10 @@ const DailyScheduleSection = ({ MySchedule, refetch }) => {
     <div className="bg-gray-100 shadow-md mx-2 p-4">
       {/* Top Section */}
       <div className="bg-gray-300 border border-gray-300 px-4 py-4 rounded-md">
-        <p className="text-xl font-semibold border-b-2 border-black pb-2">
+        {/* Title */}
+        <h5 className="text-xl font-semibold border-b-2 border-black pb-2">
           The Whole Week Schedule
-        </p>
+        </h5>
         <p className="mt-2 font-semibold text-gray-600">
           Selected Events: {Array.from(selectedEvents).length}
         </p>
@@ -281,14 +292,14 @@ const DailyScheduleSection = ({ MySchedule, refetch }) => {
           {/* Generate All Passed Dates Button */}
           <div>
             <button
-              className={`text-sm px-4 py-2 rounded-lg  ${
+              className={`text-sm px-4 py-2 rounded-lg ${
                 hasPassedDates
                   ? "bg-blue-500 hover:bg-blue-600 text-white"
                   : "bg-gray-400 text-gray-700 cursor-not-allowed"
               }`}
               disabled={!hasPassedDates}
               data-tooltip-id="ReGenerateToolTip"
-              // onClick={handleGeneratePassedSchedules}
+              onClick={handleGenerateAllPassedSchedules}
             >
               <FiRefreshCcw className="text-lg font-semibold hover:animate-spin" />
             </button>

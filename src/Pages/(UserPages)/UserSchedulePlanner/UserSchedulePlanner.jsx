@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 
+// Component Imports
 import TodaysSchedule from "./TodaysSchedule/TodaysSchedule";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import Loading from "../../../Shared/Loading/Loading";
@@ -15,28 +16,11 @@ const UserSchedulePlanner = () => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
-  // Live Clock State
+  // States
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
 
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Fetching Schedule Data
-  const {
-    data: mySchedulesData = [], // Default to an empty array to prevent undefined issues
-    isLoading: scheduleDataIsLoading,
-    error: scheduleDataError,
-    refetch,
-  } = useQuery({
-    queryKey: ["ScheduleData"],
-    queryFn: () =>
-      axiosPublic.get(`/Schedule?email=${email}`).then((res) => res.data),
-  });
-
-  // Define the full week
+  // Weekday Names
   const weekDays = [
     "Sunday",
     "Monday",
@@ -47,47 +31,68 @@ const UserSchedulePlanner = () => {
     "Saturday",
   ];
 
-  // Set default selected day to today
+  // Auto-update the live clock every second
   useEffect(() => {
-    const todayName = new Date().toLocaleDateString("en-US", {
-      weekday: "long",
-    });
-    setSelectedDay(todayName);
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
   }, []);
 
-  // Check if the email from the params matches the user's email
-  if (user?.email !== email) {
-    return <WrongUser />;
-  }
+  // Fetch user's schedule
+  const {
+    data: mySchedulesData = [],
+    isLoading: scheduleDataIsLoading,
+    error: scheduleDataError,
+    refetch,
+  } = useQuery({
+    queryKey: ["ScheduleData", email],
+    queryFn: async () => {
+      if (!email) return []; // Prevent API call if email is missing
+      try {
+        const response = await axiosPublic.get(`/Schedule?email=${email}`);
+        return response.data;
+      } catch (error) {
+        if (error.response?.status === 404) return [];
+        throw error;
+      }
+    },
+    enabled: !!email, // Only run query if email exists
+    retry: (failureCount, error) => {
+      if (error.response?.status === 404) return false;
+      return failureCount < 3;
+    },
+  });
 
-  // Ensure mySchedulesData is not empty before accessing mySchedulesData[0]
+  // Set default selected day to today's name
+  useEffect(() => {
+    setSelectedDay(new Date().toLocaleDateString("en-US", { weekday: "long" }));
+  }, []);
+
+  // Check if the logged-in user is allowed to view this page
+  if (user?.email !== email) return <WrongUser />;
+
+  // Handle loading and error states
   if (scheduleDataIsLoading) return <Loading />;
-
-  if (scheduleDataError || !mySchedulesData || mySchedulesData.length === 0) {
+  if (scheduleDataError || mySchedulesData.length === 0)
     return <NoDefault refetch={refetch} />;
-  }
 
-  const userSchedule = mySchedulesData[0]; // Safe access after checking
+  // Extract the user’s schedule
+  const userSchedule = mySchedulesData[0];
+  if (!userSchedule) return <NoDefault refetch={refetch} />;
 
-  if (!userSchedule) {
-    return <NoDefault refetch={refetch} />;
-  }
-
-  // Extract available schedule days from the data
+  // Extract available schedule days
   const availableDays = Object.keys(userSchedule.schedule || {});
 
-  // Get selected day's schedule
+  // Get the selected day's schedule
   const selectedSchedule = userSchedule.schedule?.[selectedDay] || null;
 
-  // Format date
-  const formattedDate = new Date().toLocaleDateString("en-US", {
+  // Format date and time
+  const formattedDate = currentTime.toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
-  // Format time
   const formattedTime = currentTime.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
@@ -97,10 +102,10 @@ const UserSchedulePlanner = () => {
 
   return (
     <div className="bg-[#f6eee3] min-h-screen">
-      {/* Header */}
+      {/* HEADER */}
       <div className="bg-[#F72C5B] py-12"></div>
 
-      {/* Title */}
+      {/* TITLE & LIVE CLOCK */}
       <div className="text-center">
         <p className="text-3xl font-semibold py-2 underline underline-offset-4">
           DAILY SCHEDULE PLANNER
@@ -108,9 +113,9 @@ const UserSchedulePlanner = () => {
         <p className="text-2xl font-bold text-gray-500">{formattedTime}</p>
       </div>
 
-      {/* Week & Date Selector */}
+      {/* WEEK SELECTOR & DATE */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center p-4 border-b border-gray-300">
-        {/* Today's Date */}
+        {/* Display Today's Date */}
         <div className="flex gap-2 items-center md:items-start text-md md:text-lg">
           <p className="font-semibold text-gray-800">Date:</p>
           <p className="text-gray-600 font-semibold underline underline-offset-4">
@@ -118,23 +123,23 @@ const UserSchedulePlanner = () => {
           </p>
         </div>
 
-        {/* Week Selector (All 7 days) */}
+        {/* Weekday Selector */}
         <div className="flex gap-2 mt-4 md:mt-0 flex-wrap justify-center">
-          {weekDays.map((day, index) => {
+          {weekDays.map((day) => {
             const isAvailable = availableDays.includes(day);
             const isSelected = selectedDay === day;
 
             return (
               <p
-                key={index}
+                key={day}
                 onClick={() => isAvailable && setSelectedDay(day)}
                 className={`rounded-full border border-black w-10 h-10 flex items-center justify-center text-lg font-medium cursor-pointer
-              ${isSelected ? "bg-blue-500 text-white font-bold" : ""}
-              ${
-                isAvailable
-                  ? "hover:bg-gray-400"
-                  : "opacity-50 cursor-not-allowed"
-              }`}
+                ${isSelected ? "bg-blue-500 text-white font-bold" : ""}
+                ${
+                  isAvailable
+                    ? "hover:bg-gray-400"
+                    : "opacity-50 cursor-not-allowed"
+                }`}
               >
                 {day[0]}
               </p>
@@ -143,9 +148,9 @@ const UserSchedulePlanner = () => {
         </div>
       </div>
 
-      {/* Main Section */}
+      {/* MAIN CONTENT SECTION */}
       <main className="max-w-7xl flex flex-col md:flex-row mx-auto gap-5 p-1 md:p-4">
-        {/* Selected Day's Schedule */}
+        {/* SCHEDULE DISPLAY */}
         <div className="w-full md:w-1/2">
           {selectedSchedule ? (
             <TodaysSchedule
@@ -160,9 +165,11 @@ const UserSchedulePlanner = () => {
           )}
         </div>
 
-        {/* Notes Section */}
+        {/* NOTES & EXTRAS SECTION */}
         <div className="w-full md:w-1/2">
-          {userSchedule ? (
+          {userSchedule.priority.length ||
+          userSchedule.notes.length ||
+          userSchedule.todo.length ? (
             <ExtraList
               priority={userSchedule.priority}
               notes={userSchedule.notes}

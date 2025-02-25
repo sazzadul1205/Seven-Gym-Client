@@ -27,7 +27,6 @@ const NoDefault = ({ refetch }) => {
     }
 
     const today = new Date();
-    const currentDayIndex = today.getDay();
     const userEmail = user?.email;
 
     const fullWeekdays = [
@@ -40,11 +39,16 @@ const NoDefault = ({ refetch }) => {
       "Saturday",
     ];
 
-    // Generate schedules from today until Saturday
-    let daysToGenerate = fullWeekdays.slice(currentDayIndex);
-
     const convertTimeTo24Hour = (time) => {
-      const [hours] = time.split(":").map(Number);
+      const [hour, period] = time.split(" ");
+      let hours = parseInt(hour, 10);
+
+      if (period === "PM" && hours !== 12) {
+        hours += 12;
+      } else if (period === "AM" && hours === 12) {
+        hours = 0; // Midnight case (12 AM -> 00)
+      }
+
       return hours;
     };
 
@@ -74,13 +78,15 @@ const NoDefault = ({ refetch }) => {
       todo: [],
     };
 
-    daysToGenerate.forEach((day, index) => {
-      let currentDate = new Date();
-      currentDate.setDate(today.getDate() + index); // Move forward in days
+    // Generate schedule for ALL 7 days (Sunday to Saturday)
+    fullWeekdays.forEach((day, index) => {
+      let currentDate = new Date(today);
+      currentDate.setDate(today.getDate() - today.getDay() + index); // Ensure starting from Sunday
 
       const formattedDate = currentDate
         .toLocaleDateString("en-GB")
         .replace(/\//g, "-"); // Format DD-MM-YYYY
+
       const dayId = `${day}-${formattedDate}`;
 
       schedule.schedule[day] = {
@@ -91,7 +97,6 @@ const NoDefault = ({ refetch }) => {
       };
     });
 
-    // console.log(schedule);
     // Posting the schedule data to your backend
     try {
       await axiosPublic.post("/Schedule", schedule);
@@ -282,40 +287,66 @@ const NoDefault = ({ refetch }) => {
             {/* Time Picker Inputs */}
             <div className="flex justify-center gap-4 items-center mb-6">
               {/* Start Time */}
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Start Time
-                </label>
-                <input
-                  type="time"
-                  step="3600" // Only allows selecting full hours
-                  value={startTime}
-                  onChange={(e) => {
-                    const hour = e.target.value.split(":")[0]; // Extract only the hour
-                    setStartTime(`${hour}:00`); // Force minutes to be "00"
-                  }}
-                  className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400"
-                />
-              </div>
+              <select
+                value={startTime.split(" ")[0]} // Ensure only the hour is shown
+                onChange={(e) =>
+                  setStartTime(
+                    `${e.target.value} ${startTime.split(" ")[1] || "AM"}` // Concatenate hour and AM/PM
+                  )
+                }
+                className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+              >
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
+                  <option key={hour} value={`${hour}`}>
+                    {hour}
+                  </option>
+                ))}
+              </select>
 
-              <span className="text-lg font-bold text-gray-600">-</span>
+              {/* AM/PM Selector */}
+              <select
+                value={startTime.split(" ")[1] || "AM"} // Ensure only AM/PM is shown
+                onChange={(e) =>
+                  setStartTime(
+                    `${startTime.split(" ")[0] || "12"} ${e.target.value}` // Concatenate hour and AM/PM
+                  )
+                }
+                className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+              >
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+              </select>
 
               {/* End Time */}
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  End Time
-                </label>
-                <input
-                  type="time"
-                  step="3600" // Only allows selecting full hours
-                  value={endTime}
-                  onChange={(e) => {
-                    const hour = e.target.value.split(":")[0]; // Extract only the hour
-                    setEndTime(`${hour}:00`); // Force minutes to be "00"
-                  }}
-                  className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400"
-                />
-              </div>
+              <select
+                value={endTime.split(" ")[0]} // Ensure only the hour is shown
+                onChange={(e) =>
+                  setEndTime(
+                    `${e.target.value} ${endTime.split(" ")[1] || "AM"}` // Concatenate hour and AM/PM
+                  )
+                }
+                className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+              >
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
+                  <option key={hour} value={`${hour}`}>
+                    {hour}
+                  </option>
+                ))}
+              </select>
+
+              {/* AM/PM Selector */}
+              <select
+                value={endTime.split(" ")[1] || "AM"} // Ensure only AM/PM is shown
+                onChange={(e) =>
+                  setEndTime(
+                    `${endTime.split(" ")[0] || "12"} ${e.target.value}` // Concatenate hour and AM/PM
+                  )
+                }
+                className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+              >
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+              </select>
             </div>
 
             {/* Confirm Button */}

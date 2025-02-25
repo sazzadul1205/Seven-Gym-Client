@@ -3,8 +3,6 @@ import { GrSchedules } from "react-icons/gr";
 import DailyScheduleSection from "./DailyScheduleSection/DailyScheduleSection";
 
 const USSchedule = ({ userSchedule, refetch }) => {
-  console.log(userSchedule);
-
   // Schedule Content
   const MySchedule = userSchedule?.schedule;
 

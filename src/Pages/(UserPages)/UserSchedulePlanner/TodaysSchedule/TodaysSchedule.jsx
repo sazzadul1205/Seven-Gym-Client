@@ -104,6 +104,8 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
       schedule: updatedScheduleData,
     };
 
+    console.log(regeneratedSchedule);
+
     try {
       await axiosPublic.put("/Schedule/RegenerateNewDaySchedule", {
         email: user.email,
@@ -148,21 +150,23 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
         {title}
       </p>
 
-      {isPast && (
-        <div className="mt-2 p-2 text-center text-white bg-red-500 animate-pulse rounded-lg shadow-md">
-          <p>
-            This schedule has passed. Regenerate for{" "}
-            <span className="text-lg font-semibold">next {nextDayName}</span>?
-          </p>
-          <p>({nextDate})</p>
-          <button
-            onClick={handleRegenerateClick}
-            className="mt-2 px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition"
-          >
-            Regenerate
-          </button>
-        </div>
-      )}
+      <div>
+        {isPast && (
+          <div className="mt-2 p-2 text-center text-white bg-red-500 animate-pulse rounded-lg shadow-md">
+            <p>
+              This schedule has passed. Regenerate for{" "}
+              <span className="text-lg font-semibold">next {nextDayName}</span>?
+            </p>
+            <p>({nextDate})</p>
+            <button
+              onClick={handleRegenerateClick}
+              className="mt-2 px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition"
+            >
+              Regenerate
+            </button>
+          </div>
+        )}
+      </div>
 
       <div className="pt-4 space-y-3">
         {scheduledTimes.map(({ display, event }, index) => (
