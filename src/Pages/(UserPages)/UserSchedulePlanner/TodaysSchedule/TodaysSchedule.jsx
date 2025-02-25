@@ -13,14 +13,24 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   const axiosPublic = useAxiosPublic();
   const { date, dayName } = scheduleInfo;
 
+  console.log(scheduleInfo);
+
   const [selectedID, setSelectedID] = useState(null);
 
   const today = new Date();
   const providedDate = new Date(date.split("-").reverse().join("-"));
 
-  // Determine if the provided date is today, in the future, or in the past
-  const isToday = today.toDateString() === providedDate.toDateString();
-  const isPast = providedDate < today && !isToday;
+  // Function to format the date as dd mm yyyy
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
+  };
+
+  // Fixing isToday and isPast logic
+  const isToday = today.toDateString() === providedDate.toDateString(); // Compare full date
+  const isPast = providedDate < today && !isToday; // If provided date is before today and not today
 
   // Dynamically set the title and styling
   let title = "TODAY'S SCHEDULE";
@@ -72,7 +82,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     nextDate.setDate(today.getDate() + daysToAdd);
     return {
       nextDayName: daysOfWeek[nextDate.getDay()],
-      nextDate: nextDate.toISOString().split("T")[0],
+      nextDate: formatDate(nextDate), // Use the formatted date
     };
   };
 
@@ -81,9 +91,10 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   // Handle regenerating schedule for the next occurrence
   const handleRegenerateClick = async () => {
     const updatedScheduleID = `${nextDayName}-${nextDate
-      .split("-")
+      .split(" ")
       .reverse()
       .join("-")}`;
+
     const updatedScheduleData = {};
 
     // Create new schedule entries with cleared details
@@ -97,10 +108,12 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
       };
     });
 
+    const formattedDate = nextDate.split(" ").join("-");
+
     const regeneratedSchedule = {
       id: updatedScheduleID,
       dayName: nextDayName,
-      date: nextDate,
+      date: formattedDate, // Correctly formatted as dd-mm-yyyy
       schedule: updatedScheduleData,
     };
 
@@ -147,7 +160,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
       <p
         className={`text-center py-2 font-semibold rounded-full ${titleClass}`}
       >
-        {title}
+        {title} [{date}]
       </p>
 
       <div>

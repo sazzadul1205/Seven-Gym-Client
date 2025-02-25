@@ -167,20 +167,12 @@ const UserSchedulePlanner = () => {
 
         {/* NOTES & EXTRAS SECTION */}
         <div className="w-full md:w-1/2">
-          {userSchedule.priority.length ||
-          userSchedule.notes.length ||
-          userSchedule.todo.length ? (
-            <ExtraList
-              priority={userSchedule.priority}
-              notes={userSchedule.notes}
-              todo={userSchedule.todo}
-              refetch={refetch}
-            />
-          ) : (
-            <p className="text-center text-gray-500 text-xl">
-              No notes available.
-            </p>
-          )}
+          <ExtraList
+            priority={userSchedule.priority}
+            notes={userSchedule.notes}
+            todo={userSchedule.todo}
+            refetch={refetch}
+          />
         </div>
       </main>
     </div>
