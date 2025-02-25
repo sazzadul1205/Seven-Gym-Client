@@ -1,19 +1,20 @@
 import { useState } from "react";
+import Swal from "sweetalert2";
 import {
   FaFileExport,
   FaFileImport,
   FaRegStickyNote,
   FaRegTrashAlt,
 } from "react-icons/fa";
-import { FaLocationDot } from "react-icons/fa6";
 import { Tooltip } from "react-tooltip";
+import { FiRefreshCcw } from "react-icons/fi";
+import { FaLocationDot } from "react-icons/fa6";
+
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../../Hooks/useAuth";
-import Swal from "sweetalert2";
-import { FiRefreshCcw } from "react-icons/fi";
 
 // eslint-disable-next-line react/prop-types
-const DailyScheduleSection = ({ MySchedule, refetch }) => {
+const DailyScheduleSettings = ({ MySchedule, refetch }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
@@ -214,8 +215,6 @@ const DailyScheduleSection = ({ MySchedule, refetch }) => {
     }
   };
 
-  import Swal from "sweetalert2";
-
   const handleDeleteSelected = async () => {
     if (!user?.email || selectedEvents.size === 0) return;
 
@@ -302,9 +301,6 @@ const DailyScheduleSection = ({ MySchedule, refetch }) => {
         <h5 className="text-xl font-semibold border-b-2 border-black pb-2">
           The Whole Week Schedule
         </h5>
-        <p className="mt-2 font-semibold text-gray-600">
-          Selected Events: {Array.from(selectedEvents).length}
-        </p>
 
         <div className="flex justify-between items-center gap-4 pt-2">
           {/* Left Side */}
@@ -529,4 +525,4 @@ const DailyScheduleSection = ({ MySchedule, refetch }) => {
   );
 };
 
-export default DailyScheduleSection;
+export default DailyScheduleSettings;

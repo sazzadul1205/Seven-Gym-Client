@@ -1,10 +1,22 @@
 import { GrSchedules } from "react-icons/gr";
 
-import DailyScheduleSection from "./DailyScheduleSection/DailyScheduleSection";
+import DailyScheduleSettings from "./DailyScheduleSettings/DailyScheduleSettings";
+import PrioritySettings from "./PrioritySettings/PrioritySettings";
+import NotesSettings from "./NotesSettings/NotesSettings";
+import ToDoSettings from "./ToDoSettings/ToDoSettings";
 
 const USSchedule = ({ userSchedule, refetch }) => {
   // Schedule Content
   const MySchedule = userSchedule?.schedule;
+
+  // Priority Content
+  const MyPriority = userSchedule?.priority;
+
+  // ToDo Content
+  const MyToDo = userSchedule?.todo;
+
+  // Notes Content
+  const MyNote = userSchedule?.notes;
 
   return (
     <div className="w-full bg-white">
@@ -15,8 +27,17 @@ const USSchedule = ({ userSchedule, refetch }) => {
         </p>
       </header>
 
-      {/* Schedule Container */}
-      <DailyScheduleSection refetch={refetch} MySchedule={MySchedule} />
+      {/* Schedule Settings */}
+      <DailyScheduleSettings refetch={refetch} MySchedule={MySchedule} />
+
+      {/* Priority Settings */}
+      <PrioritySettings refetch={refetch} MyPriority={MyPriority} />
+
+      {/* ToDo Settings */}
+      <ToDoSettings refetch={refetch} MyToDo={MyToDo} />
+
+      {/* Notes Settings */}
+      <NotesSettings refetch={refetch} MyNote={MyNote} />
     </div>
   );
 };
