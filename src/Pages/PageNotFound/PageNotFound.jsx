@@ -1,38 +1,48 @@
-import { Link } from "react-router";
-import Background from "../../assets/Background.jpeg";
-import { Oval } from "react-loader-spinner";
+import { Link } from "react-router"; // Ensure you use 'react-router-dom' for routing
+import Background from "../../assets/Error-Background/ErrorBackground.jpg"; // Path to background image
 
+// PageNotFound Component: This component is shown when the user navigates to a page that doesn't exist.
 const PageNotFound = () => {
   return (
     <div
-      className="page-not-found w-screen h-screen flex flex-col items-center justify-center"
+      className="w-screen h-screen"
       style={{
-        backgroundImage: `url(${Background})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundImage: `url(${Background})`, // Setting the background image for the page
+        backgroundSize: "cover", // Ensure the background covers the entire screen
+        backgroundPosition: "center", // Center the background image
       }}
     >
-      <div className="flex items-center justify-center">
-        <h1 className="text-[10rem] font-bold text-gray-800">4</h1>
-        <div className="flex items-center justify-center mx-8">
-          <Oval
-            visible={true}
-            height={100}
-            width={100}
-            color="#1f2937"
-            ariaLabel="oval-loading"
-          />
+      {/* Wrapper div for the entire screen with flexbox to center the content */}
+      <div className="w-screen h-screen flex bg-black/50 items-center justify-center gap-5">
+        {/* Container for the 404 number and spinner animation */}
+        <div className="flex items-center justify-center border-r-2 pr-5">
+          <h1 className="text-[10rem] sm:text-[6rem] md:text-[8rem] font-bold text-white">
+            4
+          </h1>{" "}
+          {/* Display the number 4 in large font, responsive */}
+          {/* Spinner to give a loading effect, added animation */}
+          <div className="w-20 h-20 border-8 border-t-white border-b-white border-l-transparent border-r-transparent rounded-full animate-spin mx-8"></div>
+          <h1 className="text-[10rem] sm:text-[6rem] md:text-[8rem] font-bold text-white">
+            4
+          </h1>{" "}
+          {/* Display the number 4 in large font, responsive */}
         </div>
-        <h1 className="text-[10rem] font-bold text-gray-800">4</h1>
+
+        {/* Section for the error message and return button */}
+        <div className="items-center text-center">
+          <p className="text-2xl sm:text-xl md:text-3xl font-extrabold text-white animate-pulse">
+            Uh Oh! Page not found! {/* Error message */}
+          </p>
+
+          {/* Link to navigate back to the homepage */}
+          <Link to={"/"} className="items-center">
+            {/* Button to return to home page with gradient hover effect */}
+            <button className="bg-gradient-to-br hover:bg-gradient-to-tl from-[#F72C5B] to-[#f72c5b7a] mt-5 py-3 px-10 font-bold text-white rounded-full">
+              Return To Home
+            </button>
+          </Link>
+        </div>
       </div>
-      <p className="mt-10 text-2xl font-extrabold text-gray-700 animate-pulse">
-        Uh Oh! Page not found!
-      </p>
-      <Link to={'/'}>
-        <button className="bg-[#F72C5B] hover:bg-[#f72c5b7a] mt-5 py-3 px-10 font-bold text-white rounded-full">
-          Return To Home
-        </button>
-      </Link>
     </div>
   );
 };

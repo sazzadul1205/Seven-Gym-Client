@@ -1,10 +1,18 @@
+// CSS Import
 import "./index.css";
+
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import PublicLayout from "./Layouts/PublicLayout.jsx";
-import AuthProvider from "./Providers/AuthProviders.jsx";
 import { BrowserRouter, Routes, Route } from "react-router";
+
+import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+
+// Layouts
+import PublicLayout from "./Layouts/PublicLayout.jsx";
+
+// Auth Provider
+import AuthProvider from "./Providers/AuthProviders.jsx";
 
 // Route Links
 import PageNotFound from "./Pages/PageNotFound/PageNotFound.jsx";
@@ -43,7 +51,10 @@ createRoot(document.getElementById("root")).render(
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
+            {/* Page Not Found */}
             <Route path="*" element={<PageNotFound />} />
+            
+            {/* Public Layout */}
             <Route element={<PublicLayout />}>
               {/* Auth Pages Link */}
               <Route path="/Login" element={<Login />} />

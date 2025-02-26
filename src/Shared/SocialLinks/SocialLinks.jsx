@@ -1,25 +1,32 @@
-import { FaFacebookSquare } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
-import useAuth from "../../Hooks/useAuth";
-import Swal from "sweetalert2";
-import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import { useNavigate, useLocation } from "react-router";
 
+import { FaFacebookSquare } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import Swal from "sweetalert2";
+
+import useAxiosPublic from "../../Hooks/useAxiosPublic";
+import useAuth from "../../Hooks/useAuth";
+
 const SocialLinks = () => {
-  const { signInWithGoogle, signInWithFacebook } = useAuth();
   const axiosPublic = useAxiosPublic();
+  const { signInWithGoogle, signInWithFacebook } = useAuth();
+
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Default redirect path
   const from = location.state?.from?.pathname || "/";
 
+  // Function to check if the user already exists based on their email
   const checkUserExists = async (email) => {
     try {
       const response = await axiosPublic.get(
         `/Users/check-email?email=${email}`
       );
-      return response.data.exists;
+      return response.data.exists; // Returns true if the user exists
     } catch (error) {
       console.error("Error checking user existence:", error);
+      // Show error message in case of failure
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -27,25 +34,27 @@ const SocialLinks = () => {
         confirmButtonColor: "#d33",
         timer: 3000,
       });
-      return null;
+      return false; // Return false if there was an error
     }
   };
 
+  // Handler for Google login
   const handleGoogleLogin = async () => {
     try {
       const res = await signInWithGoogle();
-      const email = res.user.email;
+      const email = res.user.email; // Extract the email from the Google response
       const userExists = await checkUserExists(email);
 
       if (userExists) {
-        // Redirect to previous page if user exists
+        // Redirect to previous page if the user exists
         navigate(from, { replace: true });
       } else {
-        // Redirect to SignUp/Details page if user does not exist
+        // Redirect to the SignUp/Details page if the user doesn't exist
         navigate("/SignUp/Details", { replace: true });
       }
     } catch (error) {
       console.error("Google login error:", error);
+      // Show error message if Google login fails
       Swal.fire({
         icon: "error",
         title: "Login Failed",
@@ -56,21 +65,23 @@ const SocialLinks = () => {
     }
   };
 
+  // Handler for Facebook login
   const handleFacebookLogin = async () => {
     try {
       const res = await signInWithFacebook();
-      const email = res.user.email;
+      const email = res.user.email; // Extract the email from the Facebook response
       const userExists = await checkUserExists(email);
 
       if (userExists) {
-        // Redirect to previous page if user exists
+        // Redirect to previous page if the user exists
         navigate(from, { replace: true });
       } else {
-        // Redirect to SignUp/Details page if user does not exist
+        // Redirect to the SignUp/Details page if the user doesn't exist
         navigate("/SignUp/Details", { replace: true });
       }
     } catch (error) {
       console.error("Facebook login error:", error);
+      // Show error message if Facebook login fails
       Swal.fire({
         icon: "error",
         title: "Login Failed",
@@ -83,7 +94,7 @@ const SocialLinks = () => {
 
   return (
     <div className="space-y-2">
-      {/* Google Login */}
+      {/* Google Login Button */}
       <button
         onClick={handleGoogleLogin}
         className="flex border-2 border-[#F72C5B] bg-white hover:bg-[#F72C5B] hover:text-white rounded-xl w-full py-3 justify-center gap-5"
@@ -92,7 +103,7 @@ const SocialLinks = () => {
         <span className="font-semibold">Sign Up With Google</span>
       </button>
 
-      {/* Facebook Login */}
+      {/* Facebook Login Button */}
       <button
         onClick={handleFacebookLogin}
         className="flex border-2 border-[#F72C5B] bg-white hover:bg-[#F72C5B] hover:text-white rounded-xl w-full py-3 justify-center gap-5"
