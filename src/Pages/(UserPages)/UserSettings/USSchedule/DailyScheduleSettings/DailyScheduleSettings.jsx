@@ -1,8 +1,10 @@
 import { useState } from "react";
+
 import Swal from "sweetalert2";
 import {
   FaFileExport,
   FaFileImport,
+  FaRegClock,
   FaRegStickyNote,
   FaRegTrashAlt,
 } from "react-icons/fa";
@@ -10,8 +12,9 @@ import { Tooltip } from "react-tooltip";
 import { FiRefreshCcw } from "react-icons/fi";
 import { FaLocationDot } from "react-icons/fa6";
 
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../../Hooks/useAuth";
+import ManageTimeModal from "./ManageTimeModal/ManageTimeModal";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
 // eslint-disable-next-line react/prop-types
 const DailyScheduleSettings = ({ MySchedule, refetch }) => {
@@ -21,8 +24,6 @@ const DailyScheduleSettings = ({ MySchedule, refetch }) => {
   const [selectedEvents, setSelectedEvents] = useState(new Set());
   const [openSections, setOpenSections] = useState({});
   const [selectAll, setSelectAll] = useState(false);
-
-  if (!MySchedule) return <div>No Schedule Available</div>;
 
   const getDayStatus = (dayDate) => {
     const today = new Date(); // Get today's date
@@ -362,6 +363,24 @@ const DailyScheduleSettings = ({ MySchedule, refetch }) => {
 
           {/* Right Side */}
           <div className="flex items-center gap-4">
+            {/* Manage Time Button */}
+            <div>
+              <button
+                className="text-lg px-4 py-2 border border-blue-500 hover:border-blue-600 bg-blue-300 hover:bg-blue-400 text-white rounded-xl hover:shadow-xl"
+                onClick={() =>
+                  document.getElementById("Manage_Time_Modal").showModal()
+                }
+                data-tooltip-id="manageTimeToolTip"
+              >
+                <FaRegClock />
+              </button>
+              <Tooltip
+                id="manageTimeToolTip"
+                place="top"
+                content="Manage Time"
+              />
+            </div>
+
             {/* Export Selected Events Button */}
             <div>
               <button
@@ -521,6 +540,11 @@ const DailyScheduleSettings = ({ MySchedule, refetch }) => {
           );
         })}
       </div>
+
+      {/* Manage Time Modal */}
+      <dialog id="Manage_Time_Modal" className="modal">
+        <ManageTimeModal refetch={refetch} />
+      </dialog>
     </div>
   );
 };

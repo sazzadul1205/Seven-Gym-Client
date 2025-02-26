@@ -16,6 +16,7 @@ import USSchedule from "./USSchedule/USSchedule";
 const UserSettings = () => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -56,6 +57,7 @@ const UserSettings = () => {
     queryFn: () =>
       axiosPublic.get(`/Schedule?email=${user?.email}`).then((res) => res.data),
   });
+  
   const userSchedule = schedulesData[0]; // Safe access after checking
 
   // Tab data

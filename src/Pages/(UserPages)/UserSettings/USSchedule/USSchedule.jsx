@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { GrSchedules } from "react-icons/gr";
 
 import DailyScheduleSettings from "./DailyScheduleSettings/DailyScheduleSettings";
@@ -27,17 +28,20 @@ const USSchedule = ({ userSchedule, refetch }) => {
         </p>
       </header>
 
-      {/* Schedule Settings */}
-      <DailyScheduleSettings refetch={refetch} MySchedule={MySchedule} />
+      {/* The Main Content */}
+      <main>
+        {/* Schedule Settings */}
+        <DailyScheduleSettings refetch={refetch} MySchedule={MySchedule} />
 
-      {/* Priority Settings */}
-      <PrioritySettings refetch={refetch} MyPriority={MyPriority} />
+        {/* Priority Settings */}
+        <PrioritySettings refetch={refetch} MyPriority={MyPriority} />
 
-      {/* ToDo Settings */}
-      <ToDoSettings refetch={refetch} MyToDo={MyToDo} />
+        {/* ToDo Settings */}
+        <ToDoSettings refetch={refetch} MyToDo={MyToDo} />
 
-      {/* Notes Settings */}
-      <NotesSettings refetch={refetch} MyNote={MyNote} />
+        {/* Notes Settings */}
+        <NotesSettings refetch={refetch} MyNote={MyNote} />
+      </main>
     </div>
   );
 };
