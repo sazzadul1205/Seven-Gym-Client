@@ -4,7 +4,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router";
-import Title from "../../../../Shared/Componenet/Title";
+import Title from "../../../../Shared/Component/Title";
 
 const Testimonials = ({ testimonialsData }) => {
   const sliderRef = React.useRef(null);

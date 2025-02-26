@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import Title from "../../../../Shared/Componenet/Title";
+import Title from "../../../../Shared/Component/Title";
 
 
 const PromotionsSection = ({ promotionsData }) => {

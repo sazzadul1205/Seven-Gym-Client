@@ -10,7 +10,7 @@ import {
   parseISO,
   differenceInSeconds,
 } from "date-fns";
-import Title from "../../../../Shared/Componenet/Title";
+import Title from "../../../../Shared/Component/Title";
 
 const ClassSchedule = ({ ourClasses, classDetails }) => {
   const [currentTime, setCurrentTime] = useState(new Date());

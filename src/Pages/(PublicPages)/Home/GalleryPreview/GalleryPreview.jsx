@@ -4,7 +4,7 @@ import { Link } from "react-router";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Title from "../../../../Shared/Componenet/Title";
+import Title from "../../../../Shared/Component/Title";
 
 
 const GalleryPreview = ({ galleryData }) => {

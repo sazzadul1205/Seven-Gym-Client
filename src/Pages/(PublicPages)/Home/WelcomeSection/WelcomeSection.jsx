@@ -1,15 +1,15 @@
-/* eslint-disable react/prop-types */
 import { FaChevronRight } from "react-icons/fa";
+import PropTypes from "prop-types";
 
 const WelcomeSection = ({ homeWelcomeData }) => {
   return (
-    <div className="hidden md:flex relative h-screen w-full text-white ">
+    <div className="hidden md:flex relative h-screen w-full text-white">
       {/* Background Video */}
       <div className="absolute inset-0 overflow-hidden">
         <iframe
           src={homeWelcomeData[0].videoUrl}
           title="Background Video"
-          className="w-full h-full object-cover" // Ensures the video fills the entire screen
+          className="w-full h-full object-cover"
           allow="autoplay; fullscreen"
           frameBorder="0"
         ></iframe>
@@ -27,25 +27,37 @@ const WelcomeSection = ({ homeWelcomeData }) => {
 
         {/* Call to Action (CTA) Buttons */}
         <div className="flex gap-4">
-          {/* Hardcoded buttons */}
+          {/* View Classes Button */}
           <a
             href="/classes"
             className="bg-transparent border border-white hover:bg-blue-500 hover:text-white text-white py-3 px-6 rounded-lg text-sm md:text-lg transition duration-300 flex items-center justify-between"
           >
-            <span>View Classes</span>
+            View Classes
           </a>
 
+          {/* Join Now Button */}
           <a
             href="/join-now"
             className="bg-blue-500 hover:bg-gradient-to-l from-blue-700 to-blue-400 text-white py-3 px-6 rounded-lg text-sm md:text-lg transition duration-300 flex items-center justify-between"
           >
-            <span>Join Now</span>
+            Join Now
             <FaChevronRight className="ml-2" />
           </a>
         </div>
       </div>
     </div>
   );
+};
+
+// PropTypes to ensure data integrity for the component
+WelcomeSection.propTypes = {
+  homeWelcomeData: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      videoUrl: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
 
 export default WelcomeSection;

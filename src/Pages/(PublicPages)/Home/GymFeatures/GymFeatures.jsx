@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import Title from "../../../../Shared/Componenet/Title";
+import Title from "../../../../Shared/Component/Title";
 
 const GymFeatures = ({ gymFeaturesData }) => {
   return (

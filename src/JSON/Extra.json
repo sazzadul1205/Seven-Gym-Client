@@ -1,0 +1,62 @@
+[
+  {
+    "icon": "https://i.ibb.co/HXTdzWQ/Dumble.png",
+    "title": "Personal Training",
+    "description": "Work one-on-one with expert trainers to achieve your goals.",
+    "link": "/Trainers"
+  },
+  {
+    "icon": "https://i.ibb.co/VtBmHkJ/Group.png",
+    "title": "Group Classes",
+    "description": "Join dynamic group classes to stay motivated and fit.",
+    "link": "/Classes"
+  },
+  {
+    "icon": "https://i.ibb.co/MBwPnsQ/Assessments.png",
+    "title": "Nutrition Guidance",
+    "description": "Get personalized diet plans to complement your fitness journey.",
+    "link": "/Nutrition"
+  },
+  {
+    "icon": "https://i.ibb.co/VBDGH4M/Nutrition.png",
+    "title": "Fitness Assessments",
+    "description": "Track your progress with professional assessments.",
+    "link": "/Assessment"
+  },
+  {
+    "icon": "https://i.ibb.co.com/mV6r2BbS/meditation.png",
+    "title": "Yoga & Flexibility",
+    "description": "Improve flexibility and reduce stress with guided yoga sessions.",
+    "link": "/Classes/Yoga"
+  },
+  {
+    "icon": "https://i.ibb.co.com/PGKv67Y8/workout-machine.png",
+    "title": "Cardio Training",
+    "description": "Boost your endurance with high-intensity cardio workouts.",
+    "link": "/Classes/Cardio"
+  },
+  {
+    "icon": "https://i.ibb.co.com/fzC1XzZX/strength-1.png",
+    "title": "Strength Training",
+    "description": "Build muscle and increase strength with resistance training.",
+    "link": "/Classes/Strength%20Training"
+  },
+  {
+    "icon": "https://i.ibb.co.com/GvKVY463/hiit.png",
+    "title": "HIIT Workouts",
+    "description": "Burn fat quickly with high-intensity interval training.",
+    "link": "/Classes/HIIT"
+  },
+  {
+    "icon": "https://i.ibb.co.com/Mxx2hc20/dance.png",
+    "title": "Dance Fitness",
+    "description": "Stay fit while having fun with energetic dance workouts.",
+    "link": "/Classes/Dance"
+  },
+  {
+    "icon": "https://i.ibb.co.com/35xnmZVW/extended.png",
+    "title": "Aerobics",
+    "description": "Improve heart health and endurance with fun aerobics sessions.",
+    "link": "/Classes/Aerobics"
+  }
+]

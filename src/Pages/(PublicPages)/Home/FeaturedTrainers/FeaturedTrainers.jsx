@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Link } from "react-router";
 
-import Title from "../../../../Shared/Componenet/Title";
+import Title from "../../../../Shared/Component/Title";
 import TrainersCards from "../../(Trainers)/Trainers/TrainersCards/TrainersCards";
 
 const FeaturedTrainers = ({ trainersData }) => {

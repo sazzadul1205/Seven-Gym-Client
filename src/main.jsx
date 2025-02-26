@@ -53,7 +53,7 @@ createRoot(document.getElementById("root")).render(
           <Routes>
             {/* Page Not Found */}
             <Route path="*" element={<PageNotFound />} />
-            
+
             {/* Public Layout */}
             <Route element={<PublicLayout />}>
               {/* Auth Pages Link */}

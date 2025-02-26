@@ -4,7 +4,7 @@ import Background from "../../../../assets/Background.jpeg";
 import Banner from "../../../../assets/ClassesWall.jpg";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import Loading from "../../../../Shared/Loading/Loading";
-import Title from "../../../../Shared/Componenet/Title";
+import Title from "../../../../Shared/Component/Title";
 import AllClasses from "./AllClasses/AllClasses";
 
 const Classes = () => {
