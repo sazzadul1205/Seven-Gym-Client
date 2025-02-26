@@ -1,0 +1,23 @@
+[
+  { "name": "Home", "path": "/" },
+  { "name": "Gallery", "path": "/Gallery" },
+  {
+    "name": "Trainers",
+    "path": "Trainers"
+  },
+  {
+    "name": "Classes",
+    "path": "/Classes"
+  },
+  { "name": "Forums", "path": "/Forums" },
+  {
+    "name": "About",
+    "path": "/About",
+    "submenu": [
+      { "name": "Our Mission", "path": "/About/OurMission" },
+      { "name": "Testimonials", "path": "/About/Testimonials" },
+      { "name": "About Us", "path": "/About/AboutUs" },
+      { "name": "Feedback", "path": "/About/Feedback" }
+    ]
+  }
+]
