@@ -12,7 +12,7 @@ import PageNotFound from "./Pages/PageNotFound/PageNotFound.jsx";
 // Auth Import
 import Login from "./Pages/(Auth)/Login/Login.jsx";
 import SignUp from "./Pages/(Auth)/SignUp/SignUp.jsx";
-import SUDetails from "./Pages/(Auth)/SignUp/SUDetails/SUDetails.jsx";
+import SignUpDetails from "./Pages/(Auth)/SignUpDetails/SignUpDetails.jsx";
 
 // Public Pages Import
 import Home from "./Pages/(PublicPages)/Home/Home.jsx";
@@ -45,6 +45,11 @@ createRoot(document.getElementById("root")).render(
           <Routes>
             <Route path="*" element={<PageNotFound />} />
             <Route element={<PublicLayout />}>
+              {/* Auth Pages Link */}
+              <Route path="/Login" element={<Login />} />
+              <Route path="/SignUp" element={<SignUp />} />
+              <Route path="/SignUp/Details" element={<SignUpDetails />} />
+
               {/* Public Pages Link */}
               <Route path="/" element={<Home />} />
               <Route path="/Gallery" element={<Gallery />} />
@@ -61,11 +66,6 @@ createRoot(document.getElementById("root")).render(
               <Route path="/About/Testimonials" element={<Testimonials />} />
               <Route path="/About/AboutUs" element={<AboutUs />} />
               <Route path="/About/Feedback" element={<Feedback />} />
-
-              {/* Auth Pages Link */}
-              <Route path="/Login" element={<Login />} />
-              <Route path="/SignUp" element={<SignUp />} />
-              <Route path="/SignUp/Details" element={<SUDetails />} />
 
               {/* User Pages Link */}
               <Route

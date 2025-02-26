@@ -1,29 +1,35 @@
-import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+
 import Swal from "sweetalert2";
+import PropTypes from "prop-types";
+import { useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
+
+import useAuth from "../../../Hooks/useAuth";
+import Loading from "../../../Shared/Loading/Loading";
 import ImageCropper from "./ImageCropper/ImageCropper";
-
-import LoginBack from "../../../..//assets/LoginBack.jpeg";
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FitnessGoalsSelector from "./FitnessGoalsSelector/FitnessGoalsSelector";
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-import Loading from "../../../../Shared/Loading/Loading";
-import useAuth from "../../../../Hooks/useAuth";
 
+// Background Image
+import LoginBack from "../../../assets/Background-Auth/LoginBack.jpeg";
+
+// Constants for image hosting API
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Key}`;
 
-const SUDetails = () => {
-  const axiosPublic = useAxiosPublic();
+const SignUpDetails = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const axiosPublic = useAxiosPublic();
 
+  // State hooks for form data and image
   const [selectedGoals, setSelectedGoals] = useState([]);
   const [profileImage, setProfileImage] = useState(null);
-  const [loading, setLoading] = useState(false); // Loading state for the button
+  const [loading, setLoading] = useState(false);
 
-  // Fetching data for Users
+  // Query to check if the user already exists
   const {
     data: UserExists,
     isLoading: UserExistsIsLoading,
@@ -36,29 +42,48 @@ const SUDetails = () => {
         .then((res) => res.data),
   });
 
+  // React Hook Form setup
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+  // Confirm before creating the account
+  const confirmAndSubmit = async (data) => {
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to create your account with the provided details?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, create my account",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!confirmation.isConfirmed) {
+      return; // If the user cancels, stop the process
+    }
+
+    // Proceed with account creation if confirmed
+    onSubmit(data);
+  };
+
+  // Handle form submission
   const onSubmit = async (data) => {
     setLoading(true); // Set loading to true when submission starts
-
     let uploadedImageUrl = null;
 
+    // Image upload logic
     if (profileImage) {
       const formData = new FormData();
       formData.append("image", profileImage);
-
       try {
         const res = await axiosPublic.post(Image_Hosting_API, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
-
-        uploadedImageUrl = res.data.data.display_url;
+        uploadedImageUrl = res.data.data.display_url; // Get image URL
       } catch (error) {
         console.error("Failed to upload image:", error);
         setLoading(false); // Stop loading on error
@@ -69,10 +94,9 @@ const SUDetails = () => {
         });
         return;
       }
-    } else {
-      console.warn("No profile image selected.");
     }
 
+    // Prepare form data for submission
     const creationTime = new Date().toLocaleString("en-US", {
       year: "numeric",
       month: "long",
@@ -106,6 +130,7 @@ const SUDetails = () => {
       recentWorkouts: [],
     };
 
+    // Post the data to the server
     try {
       await axiosPublic.post("/Users", formDataWithImage);
       setLoading(false); // Stop loading on success
@@ -158,7 +183,7 @@ const SUDetails = () => {
           </p>
         </div>
         <button
-          onClick={() => navigate("/profileupdate")} // Redirect to profile update page
+          onClick={() => navigate("/User/UserSettings?tab=Settings_Info")}
           className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
         >
           Go to Profile Update
@@ -175,115 +200,48 @@ const SUDetails = () => {
       }}
     >
       <div className="w-full max-w-7xl shadow-md rounded-tl-[50px] rounded-br-[50px] p-10 bg-white bg-opacity-90">
-        {/* Title */}
-        <h4 className="text-3xl font-bold text-center text-[#F72C5B] pb-5">
-          Data Form
-        </h4>
-
         {/* Forms */}
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(confirmAndSubmit)}>
           {/* Content */}
           <div className="flex gap-10 pb-10">
             {/* Left Side Data */}
             <div className="w-1/2 space-y-4">
-              {/* Image Cropper Section */}
-              <div>
-                <label className="block text-gray-700 font-semibold text-xl pb-2">
-                  Profile Image
-                </label>
-                <ImageCropper onImageCropped={setProfileImage} />
-              </div>
-
-              {/* Full Name */}
-              <div>
-                <label className="block text-gray-700 font-semibold text-xl pb-2">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="John Doe"
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F72C5B]"
-                  {...register("fullName", {
-                    required: "Full name is required",
-                  })}
-                />
-                {errors.fullName && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.fullName.message}
-                  </p>
-                )}
-              </div>
+              <ImageCropper
+                onImageCropped={setProfileImage}
+                register={register}
+                errors={errors}
+              />
+              <InputField
+                label="Full Name"
+                placeholder="John Doe"
+                register={register}
+                errors={errors}
+                name="fullName"
+              />
             </div>
 
             {/* Right Side Data */}
             <div className="w-1/2 space-y-4">
-              {/* Phone Number */}
-              <div>
-                <label className="block text-gray-700 font-semibold text-xl pb-2">
-                  Phone Number
-                </label>
-                <input
-                  type="text"
-                  placeholder="+8801234567890"
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F72C5B]"
-                  {...register("phone", {
-                    required: "Phone number is required",
-                  })}
-                />
-                {errors.phone && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.phone.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Date of Birth */}
-              <div>
-                <label className="block text-gray-700 font-semibold text-xl pb-2">
-                  Date of Birth
-                </label>
-                <input
-                  type="date"
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F72C5B]"
-                  {...register("dob", {
-                    required: "Date of birth is required",
-                  })}
-                />
-                {errors.dob && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.dob.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Gender */}
-              <div className="">
-                <label className="block text-gray-700 font-semibold text-xl pb-2">
-                  Gender
-                </label>
-                <select
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F72C5B]"
-                  {...register("gender", { required: "Gender is required" })}
-                >
-                  <option value="">Select</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </select>
-                {errors.gender && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.gender.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Fitness Goals */}
-              <div>
-                <FitnessGoalsSelector
-                  selectedGoals={selectedGoals}
-                  setSelectedGoals={setSelectedGoals}
-                />
-              </div>
+              <InputField
+                label="Phone Number"
+                placeholder="+8801234567890"
+                register={register}
+                errors={errors}
+                name="phone"
+              />
+              <InputField
+                label="Date of Birth"
+                placeholder=""
+                register={register}
+                errors={errors}
+                name="dob"
+                type="date"
+              />
+              <GenderSelectField register={register} errors={errors} />
+              <FitnessGoalsSelector
+                selectedGoals={selectedGoals}
+                setSelectedGoals={setSelectedGoals}
+              />
             </div>
           </div>
 
@@ -299,11 +257,74 @@ const SUDetails = () => {
               {loading ? "Submitting..." : "Create Account"}
             </button>
           </div>
-          
         </form>
       </div>
     </div>
   );
 };
 
-export default SUDetails;
+// Reusable Input Field Component
+const InputField = ({
+  label,
+  placeholder,
+  register,
+  errors,
+  name,
+  type = "text",
+}) => (
+  <div>
+    <label className="block text-gray-700 font-semibold text-xl pb-2">
+      {label}
+    </label>
+    <input
+      type={type}
+      placeholder={placeholder}
+      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F72C5B]"
+      {...register(name, { required: `${label} is required` })}
+    />
+    {errors[name] && (
+      <p className="text-red-500 text-sm mt-1">{errors[name].message}</p>
+    )}
+  </div>
+);
+
+// Add PropTypes for InputField
+InputField.propTypes = {
+  label: PropTypes.string.isRequired,
+  placeholder: PropTypes.string,
+  register: PropTypes.func.isRequired,
+  errors: PropTypes.object.isRequired,
+  name: PropTypes.string.isRequired,
+  type: PropTypes.string,
+};
+
+// Reusable Gender Select Field Component
+const GenderSelectField = ({ register, errors }) => (
+  <div>
+    <label className="block text-gray-700 font-semibold text-xl pb-2">
+      Gender
+    </label>
+    <select
+      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F72C5B]"
+      {...register("gender", { required: "Gender is required" })}
+    >
+      <option value="">Select</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="other">Other</option>
+    </select>
+    {errors.gender && (
+      <p className="text-red-500 text-sm mt-1">{errors.gender.message}</p>
+    )}
+  </div>
+);
+
+// Add PropTypes for GenderSelectField
+GenderSelectField.propTypes = {
+  register: PropTypes.func.isRequired,
+  errors: PropTypes.object.isRequired,
+};
+
+export { InputField, GenderSelectField };
+
+export default SignUpDetails;

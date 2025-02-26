@@ -1,16 +1,24 @@
-import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import Swal from "sweetalert2";
 
-import LoginBack from "../../../assets/LoginBack.jpeg";
+import Swal from "sweetalert2";
+import { useForm } from "react-hook-form";
+
 import useAuth from "../../../Hooks/useAuth";
 import SocialLinks from "../../../Shared/SocialLinks/SocialLinks";
 
+// Background Image
+import LoginBack from "../../../assets/Background-Auth/LoginBack.jpeg";
+
 const SignUp = () => {
+  // Custom authentication hook
   const { createUser } = useAuth();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false); // Loading state
+
+  // Loading state for form submission
+  const [loading, setLoading] = useState(false);
+
+  // Form validation & state handling using react-hook-form
   const {
     register,
     handleSubmit,
@@ -18,19 +26,19 @@ const SignUp = () => {
     watch,
   } = useForm();
 
+  // Watch password input to validate confirm password
   const password = watch("password");
 
+  // Function to handle form submission
   const onSubmit = (data) => {
     const { email, password } = data;
-
     setLoading(true); // Start loading
 
-    // Create User
+    // Create user account
     createUser(email, password)
-      // eslint-disable-next-line no-unused-vars
-      .then((res) => {
+      .then(() => {
         setLoading(false); // Stop loading
-        navigate("/SignUp/Details");
+        navigate("/SignUp/Details"); // Redirect to details page after successful signup
 
         // Show success alert
         Swal.fire({
@@ -56,7 +64,7 @@ const SignUp = () => {
 
   return (
     <div>
-      <div className="bg-[#F72C5B] py-11"></div>
+      {/* Background image and layout styling */}
       <div
         className="min-h-screen bg-fixed bg-cover bg-center flex items-center justify-center"
         style={{
@@ -65,22 +73,21 @@ const SignUp = () => {
           backgroundPosition: "center",
         }}
       >
-        {/* SignUp Card */}
+        {/* Sign-up card container */}
         <div
           className="w-full max-w-lg shadow-md rounded-tl-[50px] rounded-br-[50px] p-10"
-          style={{
-            backgroundColor: "rgba(255, 255, 255, 0.8)", // Transparent background
-          }}
+          style={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
         >
-          {/* Welcome Part */}
+          {/* Form title */}
           <div className="pb-5">
             <h4 className="text-3xl font-bold text-center text-[#F72C5B]">
               Sign Up Form
             </h4>
           </div>
 
+          {/* Sign-up form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Email Field */}
+            {/* Email input field */}
             <div>
               <label className="block text-gray-700 font-semibold text-xl pb-2">
                 Email
@@ -104,7 +111,7 @@ const SignUp = () => {
               )}
             </div>
 
-            {/* Password Field */}
+            {/* Password input field */}
             <div>
               <label className="block text-gray-700 font-semibold text-xl pb-2">
                 Password
@@ -128,7 +135,7 @@ const SignUp = () => {
               )}
             </div>
 
-            {/* Confirm Password Field */}
+            {/* Confirm password field */}
             <div>
               <label className="block text-gray-700 font-semibold text-xl pb-2">
                 Confirm Password
@@ -150,31 +157,35 @@ const SignUp = () => {
               )}
             </div>
 
-            {/* Submit Button */}
+            {/* Submit button */}
             <button
               type="submit"
               disabled={loading} // Disable button while loading
               className={`w-full ${
-                loading ? "bg-gray-400" : "bg-[#F72C5B] hover:bg-[#f72c5bbd]"
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#F72C5B] hover:bg-[#f72c5bbd]"
               } text-white py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#f72c5bbd]`}
             >
               {loading ? "Signing Up..." : "Sign Up"}
             </button>
 
-            {/* Sign Up link */}
+            {/* Login link for existing users */}
             <p className="font-semibold">
-              Already have an Account, Please{" "}
+              Already have an Account?{" "}
               <Link to={"/Login"} className="text-[#F72C5B] hover:underline">
                 Login
               </Link>
             </p>
           </form>
 
+          {/* Divider for social sign-up options */}
           <div className="flex w-full flex-col border-opacity-50">
             <div className="divider font-bold">OR</div>
           </div>
 
-          <SocialLinks></SocialLinks>
+          {/* Social login component */}
+          <SocialLinks />
         </div>
       </div>
     </div>

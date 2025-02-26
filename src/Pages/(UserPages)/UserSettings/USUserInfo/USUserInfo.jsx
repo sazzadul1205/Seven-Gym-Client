@@ -3,7 +3,7 @@ import { IoSettings } from "react-icons/io5";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import { FaFacebook, FaInstagram, FaTelegram, FaTwitter } from "react-icons/fa";
-import FitnessGoalsSelector from "../../../(Auth)/SignUp/SUDetails/FitnessGoalsSelector/FitnessGoalsSelector";
+import FitnessGoalsSelector from "../../../(Auth)/SignUpDetails/FitnessGoalsSelector/FitnessGoalsSelector";
 import { useState } from "react";
 import useAuth from "../../../../Hooks/useAuth";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";

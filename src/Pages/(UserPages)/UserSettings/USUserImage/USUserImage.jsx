@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 
 import AddImages from "../../../../assets/AddImages/AddImages.png";
-import ImageCropper from "../../../(Auth)/SignUp/SUDetails/ImageCropper/ImageCropper";
+import ImageCropper from "../../../(Auth)/SignUpDetails/ImageCropper/ImageCropper";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 // Image Hosting API
