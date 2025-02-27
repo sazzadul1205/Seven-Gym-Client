@@ -1,13 +1,15 @@
-/* eslint-disable react/prop-types */
 import { Link } from "react-router";
+
+import PropTypes from "prop-types";
 
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
 import Title from "../../../../Shared/Component/Title";
 
-
 const GalleryPreview = ({ galleryData }) => {
+  // Slider Configuration
   const sliderSettings = {
     dots: false,
     infinite: true,
@@ -34,28 +36,33 @@ const GalleryPreview = ({ galleryData }) => {
     ],
   };
 
+  // Early return if galleryData is empty
+  if (!galleryData || galleryData.length === 0) {
+    return null;
+  }
+
   return (
-    <div className="py-16">
+    <div className="py-10 bg-gradient-to-b from-black/20 to-black/40">
       <div className="container mx-auto text-center">
         {/* Section Title */}
         <div className="px-6">
-          <Title titleContent={"Gallery Preview"} />
+          <Title titleContent="Our Gallery Preview" />
         </div>
 
         <div className="mt-11">
-          {/* Top Slider */}
-          <div className="">
+          {/* Top Slider - Moves in Reverse Direction */}
+          <div className="overflow-hidden">
             <Slider
               {...sliderSettings}
               className="slider-left"
               style={{ transform: "scaleX(-1)" }} // Reverse direction
             >
               {galleryData.map((image) => (
-                <div key={image._id} className="">
+                <div key={image._id}>
                   <div className="rounded-lg overflow-hidden shadow-lg">
                     <img
                       src={image.url}
-                      alt={image.alt}
+                      alt={image.alt || "Gallery image"}
                       className="w-full h-56 object-cover"
                     />
                   </div>
@@ -64,15 +71,15 @@ const GalleryPreview = ({ galleryData }) => {
             </Slider>
           </div>
 
-          {/* Bottom Slider */}
-          <div className="">
+          {/* Bottom Slider - Normal Direction */}
+          <div className="overflow-hidden">
             <Slider {...sliderSettings} className="slider-right">
               {galleryData.map((image) => (
-                <div key={image._id} className="">
+                <div key={image._id}>
                   <div className="rounded-lg overflow-hidden shadow-lg">
                     <img
                       src={image.url}
-                      alt={image.alt}
+                      alt={image.alt || "Gallery image"}
                       className="w-full h-56 object-cover"
                     />
                   </div>
@@ -82,10 +89,10 @@ const GalleryPreview = ({ galleryData }) => {
           </div>
         </div>
 
-        {/* Link to Full Gallery */}
+        {/* Button: View Full Gallery */}
         <div className="text-center mt-8">
-          <Link to={'/Gallery'}>
-            <button className=" px-12 md:px-24 py-3 font-semibold bg-[#F72C5B] hover:bg-white text-white hover:text-[#F72C5B] items-end gap-5 justify-end mx-auto transform transition-all duration-300 ease-in-out hover:scale-105">
+          <Link to="/Gallery">
+            <button className="bg-gradient-to-bl hover:bg-gradient-to-tr from-[#d1234f] to-[#fc003f] px-14 py-3 text-xl font-semibold text-white rounded-xl shadow-lg hover:shadow-2xl">
               View Full Gallery
             </button>
           </Link>
@@ -93,6 +100,17 @@ const GalleryPreview = ({ galleryData }) => {
       </div>
     </div>
   );
+};
+
+// PropTypes validation to ensure correct props
+GalleryPreview.propTypes = {
+  galleryData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      url: PropTypes.string.isRequired,
+      alt: PropTypes.string,
+    })
+  ).isRequired,
 };
 
 export default GalleryPreview;

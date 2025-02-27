@@ -4,13 +4,15 @@ import GymFeatures from "./GymFeatures/GymFeatures";
 import OurServices from "./OurServices/OurServices";
 import Testimonials from "./Testimonials/Testimonials";
 import CallToAction from "./CallToAction/CallToAction";
-import Background from "../../../assets/Background.jpeg";
 import BannerSection from "./BannerSection/BannerSection";
 import ClassSchedule from "./ClassSchedule/ClassSchedule";
 import WelcomeSection from "./WelcomeSection/WelcomeSection";
 import GalleryPreview from "./GalleryPreview/GalleryPreview";
 import FeaturedTrainers from "./FeaturedTrainers/FeaturedTrainers";
 import PromotionsSection from "./PromotionsSection/PromotionsSection";
+
+// Background Asset
+import Background from "../../../assets/Background.jpeg";
 
 import Loading from "../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
@@ -159,10 +161,10 @@ const Home = () => {
         classDetails={Class_DetailsData}
       />
       <FeaturedTrainers trainersData={TrainersData} />
-      <Testimonials testimonialsData={TestimonialsData} />
       <GalleryPreview galleryData={GalleryData} />
       <PromotionsSection promotionsData={PromotionsData} />
       <GymFeatures gymFeaturesData={Gym_FeaturesData} />
+      <Testimonials testimonialsData={TestimonialsData} />
       <CallToAction />
     </div>
   );
