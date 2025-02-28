@@ -12,12 +12,12 @@ const Trainers = () => {
 
   // State for filters
   const [searchName, setSearchName] = useState("");
-  const [selectedSpecialization, setSelectedSpecialization] = useState("");
   const [selectedTier, setSelectedTier] = useState("");
   const [selectedGender, setSelectedGender] = useState(null);
   const [selectedLanguages, setSelectedLanguages] = useState("");
   const [selectedClassType, setSelectedClassType] = useState("");
   const [selectedFocusArea, setSelectedFocusArea] = useState("");
+  const [selectedSpecialization, setSelectedSpecialization] = useState("");
 
   // Fetching static data for dropdowns and range sliders
   const { data: TrainersSpecializationsData } = useQuery({
@@ -49,7 +49,7 @@ const Trainers = () => {
       axiosPublic.get(`/Trainers/focusAreas`).then((res) => res.data),
   });
 
-  // Fetching filtered trainers
+  // Fetching filtered trainers based on user selection
   const { data: TrainersData, isLoading: TrainersDataIsLoading } = useQuery({
     queryKey: [
       "TrainersData",
@@ -72,12 +72,14 @@ const Trainers = () => {
       if (selectedLanguages) params.languages = selectedLanguages;
       if (selectedClassType) params.classType = selectedClassType;
       if (selectedFocusArea) params.focusArea = selectedFocusArea;
+
+      // Fetch filtered trainer data from the server
       return axiosPublic.get(`/Trainers`, { params }).then((res) => res.data);
     },
-    enabled: true,
+    enabled: true, // Ensure query runs only when necessary
   });
 
-  // Function to return tier badge style
+  // Function to return tier badge style based on tier value
   const getTierBadge = (tier) => {
     const styles = {
       Bronze: "bg-orange-600 text-white ring-2 ring-orange-300 shadow-lg",
@@ -86,7 +88,7 @@ const Trainers = () => {
       Diamond: "bg-blue-600 text-white ring-2 ring-blue-300 shadow-lg",
       Platinum: "bg-gray-800 text-white ring-2 ring-gray-500 shadow-lg",
     };
-    return styles[tier] || "bg-gray-200 text-gray-700";
+    return styles[tier] || "bg-gray-200 text-gray-700"; // Default to gray if no match
   };
 
   return (
@@ -98,12 +100,16 @@ const Trainers = () => {
         backgroundPosition: "center",
       }}
     >
-      {/* Top Section */}
-      <div className="bg-[#F72C5B] py-11"></div>
+      {/* Title */}
+      <div className="py-5 text-center bg-gray-500/20 text-gray-700">
+        <p className="text-4xl font-bold  ">Our Gallery</p>
+        <div className="bg-gray-900 p-[2px] md:w-3/12 mx-auto mt-2"></div>
+      </div>
+
       {/* Main Section */}
-      <div className="flex">
+      <div className="flex gap-3">
         {/* Left Filter Section */}
-        <div className="w-full lg:w-1/4 bg-white bg-opacity-90 shadow-lg p-6 h-screen sticky top-0 hidden lg:block">
+        <div className="hidden lg:block w-1/4 bg-white/70 px-2 sticky top-0 h-screen overflow-y-auto pt-24">
           <TrainerFilter
             searchName={searchName}
             setSearchName={setSearchName}
@@ -128,24 +134,17 @@ const Trainers = () => {
         </div>
 
         {/* Trainers Cards */}
-        <div className="flex-1 w-full lg:w-3/4 overflow-y-auto pb-20 lg:px-6">
-          {/* Title */}
-          <div>
-            <div className=" py-5 text-center hidden lg:block">
-              <p className="text-3xl font-bold text-black">Our Trainers</p>
-              <div className="bg-white p-[2px] md:w-1/6 mx-auto"></div>
-            </div>
-
-            <div className="px-4 py-5 flex lg:hidden justify-between items-center bg-white mb-2">
-              <p className="text-3xl font-bold text-black">Our Trainers</p>
-              {/* Drawer toggle button */}
-              <label htmlFor="my-drawer-5" className="drawer-button ">
-                <FaSearch className="text-2xl" />
-              </label>
-            </div>
+        <div className="w-full lg:w-3/4 lg:ml-auto overflow-y-auto">
+          {/* Title Section  ( Mobile )  */}
+          <div className="px-4 py-5 flex lg:hidden justify-between items-center bg-white mb-2">
+            <p className="text-3xl font-bold text-black">Our Trainers</p>
+            {/* Drawer toggle button */}
+            <label htmlFor="my-drawer-5" className="drawer-button">
+              <FaSearch className="text-2xl" />
+            </label>
           </div>
 
-          {/* Content */}
+          {/* Trainer Cards Content */}
           <>
             {TrainersDataIsLoading ? (
               <Loading /> // Show loading spinner in the content area while trainers are being loaded
@@ -168,18 +167,18 @@ const Trainers = () => {
         </div>
       </div>
 
-      {/* Drawer Section */}
+      {/* Drawer Section (Mobile View) */}
       <div className="drawer drawer-end z-40">
         <input id="my-drawer-5" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content"></div>
-        <div className="drawer-side ">
+        <div className="drawer-side">
           <label
             htmlFor="my-drawer-5"
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
           <div
-            className="menu bg-base-200 text-base-content min-h-full w-80 p-4"
+            className="menu bg-base-200 text-base-content min-h-full w-80 p-4 pt-20"
             style={{ maxWidth: "80%" }}
           >
             <TrainerFilter
