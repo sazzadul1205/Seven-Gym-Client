@@ -7,9 +7,9 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-
 // Layouts
-import PublicLayout from "./Layouts/PublicLayout.jsx";
+import HomePageLayout from "./Layouts/HomePageLayout.jsx";
+import PublicPageLayout from "./Layouts/PublicPageLayout.jsx";
 
 // Auth Provider
 import AuthProvider from "./Providers/AuthProviders.jsx";
@@ -54,15 +54,20 @@ createRoot(document.getElementById("root")).render(
             {/* Page Not Found */}
             <Route path="*" element={<PageNotFound />} />
 
-            {/* Public Layout */}
-            <Route element={<PublicLayout />}>
+            {/* Home Page Layout */}
+            <Route element={<HomePageLayout />}>
               {/* Auth Pages Link */}
               <Route path="/Login" element={<Login />} />
               <Route path="/SignUp" element={<SignUp />} />
               <Route path="/SignUp/Details" element={<SignUpDetails />} />
 
-              {/* Public Pages Link */}
+              {/* Home Pages Link */}
               <Route path="/" element={<Home />} />
+            </Route>
+
+            {/* Public Page Layout */}
+            <Route element={<PublicPageLayout />}>
+              {/* Public Pages Link */}
               <Route path="/Gallery" element={<Gallery />} />
               <Route path="/Trainers" element={<Trainers />} />
               <Route path="/Trainers/:name" element={<TrainersDetails />} />

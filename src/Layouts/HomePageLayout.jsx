@@ -2,7 +2,7 @@ import { Outlet } from "react-router";
 import Navbar from "../Shared/Navbar/Navbar";
 import Footer from "../Shared/Footer";
 
-const PublicLayout = () => {
+const HomePageLayout = () => {
   return (
     <div data-theme="cupcake">
       <Navbar />
@@ -12,4 +12,4 @@ const PublicLayout = () => {
   );
 };
 
-export default PublicLayout;
+export default HomePageLayout;

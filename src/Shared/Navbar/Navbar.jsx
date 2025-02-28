@@ -217,43 +217,52 @@ const Navbar = () => {
         </div>
 
         {/* Navbar End - User Profile & Login */}
-        <div className="navbar-end flex items-center">
+        <div className="navbar-end flex items-center ">
           {UsersData ? (
-            <div className="relative" ref={dropdownRef}>
+            <div
+              className="relative rounded-full border-4 border-white"
+              ref={dropdownRef}
+            >
               <img
                 src={
                   UsersData.profileImage ||
                   "https://i.ibb.co.com/XtrM9rc/UsersData.jpg"
                 }
                 alt="User Avatar"
-                className="w-14 h-14 rounded-full cursor-pointer hover:scale-105"
+                className="w-14 h-14 rounded-full cursor-pointer hover:scale-105 "
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               />
-              {isDropdownOpen && (
-                <div className="absolute right-0 mt-1 w-[250px] bg-white text-black rounded-lg shadow-lg z-10">
-                  <ul>
-                    {(roleBasedLinks[UsersData?.role] || []).map((link) => (
-                      <Link to={link.path} key={link.name}>
-                        <li className="flex py-3 px-5 gap-2 hover:bg-gray-100 border-b border-gray-300">
-                          {link.icon} {link.name}
-                        </li>
-                      </Link>
-                    ))}
-                    <li
-                      className="p-2 py-3 px-5 text-red-500 font-semibold hover:bg-gray-100 flex items-center justify-between"
-                      onClick={handleSignOut}
-                    >
-                      {isLoggingOut ? (
-                        "Logging Out..."
-                      ) : (
-                        <>
-                          Logout <ImExit />
-                        </>
-                      )}
-                    </li>
-                  </ul>
-                </div>
-              )}
+              <div>
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-1 w-[280px] bg-white text-black  z-10">
+                    <ul>
+                      {(roleBasedLinks[UsersData?.role] || []).map((link) => (
+                        <Link to={link.path} key={link.name}>
+                          <li className="flex py-3 px-5 gap-2 hover:bg-gray-100 border-b border-gray-300">
+                            <span className="border-r border-black pr-2">
+                              {link.icon}
+                            </span>
+                            <span>{link.name}</span>
+                          </li>
+                        </Link>
+                      ))}
+                      <li
+                        className="p-2 py-3 px-5 text-red-500 font-semibold hover:bg-gray-100 flex items-center justify-between"
+                        onClick={handleSignOut}
+                      >
+                        {isLoggingOut ? (
+                          "Logging Out..."
+                        ) : (
+                          <>
+                            <ImExit  />
+                            Logout
+                          </>
+                        )}
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             <Link to="/Login">
