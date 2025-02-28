@@ -1,0 +1,68 @@
+[
+  {
+    "title": "Discounts on Memberships",
+    "description": "Sign up now and enjoy amazing discounts on all membership plans. Get up to 25% off on our 12-month memberships. Don't miss this exclusive offer to lock in a lower rate for a full year of fitness!",
+    "imageUrl": "https://i.ibb.co.com/JjZ24KFT/Discounts-on-Memberships.png",
+    "link": "/Promotion/Membership-Discount",
+    "promoDuration": "Offer valid till December 31st, 2024",
+    "offerDetails": "Discounts applied automatically during checkout. No code needed. Discounts increase with longer plans.",
+    "discountPercentage": 25,
+    "promoCode": "PROMO-6759D6EB",
+    "usedUser": {}
+  },
+  {
+    "title": "Early Bird Sign-Up Discount",
+    "description": "Be an early bird and enjoy 30% off your first month when you sign up for any membership before 10 AM! This offer is valid for a limited time only.",
+    "imageUrl": "https://i.ibb.co.com/p6D2d0Wr/Early-Bird-Sign-Up-Discount.png",
+    "link": "/Promotion/Early-Bird-Sign-up",
+    "promoDuration": "Offer valid until further notice, 10 AM cutoff",
+    "offerDetails": "Offer is valid for new members only. Limited to the first 100 sign-ups each month.",
+    "discountPercentage": 30,
+    "promoCode": "PROMO-6759D6EB",
+    "usedUser": {}
+  },
+  {
+    "title": "Free Trial Classes",
+    "description": "Try out our gym for free! Get a feel for the equipment, classes, and facilities. Limited time offer! Enjoy 1 week of free access to all our gym facilities including group classes and personal training sessions.",
+    "imageUrl": "https://i.ibb.co.com/KckQVPgF/Free-Trial-Classes.png",
+    "link": "/Promotion/Free-Trial",
+    "promoDuration": "Available till January 31st, 2025",
+    "offerDetails": "No commitment required. Sign up online to claim your free trial.",
+    "discountPercentage": 0,
+    "promoCode": "PROMO-6759D6EB",
+    "usedUser": {}
+  },
+  {
+    "title": "Bring a Friend, Get Rewards",
+    "description": "Refer a friend to join the gym and receive up to 1 month of free membership for every successful sign-up. Plus, your friend will get a special discount on their first month!",
+    "imageUrl": "https://i.ibb.co.com/4R0jxGHT/Bring-a-Friend-Get-Rewards.png",
+    "link": "/Promotion/Bring-Friend",
+    "promoDuration": "Ongoing",
+    "offerDetails": "Both you and your friend will enjoy free membership for 1 month after their sign-up. No limits on the number of friends you refer.",
+    "discountPercentage": 0,
+    "promoCode": "PROMO-6759D6EB",
+    "usedUser": {}
+  },
+  {
+    "title": "Holiday Special Package",
+    "description": "Celebrate the holiday season with our exclusive holiday special membership package. Enjoy full access to all gym facilities, unlimited group classes, and a free personal training session.",
+    "imageUrl": "https://i.ibb.co.com/XrqD7x37/Holiday-Special-Package.png",
+    "link": "/Promotion/Holiday-Package",
+    "promoDuration": "Available until December 25th, 2024",
+    "offerDetails": "Special rates for both 3-month and 6-month memberships. Includes a free consultation with our personal trainers.",
+    "discountPercentage": 20,
+    "promoCode": "PROMO-6759D6EB",
+    "usedUser": {}
+  },
+  {
+    "title": "Seasonal Offers",
+    "description": "Take advantage of our seasonal offers with special rates and packages. Whether you're looking for a membership or group classes, we have exciting deals to match your fitness goals.",
+    "imageUrl": "https://i.ibb.co.com/vvd2RzyG/Seasonal-Offers.png",
+    "link": "/Promotion/",
+    "promoDuration": "Valid until March 31st, 2025",
+    "offerDetails": "Seasonal packages include discounts on personal training, group classes, and more. Limited availability.",
+    "discountPercentage": 15,
+    "promoCode": "PROMO-6759D6EB",
+    "usedUser": {}
+  }
+]

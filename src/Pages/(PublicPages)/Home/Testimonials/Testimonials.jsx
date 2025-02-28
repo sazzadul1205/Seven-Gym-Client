@@ -1,14 +1,17 @@
-/* eslint-disable react/prop-types */
-import React from "react";
+import { useRef } from "react";
+
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
+import PropTypes from "prop-types";
 import { Link } from "react-router";
 import Title from "../../../../Shared/Component/Title";
 
 const Testimonials = ({ testimonialsData }) => {
-  const sliderRef = React.useRef(null);
+  const sliderRef = useRef(null);
 
+  // Slider settings for responsiveness and autoplay
   const settings = {
     dots: false,
     infinite: true,
@@ -19,66 +22,89 @@ const Testimonials = ({ testimonialsData }) => {
     autoplaySpeed: 1500,
     arrows: false,
     responsive: [
-      {
-        breakpoint: 1024, // Tablet view
-        settings: { slidesToShow: 2 },
-      },
-      {
-        breakpoint: 768, // Mobile view
-        settings: { slidesToShow: 1 },
-      },
+      { breakpoint: 1024, settings: { slidesToShow: 2 } }, // Tablet view
+      { breakpoint: 768, settings: { slidesToShow: 1 } }, // Mobile view
     ],
   };
 
-  const handleSliderPause = () => sliderRef.current.slickPause();
-  const handleSliderPlay = () => sliderRef.current.slickPlay();
+  // Functions to control slider behavior on hover
+  const handleSliderPause = () => sliderRef.current?.slickPause();
+  const handleSliderPlay = () => sliderRef.current?.slickPlay();
 
   return (
-    <div className="py-16 max--7xl mx-auto">
-      <div className="container mx-auto text-center">
+    <section className="py-10 bg-gradient-to-t from-black/20 to-black/40">
+      <div className="max-w-7xl mx-auto text-center">
         {/* Section Title */}
         <Title titleContent="What Our Clients Say About Us" />
 
         {/* Testimonials Carousel */}
-        <Slider ref={sliderRef} {...settings} className="mt-6 md:mt-16 md:px-2">
-          {testimonialsData.map(({ _id, imageUrl, name, role, quote }) => (
-            <div
-              key={_id}
-              className="md:px-4"
-              onMouseEnter={handleSliderPause}
-              onMouseLeave={handleSliderPlay}
-            >
-              <div className="bg-white shadow-lg rounded-lg p-6 h-[200px] transition-transform transform hover:scale-105">
-                <div className="flex items-center mb-4">
-                  <img
-                    src={imageUrl}
-                    alt={name}
-                    className="w-16 h-16 rounded-full border-2 border-[#F72C5B]"
-                  />
-                  <div className="ml-4 text-left">
-                    <h3 className="text-lg font-semibold text-gray-800">
-                      {name}
-                    </h3>
-                    <p className="text-sm text-gray-600">{role}</p>
+        {testimonialsData?.length > 0 ? (
+          <Slider ref={sliderRef} {...settings} className="mt-8">
+            {testimonialsData.map(({ _id, imageUrl, name, role, quote }) => (
+              <div
+                key={_id}
+                className="py-5"
+                onMouseEnter={handleSliderPause}
+                onMouseLeave={handleSliderPlay}
+              >
+                <div className="bg-white shadow-lg rounded-lg p-6 h-[200px] transition-transform transform hover:scale-105 ml-2">
+                  {/* Client Info */}
+                  <div className="flex items-center mb-4 border-b-2 border-black/70 pb-4">
+                    <img
+                      src={imageUrl}
+                      alt={name || "Client Image"}
+                      className="w-16 h-16 rounded-full border-2 border-[#F72C5B]"
+                      loading="lazy"
+                    />
+                    <div className="ml-4 text-left">
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        {name || "Anonymous"}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        {role || "Client"}
+                      </p>
+                    </div>
                   </div>
+                  {/* Testimonial Quote */}
+                  <p className="text-gray-700 italic">
+                    &quot;{quote || "No testimonial available."}&quot;
+                  </p>
                 </div>
-                <p className="text-gray-700 italic">&quot;{quote}&quot;</p>
               </div>
-            </div>
-          ))}
-        </Slider>
+            ))}
+          </Slider>
+        ) : (
+          <p className="text-gray-400 mt-6">No testimonials available.</p>
+        )}
 
         {/* Read More Stories Button */}
         <div className="mt-8">
-          <Link to={'/About/Testimonials'}>
-            <button className="px-12 md:px-24 py-3 font-semibold bg-[#F72C5B] text-white hover:bg-white hover:text-[#F72C5B] rounded-lg transition-transform transform hover:scale-105">
+          <Link to="/About/Testimonials">
+            <button className="bg-gradient-to-bl hover:bg-gradient-to-tr from-[#d1234f] to-[#fc003f] px-14 py-3 text-xl font-semibold text-white rounded-xl shadow-lg hover:shadow-2xl transition duration-300">
               Read More Stories
             </button>
           </Link>
         </div>
       </div>
-    </div>
+    </section>
   );
+};
+
+// PropTypes validation with default values
+Testimonials.propTypes = {
+  testimonialsData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      imageUrl: PropTypes.string,
+      name: PropTypes.string,
+      role: PropTypes.string,
+      quote: PropTypes.string,
+    })
+  ),
+};
+
+Testimonials.defaultProps = {
+  testimonialsData: [],
 };
 
 export default Testimonials;

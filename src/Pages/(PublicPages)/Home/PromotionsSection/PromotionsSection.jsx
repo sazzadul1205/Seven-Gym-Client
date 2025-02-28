@@ -1,25 +1,22 @@
-/* eslint-disable react/prop-types */
-import { useState, useRef } from "react";
+import { useState } from "react";
+import PropTypes from "prop-types";
+
 import Title from "../../../../Shared/Component/Title";
+import PromotionContentModal from "./PromotionContentModal/PromotionContentModal";
 
 const PromotionsSection = ({ promotionsData }) => {
-  // State to track the selected promotion
+  // State to track the selected promotion for the modal
   const [selectedPromo, setSelectedPromo] = useState(null);
 
-  // Ref for the modal element to avoid direct DOM manipulation
-  const modalRef = useRef(null);
-
-  // Function to open the modal with the selected promotion details
+  // Function to open the modal and set the selected promotion
   const handleOpenModal = (promo) => {
     setSelectedPromo(promo);
-    if (modalRef.current) {
-      modalRef.current.showModal();
-    }
+    document.getElementById("Promotion_Content_Modal").showModal();
   };
 
   return (
     <div className="py-10 bg-gradient-to-t from-black/20 to-black/40">
-      <div className="container mx-auto text-center">
+      <div className="max-w-7xl mx-auto text-center">
         {/* Section Title */}
         <div className="px-6">
           <Title titleContent="Promotions & Offers" />
@@ -30,7 +27,7 @@ const PromotionsSection = ({ promotionsData }) => {
           {promotionsData.map((promo) => (
             <div
               key={promo._id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col"
+              className="bg-gradient-to-br from-gray-50 to-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col"
             >
               {/* Promotion Image */}
               <img
@@ -40,16 +37,17 @@ const PromotionsSection = ({ promotionsData }) => {
               />
 
               {/* Promotion Details */}
-              <div className="flex-1 p-4">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  {promo.title}
-                </h3>
-                <p className="text-gray-600">{promo.description}</p>
+              <div className="flex-1 p-4 border-t-2 border-black">
+                <h3 className="text-xl font-semibold mb-2">{promo.title}</h3>
+                <p className="text-gray-700">{promo.description}</p>
               </div>
 
               {/* "Learn More" Button */}
               <div className="p-4">
-                <button className="w-full border-2 border-red-500 hover:bg-gradient-to-br from-[#d1234f] to-[#eb0b43] py-2 font-semibold rounded-xl hover:text-white">
+                <button
+                  className="w-full border-2 border-red-500 hover:bg-gradient-to-br from-[#d1234f] to-[#eb0b43] py-2 font-semibold rounded-xl hover:text-white transition duration-300"
+                  onClick={() => handleOpenModal(promo)}
+                >
                   Learn More
                 </button>
               </div>
@@ -59,36 +57,26 @@ const PromotionsSection = ({ promotionsData }) => {
       </div>
 
       {/* Promotion Details Modal */}
-      <dialog ref={modalRef} className="modal">
-        <div className="modal-box">
-          {selectedPromo ? (
-            <>
-              {/* Modal Content */}
-              <img
-                src={selectedPromo.imageUrl}
-                alt={selectedPromo.title || "Promotion Image"}
-                className="w-full rounded-lg"
-              />
-              <h3 className="font-bold text-lg py-2">{selectedPromo.title}</h3>
-              <p className="py-2">{selectedPromo.offerDetails}</p>
-              <p className="py-2">
-                <strong>Duration:</strong> {selectedPromo.promoDuration}
-              </p>
-            </>
-          ) : (
-            <p>Loading...</p>
-          )}
-
-          {/* Close Button */}
-          <div className="modal-action">
-            <form method="dialog">
-              <button className="btn">Close</button>
-            </form>
-          </div>
-        </div>
+      <dialog id="Promotion_Content_Modal" className="modal">
+        <PromotionContentModal promo={selectedPromo} />
       </dialog>
     </div>
   );
+};
+
+// PropTypes validation
+PromotionsSection.propTypes = {
+  promotionsData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      imageUrl: PropTypes.string.isRequired,
+      promoDuration: PropTypes.string,
+      offerDetails: PropTypes.string,
+      promoCode: PropTypes.string,
+    })
+  ).isRequired,
 };
 
 export default PromotionsSection;

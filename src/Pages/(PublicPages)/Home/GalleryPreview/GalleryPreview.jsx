@@ -43,7 +43,7 @@ const GalleryPreview = ({ galleryData }) => {
 
   return (
     <div className="py-10 bg-gradient-to-b from-black/20 to-black/40">
-      <div className="container mx-auto text-center">
+      <div className="max-w-7xl mx-auto text-center">
         {/* Section Title */}
         <div className="px-6">
           <Title titleContent="Our Gallery Preview" />
