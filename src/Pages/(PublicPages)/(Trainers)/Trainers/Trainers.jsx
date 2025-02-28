@@ -93,7 +93,7 @@ const Trainers = () => {
       {/* Main Section */}
       <div className="flex">
         {/* Left Filter Section */}
-        <div className="hidden lg:block w-1/4 bg-white/70 px-2 border-r-2 border-black pb-5">
+        <div className="hidden lg:block w-1/4 bg-white/80 px-2 border-r-2 border-black pb-5">
           <TrainerFilter
             searchName={searchName}
             setSearchName={setSearchName}

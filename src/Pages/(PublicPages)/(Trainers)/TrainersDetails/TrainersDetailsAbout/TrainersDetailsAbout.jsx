@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-const TDBio = ({ TrainerDetails }) => {
+const TrainersDetailsAbout = ({ TrainerDetails }) => {
   // Handle case where TrainerDetails is missing
   if (!TrainerDetails)
     return (
@@ -31,12 +31,14 @@ const TDBio = ({ TrainerDetails }) => {
   return (
     <div className="bg-gradient-to-bl from-gray-200 to-gray-400 p-5 rounded-lg shadow-lg max-w-4xl mx-auto space-y-4">
       {/* Trainer Name & Bio Section */}
-      <h2 className="text-3xl font-semibold mb-3">
-        About {TrainerDetails.name || "Unknown Trainer"}
-      </h2>
-      <p className="text-lg text-gray-700 italic">
-        {TrainerDetails.bio || "No bio available."}
-      </p>
+      <div className="space-y-4">
+        <h2 className="text-3xl font-semibold mb-3">
+          About {TrainerDetails.name || "Unknown Trainer"}
+        </h2>
+        <p className="text-lg text-gray-700 italic">
+          {TrainerDetails.bio || "No bio available."}
+        </p>
+      </div>
 
       {/* Grid layout for Trainer Details */}
       <div className="grid grid-cols-2 md:grid-col-1 gap-6">
@@ -55,7 +57,7 @@ const TDBio = ({ TrainerDetails }) => {
 };
 
 // Prop validation to ensure correct data types
-TDBio.propTypes = {
+TrainersDetailsAbout.propTypes = {
   TrainerDetails: PropTypes.shape({
     name: PropTypes.string,
     bio: PropTypes.string,
@@ -66,4 +68,4 @@ TDBio.propTypes = {
   }),
 };
 
-export default TDBio;
+export default TrainersDetailsAbout;

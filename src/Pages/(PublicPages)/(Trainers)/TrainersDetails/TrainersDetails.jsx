@@ -1,99 +1,101 @@
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 
-import TDImages from "./TDContent/TDImages";
+import Trainer_Details_Page_Background from "../../../../assets/Trainers-Details-Background/Trainer_Details_Page_Background.jpg";
+
 import TDBio from "./TDContent/TDBio";
 import TDContact from "./TDContent/TDContact";
-import TDTestimonials from "./TDContent/TDTestimonials";
 import TDDetails from "./TDContent/TDDetails";
 import TDPricing from "./TDContent/TDPricing";
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-import Loading from "../../../../Shared/Loading/Loading";
+import TDTestimonials from "./TDContent/TDTestimonials";
+import TrainersDetailsHeader from "./TrainersDetailsHeader/TrainersDetailsHeader";
 
+import Loading from "../../../../Shared/Loading/Loading";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import FetchingError from "../../../../Shared/Component/FetchingError";
 
 const TrainersDetails = () => {
+  const { name } = useParams();
   const axiosPublic = useAxiosPublic();
-  let { name } = useParams();
+
+  // Decode the trainer's name from the URL
   const decodedName = decodeURIComponent(name);
 
-  // Fetching Trainer_Detail Data
+  // Fetch Trainer Details
   const {
     data: Trainer_DetailData,
-    isLoading: Trainer_DetailDataIsLoading,
-    error: Trainer_DetailDataError,
+    isLoading: isLoadingTrainerDetails,
+    error: errorTrainerDetails,
   } = useQuery({
-    queryKey: ["Trainer_DetailData", decodedName], // Adding 'decodedName' to the query key
+    queryKey: ["Trainer_DetailData", decodedName],
     queryFn: () =>
       axiosPublic
-        .get(`/Trainers/searchByNames?names=${decodedName}`) // Pass the decoded name in the API call
+        .get(`/Trainers/SearchTrainersByNames?names=${decodedName}`)
         .then((res) => res.data),
   });
 
-  // Fetching Trainer_Schedule Data
+  // Fetch Trainer Schedule
   const {
     data: Trainer_ScheduleData,
-    isLoading: Trainer_ScheduleDataIsLoading,
-    error: Trainer_ScheduleDataError,
+    isLoading: isLoadingTrainerSchedule,
+    error: errorTrainerSchedule,
   } = useQuery({
-    queryKey: ["Trainer_ScheduleData", decodedName], // Adding 'decodedName' to the query key
+    queryKey: ["Trainer_ScheduleData", decodedName],
     queryFn: () =>
       axiosPublic
-        .get(`/Trainers_Schedule/byName?name=${decodedName}`) // Pass the decoded name in the API call
+        .get(`/Trainers_Schedule/byName?name=${decodedName}`)
         .then((res) => res.data),
   });
 
-  // Loading and error states
-  if (Trainer_DetailDataIsLoading || Trainer_ScheduleDataIsLoading) {
+  // Handle loading state
+  if (isLoadingTrainerDetails || isLoadingTrainerSchedule) {
     return <Loading />;
   }
 
-  if (Trainer_DetailDataError || Trainer_ScheduleDataError) {
-    return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
-        <p className="text-center text-red-500 font-bold text-3xl mb-8">
-          Something went wrong. Please reload the page.
-        </p>
-        <button
-          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
-          onClick={() => window.location.reload()}
-        >
-          Reload
-        </button>
-      </div>
-    );
+  // Handle errors for either API call
+  if (errorTrainerDetails || errorTrainerSchedule) {
+    return <FetchingError />;
   }
 
-  const TrainerDetails = Trainer_DetailData[0];
-  const TrainerSchedule = Trainer_ScheduleData[0];
+  // Extract trainer details and schedule from API response
+  const TrainerDetails = Trainer_DetailData?.[0];
+  const TrainerSchedule = Trainer_ScheduleData?.[0];
 
   return (
-    <div className=" bg-[#f72c5b44]">
-      <div className="bg-[#F72C5B] py-11"></div>
+    <div
+      className=" bg-fixed bg-cover bg-center bg-gradient-to-b from-white/50 to-white/20"
+      style={{
+        backgroundImage: `url(${Trainer_Details_Page_Background})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className=" bg-gradient-to-b from-white/20 to-white/10">
+        {/* Header Section */}
+        <TrainersDetailsHeader TrainerDetails={TrainerDetails} />
 
-      {/* images and Name */}
-      <TDImages TrainerDetails={TrainerDetails} />
+        {/* Content Section */}
+        <div className="max-w-7xl mx-auto py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Trainer Bio and Experience */}
+            <TDBio TrainerDetails={TrainerDetails} />
 
-      <div className="container mx-auto py-8">
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Trainer Bio and Experience */}
-          <TDBio TrainerDetails={TrainerDetails} />
+            {/* Trainer Contact Information */}
+            <TDContact TrainerDetails={TrainerDetails} />
+          </div>
 
-          {/* Trainer Contact Info */}
-          <TDContact TrainerDetails={TrainerDetails} />
+          {/* Trainer Pricing and Availability */}
+          <TDPricing
+            TrainerDetails={TrainerDetails}
+            TrainerSchedule={TrainerSchedule}
+          />
+
+          {/* Trainer Certifications & Details */}
+          <TDDetails TrainerDetails={TrainerDetails} />
+
+          {/* Trainer Testimonials */}
+          <TDTestimonials TrainerDetails={TrainerDetails} />
         </div>
-
-        {/* Trainer Pricing */}
-        <TDPricing
-          TrainerDetails={TrainerDetails}
-          TrainerSchedule={TrainerSchedule}
-        />
-
-        {/* Trainer Certifications */}
-        <TDDetails TrainerDetails={TrainerDetails} />
-
-        {/* Testimonials */}
-        <TDTestimonials TrainerDetails={TrainerDetails} />
       </div>
     </div>
   );

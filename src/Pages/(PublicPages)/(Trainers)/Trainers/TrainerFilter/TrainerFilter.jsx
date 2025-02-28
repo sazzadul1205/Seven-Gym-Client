@@ -87,38 +87,38 @@ const TrainerFilter = ({
         <div className="flex justify-between mt-3 space-x-2">
           {/* Male Button */}
           <button
-            className={`flex-1 flex items-center justify-center p-4 border rounded-lg ${
+            className={`flex-1 flex items-center justify-center p-4 border-2 rounded-lg transition ${
               selectedGender === "Male"
                 ? "border-blue-500 bg-blue-100"
-                : "border-blue-500 hover:bg-blue-100"
+                : "border-blue-500 bg-blue-50 hover:bg-blue-100"
             }`}
             onClick={() => setSelectedGender("Male")}
           >
-            <IoMdMale className="text-blue-500 text-2xl" />
+            <IoMdMale className="text-blue-500 text-3xl" />
           </button>
 
           {/* All Genders Button */}
           <button
-            className={`flex-1 flex items-center justify-center p-4 border rounded-lg ${
+            className={`flex-1 flex items-center justify-center p-4 border-2 rounded-lg transition ${
               selectedGender === null
-                ? "border-gray-500 bg-gray-300"
-                : "border-gray-400 hover:bg-gray-100"
+                ? "border-gray-500 bg-gray-200"
+                : "border-gray-400 bg-gray-100 hover:bg-gray-200"
             }`}
             onClick={() => setSelectedGender(null)}
           >
-            <MdOutlinePeopleAlt className="text-gray-400 text-2xl" />
+            <MdOutlinePeopleAlt className="text-gray-500 text-3xl" />
           </button>
 
           {/* Female Button */}
           <button
-            className={`flex-1 flex items-center justify-center p-4 border rounded-lg ${
+            className={`flex-1 flex items-center justify-center p-4 border-2 rounded-lg transition ${
               selectedGender === "Female"
                 ? "border-pink-500 bg-pink-100"
-                : "border-pink-500 hover:bg-pink-100"
+                : "border-pink-500 bg-pink-50 hover:bg-pink-100"
             }`}
             onClick={() => setSelectedGender("Female")}
           >
-            <IoMdFemale className="text-pink-500 text-2xl" />
+            <IoMdFemale className="text-pink-500 text-3xl" />
           </button>
         </div>
       </div>
