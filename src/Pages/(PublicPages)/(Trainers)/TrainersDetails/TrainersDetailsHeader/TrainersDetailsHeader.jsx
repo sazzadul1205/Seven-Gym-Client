@@ -19,35 +19,37 @@ const TrainersDetailsHeader = ({ TrainerDetails }) => {
   if (!TrainerDetails) return null;
 
   return (
-    <div className="bg-gray-500/40 mx-auto text-center py-10">
+    <div className="bg-gray-500/20 mx-auto text-center py-10">
       {/* Trainer Profile Image */}
       <img
-        src={TrainerDetails.imageUrl || "/default-profile.png"}
-        alt={TrainerDetails.name || "Trainer"}
+        src={TrainerDetails?.imageUrl || "/default-profile.png"}
+        alt={TrainerDetails?.name || "Trainer"}
         className="w-32 h-32 rounded-full mx-auto mb-1"
         loading="lazy"
       />
 
       {/* Trainer Name */}
       <p className="text-4xl text-white font-bold">
-        {TrainerDetails.name || "Unknown Trainer"}
+        {TrainerDetails?.name || "Unknown Trainer"}
       </p>
 
       {/* Trainer Specialization */}
       <p className="text-xl text-white italic">
-        {TrainerDetails.specialization || "Specialization Not Available"}
+        {TrainerDetails?.specialization || "Specialization Not Available"}
       </p>
 
       {/* Tier Badge */}
-      {TrainerDetails.tier && (
-        <span
-          className={`inline-block px-6 py-1 mt-2 rounded-full text-sm font-semibold ${getTierBadge(
-            TrainerDetails.tier
-          )}`}
-        >
-          {TrainerDetails.tier} Tier
-        </span>
-      )}
+      <div className="mt-1">
+        {TrainerDetails?.tier && (
+          <span
+            className={`inline-block px-6 py-1 mt-2 rounded-full text-sm font-semibold ${getTierBadge(
+              TrainerDetails?.tier
+            )}`}
+          >
+            {TrainerDetails?.tier} Tier
+          </span>
+        )}
+      </div>
     </div>
   );
 };

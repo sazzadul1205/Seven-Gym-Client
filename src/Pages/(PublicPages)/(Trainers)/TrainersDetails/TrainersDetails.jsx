@@ -3,12 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 
 import Trainer_Details_Page_Background from "../../../../assets/Trainers-Details-Background/Trainer_Details_Page_Background.jpg";
 
-import TDBio from "./TDContent/TDBio";
-import TDContact from "./TDContent/TDContact";
-import TDDetails from "./TDContent/TDDetails";
 import TDPricing from "./TDContent/TDPricing";
+import TDDetails from "./TDContent/TDDetails";
 import TDTestimonials from "./TDContent/TDTestimonials";
+import TrainersDetailsAbout from "./TrainersDetailsAbout/TrainersDetailsAbout";
 import TrainersDetailsHeader from "./TrainersDetailsHeader/TrainersDetailsHeader";
+import TrainerDetailsContact from "./TrainerDetailsContact/TrainerDetailsContact";
 
 import Loading from "../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
@@ -75,13 +75,13 @@ const TrainersDetails = () => {
         <TrainersDetailsHeader TrainerDetails={TrainerDetails} />
 
         {/* Content Section */}
-        <div className="max-w-7xl mx-auto py-8">
+        <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Trainer Bio and Experience */}
-            <TDBio TrainerDetails={TrainerDetails} />
+            <TrainersDetailsAbout TrainerDetails={TrainerDetails} />
 
             {/* Trainer Contact Information */}
-            <TDContact TrainerDetails={TrainerDetails} />
+            <TrainerDetailsContact TrainerDetails={TrainerDetails} />
           </div>
 
           {/* Trainer Pricing and Availability */}

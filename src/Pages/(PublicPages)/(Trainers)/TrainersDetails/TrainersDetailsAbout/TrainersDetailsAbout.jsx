@@ -29,7 +29,7 @@ const TrainersDetailsAbout = ({ TrainerDetails }) => {
   ];
 
   return (
-    <div className="bg-gradient-to-bl from-gray-200 to-gray-400 p-5 rounded-lg shadow-lg max-w-4xl mx-auto space-y-4">
+    <div className="bg-gradient-to-bl from-gray-100 to-gray-300 p-5 rounded-lg shadow-lg max-w-4xl mx-auto space-y-4">
       {/* Trainer Name & Bio Section */}
       <div className="space-y-4">
         <h2 className="text-3xl font-semibold mb-3">

@@ -1,12 +1,23 @@
-/* eslint-disable react/prop-types */
+import PropTypes from "prop-types";
 import { Link } from "react-router";
 
 const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
-  const schedule = TrainerSchedule.scheduleWithPrices;
+  if (
+    !TrainerDetails ||
+    !TrainerSchedule ||
+    !TrainerSchedule.scheduleWithPrices
+  ) {
+    return (
+      <p className="text-red-500 text-center">
+        Pricing or schedule details unavailable.
+      </p>
+    );
+  }
+
+  const schedule = TrainerSchedule?.scheduleWithPrices;
 
   const getClassButton = (classType, timeStart, day, participants) => {
-    // If the class is a non-group class and has exactly one participant
-    if (
+    const isBooked =
       participants?.length === 1 &&
       ![
         "Group Classes",
@@ -14,73 +25,75 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
         "Private Session",
         "Outdoor Class",
         "Partner Workout",
-      ].includes(classType)
-    ) {
+      ].includes(classType);
+
+    if (isBooked) {
       return (
-        <div className="flex mx-auto w-[180px]">
-          <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full">
-            Booked
-          </button>
-        </div>
+        <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full">
+          Booked
+        </button>
       );
     }
 
-    // For group classes and other paid classes
-    switch (classType) {
-      case "Group Classes":
-      case "Online Class":
-      case "Outdoor Class":
-      case "Partner Workout":
-      case "Private Session":
-      case "Private Training":
-      case "Semi-Private Training":
-      case "Workshops":
-      case "Group Class":
-        return (
-          <Link
-            to={`/Trainers/Bookings/${TrainerDetails.name}?classType=${classType}&day=${day}&timeStart=${timeStart}`}
-            className="flex mx-auto w-[180px]"
-          >
-            <button className="bg-[#F72C5B] text-white px-3 py-2 rounded-2xl hover:bg-[#f72c5b83] w-full">
-              Book Session
-            </button>
-          </Link>
-        );
-      case "Drop-In Class":
-      case "Open Gym Class":
-        return (
-          <div className="flex mx-auto w-[180px]">
-            <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full">
-              Free Class
-            </button>
-          </div>
-        );
-      case "Break":
-        return (
-          <div className="flex mx-auto w-[180px]">
-            <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full">
-              On a Break
-            </button>
-          </div>
-        );
-      default:
-        return (
-          <div className="flex mx-auto w-[180px]">
-            <Link
-              to={`/Classes/${classType.split(" ").slice(0, -1).join(" ")}`}
-              className="w-full"
-            >
-              <button className="bg-green-500 text-white px-3 py-2 rounded-2xl hover:bg-green-600 w-full">
-                Visit Class
-              </button>
-            </Link>
-          </div>
-        );
+    const classLinks = {
+      bookable: [
+        "Group Classes",
+        "Online Class",
+        "Outdoor Class",
+        "Partner Workout",
+        "Private Session",
+        "Private Training",
+        "Semi-Private Training",
+        "Workshops",
+        "Group Class",
+      ],
+      free: ["Drop-In Class", "Open Gym Class"],
+    };
+
+    if (classLinks.bookable.includes(classType)) {
+      return (
+        <Link
+          to={`/Trainers/Bookings/${TrainerDetails.name}?classType=${classType}&day=${day}&timeStart=${timeStart}`}
+          className="w-full"
+        >
+          <button className="bg-[#F72C5B] text-white px-3 py-2 rounded-2xl hover:bg-[#f72c5b83] w-full">
+            Book Session
+          </button>
+        </Link>
+      );
     }
+
+    if (classLinks.free.includes(classType)) {
+      return (
+        <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full">
+          Free Class
+        </button>
+      );
+    }
+
+    if (classType === "Break") {
+      return (
+        <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full">
+          On a Break
+        </button>
+      );
+    }
+
+    return (
+      <Link
+        to={`/Classes/${classType.split(" ").slice(0, -1).join(" ")}`}
+        className="w-full"
+      >
+        <button className="bg-green-500 text-white px-3 py-2 rounded-2xl hover:bg-green-600 w-full">
+          Visit Class
+        </button>
+      </Link>
+    );
   };
 
   return (
-    <div className="bg-white px-2 lg:px-6 py-6 mt-8 lg:rounded-2xl-lg shadow-lg">
+    <div className="bg-white px-2 lg:px-6 py-6 mt-8 lg:rounded-2xl shadow-lg">
+      {/* Pricing Section */}
       <h2 className="text-2xl font-semibold mb-3">Pricing</h2>
       <div className="flex flex-col sm:flex-row justify-between sm:space-x-5 sm:gap-10">
         <div className="mb-4 flex text-xl gap-5 bg-gray-300 px-10 py-2 w-full sm:w-auto">
@@ -93,14 +106,14 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
         </div>
       </div>
 
+      {/* Weekly Schedule Section */}
       <h2 className="text-2xl font-semibold mb-4 mt-4">Weekly Schedule</h2>
-
       {Object.entries(schedule).map(([day, classes]) => (
         <div key={day} className="mb-6 collapse collapse-arrow bg-base-200">
           <input type="radio" name="schedule-accordion" />
           <p className="collapse-title text-xl font-medium">{day}</p>
           <div className="collapse-content">
-            {/* Mobile view: Stacked layout */}
+            {/* Mobile View */}
             <div className="block sm:hidden">
               {classes.map((classDetails, index) => (
                 <div
@@ -127,7 +140,7 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
               ))}
             </div>
 
-            {/* Desktop view: Table layout */}
+            {/* Desktop View */}
             <div className="hidden sm:block">
               <table className="table-auto w-full border-collapse border border-gray-300">
                 <thead>
@@ -171,6 +184,27 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
       ))}
     </div>
   );
+};
+
+// Prop Validation
+TDPricing.propTypes = {
+  TrainerDetails: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    perSession: PropTypes.number.isRequired,
+    monthlyPackage: PropTypes.number.isRequired,
+  }).isRequired,
+  TrainerSchedule: PropTypes.shape({
+    scheduleWithPrices: PropTypes.objectOf(
+      PropTypes.arrayOf(
+        PropTypes.shape({
+          timeStart: PropTypes.string.isRequired,
+          timeEnd: PropTypes.string.isRequired,
+          classType: PropTypes.string.isRequired,
+          participants: PropTypes.array,
+        })
+      )
+    ).isRequired,
+  }).isRequired,
 };
 
 export default TDPricing;
