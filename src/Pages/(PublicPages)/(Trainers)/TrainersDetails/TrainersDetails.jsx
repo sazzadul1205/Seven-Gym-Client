@@ -70,7 +70,7 @@ const TrainersDetails = () => {
         backgroundPosition: "center",
       }}
     >
-      <div className=" bg-linear-to-b from-white/20 to-white/10">
+      <div className="bg-linear-to-b from-white/20 to-white/10">
         {/* Header Section */}
         <TrainersDetailsHeader TrainerDetails={TrainerDetails} />
 

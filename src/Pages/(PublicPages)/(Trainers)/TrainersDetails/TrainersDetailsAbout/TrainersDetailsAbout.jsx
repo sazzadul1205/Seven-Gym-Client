@@ -29,10 +29,10 @@ const TrainersDetailsAbout = ({ TrainerDetails }) => {
   ];
 
   return (
-    <div className="bg-linear-to-bl from-gray-100 to-gray-300 p-5 rounded-lg shadow-lg max-w-4xl mx-auto space-y-4">
+    <div className="bg-linear-to-bl from-gray-200 to-gray-400 p-5 rounded-lg shadow-lg max-w-4xl mx-auto space-y-4">
       {/* Trainer Name & Bio Section */}
       <div className="space-y-4">
-        <h2 className="text-3xl font-semibold mb-3">
+        <h2 className="text-3xl text-black font-semibold mb-3">
           About {TrainerDetails.name || "Unknown Trainer"}
         </h2>
         <p className="text-lg text-gray-700 italic">
@@ -47,8 +47,8 @@ const TrainersDetailsAbout = ({ TrainerDetails }) => {
             key={label}
             className="bg-linear-to-bl hover:bg-linear-to-tr from-white/20 to-gray-200 p-4 rounded-lg shadow-xs hover:shadow-2xl border-2 border-black"
           >
-            <h3 className="font-semibold text-xl">{label} :</h3>
-            <p className="text-lg italic">{value}</p>
+            <h3 className="font-semibold text-xl text-black">{label} :</h3>
+            <p className="text-lg italic text-gray-700">{value}</p>
           </div>
         ))}
       </div>

@@ -19,7 +19,7 @@ const TrainersDetailsHeader = ({ TrainerDetails }) => {
   if (!TrainerDetails) return null;
 
   return (
-    <div className="bg-gray-500/20 mx-auto text-center py-10">
+    <div className="bg-gray-500/50 mx-auto text-center py-10">
       {/* Trainer Profile Image */}
       <img
         src={TrainerDetails?.imageUrl || "/default-profile.png"}

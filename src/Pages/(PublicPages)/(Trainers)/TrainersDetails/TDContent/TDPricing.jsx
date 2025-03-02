@@ -1,5 +1,6 @@
-import PropTypes from "prop-types";
 import { Link } from "react-router";
+
+import PropTypes from "prop-types";
 
 const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
   if (
@@ -92,9 +93,9 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
   };
 
   return (
-    <div className="bg-white bg-linear-to-bl from-gray-200 to-gray-300 px-2 lg:px-6 py-6 mt-8 lg:rounded-2xl shadow-lg">
+    <div className="bg-linear-to-bl from-gray-200 to-gray-400 px-2 lg:px-6 py-6 mt-8 lg:rounded-2xl shadow-lg">
       {/* Pricing Section */}
-      <h2 className="text-2xl font-semibold mb-3">
+      <h2 className="text-2xl text-black font-semibold mb-3">
         {TrainerDetails.name || "Unknown Trainer"} Pricing
       </h2>
 
@@ -102,20 +103,28 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
       <div className="flex flex-col sm:flex-row justify-between sm:space-x-5 sm:gap-10">
         {/* Per Session Price */}
         <div className="flex bg-slate-300 font-semibold border border-gray-500 rounded-xl p-3 px-10 gap-5 hover:scale-105 transform transition duration-300 ease-in-out">
-          <p>Per Session :</p>
-          <p>$ {TrainerDetails.perSession.toFixed(2)}</p>
+          <p className="font-bold text-black">Per Session :</p>
+          <p className="text-gray-600">
+            $ {TrainerDetails.perSession.toFixed(2)}
+          </p>
         </div>
 
         {/* Monthly Package Price with 20% Discount */}
         <div className="flex bg-slate-300 font-semibold border border-gray-500 rounded-xl p-3 px-10 gap-5 hover:scale-105 transform transition duration-300 ease-in-out">
-          <h3 className="font-semibold">Monthly Package ( 28 Days )</h3>
-          <p>$ {(TrainerDetails.perSession * 28 * 0.8).toFixed(2)}</p>
+          <p className="font-bold text-black">Monthly Package ( 28 Days )</p>
+          <p className="text-gray-600">
+            $ {(TrainerDetails.perSession * 28 * 0.8).toFixed(2)}
+          </p>
         </div>
       </div>
 
       {/* Weekly Schedule Section */}
       <div className="mt-6 border-t-2 border-black">
-        <h2 className="text-2xl font-semibold mb-4 mt-4">Weekly Schedule</h2>
+        {/* Title */}
+        <h2 className="text-2xl text-black font-semibold mb-4 mt-4">
+          Weekly Schedule
+        </h2>
+        {/* Schedule Part */}
         <div className="accordion flex flex-col">
           {Object.entries(schedule).map(([day, classes]) => (
             <div key={day} className="mb-6 collapse collapse-arrow bg-base-200">

@@ -106,7 +106,7 @@ const TrainerDetailsContact = ({ TrainerDetails }) => {
   ].filter((link) => link.url); // Remove empty or undefined links
 
   return (
-    <div className="bg-linear-to-bl from-gray-100 to-gray-300 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full">
+    <div className="bg-linear-to-bl from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full">
       {/* Header */}
       <h2 className="text-3xl font-semibold text-gray-800 mb-6">
         Contact Information
@@ -132,7 +132,7 @@ const TrainerDetailsContact = ({ TrainerDetails }) => {
           </h3>
           <a
             href={`mailto:${contact.email}`}
-            className="text-lg text-gray-600 underline hover:text-blue-500 transition-all"
+            className="text-lg text-blue-500 hover:underline"
           >
             {contact.email}
           </a>
@@ -143,7 +143,7 @@ const TrainerDetailsContact = ({ TrainerDetails }) => {
       {contact.website && (
         <div className="mb-6 flex gap-5 items-center">
           <h3 className="font-semibold text-xl text-gray-700 flex items-center">
-            <FaGlobe className="mr-3 text-green-500" />
+            <FaGlobe className="mr-3 text-blue-500" />
             Website:
           </h3>
           <a
@@ -163,15 +163,15 @@ const TrainerDetailsContact = ({ TrainerDetails }) => {
           <h3 className="font-semibold text-xl text-gray-700">Social Links</h3>
           <div className="flex flex-wrap gap-4 mt-4">
             {socialLinks.map(({ name, url, icon, color }) => (
-              <a
+              <button
                 key={name}
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`flex items-center justify-center bg-gray-100 rounded-full shadow-md hover:bg-gray-200 p-4 transition-all ${color}`}
+                className={`flex items-center justify-center bg-gray-300 rounded-full shadow-md hover:bg-gray-400 p-4 transition-all ${color}`}
               >
                 <span className="text-3xl">{icon}</span>
-              </a>
+              </button>
             ))}
           </div>
         </div>
