@@ -93,7 +93,7 @@ const Trainers = () => {
       {/* Main Section */}
       <div className="flex">
         {/* Left Filter Section */}
-        <div className="hidden lg:block w-1/4 bg-white/80 px-2 border-r-2 border-black pb-5">
+        <div className="hidden lg:block w-1/4 bg-white/90 px-2 border-r-2 border-black pb-5">
           <TrainerFilter
             searchName={searchName}
             setSearchName={setSearchName}
@@ -120,7 +120,7 @@ const Trainers = () => {
         {/* Trainers Cards Section */}
         <div className="w-full lg:w-3/4 lg:ml-auto overflow-y-auto bg-linear-to-b from-white/50 to-white/10">
           {/* Title (Mobile View) */}
-          <div className="px-4 py-5 flex lg:hidden justify-between items-center bg-white/20 text-white">
+          <div className="px-4 py-5 flex lg:hidden justify-between items-center bg-gray-200 text-white mb-5">
             <p className="text-3xl font-bold text-black border-b-2 border-black">
               Our Trainers
             </p>
@@ -129,7 +129,7 @@ const Trainers = () => {
               htmlFor="my-drawer-5"
               className="drawer-button cursor-pointer bg-white rounded-xl p-2"
             >
-              <FaSearch className="text-xl" />
+              <FaSearch className="text-xl text-black" />
             </label>
           </div>
 
@@ -169,7 +169,7 @@ const Trainers = () => {
             className="drawer-overlay"
           ></label>
           <div
-            className="menu bg-base-200/90 text-base-content min-h-full w-80 p-4 pt-20"
+            className="menu bg-white/80 text-base-content min-h-full w-80 p-4 pt-20"
             style={{ maxWidth: "80%" }}
           >
             <TrainerFilter

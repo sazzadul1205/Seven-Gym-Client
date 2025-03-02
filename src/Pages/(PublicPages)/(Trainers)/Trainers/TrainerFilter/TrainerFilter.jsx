@@ -5,10 +5,10 @@ import { MdOutlinePeopleAlt } from "react-icons/md";
 
 // Reusable Dropdown Component
 const Dropdown = ({ label, options, onChange, selectedValue }) => (
-  <div className="mt-6">
-    <p className="font-bold">{label}</p>
+  <div className="mt-6 space-y-2">
+    <p className="font-bold text-black text-lg">{label}</p>
     <select
-      className="input input-bordered rounded-xl w-full mt-2"
+      className="input border border-gray-500 w-full bg-white text-black rounded-xl h-12"
       onChange={onChange}
       value={selectedValue}
     >
@@ -29,6 +29,7 @@ Dropdown.propTypes = {
   selectedValue: PropTypes.string,
 };
 
+//  TrainerFilter Component - Provides various filters for selecting trainers.
 const TrainerFilter = ({
   searchName,
   setSearchName,
@@ -53,17 +54,17 @@ const TrainerFilter = ({
   return (
     <>
       {/* Search Input */}
-      <div className="mt-5">
-        <p className="font-bold">Search By Name</p>
-        <label className="input input-bordered rounded-xl flex items-center mt-2">
+      <div className="mt-5 space-y-3">
+        <p className="font-bold text-black text-lg">Search By Name</p>
+        <label className="input border border-gray-500 w-full bg-white text-black rounded-3xl h-12 flex items-center px-3">
+          <FaSearch className="text-xl text-gray-600 mr-2" />
           <input
-            type="text"
-            className="grow "
+            type="search"
             placeholder="Search"
             value={searchName}
             onChange={(e) => setSearchName(e.target.value)}
+            className="w-full outline-none bg-transparent"
           />
-          <FaSearch />
         </label>
       </div>
 
@@ -83,43 +84,42 @@ const TrainerFilter = ({
 
       {/* Gender Selection */}
       <div className="mt-6">
-        <p className="font-bold">Select Gender</p>
-        <div className="flex justify-between mt-3 space-x-2">
-          {/* Male Button */}
-          <button
-            className={`flex-1 flex items-center justify-center p-4 border-2 rounded-lg transition ${
-              selectedGender === "Male"
-                ? "border-blue-500 bg-blue-100"
-                : "border-blue-500 bg-blue-50 hover:bg-blue-100"
-            }`}
-            onClick={() => setSelectedGender("Male")}
-          >
-            <IoMdMale className="text-blue-500 text-3xl" />
-          </button>
-
-          {/* All Genders Button */}
-          <button
-            className={`flex-1 flex items-center justify-center p-4 border-2 rounded-lg transition ${
-              selectedGender === null
-                ? "border-gray-500 bg-gray-200"
-                : "border-gray-400 bg-gray-100 hover:bg-gray-200"
-            }`}
-            onClick={() => setSelectedGender(null)}
-          >
-            <MdOutlinePeopleAlt className="text-gray-500 text-3xl" />
-          </button>
-
-          {/* Female Button */}
-          <button
-            className={`flex-1 flex items-center justify-center p-4 border-2 rounded-lg transition ${
-              selectedGender === "Female"
-                ? "border-pink-500 bg-pink-100"
-                : "border-pink-500 bg-pink-50 hover:bg-pink-100"
-            }`}
-            onClick={() => setSelectedGender("Female")}
-          >
-            <IoMdFemale className="text-pink-500 text-3xl" />
-          </button>
+        <p className="font-bold text-black text-lg">Select Gender</p>
+        <div className="flex justify-between mt-3 space-x-2 gap-2">
+          {/* Gender Selection Buttons */}
+          {[
+            {
+              value: "Male",
+              icon: <IoMdMale className="text-blue-500 text-3xl" />,
+              border: "border-blue-500",
+              bgActive: "bg-blue-100",
+              bgInactive: "bg-blue-50 hover:bg-blue-100",
+            },
+            {
+              value: null,
+              icon: <MdOutlinePeopleAlt className="text-gray-500 text-3xl" />,
+              border: "border-gray-500",
+              bgActive: "bg-gray-200",
+              bgInactive: "bg-gray-100 hover:bg-gray-200",
+            },
+            {
+              value: "Female",
+              icon: <IoMdFemale className="text-pink-500 text-3xl" />,
+              border: "border-pink-500",
+              bgActive: "bg-pink-100",
+              bgInactive: "bg-pink-50 hover:bg-pink-100",
+            },
+          ].map(({ value, icon, border, bgActive, bgInactive }) => (
+            <button
+              key={value === null ? "all" : value}
+              className={`flex-1 flex items-center justify-center p-4 border-2 rounded-lg transition ${
+                selectedGender === value ? bgActive : bgInactive
+              } ${border}`}
+              onClick={() => setSelectedGender(value)}
+            >
+              {icon}
+            </button>
+          ))}
         </div>
       </div>
 
