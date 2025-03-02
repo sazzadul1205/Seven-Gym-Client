@@ -3,7 +3,7 @@ import Title from "../../../../Shared/Component/Title";
 
 const GymFeatures = ({ gymFeaturesData }) => {
   return (
-    <section className="py-10 bg-linear-to-b from-black/20 to-black/40">
+    <div className="py-10 bg-gradient-to-b from-black/40 to-black/70">
       <div className="max-w-7xl mx-auto text-center">
         {/* Section Title */}
         <Title titleContent="Our Gym Features" />
@@ -34,7 +34,7 @@ const GymFeatures = ({ gymFeaturesData }) => {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

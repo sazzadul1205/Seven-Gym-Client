@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 
 const BannerSection = ({ homeBannerData }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -26,7 +27,7 @@ const BannerSection = ({ homeBannerData }) => {
   };
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative overflow-hidden pt-28 md:pt-0">
       {/* Banner Image */}
       <div className="relative w-full h-[250px] sm:h-[400px] lg:h-[750px]">
         {homeBannerData.map((banner, index) => (
@@ -60,17 +61,17 @@ const BannerSection = ({ homeBannerData }) => {
       {/* Left Navigation Button */}
       <button
         onClick={handleLeftClick}
-        className="absolute top-0 left-0 h-full w-[10%] sm:w-[5%] bg-black hover:bg-[#f35f81] bg-opacity-50 hover:bg-opacity-20 flex items-center justify-center text-white text-3xl sm:text-4xl"
+        className="absolute top-0 left-0 h-full w-[10%] sm:w-[5%] bg-black hover:bg-[#f35f81] bg-opacity-50 hover:bg-opacity-20 flex items-center justify-center"
       >
-        &#8592; {/* Left Arrow */}
+        <FaArrowLeftLong className="text-3xl" />
       </button>
 
       {/* Right Navigation Button */}
       <button
         onClick={handleRightClick}
-        className="absolute top-0 right-0 h-full w-[10%] sm:w-[5%] bg-black hover:bg-[#f35f81] bg-opacity-50 hover:bg-opacity-20 flex items-center justify-center text-white text-3xl sm:text-4xl"
+        className="absolute top-0 right-0 h-full w-[10%] sm:w-[5%] bg-black hover:bg-[#f35f81] bg-opacity-50 hover:bg-opacity-20 flex items-center justify-center"
       >
-        &#8594; {/* Right Arrow */}
+        <FaArrowRightLong className="text-3xl" />
       </button>
     </div>
   );

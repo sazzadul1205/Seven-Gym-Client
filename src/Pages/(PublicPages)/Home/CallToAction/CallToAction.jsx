@@ -3,24 +3,24 @@ const CallToAction = () => {
   const ctaButtons = [
     {
       label: "Sign Up for Membership",
-      color: "text-purple-600",
-      hover: "hover:bg-purple-100",
+      hover:
+        "bg-linear-to-tl hover:bg-linear-to-br from-red-400/70 to-red-400",
       link: "/SignUp",
     },
     {
       label: "Download Our App",
-      color: "text-blue-600",
-      hover: "hover:bg-blue-100",
+      hover:
+        "bg-linear-to-tl hover:bg-linear-to-br from-green-400/70 to-green-400",
     },
     {
       label: "Visit the Gym",
-      color: "text-green-600",
-      hover: "hover:bg-green-100",
+      hover:
+        "bg-linear-to-tl hover:bg-linear-to-br from-purple-400/70 to-purple-400",
     },
   ];
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-linear-to-r from-purple-600 to-blue-500 text-white text-center">
+    <div className="py-16 px-4 sm:px-6 lg:px-8 bg-linear-to-tr from-purple-700 to-blue-500 text-white text-center border-t-2 border-black">
       <div className="max-w-7xl mx-auto">
         {/* Section Title */}
         <h2 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight">
@@ -33,10 +33,10 @@ const CallToAction = () => {
 
         {/* CTA Buttons Container */}
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-          {ctaButtons.map(({ label, color, hover, link }, index) => (
+          {ctaButtons.map(({ label, hover, link }, index) => (
             <a
               key={index}
-              className={`bg-white ${color} font-bold py-3 w-[280px] sm:w-[300px] rounded-lg shadow-lg transition duration-300 ${hover}`}
+              className={`${hover} font-bold py-3 w-[280px] sm:w-[300px] rounded-lg shadow-lg hover:shadow-2xl transition duration-300`}
               href={`${link}`}
               aria-label={label}
             >
@@ -45,7 +45,7 @@ const CallToAction = () => {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

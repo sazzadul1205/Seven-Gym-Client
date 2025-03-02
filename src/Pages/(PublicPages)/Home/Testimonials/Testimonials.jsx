@@ -32,7 +32,7 @@ const Testimonials = ({ testimonialsData }) => {
   const handleSliderPlay = () => sliderRef.current?.slickPlay();
 
   return (
-    <section className="py-10 bg-linear-to-t from-black/20 to-black/40">
+    <div className="py-10 bg-gradient-to-t from-black/40 to-black/70">
       <div className="max-w-7xl mx-auto text-center">
         {/* Section Title */}
         <Title titleContent="What Our Clients Say About Us" />
@@ -86,7 +86,7 @@ const Testimonials = ({ testimonialsData }) => {
           </Link>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

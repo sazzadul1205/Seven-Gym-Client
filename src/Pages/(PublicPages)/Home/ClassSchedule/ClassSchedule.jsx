@@ -64,7 +64,7 @@ const ClassSchedule = ({ ourClasses, classDetails }) => {
       : 0;
 
     return (
-      <div key={index} className="relative group border p-1 bg-gray-200/20">
+      <div key={index} className="relative group border p-1 hover:bg-gray-200/20">
         {/* Class Card */}
         <div
           className={`relative p-4 border-2 border-gray-400 transition duration-300 rounded-lg lg:hover:scale-105 h-[220px]
@@ -125,9 +125,9 @@ const ClassSchedule = ({ ourClasses, classDetails }) => {
         </div>
 
         {/* Hover Overlay for Join Button */}
-        <div className="hidden lg:flex absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition duration-300 items-center justify-center rounded-lg">
+        <div className="hidden lg:flex absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition duration-300 items-center justify-center rounded-lg">
           <Link to={`/Classes/${classItem.module}`}>
-            <button className="absolute top-4 right-4 bg-white hover:bg-linear-to-bl from-[#F72C5B] to-[#ce294f] text-black hover:text-white font-bold px-10 py-3 rounded-lg shadow-lg">
+            <button className="absolute top-4 right-4 bg-white bg-linear-to-tr hover:bg-linear-to-bl from-[#F72C5B] to-[#ce294f] text-white font-bold px-10 py-3 rounded-lg shadow-lg">
               <FaUserPlus />
             </button>
           </Link>
@@ -140,7 +140,7 @@ const ClassSchedule = ({ ourClasses, classDetails }) => {
   };
 
   return (
-    <div className="py-10 bg-linear-to-b from-black/20 to-black/40">
+    <div className="py-10 bg-gradient-to-b from-black/40 to-black/70">
       <div className="mx-auto max-w-7xl">
         <div className="container mx-auto text-center">
           {/* Section Title */}

@@ -8,7 +8,7 @@ import TrainerPublicIdCard from "../../../../Shared/Component/TrainerPublicIdCar
 // Main Featured Trainers Component
 const FeaturedTrainers = ({ trainersData }) => {
   return (
-    <div className="py-10 bg-linear-to-t from-black/20 to-black/40">
+    <div className="py-10 bg-gradient-to-t from-black/40 to-black/70">
       <div className="mx-auto max-w-7xl">
         {/* Section Title */}
         <div className="text-center px-6">

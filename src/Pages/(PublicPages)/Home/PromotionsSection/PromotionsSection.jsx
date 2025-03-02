@@ -15,7 +15,7 @@ const PromotionsSection = ({ promotionsData }) => {
   };
 
   return (
-    <div className="py-10 bg-linear-to-t from-black/20 to-black/40">
+    <div className="py-10 bg-gradient-to-t from-black/40 to-black/70">
       <div className="max-w-7xl mx-auto text-center">
         {/* Section Title */}
         <div className="px-6">
@@ -38,14 +38,16 @@ const PromotionsSection = ({ promotionsData }) => {
 
               {/* Promotion Details */}
               <div className="flex-1 p-4 border-t-2 border-black">
-                <h3 className="text-xl font-semibold mb-2">{promo.title}</h3>
+                <h3 className="text-xl font-semibold mb-2 text-black">
+                  {promo.title}
+                </h3>
                 <p className="text-gray-700">{promo.description}</p>
               </div>
 
               {/* "Learn More" Button */}
               <div className="p-4">
                 <button
-                  className="w-full border-2 border-red-500 hover:bg-linear-to-br from-[#d1234f] to-[#eb0b43] py-2 font-semibold rounded-xl hover:text-white transition duration-300"
+                  className="w-full border-2 bg-linear-to-tl hover:bg-linear-to-br from-[#d1234f]/70 to-[#eb0b43] font-semibold rounded-xl hover:text-white transition duration-300 py-3"
                   onClick={() => handleOpenModal(promo)}
                 >
                   Learn More

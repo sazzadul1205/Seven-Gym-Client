@@ -1,5 +1,6 @@
 import { FaChevronRight } from "react-icons/fa";
 import PropTypes from "prop-types";
+import { Link } from "react-router";
 
 const WelcomeSection = ({ homeWelcomeData }) => {
   return (
@@ -16,7 +17,7 @@ const WelcomeSection = ({ homeWelcomeData }) => {
       </div>
 
       {/* Overlay Content */}
-      <div className="absolute inset-0 flex flex-col justify-center items-center bg-black bg-opacity-50 px-6">
+      <div className="absolute inset-0 flex flex-col justify-center items-center bg-black/50 px-6">
         {/* Hero Text */}
         <h1 className="text-2xl sm:text-4xl lg:text-6xl font-bold text-center mb-4 max-w-3xl">
           {homeWelcomeData[0].title}
@@ -28,21 +29,19 @@ const WelcomeSection = ({ homeWelcomeData }) => {
         {/* Call to Action (CTA) Buttons */}
         <div className="flex gap-4">
           {/* View Classes Button */}
-          <a
-            href="/classes"
-            className="bg-transparent border border-white hover:bg-blue-500 hover:text-white text-white py-3 px-6 rounded-lg text-sm md:text-lg transition duration-300 flex items-center justify-between"
-          >
-            View Classes
-          </a>
+          <Link to="/Classes">
+            <button className="border bg-linear-to-bl hover:bg-linear-to-tr from-gray-500/30 to-gray-800/70 py-4 px-10 rounded-lg text-sm md:text-lg ">
+              View Classes
+            </button>
+          </Link>
 
           {/* Join Now Button */}
-          <a
-            href="/join-now"
-            className="bg-blue-500 hover:bg-linear-to-l from-blue-700 to-blue-400 text-white py-3 px-6 rounded-lg text-sm md:text-lg transition duration-300 flex items-center justify-between"
-          >
-            Join Now
-            <FaChevronRight className="ml-2" />
-          </a>
+          <Link to="/SignUp">
+            <button className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-700 to-blue-400 text-white py-4 px-10 rounded-lg text-sm md:text-lg transition duration-300 flex items-center justify-between">
+              Join Now
+              <FaChevronRight className="ml-2" />
+            </button>
+          </Link>
         </div>
       </div>
     </div>

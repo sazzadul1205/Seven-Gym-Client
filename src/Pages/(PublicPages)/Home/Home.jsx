@@ -12,7 +12,7 @@ import FeaturedTrainers from "./FeaturedTrainers/FeaturedTrainers";
 import PromotionsSection from "./PromotionsSection/PromotionsSection";
 
 // Background Asset
-import Background from "../../../assets/Background.jpeg";
+import HomeBackground from "../../../assets/Home-Background/Home-Background.jpeg";
 
 import Loading from "../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
@@ -147,7 +147,7 @@ const Home = () => {
     <div
       className="min-h-screen bg-fixed bg-cover bg-center"
       style={{
-        backgroundImage: `url(${Background})`,
+        backgroundImage: `url(${HomeBackground})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

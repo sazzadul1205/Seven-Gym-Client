@@ -7,22 +7,22 @@ import "slick-carousel/slick/slick-theme.css";
 const OurServices = ({ homeServicesData }) => {
   // Slider settings
   const settings = {
-    dots: true,
     infinite: true,
     speed: 1000, // Transition speed
     autoplay: true,
     autoplaySpeed: 2000, // Slide change speed
-    slidesToShow: 4,
+    slidesToShow: 4, // Default: PC view
     slidesToScroll: 1,
+    arrows: false,
     responsive: [
       {
-        breakpoint: 1024, // Tablets
+        breakpoint: 1024, // Tablets (2 slides)
         settings: {
-          slidesToShow: 3,
+          slidesToShow: 2,
         },
       },
       {
-        breakpoint: 768, // Mobile devices
+        breakpoint: 767, // Mobile (1 slide)
         settings: {
           slidesToShow: 1,
         },
@@ -31,7 +31,7 @@ const OurServices = ({ homeServicesData }) => {
   };
 
   return (
-    <div className="py-10 bg-linear-to-t from-black/20 to-black/40">
+    <div className="py-10 bg-gradient-to-t from-black/40 to-black/70">
       <div className="mx-auto max-w-7xl">
         <div className="container mx-auto text-center">
           {/* Section Title */}
@@ -49,7 +49,7 @@ const OurServices = ({ homeServicesData }) => {
                   aria-label={`Learn more about ${service.title}`}
                 >
                   {/* Service Card */}
-                  <div className="bg-linear-to-tr hover:bg-linear-to-bl from-gray-200 to-gray-400 shadow-lg hover:shadow-2xl rounded-lg p-6 text-center h-[190px] w-full flex flex-col justify-between">
+                  <div className="bg-gradient-to-tr hover:bg-gradient-to-bl from-gray-200 to-gray-400 shadow-lg hover:shadow-2xl rounded-lg p-6 text-center h-[190px] w-full flex flex-col justify-between">
                     {/* Service Icon */}
                     <div className="flex justify-center items-center mb-4">
                       <img
