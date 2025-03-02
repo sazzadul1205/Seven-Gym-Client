@@ -102,3 +102,5 @@ const TrainersDetails = () => {
 };
 
 export default TrainersDetails;
+
+// Remove gender have icons beside the trainers name in the TrainersDetailsHeader component to identify the gender of the trainer

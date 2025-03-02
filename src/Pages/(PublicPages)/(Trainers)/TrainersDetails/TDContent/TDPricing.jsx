@@ -55,9 +55,8 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
       return (
         <Link
           to={`/Trainers/Bookings/${TrainerDetails.name}?classType=${classType}&day=${day}&timeStart=${timeStart}`}
-          className="w-full"
         >
-          <button className="bg-[#F72C5B] text-white px-3 py-2 rounded-2xl hover:bg-[#f72c5b83] w-full">
+          <button className="bg-linear-to-bl hover:bg-linear-to-tr from-[#F72C5B] to-[#e47b93] text-white rounded-2xl w-full md:w-2/3 px-3 py-2">
             Book Session
           </button>
         </Link>
@@ -66,7 +65,7 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
 
     if (classLinks.free.includes(classType)) {
       return (
-        <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full">
+        <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full md:w-2/3">
           Free Class
         </button>
       );
@@ -74,7 +73,7 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
 
     if (classType === "Break") {
       return (
-        <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full">
+        <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full md:w-2/3">
           On a Break
         </button>
       );
@@ -85,7 +84,7 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
         to={`/Classes/${classType.split(" ").slice(0, -1).join(" ")}`}
         className="w-full"
       >
-        <button className="bg-green-500 text-white px-3 py-2 rounded-2xl hover:bg-green-600 w-full">
+        <button className="bg-green-500 text-white px-3 py-2 rounded-2xl hover:bg-green-600 w-full md:w-2/3">
           Visit Class
         </button>
       </Link>
@@ -127,9 +126,11 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
         {/* Schedule Part */}
         <div className="accordion flex flex-col">
           {Object.entries(schedule).map(([day, classes]) => (
-            <div key={day} className="mb-6 collapse collapse-arrow bg-base-200">
+            <div key={day} className="mb-6 collapse collapse-arrow bg-gray-200">
               <input type="radio" name="schedule-accordion" />
-              <p className="collapse-title text-xl font-medium">{day}</p>
+              <p className="collapse-title text-xl text-black font-medium">
+                {day}{" "}
+              </p>
               <div className="collapse-content">
                 {/* Mobile View */}
                 <div className="block sm:hidden">
@@ -160,7 +161,7 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
 
                 {/* Desktop View */}
                 <div className="hidden sm:block">
-                  <table className="table-auto w-full border-collapse border border-gray-300">
+                  <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black">
                     <thead>
                       <tr>
                         <th className="px-4 py-2 border-b bg-gray-100">Time</th>
@@ -180,10 +181,10 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
                             index % 2 === 0 ? "bg-gray-50" : "bg-white"
                           } border-b`}
                         >
-                          <td className="px-4 py-2 text-center">
+                          <td className="px-4 py-2">
                             {classDetails.timeStart} - {classDetails.timeEnd}
                           </td>
-                          <td className="px-4 py-2 text-center">
+                          <td className="px-4 py-2">
                             {classDetails.classType}
                           </td>
                           <td className="px-4 py-2">
@@ -230,3 +231,4 @@ TDPricing.propTypes = {
 };
 
 export default TDPricing;
+
