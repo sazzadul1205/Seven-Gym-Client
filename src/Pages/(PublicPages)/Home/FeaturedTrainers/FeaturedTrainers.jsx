@@ -8,7 +8,7 @@ import TrainerPublicIdCard from "../../../../Shared/Component/TrainerPublicIdCar
 // Main Featured Trainers Component
 const FeaturedTrainers = ({ trainersData }) => {
   return (
-    <div className="py-10 bg-gradient-to-t from-black/20 to-black/40">
+    <div className="py-10 bg-linear-to-t from-black/20 to-black/40">
       <div className="mx-auto max-w-7xl">
         {/* Section Title */}
         <div className="text-center px-6">
@@ -25,7 +25,7 @@ const FeaturedTrainers = ({ trainersData }) => {
         {/* "Find More Teachers" Button */}
         <div className="text-center mt-8">
           <Link to="/Trainers">
-            <button className="bg-gradient-to-bl hover:bg-gradient-to-tr from-[#d1234f] to-[#fc003f] px-14 py-3 text-xl font-semibold text-white rounded-xl shadow-lg hover:shadow-2xl">
+            <button className="bg-linear-to-bl hover:bg-linear-to-tr from-[#d1234f] to-[#fc003f] px-14 py-3 text-xl font-semibold text-white rounded-xl shadow-lg hover:shadow-2xl">
               Find More Teachers
             </button>
           </Link>

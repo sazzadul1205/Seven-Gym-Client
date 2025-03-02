@@ -70,7 +70,7 @@ const ViewAllRecentWorkoutModal = ({ usersData, refetch }) => {
           onClick={() =>
             document.getElementById("View_All_Recent_Workout_Modal").close()
           }
-          className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 focus:outline-none"
+          className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 focus:outline-hidden"
         >
           <ImCross className="text-xl text-gray-500 hover:text-gray-700" />
         </button>

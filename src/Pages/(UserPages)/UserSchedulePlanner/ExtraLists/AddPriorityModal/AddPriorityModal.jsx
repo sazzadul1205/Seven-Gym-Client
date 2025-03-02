@@ -193,7 +193,7 @@ const AddPriorityModal = ({ refetch }) => {
         <div className="mt-6 flex justify-end">
           <button
             type="submit"
-            className="font-semibold bg-gradient-to-br hover:bg-gradient-to-tl from-green-400 to-green-500 rounded-xl shadow-xl px-10 py-3"
+            className="font-semibold bg-linear-to-br hover:bg-linear-to-tl from-green-400 to-green-500 rounded-xl shadow-xl px-10 py-3"
           >
             Add Priority
           </button>

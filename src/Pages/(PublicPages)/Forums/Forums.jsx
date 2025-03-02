@@ -57,7 +57,7 @@ const Forums = () => {
   if (ForumsError || CategoriesError) {
     console.error("Error fetching data:", ForumsError || CategoriesError);
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
         <p className="text-3xl text-red-500 font-bold mb-8">
           {ForumsError
             ? "Failed to load forum threads."
@@ -111,7 +111,7 @@ const Forums = () => {
               placeholder="Search threads by title..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-4 border bg-white shadow-lg rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-4 border bg-white shadow-lg rounded-l-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             />
             <button className="bg-green-500 hover:bg-green-400 p-4 rounded-r-lg">
               <FaSearch className="text-xl text-white" />

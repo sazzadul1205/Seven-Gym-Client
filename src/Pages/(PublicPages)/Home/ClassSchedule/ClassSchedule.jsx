@@ -127,7 +127,7 @@ const ClassSchedule = ({ ourClasses, classDetails }) => {
         {/* Hover Overlay for Join Button */}
         <div className="hidden lg:flex absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition duration-300 items-center justify-center rounded-lg">
           <Link to={`/Classes/${classItem.module}`}>
-            <button className="absolute top-4 right-4 bg-white hover:bg-gradient-to-bl from-[#F72C5B] to-[#ce294f] text-black hover:text-white font-bold px-10 py-3 rounded-lg shadow-lg">
+            <button className="absolute top-4 right-4 bg-white hover:bg-linear-to-bl from-[#F72C5B] to-[#ce294f] text-black hover:text-white font-bold px-10 py-3 rounded-lg shadow-lg">
               <FaUserPlus />
             </button>
           </Link>
@@ -140,7 +140,7 @@ const ClassSchedule = ({ ourClasses, classDetails }) => {
   };
 
   return (
-    <div className="py-10 bg-gradient-to-b from-black/20 to-black/40">
+    <div className="py-10 bg-linear-to-b from-black/20 to-black/40">
       <div className="mx-auto max-w-7xl">
         <div className="container mx-auto text-center">
           {/* Section Title */}

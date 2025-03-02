@@ -39,7 +39,7 @@ const TearUpgradePayment = () => {
   // Error handling
   if (CurrentTierDataError) {
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
         <p className="text-3xl text-red-500 font-bold mb-8">
           Failed to load tier data.
         </p>
@@ -97,7 +97,7 @@ const TearUpgradePayment = () => {
       )}
 
       {!showModal && (
-        <div className="bg-gradient-to-b from-red-400 to-white min-h-screen">
+        <div className="bg-linear-to-b from-red-400 to-white min-h-screen">
           {/* Page Header */}
           <p className="text-3xl font-bold text-center pt-[100px] text-white bg-[#F72C5B] py-11 pb-4">
             Payment for {CurrentTierData?.name || "Loading..."} Tier
@@ -122,7 +122,7 @@ const TearUpgradePayment = () => {
                 </h2>
 
                 {/* List of Tier Perks */}
-                <ul className="flex-grow mb-4">
+                <ul className="grow mb-4">
                   {CurrentTierData?.perks?.map((perk, idx) => (
                     <li
                       key={idx}

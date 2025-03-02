@@ -46,7 +46,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
           <Tooltip id="addTooltip" place="top" content="Add Priority" />
 
           {/* Title in the Center */}
-          <p className="text-center flex-grow">PRIORITY LIST</p>
+          <p className="text-center grow">PRIORITY LIST</p>
 
           {/* Right Button (Mobile & Desktop) */}
           <div className="flex gap-3 sm:gap-6">
@@ -113,7 +113,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
           ) : (
             <div className="flex min-h-[100px] justify-center items-center">
               <button
-                className="px-16 py-2 bg-gradient-to-br hover:bg-gradient-to-tl from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition"
+                className="px-16 py-2 bg-linear-to-br hover:bg-linear-to-tl from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition"
                 onClick={() =>
                   document.getElementById("Add_Priority_Modal").showModal()
                 }
@@ -142,7 +142,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
           <Tooltip id="addToDoTooltip" place="top" content="Add To-Do" />
 
           {/* Title in the Center */}
-          <p className="text-center flex-grow">TO-DO LIST</p>
+          <p className="text-center grow">TO-DO LIST</p>
 
           {/* Right Buttons */}
           <div className="flex gap-3 sm:gap-6">
@@ -207,7 +207,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
           ) : (
             <div className="flex min-h-[100px] justify-center items-center">
               <button
-                className="px-16 py-2 bg-gradient-to-br hover:bg-gradient-to-tl from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition"
+                className="px-16 py-2 bg-linear-to-br hover:bg-linear-to-tl from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition"
                 onClick={() =>
                   document.getElementById("Add_To-Do_Modal").showModal()
                 }
@@ -236,7 +236,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
           <Tooltip id="addTooltip" place="top" content="Add Notes" />
 
           {/* Title in the Center */}
-          <p className="text-center flex-grow">NOTES / REMINDERS LIST</p>
+          <p className="text-center grow">NOTES / REMINDERS LIST</p>
 
           {/* Right Buttons */}
           <div className="flex gap-3 sm:gap-6">
@@ -299,7 +299,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
           ) : (
             <div className="flex min-h-[100px] justify-center items-center">
               <button
-                className="px-16 py-2 bg-gradient-to-br hover:bg-gradient-to-tl from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition"
+                className="px-16 py-2 bg-linear-to-br hover:bg-linear-to-tl from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition"
                 onClick={() =>
                   document.getElementById("Add_Notes_Modal").showModal()
                 }

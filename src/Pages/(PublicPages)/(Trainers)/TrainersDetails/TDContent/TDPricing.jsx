@@ -92,7 +92,7 @@ const TDPricing = ({ TrainerDetails, TrainerSchedule }) => {
   };
 
   return (
-    <div className="bg-white bg-gradient-to-bl from-gray-200 to-gray-300 px-2 lg:px-6 py-6 mt-8 lg:rounded-2xl shadow-lg">
+    <div className="bg-white bg-linear-to-bl from-gray-200 to-gray-300 px-2 lg:px-6 py-6 mt-8 lg:rounded-2xl shadow-lg">
       {/* Pricing Section */}
       <h2 className="text-2xl font-semibold mb-3">
         {TrainerDetails.name || "Unknown Trainer"} Pricing

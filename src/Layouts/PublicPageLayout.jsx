@@ -6,7 +6,7 @@ const PublicPageLayout = () => {
   return (
     <div data-theme="cupcake">
       <Navbar />
-      <main className="bg-gradient-to-l from-[#F72C5B] to-[#f53260] pt-28">
+      <main className="bg-linear-to-l from-[#F72C5B] to-[#f53260] pt-28">
         <Outlet />
       </main>
       <Footer />

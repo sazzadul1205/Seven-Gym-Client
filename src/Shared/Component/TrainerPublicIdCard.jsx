@@ -33,7 +33,7 @@ const TrainerPublicIdCard = ({ trainer }) => {
       </div>
 
       {/* Card Content */}
-      <div className="bg-gradient-to-bl from-gray-200 to-gray-300 border-t-4 border-black">
+      <div className="bg-linear-to-bl from-gray-200 to-gray-300 border-t-4 border-black">
         {/* Content */}
         <div className="px-3 text-left flex-1 pt-2  ">
           {/* Trainer Name & Specialization */}
@@ -64,7 +64,7 @@ const TrainerPublicIdCard = ({ trainer }) => {
         {/* View Details Button */}
         <div className="mt-auto p-4">
           <Link to={`/Trainers/${trainer.name}`}>
-            <button className="w-full border-2 border-red-500 hover:bg-gradient-to-br from-[#d1234f] to-[#eb0b43] py-2 font-semibold rounded-xl hover:text-white">
+            <button className="w-full border-2 border-red-500 hover:bg-linear-to-br from-[#d1234f] to-[#eb0b43] py-2 font-semibold rounded-xl hover:text-white">
               View Details
             </button>
           </Link>

@@ -63,14 +63,14 @@ const TrainersDetails = () => {
 
   return (
     <div
-      className=" bg-fixed bg-cover bg-center bg-gradient-to-b from-white/50 to-white/20"
+      className=" bg-fixed bg-cover bg-center bg-linear-to-b from-white/50 to-white/20"
       style={{
         backgroundImage: `url(${Trainer_Details_Page_Background})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div className=" bg-gradient-to-b from-white/20 to-white/10">
+      <div className=" bg-linear-to-b from-white/20 to-white/10">
         {/* Header Section */}
         <TrainersDetailsHeader TrainerDetails={TrainerDetails} />
 

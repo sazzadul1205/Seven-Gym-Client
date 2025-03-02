@@ -99,7 +99,7 @@ const CDReview = ({ ThisModule }) => {
             {comments.map((comment, index) => (
               <div
                 key={index}
-                className="bg-gray-100 border border-gray-200 p-4 rounded-lg shadow-sm h-[150px] mx-2"
+                className="bg-gray-100 border border-gray-200 p-4 rounded-lg shadow-xs h-[150px] mx-2"
               >
                 <p className="text-lg font-medium text-gray-800">
                   {comment.commenterName}

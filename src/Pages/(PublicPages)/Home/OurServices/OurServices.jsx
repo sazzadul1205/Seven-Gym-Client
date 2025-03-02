@@ -31,7 +31,7 @@ const OurServices = ({ homeServicesData }) => {
   };
 
   return (
-    <div className="py-10 bg-gradient-to-t from-black/20 to-black/40">
+    <div className="py-10 bg-linear-to-t from-black/20 to-black/40">
       <div className="mx-auto max-w-7xl">
         <div className="container mx-auto text-center">
           {/* Section Title */}
@@ -49,7 +49,7 @@ const OurServices = ({ homeServicesData }) => {
                   aria-label={`Learn more about ${service.title}`}
                 >
                   {/* Service Card */}
-                  <div className="bg-gradient-to-tr hover:bg-gradient-to-bl from-gray-200 to-gray-400 shadow-lg hover:shadow-2xl rounded-lg p-6 text-center h-[190px] w-full flex flex-col justify-between">
+                  <div className="bg-linear-to-tr hover:bg-linear-to-bl from-gray-200 to-gray-400 shadow-lg hover:shadow-2xl rounded-lg p-6 text-center h-[190px] w-full flex flex-col justify-between">
                     {/* Service Icon */}
                     <div className="flex justify-center items-center mb-4">
                       <img

@@ -222,7 +222,7 @@ const USAwards = ({ UsersData, refetch }) => {
                       </td>
                       <td className="p-3 border border-gray-200">
                         <button
-                          className="bg-gradient-to-br hover:bg-gradient-to-tl from-[#F72C5B] to-[#f72c5bb4] p-3 rounded-xl w-full"
+                          className="bg-linear-to-br hover:bg-linear-to-tl from-[#F72C5B] to-[#f72c5bb4] p-3 rounded-xl w-full"
                           onClick={() => deleteAward(index, award.awardCode)}
                         >
                           <FaRegTrashAlt className="text-white justify-center mx-auto" />
@@ -274,7 +274,7 @@ const USAwards = ({ UsersData, refetch }) => {
                     </button>
 
                     <button
-                      className="bg-gradient-to-br hover:bg-gradient-to-tl from-[#F72C5B] to-[#f72c5bb4] p-2 "
+                      className="bg-linear-to-br hover:bg-linear-to-tl from-[#F72C5B] to-[#f72c5bb4] p-2 "
                       onClick={() => deleteAward(index, award.awardCode)}
                     >
                       <FaRegTrashAlt className="text-white text-xl" />

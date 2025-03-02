@@ -46,7 +46,7 @@ const UserTierUpgrade = () => {
   // Error handling
   if (UsersError || TierDataError) {
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
         <p className="text-3xl text-red-500 font-bold mb-8">
           Failed to load data. Please try again.
         </p>
@@ -117,7 +117,7 @@ const UserTierUpgrade = () => {
       )}
 
       {!showModal && (
-        <div className="min-h-screen bg-gradient-to-br from-[#F72C5B] to-[#f72c5b7c] pt-5 pb-10">
+        <div className="min-h-screen bg-linear-to-br from-[#F72C5B] to-[#f72c5b7c] pt-5 pb-10">
           {/* Title */}
           <p className="text-3xl font-bold text-center mb-6 pt-[100px] text-white border-b-2 border-white pb-2 mx-4 md:mx-40">
             Choose Your Membership
@@ -144,7 +144,7 @@ const UserTierUpgrade = () => {
                   >
                     {tier.name}
                   </h2>
-                  <ul className="flex-grow mb-4">
+                  <ul className="grow mb-4">
                     {tier.perks.map((perk, idx) => (
                       <li
                         key={idx}

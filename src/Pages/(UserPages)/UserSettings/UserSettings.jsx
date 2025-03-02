@@ -105,7 +105,7 @@ const UserSettings = () => {
   if (UsersError || scheduleDataError) {
     console.error("Error fetching data:", UsersError);
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
         <p className="text-3xl text-red-500 font-bold mb-8">
           Failed to load user settings.
         </p>
@@ -120,7 +120,7 @@ const UserSettings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white bg-gradient-to-br from-[#f72c5b8a] to-[#f72c5b65]">
+    <div className="min-h-screen bg-white bg-linear-to-br from-[#f72c5b8a] to-[#f72c5b65]">
       {/* Header */}
       <div className="bg-[#F72C5B] py-12"></div>
 
@@ -145,8 +145,8 @@ const UserSettings = () => {
               key={tab.id}
               className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold my-1 ${
                 activeTab === tab.id
-                  ? "bg-gradient-to-br from-blue-500 to-blue-300 text-white border border-gray-500"
-                  : "bg-white hover:border-gray-500 hover:bg-gradient-to-br from-blue-400 to-blue-200 hover:text-white"
+                  ? "bg-linear-to-br from-blue-500 to-blue-300 text-white border border-gray-500"
+                  : "bg-white hover:border-gray-500 hover:bg-linear-to-br from-blue-400 to-blue-200 hover:text-white"
               }`}
               onClick={() => setActiveTab(tab.id)}
             >

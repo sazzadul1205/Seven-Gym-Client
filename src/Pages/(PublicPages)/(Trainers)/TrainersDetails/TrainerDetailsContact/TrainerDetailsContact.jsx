@@ -106,7 +106,7 @@ const TrainerDetailsContact = ({ TrainerDetails }) => {
   ].filter((link) => link.url); // Remove empty or undefined links
 
   return (
-    <div className="bg-gradient-to-bl from-gray-100 to-gray-300 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full">
+    <div className="bg-linear-to-bl from-gray-100 to-gray-300 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full">
       {/* Header */}
       <h2 className="text-3xl font-semibold text-gray-800 mb-6">
         Contact Information

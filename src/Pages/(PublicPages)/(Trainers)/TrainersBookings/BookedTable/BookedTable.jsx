@@ -102,7 +102,7 @@ const BookedTable = ({
       <h2 className="text-2xl font-bold mb-4">Bookings List</h2>
 
       {/* Original Schedule Section */}
-      <div className="mb-6 flex-grow">
+      <div className="mb-6 grow">
         {daySchedule.length > 0 || listedSessions.length > 0 ? (
           <table className="min-w-full table-fixed border-collapse">
             <thead>

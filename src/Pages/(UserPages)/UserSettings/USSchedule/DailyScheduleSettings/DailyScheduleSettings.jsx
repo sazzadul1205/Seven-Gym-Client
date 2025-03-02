@@ -481,7 +481,7 @@ const DailyScheduleSettings = ({ MySchedule, refetch }) => {
                           Day has passed. Generate new day.
                         </p>
                         <button
-                          className="text-sm text-white bg-gradient-to-br hover:bg-gradient-to-tl from-red-400 to-red-500 rounded-lg px-5 py-2 pointer-events-auto"
+                          className="text-sm text-white bg-linear-to-br hover:bg-linear-to-tl from-red-400 to-red-500 rounded-lg px-5 py-2 pointer-events-auto"
                           onClick={() =>
                             handleRegenerateClick(dayName, schedule)
                           }

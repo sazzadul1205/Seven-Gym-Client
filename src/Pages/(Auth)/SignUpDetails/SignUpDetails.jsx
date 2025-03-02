@@ -156,7 +156,7 @@ const SignUpDetails = () => {
 
   if (UserExistsError) {
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
         <p className="text-center text-red-500 font-bold text-3xl mb-8">
           Something went wrong. Please reload the page.
         </p>
@@ -173,7 +173,7 @@ const SignUpDetails = () => {
   // If user already exists
   if (UserExists?.exists) {
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
         <div className="text-center text-2xl font-bold text-red-500 mb-6">
           You already have an account.
         </div>
@@ -250,7 +250,7 @@ const SignUpDetails = () => {
             <button
               type="submit"
               disabled={loading} // Disable the button when loading
-              className={`w-1/3 bg-[#F72C5B] hover:bg-[#f72c5bbd] text-white py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#f72c5bbd] ${
+              className={`w-1/3 bg-[#F72C5B] hover:bg-[#f72c5bbd] text-white py-3 rounded-lg font-medium focus:outline-hidden focus:ring-2 focus:ring-[#f72c5bbd] ${
                 loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
@@ -279,7 +279,7 @@ const InputField = ({
     <input
       type={type}
       placeholder={placeholder}
-      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F72C5B]"
+      className="w-full px-4 py-3 border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#F72C5B]"
       {...register(name, { required: `${label} is required` })}
     />
     {errors[name] && (
@@ -305,7 +305,7 @@ const GenderSelectField = ({ register, errors }) => (
       Gender
     </label>
     <select
-      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F72C5B]"
+      className="w-full px-4 py-3 border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#F72C5B]"
       {...register("gender", { required: "Gender is required" })}
     >
       <option value="">Select</option>

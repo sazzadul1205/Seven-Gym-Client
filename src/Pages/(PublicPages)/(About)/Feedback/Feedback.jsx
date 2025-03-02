@@ -75,7 +75,7 @@ const Feedback = () => {
         </p>
 
         {isSubmitSuccessful && (
-          <div className="bg-green-100 text-green-800 text-center p-4 rounded mb-6">
+          <div className="bg-green-100 text-green-800 text-center p-4 rounded-sm mb-6">
             Thank you for your feedback! We appreciate it.
           </div>
         )}
@@ -92,7 +92,7 @@ const Feedback = () => {
             <input
               type="text"
               id="name"
-              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
+              className={`w-full p-3 border rounded-lg focus:outline-hidden focus:ring-2 ${
                 errors.name ? "border-red-500" : "border-gray-300"
               }`}
               placeholder="Enter your name"
@@ -120,7 +120,7 @@ const Feedback = () => {
             <input
               type="email"
               id="email"
-              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
+              className={`w-full p-3 border rounded-lg focus:outline-hidden focus:ring-2 ${
                 errors.email ? "border-red-500" : "border-gray-300"
               }`}
               placeholder="Enter your email"
@@ -149,7 +149,7 @@ const Feedback = () => {
             </label>
             <textarea
               id="feedback"
-              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
+              className={`w-full p-3 border rounded-lg focus:outline-hidden focus:ring-2 ${
                 errors.feedback ? "border-red-500" : "border-gray-300"
               }`}
               rows="4"
@@ -179,7 +179,7 @@ const Feedback = () => {
             </label>
             <select
               id="rating"
-              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
+              className={`w-full p-3 border rounded-lg focus:outline-hidden focus:ring-2 ${
                 errors.rating ? "border-red-500" : "border-gray-300"
               }`}
               {...register("rating", { required: "Rating is required" })}

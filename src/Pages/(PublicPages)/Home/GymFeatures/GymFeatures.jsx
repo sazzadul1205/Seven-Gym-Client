@@ -3,7 +3,7 @@ import Title from "../../../../Shared/Component/Title";
 
 const GymFeatures = ({ gymFeaturesData }) => {
   return (
-    <section className="py-10 bg-gradient-to-b from-black/20 to-black/40">
+    <section className="py-10 bg-linear-to-b from-black/20 to-black/40">
       <div className="max-w-7xl mx-auto text-center">
         {/* Section Title */}
         <Title titleContent="Our Gym Features" />
@@ -13,7 +13,7 @@ const GymFeatures = ({ gymFeaturesData }) => {
           {gymFeaturesData.map(({ _id, icon, title, description }) => (
             <div
               key={_id}
-              className="bg-gradient-to-tr hover:bg-gradient-to-bl from-gray-200 to-gray-400 shadow-lg hover:shadow-2xl rounded-lg text-center flex flex-col items-center p-5 transition duration-300"
+              className="bg-linear-to-tr hover:bg-linear-to-bl from-gray-200 to-gray-400 shadow-lg hover:shadow-2xl rounded-lg text-center flex flex-col items-center p-5 transition duration-300"
             >
               {/* Feature Icon */}
               <img

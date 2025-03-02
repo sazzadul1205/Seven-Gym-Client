@@ -174,7 +174,7 @@ const ManageTimeModal = ({ refetch }) => {
           onChange={(e) =>
             setStartTime(`${e.target.value} ${startTime.split(" ")[1] || "AM"}`)
           }
-          className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+          className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-red-400"
         >
           {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
             <option key={hour} value={hour}>
@@ -189,7 +189,7 @@ const ManageTimeModal = ({ refetch }) => {
           onChange={(e) =>
             setStartTime(`${startTime.split(" ")[0] || "12"} ${e.target.value}`)
           }
-          className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+          className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-red-400"
         >
           <option value="AM">AM</option>
           <option value="PM">PM</option>
@@ -201,7 +201,7 @@ const ManageTimeModal = ({ refetch }) => {
           onChange={(e) =>
             setEndTime(`${e.target.value} ${endTime.split(" ")[1] || "AM"}`)
           }
-          className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+          className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-red-400"
         >
           {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
             <option key={hour} value={hour}>
@@ -216,7 +216,7 @@ const ManageTimeModal = ({ refetch }) => {
           onChange={(e) =>
             setEndTime(`${endTime.split(" ")[0] || "12"} ${e.target.value}`)
           }
-          className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+          className="border rounded-lg px-3 py-2 text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-red-400"
         >
           <option value="AM">AM</option>
           <option value="PM">PM</option>
@@ -225,7 +225,7 @@ const ManageTimeModal = ({ refetch }) => {
 
       {/* Confirm Button */}
       <button
-        className="bg-gradient-to-tr from-red-400 to-red-500 hover:from-red-500 hover:to-red-400 text-white font-semibold rounded-xl shadow-xl hover:shadow-2xl py-3 px-10 transition-all duration-300"
+        className="bg-linear-to-tr from-red-400 to-red-500 hover:from-red-500 hover:to-red-400 text-white font-semibold rounded-xl shadow-xl hover:shadow-2xl py-3 px-10 transition-all duration-300"
         onClick={generateSchedule}
       >
         Confirm Time

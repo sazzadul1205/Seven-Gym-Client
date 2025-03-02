@@ -51,7 +51,7 @@ const BannerSection = ({ homeBannerData }) => {
         </p>
         <a
           href={homeBannerData[currentIndex].link}
-          className="bg-gradient-to-br hover:bg-gradient-to-tl from-red-400 to-red-600 text-white py-2 px-16 rounded text-lg"
+          className="bg-linear-to-br hover:bg-linear-to-tl from-red-400 to-red-600 text-white py-2 px-16 rounded-sm text-lg"
         >
           {homeBannerData[currentIndex].buttonName}
         </a>

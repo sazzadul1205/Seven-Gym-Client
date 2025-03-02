@@ -15,7 +15,7 @@ const PromotionsSection = ({ promotionsData }) => {
   };
 
   return (
-    <div className="py-10 bg-gradient-to-t from-black/20 to-black/40">
+    <div className="py-10 bg-linear-to-t from-black/20 to-black/40">
       <div className="max-w-7xl mx-auto text-center">
         {/* Section Title */}
         <div className="px-6">
@@ -27,7 +27,7 @@ const PromotionsSection = ({ promotionsData }) => {
           {promotionsData.map((promo) => (
             <div
               key={promo._id}
-              className="bg-gradient-to-br from-gray-50 to-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col"
+              className="bg-linear-to-br from-gray-50 to-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col"
             >
               {/* Promotion Image */}
               <img
@@ -45,7 +45,7 @@ const PromotionsSection = ({ promotionsData }) => {
               {/* "Learn More" Button */}
               <div className="p-4">
                 <button
-                  className="w-full border-2 border-red-500 hover:bg-gradient-to-br from-[#d1234f] to-[#eb0b43] py-2 font-semibold rounded-xl hover:text-white transition duration-300"
+                  className="w-full border-2 border-red-500 hover:bg-linear-to-br from-[#d1234f] to-[#eb0b43] py-2 font-semibold rounded-xl hover:text-white transition duration-300"
                   onClick={() => handleOpenModal(promo)}
                 >
                   Learn More

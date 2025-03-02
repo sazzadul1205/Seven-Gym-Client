@@ -29,7 +29,7 @@ const TrainersDetailsAbout = ({ TrainerDetails }) => {
   ];
 
   return (
-    <div className="bg-gradient-to-bl from-gray-100 to-gray-300 p-5 rounded-lg shadow-lg max-w-4xl mx-auto space-y-4">
+    <div className="bg-linear-to-bl from-gray-100 to-gray-300 p-5 rounded-lg shadow-lg max-w-4xl mx-auto space-y-4">
       {/* Trainer Name & Bio Section */}
       <div className="space-y-4">
         <h2 className="text-3xl font-semibold mb-3">
@@ -45,7 +45,7 @@ const TrainersDetailsAbout = ({ TrainerDetails }) => {
         {details.map(({ label, value }) => (
           <div
             key={label}
-            className="bg-gradient-to-bl hover:bg-gradient-to-tr from-white/20 to-gray-200 p-4 rounded-lg shadow-sm hover:shadow-2xl border-2 border-black"
+            className="bg-linear-to-bl hover:bg-linear-to-tr from-white/20 to-gray-200 p-4 rounded-lg shadow-xs hover:shadow-2xl border-2 border-black"
           >
             <h3 className="font-semibold text-xl">{label} :</h3>
             <p className="text-lg italic">{value}</p>

@@ -219,7 +219,7 @@ const ClassesDetailsModal = ({ ThisModule, user, UsersData }) => {
               id="agree"
               checked={agreed}
               onChange={(e) => setAgreed(e.target.checked)}
-              className="w-5 h-5 text-[#F72C5B] border-gray-300 rounded focus:ring-[#F72C5B]"
+              className="w-5 h-5 text-[#F72C5B] border-gray-300 rounded-sm focus:ring-[#F72C5B]"
             />
             <label htmlFor="agree" className="ml-2 text-lg text-gray-700">
               I agree to the terms and conditions
@@ -231,7 +231,7 @@ const ClassesDetailsModal = ({ ThisModule, user, UsersData }) => {
               id="understandRisks"
               checked={understandRisks}
               onChange={(e) => setUnderstandRisks(e.target.checked)}
-              className="w-5 h-5 text-[#F72C5B] border-gray-300 rounded focus:ring-[#F72C5B]"
+              className="w-5 h-5 text-[#F72C5B] border-gray-300 rounded-sm focus:ring-[#F72C5B]"
             />
             <label
               htmlFor="understandRisks"

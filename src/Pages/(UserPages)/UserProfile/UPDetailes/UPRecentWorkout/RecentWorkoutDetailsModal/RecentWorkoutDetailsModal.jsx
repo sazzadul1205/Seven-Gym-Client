@@ -24,7 +24,7 @@ const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
 
 const RecentWorkoutDetailsModal = ({ selectedWorkout }) => {
   return (
-    <div className="modal-box bg-gradient-to-br from-gray-300 to-white rounded-lg shadow-xl max-w-md mx-auto p-6">
+    <div className="modal-box bg-linear-to-br from-gray-300 to-white rounded-lg shadow-xl max-w-md mx-auto p-6">
       {/* Modal Header */}
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-2xl font-bold text-gray-800">
@@ -34,7 +34,7 @@ const RecentWorkoutDetailsModal = ({ selectedWorkout }) => {
           onClick={() =>
             document.getElementById("Recent_Workout_Details_Modal").close()
           }
-          className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 focus:outline-none"
+          className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 focus:outline-hidden"
         >
           <ImCross className="text-xl text-gray-500 hover:text-gray-700" />
         </button>

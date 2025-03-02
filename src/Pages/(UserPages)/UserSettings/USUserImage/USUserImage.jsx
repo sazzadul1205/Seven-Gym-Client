@@ -266,7 +266,7 @@ const USUserImage = ({ UsersData, refetch }) => {
               className={`${
                 isLoading
                   ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gradient-to-br from-green-600 to-green-400 hover:from-green-500 hover:to-green-300"
+                  : "bg-linear-to-br from-green-600 to-green-400 hover:from-green-500 hover:to-green-300"
               } text-white font-semibold px-5 py-3 rounded-lg`}
               onClick={() => handleSaveImage("background")}
               disabled={isLoading}
@@ -298,7 +298,7 @@ const USUserImage = ({ UsersData, refetch }) => {
               className={`${
                 isLoading
                   ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gradient-to-br from-green-600 to-green-400 hover:from-green-500 hover:to-green-300"
+                  : "bg-linear-to-br from-green-600 to-green-400 hover:from-green-500 hover:to-green-300"
               } text-white font-semibold px-5 py-3 rounded-lg`}
               onClick={() => handleSaveImage("profile")}
               disabled={isLoading}

@@ -38,7 +38,7 @@ const WelcomeSection = ({ homeWelcomeData }) => {
           {/* Join Now Button */}
           <a
             href="/join-now"
-            className="bg-blue-500 hover:bg-gradient-to-l from-blue-700 to-blue-400 text-white py-3 px-6 rounded-lg text-sm md:text-lg transition duration-300 flex items-center justify-between"
+            className="bg-blue-500 hover:bg-linear-to-l from-blue-700 to-blue-400 text-white py-3 px-6 rounded-lg text-sm md:text-lg transition duration-300 flex items-center justify-between"
           >
             Join Now
             <FaChevronRight className="ml-2" />

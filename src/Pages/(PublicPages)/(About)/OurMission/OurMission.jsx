@@ -23,7 +23,7 @@ const OurMission = () => {
   if (OurMissionsError) {
     console.error("Error fetching data:", OurMissionsError);
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
         <p className="text-3xl text-red-500 font-bold mb-8">
           Failed to load forum threads.
         </p>
@@ -102,7 +102,7 @@ const OurMission = () => {
             {mission?.coreValues.map((value, index) => (
               <div
                 key={index}
-                className="flex gap-6 bg-gray-100 p-5 rounded-lg shadow-sm hover:shadow-lg transition-shadow hover:scale-105"
+                className="flex gap-6 bg-gray-100 p-5 rounded-lg shadow-xs hover:shadow-lg transition-shadow hover:scale-105"
               >
                 <img src={value.img} alt={value.title} className="w-[100px]" />
                 <div>

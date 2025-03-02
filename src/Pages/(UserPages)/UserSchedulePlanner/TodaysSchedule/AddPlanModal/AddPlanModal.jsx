@@ -281,7 +281,7 @@ const AddPlanModal = ({ selectedID, refetch }) => {
                     isSubmitting
                       ? "bg-gray-400 text-gray-200 cursor-not-allowed"
                       : allAvailable
-                      ? "bg-gradient-to-br from-green-600 to-green-400 hover:bg-gradient-to-tl text-gray-100 cursor-pointer"
+                      ? "bg-linear-to-br from-green-600 to-green-400 hover:bg-linear-to-tl text-gray-100 cursor-pointer"
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
             disabled={!allAvailable || isSubmitting}

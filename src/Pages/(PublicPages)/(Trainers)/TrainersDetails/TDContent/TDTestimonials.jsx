@@ -83,7 +83,7 @@ const TDTestimonials = ({ TrainerDetails }) => {
         {TrainerDetails.testimonials.map((testimonial, index) => (
           <div
             key={index}
-            className="bg-gray-100 border border-gray-200 p-6 rounded-lg shadow-sm mx-2 h-[180px]"
+            className="bg-gray-100 border border-gray-200 p-6 rounded-lg shadow-xs mx-2 h-[180px]"
           >
             <h3 className="font-semibold text-lg text-gray-700">
               {testimonial.clientName}

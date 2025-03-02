@@ -25,7 +25,7 @@ const AboutUs = () => {
 
   if (AboutUsDataError) {
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
         <p className="text-center text-red-500 font-bold text-3xl mb-8">
           Something went wrong. Please reload the page.
         </p>
@@ -152,7 +152,7 @@ const AboutUs = () => {
         </p>
         <a
           href={AboutUsData.callToAction.buttonLink}
-          className="px-6 py-3 bg-white text-yellow-500 font-semibold rounded-lg shadow hover:bg-gray-200 transition"
+          className="px-6 py-3 bg-white text-yellow-500 font-semibold rounded-lg shadow-sm hover:bg-gray-200 transition"
         >
           {AboutUsData.callToAction.buttonText}
         </a>

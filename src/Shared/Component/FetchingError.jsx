@@ -3,7 +3,7 @@ import { IoWarningOutline } from "react-icons/io5";
 const FetchingError = () => {
   return (
     <div
-      className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white animate-fadeIn"
+      className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white animate-fadeIn"
       aria-live="polite"
     >
       {/* Warning Icon */}

@@ -102,7 +102,7 @@ const Login = () => {
             <input
               type="email"
               placeholder="name@mail.com"
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F72C5B]"
+              className="w-full px-4 py-3 border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#F72C5B]"
               {...register("email", {
                 required: "Email is required",
                 pattern: {
@@ -126,7 +126,7 @@ const Login = () => {
             <input
               type="password"
               placeholder="********"
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F72C5B]"
+              className="w-full px-4 py-3 border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#F72C5B]"
               {...register("password", {
                 required: "Password is required",
                 minLength: {
@@ -146,7 +146,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#f72c5bbd] ${
+            className={`w-full py-3 rounded-lg font-medium focus:outline-hidden focus:ring-2 focus:ring-[#f72c5bbd] ${
               loading
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-[#F72C5B] hover:bg-[#f72c5bbd] text-white"

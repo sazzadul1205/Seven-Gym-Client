@@ -209,7 +209,7 @@ const TUPaymentBox = ({ CurrentTierData }) => {
         ].map((option, index) => (
           <div
             key={index}
-            className={`px-4 py-6 border-4 rounded-xl shadow-lg bg-gradient-to-br from-white to-blue-50 transition-all duration-300 cursor-pointer ${
+            className={`px-4 py-6 border-4 rounded-xl shadow-lg bg-linear-to-br from-white to-blue-50 transition-all duration-300 cursor-pointer ${
               selectedDuration?.duration === option.duration
                 ? "border-blue-500 shadow-2xl scale-105"
                 : "border-gray-200 hover:border-blue-300 hover:shadow-xl"
@@ -261,7 +261,7 @@ const TUPaymentBox = ({ CurrentTierData }) => {
               {...register("cardholderName", {
                 required: "Cardholder name is required.",
               })}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               placeholder="Enter cardholder name"
             />
             {errors.cardholderName && (

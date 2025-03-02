@@ -108,7 +108,7 @@ const ClassesDetails = () => {
     UsersDataError
   ) {
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
         <p className="text-center text-red-500 font-bold text-3xl mb-8">
           Something went wrong. Please reload the page.
         </p>
@@ -125,7 +125,7 @@ const ClassesDetails = () => {
   const ThisModule = ModuleData[0];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f72c5b9c] to-[#f72c5b44] pb-5">
+    <div className="min-h-screen bg-linear-to-br from-[#f72c5b9c] to-[#f72c5b44] pb-5">
       {/* Header Image */}
       <div className="relative">
         <img

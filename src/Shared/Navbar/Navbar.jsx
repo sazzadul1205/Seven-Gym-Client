@@ -179,7 +179,7 @@ const Navbar = () => {
                     </div>
                     {openSubmenu === item.name && (
                       <ul
-                        className="absolute dropdown-content menu left-0 w-52 bg-[#f35f81] text-white z-[1] p-2 shadow-2xl mt-2"
+                        className="absolute dropdown-content menu left-0 w-52 bg-[#f35f81] text-white z-1 p-2 shadow-2xl mt-2"
                         ref={menuRef}
                       >
                         {item.submenu.map((subItem) => (

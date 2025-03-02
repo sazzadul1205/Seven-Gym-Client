@@ -79,7 +79,7 @@ const UserProfile = () => {
       UsersError || TrainerDetailsError || ClassesError
     );
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
         <p className="text-3xl text-red-500 font-bold mb-8">
           {UsersError
             ? "Failed to load forum threads."

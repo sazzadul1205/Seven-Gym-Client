@@ -37,7 +37,7 @@ const PageNotFound = () => {
           {/* Link to navigate back to the homepage */}
           <Link to={"/"} className="items-center">
             {/* Button to return to home page with gradient hover effect */}
-            <button className="bg-gradient-to-br hover:bg-gradient-to-tl from-[#F72C5B] to-[#f72c5b7a] mt-5 py-3 px-10 font-bold text-white rounded-full">
+            <button className="bg-linear-to-br hover:bg-linear-to-tl from-[#F72C5B] to-[#f72c5b7a] mt-5 py-3 px-10 font-bold text-white rounded-full">
               Return To Home
             </button>
           </Link>

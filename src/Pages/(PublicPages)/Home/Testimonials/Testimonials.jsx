@@ -32,7 +32,7 @@ const Testimonials = ({ testimonialsData }) => {
   const handleSliderPlay = () => sliderRef.current?.slickPlay();
 
   return (
-    <section className="py-10 bg-gradient-to-t from-black/20 to-black/40">
+    <section className="py-10 bg-linear-to-t from-black/20 to-black/40">
       <div className="max-w-7xl mx-auto text-center">
         {/* Section Title */}
         <Title titleContent="What Our Clients Say About Us" />
@@ -80,7 +80,7 @@ const Testimonials = ({ testimonialsData }) => {
         {/* Read More Stories Button */}
         <div className="mt-8">
           <Link to="/About/Testimonials">
-            <button className="bg-gradient-to-bl hover:bg-gradient-to-tr from-[#d1234f] to-[#fc003f] px-14 py-3 text-xl font-semibold text-white rounded-xl shadow-lg hover:shadow-2xl transition duration-300">
+            <button className="bg-linear-to-bl hover:bg-linear-to-tr from-[#d1234f] to-[#fc003f] px-14 py-3 text-xl font-semibold text-white rounded-xl shadow-lg hover:shadow-2xl transition duration-300">
               Read More Stories
             </button>
           </Link>

@@ -46,7 +46,7 @@ const PromotionContentModal = ({ promo }) => {
           <div className="py-2">
             <p className="text-sm">
               <strong>Promo Code:</strong>{" "}
-              <span className="font-mono bg-gray-200 px-2 py-1 rounded text-red-600">
+              <span className="font-mono bg-gray-200 px-2 py-1 rounded-sm text-red-600">
                 {promo.promoCode}
               </span>
             </p>

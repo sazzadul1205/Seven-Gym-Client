@@ -203,7 +203,7 @@ const USUserInfo = ({ UsersData, refetch }) => {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="bg-gradient-to-br from-green-600 to-green-400 hover:from-green-500 hover:to-green-300 text-white font-semibold px-12 py-3 rounded-lg"
+              className="bg-linear-to-br from-green-600 to-green-400 hover:from-green-500 hover:to-green-300 text-white font-semibold px-12 py-3 rounded-lg"
             >
               Save Settings
             </button>

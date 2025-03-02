@@ -12,7 +12,7 @@ const CDPrice = ({ ThisModule }) => {
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
         {/* Registration Fee */}
-        <div className="flex flex-col items-center text-center bg-gray-100 p-4 rounded-lg shadow-sm">
+        <div className="flex flex-col items-center text-center bg-gray-100 p-4 rounded-lg shadow-xs">
           <h4 className="text-lg font-semibold text-gray-700">
             Registration Fee
           </h4>
@@ -22,7 +22,7 @@ const CDPrice = ({ ThisModule }) => {
         </div>
 
         {/* Daily Class Fee */}
-        <div className="flex flex-col items-center text-center bg-gray-100 p-4 rounded-lg shadow-sm">
+        <div className="flex flex-col items-center text-center bg-gray-100 p-4 rounded-lg shadow-xs">
           <h4 className="text-lg font-semibold text-gray-700">
             Daily Class Fee
           </h4>
@@ -32,7 +32,7 @@ const CDPrice = ({ ThisModule }) => {
         </div>
 
         {/* Weekly Class Fee */}
-        <div className="flex flex-col items-center text-center bg-gray-100 p-4 rounded-lg shadow-sm">
+        <div className="flex flex-col items-center text-center bg-gray-100 p-4 rounded-lg shadow-xs">
           <h4 className="text-lg font-semibold text-gray-700">
             Weekly Class Fee
           </h4>
@@ -42,7 +42,7 @@ const CDPrice = ({ ThisModule }) => {
         </div>
 
         {/* Monthly Class Fee */}
-        <div className="flex flex-col items-center text-center bg-gray-100 p-4 rounded-lg shadow-sm">
+        <div className="flex flex-col items-center text-center bg-gray-100 p-4 rounded-lg shadow-xs">
           <h4 className="text-lg font-semibold text-gray-700">
             Monthly Class Fee
           </h4>

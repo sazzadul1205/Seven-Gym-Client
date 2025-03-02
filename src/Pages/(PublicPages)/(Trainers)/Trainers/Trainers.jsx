@@ -118,7 +118,7 @@ const Trainers = () => {
         </div>
 
         {/* Trainers Cards Section */}
-        <div className="w-full lg:w-3/4 lg:ml-auto overflow-y-auto bg-gradient-to-b from-white/50 to-white/10">
+        <div className="w-full lg:w-3/4 lg:ml-auto overflow-y-auto bg-linear-to-b from-white/50 to-white/10">
           {/* Title (Mobile View) */}
           <div className="px-4 py-5 flex lg:hidden justify-between items-center bg-white/20 text-white">
             <p className="text-3xl font-bold text-black border-b-2 border-black">

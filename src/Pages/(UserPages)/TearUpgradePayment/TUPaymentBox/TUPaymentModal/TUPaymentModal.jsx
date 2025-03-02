@@ -32,7 +32,7 @@ const TUPaymentModal = ({ PaymentID }) => {
   // Error handling
   if (PaymentIDDataError) {
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-[#ffffff]">
+      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-[#ffffff]">
         <p className="text-3xl text-red-500 font-bold mb-8">
           Failed to load payment data.
         </p>

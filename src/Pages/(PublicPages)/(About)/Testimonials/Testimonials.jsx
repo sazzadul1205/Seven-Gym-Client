@@ -24,7 +24,7 @@ const Testimonials = () => {
 
   if (TestimonialsDataError) {
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-300 to-white">
+      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
         <p className="text-center text-red-500 font-bold text-3xl mb-8">
           Something went wrong. Please reload the page.
         </p>

@@ -42,7 +42,7 @@ const GalleryPreview = ({ galleryData }) => {
   }
 
   return (
-    <div className="py-10 bg-gradient-to-b from-black/20 to-black/40">
+    <div className="py-10 bg-linear-to-b from-black/20 to-black/40">
       <div className="max-w-7xl mx-auto text-center">
         {/* Section Title */}
         <div className="px-6">
@@ -92,7 +92,7 @@ const GalleryPreview = ({ galleryData }) => {
         {/* Button: View Full Gallery */}
         <div className="text-center mt-8">
           <Link to="/Gallery">
-            <button className="bg-gradient-to-bl hover:bg-gradient-to-tr from-[#d1234f] to-[#fc003f] px-14 py-3 text-xl font-semibold text-white rounded-xl shadow-lg hover:shadow-2xl">
+            <button className="bg-linear-to-bl hover:bg-linear-to-tr from-[#d1234f] to-[#fc003f] px-14 py-3 text-xl font-semibold text-white rounded-xl shadow-lg hover:shadow-2xl">
               View Full Gallery
             </button>
           </Link>

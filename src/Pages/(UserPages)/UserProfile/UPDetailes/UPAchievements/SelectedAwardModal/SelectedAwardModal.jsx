@@ -8,7 +8,7 @@ const SelectedAwardModal = ({ award }) => {
       <button
         type="button"
         onClick={() => document.getElementById("Selected_Award_Modal").close()}
-        className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-200 transition-colors duration-200 focus:outline-none"
+        className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-200 transition-colors duration-200 focus:outline-hidden"
       >
         <ImCross className="text-lg text-gray-500 hover:text-gray-700" />
       </button>
