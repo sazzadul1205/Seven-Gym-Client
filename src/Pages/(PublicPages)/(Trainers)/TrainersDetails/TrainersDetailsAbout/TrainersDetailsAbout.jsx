@@ -19,7 +19,6 @@ const TrainersDetailsAbout = ({ TrainerDetails }) => {
       label: "Age",
       value: TrainerDetails.age ? `${TrainerDetails.age} years` : "N/A",
     },
-    { label: "Gender", value: TrainerDetails.gender || "Not specified" },
     {
       label: "Available Days",
       value: TrainerDetails.availableDays?.length
