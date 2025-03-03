@@ -106,76 +106,76 @@ const TrainerDetailsContact = ({ TrainerDetails }) => {
   ].filter((link) => link.url); // Remove empty or undefined links
 
   return (
-    <div className="bg-linear-to-bl from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full">
+    <div className="bg-gradient-to-bl from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full">
       {/* Header */}
-      <h2 className="text-3xl font-semibold text-gray-800 mb-6">
+      <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">
         Contact Information
       </h2>
 
-      {/* Phone Section */}
-      {contact.phone && (
-        <div className="mb-6 flex gap-5 items-center">
-          <h3 className="font-semibold text-xl text-gray-700 flex items-center">
-            <FaPhoneAlt className="mr-3 text-green-600" />
-            Phone:
-          </h3>
-          <p className="text-lg text-gray-600">{contact.phone}</p>
-        </div>
-      )}
+      {/* Content */}
 
-      {/* Email Section */}
-      {contact.email && (
-        <div className="mb-6 flex gap-5 items-center">
-          <h3 className="font-semibold text-xl text-gray-700 flex items-center">
-            <FaEnvelope className="mr-3 text-red-500" />
-            Email:
-          </h3>
-          <a
-            href={`mailto:${contact.email}`}
-            className="text-lg text-blue-500 hover:underline"
-          >
-            {contact.email}
-          </a>
-        </div>
-      )}
+      <div className="space-y-6">
+        {/* Contact Details */}
+        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Phone Section */}
+          {contact.phone && (
+            <div className="flex items-center space-x-3 bg-white p-4 rounded-lg shadow-md">
+              <FaPhoneAlt className="text-green-600 text-xl" />
+              <p className="text-gray-700 font-semibold">{contact.phone}</p>
+            </div>
+          )}
 
-      {/* Website Section */}
-      {contact.website && (
-        <div className="mb-6 flex gap-5 items-center">
-          <h3 className="font-semibold text-xl text-gray-700 flex items-center">
-            <FaGlobe className="mr-3 text-blue-500" />
-            Website:
-          </h3>
-          <a
-            href={contact.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-lg text-blue-500 hover:underline"
-          >
-            {contact.website}
-          </a>
-        </div>
-      )}
+          {/* Email Section */}
+          {contact.email && (
+            <div className="flex items-center space-x-3 bg-white p-4 rounded-lg shadow-md">
+              <FaEnvelope className="text-red-500 text-xl" />
+              <a
+                href={`mailto:${contact.email}`}
+                className="text-blue-500 font-semibold hover:underline"
+              >
+                {contact.email}
+              </a>
+            </div>
+          )}
 
-      {/* Social Links Section */}
-      {socialLinks.length > 0 && (
-        <div className="mb-6">
-          <h3 className="font-semibold text-xl text-gray-700">Social Links</h3>
-          <div className="flex flex-wrap gap-4 mt-4">
-            {socialLinks.map(({ name, url, icon, color }) => (
-              <button
-                key={name}
-                href={url}
+          {/* Website Section - Takes full width only if it exists */}
+          {contact.website && (
+            <div className="col-span-1 lg:col-span-2 flex items-center space-x-3 bg-white p-4 rounded-lg shadow-md">
+              <FaGlobe className="text-blue-500 text-xl" />
+              <a
+                href={contact.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`flex items-center justify-center bg-gray-300 rounded-full shadow-md hover:bg-gray-400 p-4 transition-all ${color}`}
+                className="text-blue-500 font-semibold hover:underline truncate"
               >
-                <span className="text-3xl">{icon}</span>
-              </button>
-            ))}
-          </div>
+                {contact.website}
+              </a>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Social Links Section */}
+        {socialLinks.length > 0 && (
+          <div>
+            <h3 className="text-xl font-semibold text-gray-700 text-center">
+              Social Links
+            </h3>
+            <div className="flex flex-wrap justify-center gap-4 mt-4">
+              {socialLinks.map(({ name, url, icon, color }) => (
+                <button
+                  key={name}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex items-center justify-center bg-white hover:bg-gray-300 rounded-full shadow-md hover:shadow-lg p-4 transition-all duration-300 ${color}`}
+                >
+                  <span className="text-3xl">{icon}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
