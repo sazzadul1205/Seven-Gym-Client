@@ -17,7 +17,8 @@ const Classes = () => {
     error: Our_ClassesDataError,
   } = useQuery({
     queryKey: ["Our_ClassesData"],
-    queryFn: () => axiosPublic.get(`/Our_Classes`).then((res) => res.data),
+    queryFn: () =>
+      axiosPublic.get(`/Our_Classes_Schedule`).then((res) => res.data),
   });
 
   // Fetching data for Our_Classes_Module
@@ -28,7 +29,7 @@ const Classes = () => {
   } = useQuery({
     queryKey: ["Our_Classes_ModuleData"],
     queryFn: () =>
-      axiosPublic.get(`/Our_Classes/modules`).then((res) => res.data),
+      axiosPublic.get(`/Our_Classes_Schedule/modules`).then((res) => res.data),
   });
 
   // Fetching data for Class_Details
@@ -69,6 +70,8 @@ const Classes = () => {
       </div>
     );
   }
+
+  console.log(Our_ClassesData);
 
   return (
     <div
