@@ -81,7 +81,7 @@ const Login = () => {
       }}
     >
       {/* Login card container */}
-      <div className="w-full max-w-md shadow-md rounded-tl-[50px] rounded-br-[50px] p-10 bg-white/80 ">
+      <div className="w-full max-w-lg shadow-md rounded-tl-[50px] rounded-br-[50px] p-10 bg-white/80 ">
         {/* Heading section */}
         <div className="pb-5">
           <h4 className="text-3xl font-bold text-center text-[#F72C5B]">
@@ -155,7 +155,7 @@ const Login = () => {
             {loading ? (
               <div className="flex items-center justify-center space-x-2">
                 <span className="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></span>
-                <span>Logging in...</span>
+                <span>Logging In ...</span>
               </div>
             ) : (
               "Log In"

@@ -95,7 +95,7 @@ const SignUp = () => {
               <input
                 type="email"
                 placeholder="name@mail.com"
-                className="w-full px-4 py-3 border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#F72C5B]"
+                className="input w-full text-black bg-white rounded-2xl shadow-lg hover:shadow-xl focus:shadow-xl"
                 {...register("email", {
                   required: "Email is required",
                   pattern: {
@@ -119,7 +119,7 @@ const SignUp = () => {
               <input
                 type="password"
                 placeholder="********"
-                className="w-full px-4 py-3 border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#F72C5B]"
+                className="input w-full text-black bg-white rounded-2xl shadow-lg hover:shadow-xl focus:shadow-xl"
                 {...register("password", {
                   required: "Password is required",
                   minLength: {
@@ -143,7 +143,7 @@ const SignUp = () => {
               <input
                 type="password"
                 placeholder="********"
-                className="w-full px-4 py-3 border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#F72C5B]"
+                className="input w-full text-black bg-white rounded-2xl shadow-lg hover:shadow-xl focus:shadow-xl"
                 {...register("confirmPassword", {
                   required: "Confirm Password is required",
                   validate: (value) =>
@@ -161,27 +161,37 @@ const SignUp = () => {
             <button
               type="submit"
               disabled={loading} // Disable button while loading
-              className={`w-full ${
+              className={`w-full text-4xl font-bold rounded-xl py-3 ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-[#F72C5B] hover:bg-[#f72c5bbd]"
-              } text-white py-3 rounded-lg font-medium focus:outline-hidden focus:ring-2 focus:ring-[#f72c5bbd]`}
+                  : "bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white"
+              }`}
             >
-              {loading ? "Signing Up..." : "Sign Up"}
+              {loading ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></span>
+                  <span>Sign Up ...</span>
+                </div>
+              ) : (
+                "Sign Up"
+              )}
             </button>
 
             {/* Login link for existing users */}
-            <p className="font-semibold">
+            <p className="font-semibold text-black pt-2">
               Already have an Account?{" "}
-              <Link to={"/Login"} className="text-[#F72C5B] hover:underline">
+              <Link
+                to={"/Login"}
+                className="text-[#F72C5B] font-semibold hover:font-bold hover:underline"
+              >
                 Login
               </Link>
             </p>
           </form>
 
-          {/* Divider for social sign-up options */}
-          <div className="flex w-full flex-col border-opacity-50">
-            <div className="divider font-bold">OR</div>
+          {/* Divider for social login options */}
+          <div className="divider divider-neutral text-black font-semibold">
+            OR
           </div>
 
           {/* Social login component */}
