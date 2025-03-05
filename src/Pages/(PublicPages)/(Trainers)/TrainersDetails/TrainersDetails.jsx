@@ -3,12 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 
 import Trainer_Details_Page_Background from "../../../../assets/Trainers-Details-Background/Trainer_Details_Page_Background.jpg";
 
-import TDPricing from "./TDContent/TDPricing";
-import TDDetails from "./TDContent/TDDetails";
-import TDTestimonials from "./TDContent/TDTestimonials";
 import TrainersDetailsAbout from "./TrainersDetailsAbout/TrainersDetailsAbout";
 import TrainersDetailsHeader from "./TrainersDetailsHeader/TrainersDetailsHeader";
+import TrainerDetailsDetails from "./TrainerDetailsDetails/TrainerDetailsDetails";
 import TrainerDetailsContact from "./TrainerDetailsContact/TrainerDetailsContact";
+import TrainerDetailsSchedule from "./TrainerDetailsSchedule/TrainerDetailsSchedule";
+import TrainerDetailsTestimonials from "./TrainerDetailsTestimonials/TrainerDetailsTestimonials";
 
 import Loading from "../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
@@ -43,7 +43,7 @@ const TrainersDetails = () => {
     queryKey: ["Trainer_ScheduleData", decodedName],
     queryFn: () =>
       axiosPublic
-        .get(`/Trainers_Schedule/byName?name=${decodedName}`)
+        .get(`/Trainers_Schedule/ByTrainerName?trainerName=${decodedName}`)
         .then((res) => res.data),
   });
 
@@ -85,16 +85,16 @@ const TrainersDetails = () => {
           </div>
 
           {/* Trainer Pricing and Availability */}
-          <TDPricing
+          <TrainerDetailsSchedule
             TrainerDetails={TrainerDetails}
             TrainerSchedule={TrainerSchedule}
           />
 
           {/* Trainer Certifications & Details */}
-          <TDDetails TrainerDetails={TrainerDetails} />
+          <TrainerDetailsDetails TrainerDetails={TrainerDetails} />
 
           {/* Trainer Testimonials */}
-          <TDTestimonials TrainerDetails={TrainerDetails} />
+          <TrainerDetailsTestimonials TrainerDetails={TrainerDetails} />
         </div>
       </div>
     </div>
@@ -102,5 +102,3 @@ const TrainersDetails = () => {
 };
 
 export default TrainersDetails;
-
-// Remove gender have icons beside the trainers name in the TrainersDetailsHeader component to identify the gender of the trainer
