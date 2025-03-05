@@ -93,24 +93,28 @@ const SocialLinks = () => {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {/* Google Login Button */}
-      <button
-        onClick={handleGoogleLogin}
-        className="flex border-2 border-[#F72C5B] bg-white hover:bg-[#F72C5B] hover:text-white rounded-xl w-full py-3 justify-center gap-5"
-      >
-        <FcGoogle className="text-xl" />
-        <span className="font-semibold">Sign Up With Google</span>
-      </button>
+      <div>
+        <button
+          onClick={handleGoogleLogin}
+          className="flex bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white rounded-xl w-full py-3 justify-center gap-5"
+        >
+          <FcGoogle className="text-xl" />
+          <span className="font-semibold">Sign Up With Google</span>
+        </button>
+      </div>
 
       {/* Facebook Login Button */}
-      <button
-        onClick={handleFacebookLogin}
-        className="flex border-2 border-[#F72C5B] bg-white hover:bg-[#F72C5B] hover:text-white rounded-xl w-full py-3 justify-center gap-5"
-      >
-        <FaFacebookSquare className="text-xl text-[#1877F2]" />
-        <span className="font-semibold">Sign Up With Facebook</span>
-      </button>
+      <div>
+        <button
+          onClick={handleFacebookLogin}
+          className="flex bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white rounded-xl w-full py-3 justify-center gap-5"
+        >
+          <FaFacebookSquare className="text-xl text-[#1877F2]" />
+          <span className="font-semibold">Sign Up With Facebook</span>
+        </button>
+      </div>
     </div>
   );
 };

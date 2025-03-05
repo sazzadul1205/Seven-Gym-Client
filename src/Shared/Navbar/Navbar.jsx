@@ -148,7 +148,7 @@ const Navbar = () => {
         isScrolled ? "bg-[#F72C5B]" : "bg-transparent"
       }`}
     >
-      <div className="navbar flex-none w-full justify-between px-0 lg:px-24">
+      <div className="navbar flex-none w-full justify-between items-center px-0 lg:px-24">
         {/* Navbar Start - Logo & Mobile Menu */}
         <div className="navbar-start flex items-center">
           <label
@@ -254,7 +254,7 @@ const Navbar = () => {
                           "Logging Out..."
                         ) : (
                           <>
-                            <ImExit  />
+                            <ImExit />
                             Logout
                           </>
                         )}
@@ -266,7 +266,7 @@ const Navbar = () => {
             </div>
           ) : (
             <Link to="/Login">
-              <button className="bg-blue-400 hover:bg-blue-700 w-28 py-2 text-white font-semibold">
+              <button className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-500 to-blue-300 py-3 px-14 text-white font-semibold">
                 Login
               </button>
             </Link>

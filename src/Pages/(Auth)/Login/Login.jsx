@@ -81,13 +81,13 @@ const Login = () => {
       }}
     >
       {/* Login card container */}
-      <div className="w-full max-w-md shadow-md rounded-tl-[50px] rounded-br-[50px] p-10 bg-white bg-opacity-80">
+      <div className="w-full max-w-md shadow-md rounded-tl-[50px] rounded-br-[50px] p-10 bg-white/80 ">
         {/* Heading section */}
         <div className="pb-5">
           <h4 className="text-3xl font-bold text-center text-[#F72C5B]">
             Welcome Back
           </h4>
-          <p className="text-lg italic text-center font-semibold">
+          <p className="text-lg text-black italic text-center font-semibold">
             Please Login
           </p>
         </div>
@@ -101,8 +101,8 @@ const Login = () => {
             </label>
             <input
               type="email"
-              placeholder="name@mail.com"
-              className="w-full px-4 py-3 border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#F72C5B]"
+              placeholder="Example@gmail.com"
+              className="input w-full text-black bg-white rounded-2xl shadow-lg hover:shadow-xl focus:shadow-xl"
               {...register("email", {
                 required: "Email is required",
                 pattern: {
@@ -126,7 +126,7 @@ const Login = () => {
             <input
               type="password"
               placeholder="********"
-              className="w-full px-4 py-3 border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#F72C5B]"
+              className="input w-full text-black bg-white rounded-2xl shadow-lg hover:shadow-xl focus:shadow-xl"
               {...register("password", {
                 required: "Password is required",
                 minLength: {
@@ -146,10 +146,10 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg font-medium focus:outline-hidden focus:ring-2 focus:ring-[#f72c5bbd] ${
+            className={`w-full text-4xl font-bold rounded-xl py-3 ${
               loading
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#F72C5B] hover:bg-[#f72c5bbd] text-white"
+                : "bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white"
             }`}
           >
             {loading ? (
@@ -163,18 +163,19 @@ const Login = () => {
           </button>
 
           {/* Sign-up link */}
-          <p className="font-semibold">
+          <p className="font-semibold text-black pt-2">
             Don&apos;t have an Account? Please{" "}
-            <Link to="/SignUp" className="text-[#F72C5B] hover:underline">
+            <Link
+              to="/SignUp"
+              className="text-[#F72C5B] font-semibold hover:font-bold hover:underline"
+            >
               Sign Up
             </Link>
           </p>
         </form>
 
         {/* Divider for social login options */}
-        <div className="flex w-full flex-col border-opacity-50">
-          <div className="divider font-bold">OR</div>
-        </div>
+        <div className="divider divider-neutral text-black font-semibold">OR</div>
 
         {/* Social login component */}
         <SocialLinks />
