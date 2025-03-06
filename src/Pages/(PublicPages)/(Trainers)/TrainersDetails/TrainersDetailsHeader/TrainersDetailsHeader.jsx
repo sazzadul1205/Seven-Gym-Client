@@ -50,7 +50,7 @@ const TrainersDetailsHeader = ({ TrainerDetails }) => {
   const { icon } = getGenderIcon(TrainerDetails?.gender);
 
   return (
-    <div className="bg-gray-500/50 mx-auto justify-between text-center py-10">
+    <div className="bg-linear-to-b from-gray-500/80 to-gray-500/50 mx-auto justify-between text-center py-10">
       {/* Trainer Profile Image */}
       <img
         src={TrainerDetails?.imageUrl || "/default-profile.png"}

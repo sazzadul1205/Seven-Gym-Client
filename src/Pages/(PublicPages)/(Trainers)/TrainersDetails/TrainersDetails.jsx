@@ -75,8 +75,8 @@ const TrainersDetails = () => {
         <TrainersDetailsHeader TrainerDetails={TrainerDetails} />
 
         {/* Content Section */}
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-linear-to-t from-gray-500/50 to-gray-500/30 ">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Trainer Bio and Experience */}
             <TrainersDetailsAbout TrainerDetails={TrainerDetails} />
 

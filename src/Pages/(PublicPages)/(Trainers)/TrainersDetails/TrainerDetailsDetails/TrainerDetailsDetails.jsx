@@ -9,7 +9,7 @@ import {
 
 const TrainerDetailsDetails = ({ TrainerDetails }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-3">
+    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5 pt-3">
       {/* Trainer Certifications Section */}
       <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full space-y-6">
         <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center">

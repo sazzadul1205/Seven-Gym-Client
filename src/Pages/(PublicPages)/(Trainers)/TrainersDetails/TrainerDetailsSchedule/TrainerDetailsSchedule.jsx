@@ -90,7 +90,7 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
   };
 
   return (
-    <div className="bg-linear-to-bl from-gray-200 to-gray-400 px-2 lg:px-6 py-6 mt-8 lg:rounded-2xl shadow-lg">
+    <div className="max-w-7xl mx-auto bg-linear-to-bl from-gray-200 to-gray-400 px-2 lg:px-6 py-6 mt-8 lg:rounded-2xl shadow-lg">
       {/* Weekly Schedule Section */}
       <div className="">
         <h2 className="text-2xl text-black font-semibold pb-3 border-b-2 border-black">

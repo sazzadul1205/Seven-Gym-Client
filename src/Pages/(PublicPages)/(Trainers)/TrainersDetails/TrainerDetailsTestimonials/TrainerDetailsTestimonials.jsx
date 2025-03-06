@@ -66,7 +66,7 @@ const TrainerDetailsTestimonials = ({ TrainerDetails }) => {
       </h2>
 
       {/* Average Rating Display */}
-      <div className="flex items-center space-x-4 mb-3 py-1 bg-white">
+      <div className="flex items-center space-x-4 mb-3 py-1 bg-white border-2 border-gray-500 px-2">
         <div className="text-3xl font-bold text-yellow-500">
           {averageRating}
         </div>
