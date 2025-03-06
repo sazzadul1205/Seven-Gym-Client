@@ -1,100 +1,113 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
-import { FiCamera } from "react-icons/fi";
 import Cropper from "react-easy-crop";
+import { FiCamera } from "react-icons/fi";
 
 const ImageCropper = ({ onImageCropped }) => {
-  // State to handle image, crop settings, and crop visibility
-  const [image, setImage] = useState(null); // The selected image file
-  const [crop, setCrop] = useState({ x: 0, y: 0 }); // Position of the crop area
-  const [zoom, setZoom] = useState(1); // Zoom level for cropping
-  const [rotation, setRotation] = useState(0); // Rotation angle for the image
-  const [cropArea, setCropArea] = useState(null); // The actual crop area in pixels
-  const [showCropper, setShowCropper] = useState(false); // To toggle the visibility of the cropper
+  // State for image cropping
+  const [imageSrc, setImageSrc] = useState(null); // Stores image URL for cropper
+  const [zoom, setZoom] = useState(1); // Zoom level
+  const [rotation, setRotation] = useState(0); // Rotation angle
+  const [crop, setCrop] = useState({ x: 0, y: 0 }); // Crop position
+  const [cropArea, setCropArea] = useState(null); // Cropped area in pixels
+  const [showCropper, setShowCropper] = useState(false); // Show/hide cropper
 
-  // Handle image selection from file input
+  // Handle file selection
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImage(file); // Save the selected image file
-      setShowCropper(true); // Show the cropper interface
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        setImageSrc(fileReader.result); // Convert file to data URL
+        setShowCropper(true);
+      };
+      fileReader.readAsDataURL(file);
     }
   };
 
-  // Handle crop completion event to save the cropped area
-  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-    setCropArea(croppedAreaPixels); // Save the cropped area dimensions
+  // Handle crop completion
+  const onCropComplete = useCallback((_, croppedAreaPixels) => {
+    setCropArea(croppedAreaPixels);
   }, []);
 
-  // Function to generate the cropped image as a Blob
+  // Generate cropped image
   const getCroppedImage = async () => {
-    if (!image || !cropArea) return; // Check if the image or crop area is invalid
+    if (!imageSrc || !cropArea) return;
 
-    const canvas = document.createElement("canvas"); // Create a new canvas to render the cropped image
-    const img = document.createElement("img"); // Create an image element
-    img.src = URL.createObjectURL(image); // Convert the file to an image URL
+    const canvas = document.createElement("canvas");
+    const img = document.createElement("img");
+    img.src = imageSrc;
 
     return new Promise((resolve) => {
       img.onload = () => {
-        const ctx = canvas.getContext("2d"); // Get the canvas 2d context
-        const scaleX = img.naturalWidth / img.width; // Calculate scale for X axis
-        const scaleY = img.naturalHeight / img.height; // Calculate scale for Y axis
+        const ctx = canvas.getContext("2d");
+        const scaleX = img.naturalWidth / img.width;
+        const scaleY = img.naturalHeight / img.height;
 
-        // Set canvas size to match the cropped area dimensions
         canvas.width = cropArea.width;
         canvas.height = cropArea.height;
 
-        ctx.save(); // Save current context
-        ctx.translate(canvas.width / 2, canvas.height / 2); // Center the crop on the canvas
-        ctx.rotate((rotation * Math.PI) / 180); // Apply rotation
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((rotation * Math.PI) / 180);
         ctx.drawImage(
           img,
-          cropArea.x * scaleX, // Apply crop position X
-          cropArea.y * scaleY, // Apply crop position Y
-          cropArea.width * scaleX, // Apply crop width
-          cropArea.height * scaleY, // Apply crop height
-          -canvas.width / 2, // Adjust to center the cropped area
-          -canvas.height / 2, // Adjust to center the cropped area
-          canvas.width, // Set the canvas width
-          canvas.height // Set the canvas height
+          cropArea.x * scaleX,
+          cropArea.y * scaleY,
+          cropArea.width * scaleX,
+          cropArea.height * scaleY,
+          -canvas.width / 2,
+          -canvas.height / 2,
+          canvas.width,
+          canvas.height
         );
-        ctx.restore(); // Restore the context
+        ctx.restore();
 
-        // Convert the canvas to a Blob and pass it to the parent component
         canvas.toBlob(
           (blob) => {
-            onImageCropped(blob); // Pass the cropped image Blob
-            setShowCropper(false); // Close the cropper interface
-            resolve(blob); // Resolve the promise with the Blob
+            onImageCropped(blob);
+            setShowCropper(false); // Hide cropper after saving
+            resolve(blob);
           },
-          "image/jpeg", // Image format
-          1 // Quality (1 = high)
+          "image/jpeg",
+          1
         );
       };
     });
   };
 
+  // Clean up URL when unmounting
+  useEffect(() => {
+    return () => {
+      if (imageSrc) URL.revokeObjectURL(imageSrc);
+    };
+  }, [imageSrc]);
+
   return (
     <div>
-      {/* Image Preview and Upload Input */}
+      <label className="text-2xl font-semibold text-gray-700 pt-5">
+        Profile Image
+      </label>
+
+      {/* Image Preview & Upload */}
       <div
         className="w-[250px] h-[250px] rounded-full mx-auto border-2 border-dashed border-gray-500 flex items-center justify-center relative overflow-hidden hover:scale-105"
         style={{ backgroundColor: "#f9f9f9" }}
       >
-        {/* Display the image or a placeholder */}
-        {image && !showCropper ? (
+        {/* Display cropped image if available, else show upload icon */}
+        {imageSrc && !showCropper ? (
           <img
-            src={URL.createObjectURL(image)} // Display the selected image
-            alt="Cropped Profile"
+            src={imageSrc}
+            alt="Profile"
             className="w-full h-full object-cover rounded-full"
           />
         ) : (
           <div className="flex flex-col items-center text-gray-400">
             <FiCamera size={40} />
-            <p>Drag & Drop or Click to Browse</p>
+            <p>Click to Upload</p>
           </div>
         )}
-        {/* Hidden input for file selection */}
+        {/* Hidden input field */}
         <input
           type="file"
           accept="image/*"
@@ -103,23 +116,22 @@ const ImageCropper = ({ onImageCropped }) => {
         />
       </div>
 
-      {/* Image Cropper Modal */}
-      <div>
+      {/* Cropper Modal */}
+      <div className="relative">
         {showCropper && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40">
             <div className="bg-white p-5 rounded-lg shadow-lg relative w-full max-w-4xl">
               <div className="relative h-96">
-                {/* Cropper Component */}
                 <Cropper
-                  image={URL.createObjectURL(image)} // Create an object URL for the image
-                  crop={crop} // Set the crop position
-                  zoom={zoom} // Set the zoom level
-                  rotation={rotation} // Set the rotation angle
-                  aspect={1 / 1} // Set aspect ratio for the crop
-                  onCropChange={setCrop} // Update crop position
-                  onZoomChange={setZoom} // Update zoom level
-                  onRotationChange={setRotation} // Update rotation angle
-                  onCropComplete={onCropComplete} // Update crop area dimensions
+                  image={imageSrc}
+                  crop={crop}
+                  zoom={zoom}
+                  rotation={rotation}
+                  aspect={1 / 1}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onRotationChange={setRotation}
+                  onCropComplete={onCropComplete}
                 />
               </div>
               <div className="flex justify-between items-center mt-4 space-x-4">
@@ -132,21 +144,22 @@ const ImageCropper = ({ onImageCropped }) => {
                     max="3"
                     step="0.1"
                     value={zoom}
-                    onChange={(e) => setZoom(e.target.value)}
+                    onChange={(e) => setZoom(Number(e.target.value))}
                     className="ml-2"
                   />
                 </div>
-                {/* Buttons for Cancel and Save */}
-                <div className="flex space-x-2">
+
+                {/* Buttons */}
+                <div className="flex space-x-2 gap-4">
                   <button
-                    className="bg-gray-500 text-white px-4 py-2 rounded-lg"
-                    onClick={() => setShowCropper(false)} // Close the cropper
+                    className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-500 to-gray-300 text-white px-4 py-2 rounded-lg w-[100px]"
+                    onClick={() => setShowCropper(false)}
                   >
                     Cancel
                   </button>
                   <button
-                    className="bg-[#F72C5B] text-white px-4 py-2 rounded-lg"
-                    onClick={getCroppedImage} // Save the cropped image
+                    className="bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white px-4 py-2 rounded-lg w-[100px]"
+                    onClick={getCroppedImage}
                   >
                     Save
                   </button>

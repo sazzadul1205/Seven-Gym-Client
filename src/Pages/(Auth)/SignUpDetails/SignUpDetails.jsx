@@ -14,6 +14,7 @@ import FitnessGoalsSelector from "./FitnessGoalsSelector/FitnessGoalsSelector";
 
 // Background Image
 import LoginBack from "../../../assets/Background-Auth/LoginBack.jpeg";
+import FetchingError from "../../../Shared/Component/FetchingError";
 
 // Constants for image hosting API
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
@@ -155,19 +156,7 @@ const SignUpDetails = () => {
   }
 
   if (UserExistsError) {
-    return (
-      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
-        <p className="text-center text-red-500 font-bold text-3xl mb-8">
-          Something went wrong. Please reload the page.
-        </p>
-        <button
-          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
-          onClick={() => window.location.reload()}
-        >
-          Reload
-        </button>
-      </div>
-    );
+    return <FetchingError />;
   }
 
   // If user already exists
@@ -199,7 +188,7 @@ const SignUpDetails = () => {
         backgroundImage: `url(${LoginBack})`,
       }}
     >
-      <div className="w-full max-w-7xl shadow-md rounded-tl-[50px] rounded-br-[50px] p-10 bg-white bg-opacity-90">
+      <div className="w-full max-w-7xl shadow-md rounded-tl-[50px] rounded-br-[50px] p-10 bg-white/90">
         {/* Forms */}
         <form onSubmit={handleSubmit(confirmAndSubmit)}>
           {/* Content */}
@@ -217,6 +206,7 @@ const SignUpDetails = () => {
                 register={register}
                 errors={errors}
                 name="fullName"
+                type="text"
               />
             </div>
 
@@ -228,6 +218,7 @@ const SignUpDetails = () => {
                 register={register}
                 errors={errors}
                 name="phone"
+                type="tel"
               />
               <InputField
                 label="Date of Birth"
@@ -250,8 +241,10 @@ const SignUpDetails = () => {
             <button
               type="submit"
               disabled={loading} // Disable the button when loading
-              className={`w-1/3 bg-[#F72C5B] hover:bg-[#f72c5bbd] text-white py-3 rounded-lg font-medium focus:outline-hidden focus:ring-2 focus:ring-[#f72c5bbd] ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
+              className={`w-1/3 text-4xl font-bold rounded-xl py-3 ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white"
               }`}
             >
               {loading ? "Submitting..." : "Create Account"}
@@ -270,7 +263,7 @@ const InputField = ({
   register,
   errors,
   name,
-  type = "text",
+  type,
 }) => (
   <div>
     <label className="block text-gray-700 font-semibold text-xl pb-2">
@@ -279,7 +272,7 @@ const InputField = ({
     <input
       type={type}
       placeholder={placeholder}
-      className="w-full px-4 py-3 border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#F72C5B]"
+      className="input w-full text-black bg-white rounded-2xl shadow-lg hover:shadow-xl focus:shadow-xl"
       {...register(name, { required: `${label} is required` })}
     />
     {errors[name] && (
@@ -305,7 +298,7 @@ const GenderSelectField = ({ register, errors }) => (
       Gender
     </label>
     <select
-      className="w-full px-4 py-3 border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#F72C5B]"
+      className="input w-full text-black bg-white rounded-2xl shadow-lg hover:shadow-xl focus:shadow-xl"
       {...register("gender", { required: "Gender is required" })}
     >
       <option value="">Select</option>
@@ -324,7 +317,5 @@ GenderSelectField.propTypes = {
   register: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
 };
-
-export { InputField, GenderSelectField };
 
 export default SignUpDetails;

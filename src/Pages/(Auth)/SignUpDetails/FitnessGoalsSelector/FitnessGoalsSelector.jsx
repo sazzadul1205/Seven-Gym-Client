@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import Select from "react-select";
+import { ImCross } from "react-icons/im";
 
 const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
   // Initialize the list of all available fitness goals
@@ -103,6 +104,21 @@ const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
     "Mood Boost": "#FFB6C1",
   };
 
+  const getTextColor = (bgColor) => {
+    if (!bgColor) return "#FFFFFF"; // Default to white text
+
+    // Convert hex color to RGB
+    const hex = bgColor.replace("#", "");
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    // Calculate brightness (YIQ formula)
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+    return brightness > 128 ? "#000000" : "#FFFFFF"; // Dark text for bright colors, white text for dark colors
+  };
+
   // Use useCallback to memoize this function and avoid unnecessary re-renders
   const handleDrop = useCallback(
     (event) => {
@@ -138,26 +154,34 @@ const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
 
   return (
     <div className="space-y-4">
-      {/* My Goals Section */}
       <div
         className="w-full"
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
       >
-        <h5 className="text-lg font-semibold py-2">My Goals</h5>
-        <div className="flex flex-wrap gap-2 bg-white py-4 px-2">
-          {selectedGoals.map((goal) => (
-            <span
-              key={goal}
-              className="px-5 py-2 rounded-full cursor-pointer text-white font-semibold"
-              style={{
-                backgroundColor: goalColors[goal] || "#F72C5B", // Default color if not in the map
-              }}
-              onClick={() => removeGoal(goal)}
-            >
-              {goal} ✕
-            </span>
-          ))}
+        <label className="block text-gray-700 font-semibold text-xl pb-2">
+          My Goals
+        </label>
+        <div className="flex flex-wrap bg-white gap-2 py-4 px-2">
+          {selectedGoals.map((goal) => {
+            const bgColor = goalColors[goal] || "#F72C5B";
+            const textColor = getTextColor(bgColor);
+
+            return (
+              <div
+                key={goal}
+                className="flex cursor-pointer font-semibold items-center rounded-full px-5 py-2 gap-5 hover:opacity-90"
+                style={{
+                  backgroundColor: bgColor,
+                  
+                  color: textColor, // Set text color dynamically
+                }}
+                onClick={() => removeGoal(goal)}
+              >
+                <span>{goal}</span> <ImCross />
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -168,7 +192,7 @@ const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
           onChange={handleSelect}
           placeholder="Search and select goals..."
           isSearchable
-          className="basic-multi-select"
+          className="basic-multi-select text-black"
         />
       </div>
     </div>
