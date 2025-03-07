@@ -1,11 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
-import Background from "../../../../assets/Background.jpeg";
-import Banner from "../../../../assets/ClassesWall.jpg";
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-import Loading from "../../../../Shared/Loading/Loading";
-import Title from "../../../../Shared/Component/Title";
+
+import { useQuery } from "@tanstack/react-query";
+
+import Classes_Background from "../../../../assets/Classes-Background/Classes_Background.jpg";
+
 import AllClasses from "./AllClasses/AllClasses";
+import Title from "../../../../Shared/Component/Title";
+import Loading from "../../../../Shared/Loading/Loading";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import FetchingError from "../../../../Shared/Component/FetchingError";
 
 const Classes = () => {
   const axiosPublic = useAxiosPublic();
@@ -56,98 +59,73 @@ const Classes = () => {
     Class_DetailsDataError ||
     Our_Classes_ModuleDataError
   ) {
-    return (
-      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
-        <p className="text-center text-red-500 font-bold text-3xl mb-8">
-          Something went wrong. Please reload the page.
-        </p>
-        <button
-          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
-          onClick={() => window.location.reload()}
-        >
-          Reload
-        </button>
-      </div>
-    );
+    return <FetchingError />;
   }
-
-  console.log(Our_ClassesData);
 
   return (
     <div
-      className="pb-16"
+      className=" bg-fixed bg-cover bg-center"
       style={{
-        backgroundImage: `url(${Background})`,
+        backgroundImage: `url(${Classes_Background})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div className="bg-[#F72C5B] py-11"></div>
+      <div className="bg-gradient-to-b from-gray-500/50 to-gray-500/20">
+        {/* Class Modules Section */}
+        <section className="max-w-7xl mx-auto pt-10">
+          {/* Section Title */}
+          <div className="mb-6 px-6">
+            <Title titleContent="Our Class Modules" />
+          </div>
 
-      {/* Banner */}
-      <div className="relative">
-        {/* Banner Image */}
-        <img
-          src={Banner}
-          alt={Banner}
-          className="w-full h-[250px] md:h-[300px] lg:h-[450px] object-cover"
-        />
+          {/* Modules Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 px-5 gap-0 lg:gap-2">
+            {Our_Classes_ModuleData.map((module, index) => {
+              // Find matching class details
+              const classDetail = Class_DetailsData.find(
+                (classItem) => classItem.module === module
+              );
 
-        {/* Classes at the bottom */}
-        <div className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 text-white">
-          <h3 className="text-lg sm:text-2xl font-bold text-center bg-[#F72C5B] px-10 sm:px-24 rounded-full">
-            Classes
-          </h3>
-        </div>
+              return (
+                <div
+                  key={index}
+                  className="relative border-2 border-blue-500 bg-white hover:bg-gray-300 text-black px-6 py-3 rounded-lg group transition-all duration-300"
+                >
+                  <Link to={`/Classes/${module}`}>
+                    {/* Display Module Icon (if available) */}
+                    {classDetail?.icon && (
+                      <img
+                        src={classDetail.icon}
+                        alt={module}
+                        className="w-16 h-16 mx-auto mb-2"
+                      />
+                    )}
+
+                    {/* Module Name */}
+                    <div className="text-center text-sm font-semibold">
+                      {module}
+                    </div>
+
+                    {/* "Join Now" Hover Effect */}
+                    <div className="absolute inset-0 bg-black/50 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span className="text-white font-bold text-lg">
+                        Join Now
+                      </span>
+                    </div>
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Pass the other data to the AllClasses component */}
+        <AllClasses
+          OurClasses={Our_ClassesData}
+          ClassDetails={Class_DetailsData}
+        ></AllClasses>
       </div>
-
-      {/* Module Section */}
-      <div className="pt-10">
-        <div className="mb-6 px-6">
-          <Title titleContent={"Our Class Modules"} />
-        </div>
-        <div className="justify-center gap-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 px-5 max-w-[1200px] mx-auto">
-          {Our_Classes_ModuleData.map((module, index) => {
-            const classDetail = Class_DetailsData.find(
-              (classItem) => classItem.module === module
-            ); // Find the matching class detail for the module
-
-            return (
-              <div
-                key={index}
-                className="relative border-2 border-blue-500 bg-white hover:bg-gray-300 text-black px-6 py-3 rounded-lg group"
-              >
-                {/* Image */}
-                <Link to={`/Classes/${module}`}>
-                  {classDetail?.icon && (
-                    <img
-                      src={classDetail.icon}
-                      alt={module}
-                      className="w-16 h-16 mx-auto mb-2"
-                    />
-                  )}
-
-                  {/* Module Name */}
-                  <div className="text-center text-sm">{module}</div>
-
-                  {/* Join Now Overlay */}
-                  <div className="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="text-white font-bold text-lg">
-                      Join Now
-                    </span>
-                  </div>
-                </Link>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Pass the other data to the AllClasses component */}
-      <AllClasses
-        OurClasses={Our_ClassesData}
-        ClassDetails={Class_DetailsData}
-      ></AllClasses>
     </div>
   );
 };

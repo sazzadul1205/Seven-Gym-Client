@@ -1,97 +1,95 @@
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
+
+import Classes_Background from "../../../../assets/Classes-Background/Classes_Background.jpg";
+
 import CDTrainers from "./CDContent/CDTrainers";
-import CDPrice from "./CDContent/CDPrice";
 import CDSchedule from "./CDContent/CDSchedule";
 import CDReview from "./CDContent/CDReview";
 import CDMore from "./CDContent/CDMore";
-import CDContent from "./CDContent/CDContent";
-import ClassesDetailsModal from "./ClassesDetailsModal/ClassesDetailsModal";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../Hooks/useAuth";
 import Loading from "../../../../Shared/Loading/Loading";
-
+import FetchingError from "../../../../Shared/Component/FetchingError";
+import ClassesDetailsContent from "./ClassesDetailsContent/ClassesDetailsContent";
+import Classes from "../Classes/Classes";
+import ClassesDetailsKeyFeatures from "./ClassesDetailsKeyFeatures/ClassesDetailsKeyFeatures";
+import ClassesDetailsDescription from "./ClassesDetailsDescription/ClassesDetailsDescription";
+import ClassesDetailsPrice from "./ClassesDetailsPrice/ClassesDetailsPrice";
 
 const ClassesDetails = () => {
   const axiosPublic = useAxiosPublic();
-  let { module } = useParams();
+  const { module } = useParams();
   const { user } = useAuth();
 
-  // Fetching data for Module
+  // Fetch Module Data
   const {
     data: ModuleData,
     isLoading: ModuleDataIsLoading,
     error: ModuleDataError,
   } = useQuery({
-    queryKey: ["ModuleData"],
-    queryFn: () =>
+    queryKey: ["ModuleData", module], // Depend on `module`
+    queryFn: async () =>
       axiosPublic
         .get(`/Class_Details?module=${module}`)
         .then((res) => res.data),
   });
 
-  // Fetching data for ClassSchedule
+  // Fetch Class Schedule
   const {
     data: ClassScheduleData,
     isLoading: ClassScheduleDataIsLoading,
     error: ClassScheduleDataError,
   } = useQuery({
-    queryKey: ["ClassScheduleData"],
-    queryFn: () =>
+    queryKey: ["ClassScheduleData", module],
+    queryFn: async () =>
       axiosPublic
         .get(`/Our_Classes/searchByModule?moduleName=${module}`)
         .then((res) => res.data),
   });
 
-  // Derived teacher names from ModuleData
+  // Extract teacher names dynamically for Trainers Data
   const teacherNames =
-    ModuleData && ModuleData.length > 0
+    ModuleData?.length > 0
       ? [
           ModuleData[0].classTeacher,
           ...ModuleData[0].helperTeachers,
           ModuleData[0].fallbackTeacher,
-        ]
+        ].filter(Boolean) // Remove null/undefined values
       : [];
 
-  // Fetching data for Trainers (using teacherNames dynamically)
+  // Fetch Trainers Data
   const {
     data: TrainersData,
     isLoading: TrainersDataIsLoading,
     error: TrainersDataError,
   } = useQuery({
     queryKey: ["TrainersData", teacherNames],
-    queryFn: () =>
+    queryFn: async () =>
       axiosPublic
-        .get(`/Trainers/searchByNames?names=${teacherNames.join(",")}`)
+        .get(`/Trainers/SearchTrainersByNames?names=${teacherNames.join(",")}`)
         .then((res) => res.data),
-    enabled: teacherNames.length > 0, // Prevent fetching if teacherNames are empty
+    enabled: teacherNames.length > 0, // Fetch only if teachers exist
   });
 
-  // Fetching data for UsersData
+  // Fetch User Data (Only if user exists)
   const {
     data: UsersData,
     isLoading: UsersDataIsLoading,
     error: UsersDataError,
   } = useQuery({
-    queryKey: ["UsersData"],
-    queryFn: () => {
-      if (!user) {
-        return null; // Return null if no user
-      }
-      return axiosPublic
+    queryKey: ["UsersData", user?.email],
+    queryFn: async () =>
+      axiosPublic
         .get(`/Users?email=${user.email}`)
         .then((res) => res.data)
-        .catch((error) => {
-          if (error.response?.status === 404) {
-            return null; // Handle 404 as no data found
-          }
-          throw error; // Rethrow other errors
-        });
-    },
-    enabled: !!user, // Only fetch if user exists
+        .catch((error) =>
+          error.response?.status === 404 ? null : Promise.reject(error)
+        ),
+    enabled: !!user, // Fetch only if user exists
   });
 
-  // Handle loading and error states
+  // Handle Loading State
   if (
     ModuleDataIsLoading ||
     TrainersDataIsLoading ||
@@ -101,98 +99,73 @@ const ClassesDetails = () => {
     return <Loading />;
   }
 
+  // Handle Errors
   if (
     ModuleDataError ||
     TrainersDataError ||
     ClassScheduleDataError ||
     UsersDataError
   ) {
-    return (
-      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
-        <p className="text-center text-red-500 font-bold text-3xl mb-8">
-          Something went wrong. Please reload the page.
-        </p>
-        <button
-          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
-          onClick={() => window.location.reload()}
-        >
-          Reload
-        </button>
-      </div>
-    );
+    return <FetchingError />;
   }
 
-  const ThisModule = ModuleData[0];
+  const ThisModule = ModuleData[0]; // Extract the main module data
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#f72c5b9c] to-[#f72c5b44] pb-5">
-      {/* Header Image */}
-      <div className="relative">
+    <div
+      className="min-h-screen bg-fixed bg-cover bg-center "
+      style={{
+        backgroundImage: `url(${Classes_Background})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Header Section */}
+      <div className="relative w-full h-[300px] md:h-[400px] overflow-hidden">
+        {/* Background Image with Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-transparent z-10"></div>
         <img
           src={ThisModule.mainImage}
           alt={ThisModule.module}
-          className="w-full h-[300px] md:h-[400px] object-cover brightness-75"
+          className="w-full h-full object-cover brightness-75"
         />
-        <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center">
-          <h1 className="text-3xl md:text-5xl text-white font-bold bg-black bg-opacity-50 px-6 py-2 rounded-lg text-center">
+        {/* Centered Title */}
+        <div className="absolute inset-0 flex justify-center items-center z-20">
+          <h1 className="text-3xl md:text-5xl text-white font-extrabold shadow-md px-6 py-3 bg-black/50 rounded-lg backdrop-blur-sm">
             {ThisModule.module}
           </h1>
         </div>
       </div>
 
-      {/* CDContent Section */}
-      <CDContent ThisModule={ThisModule} />
+      <div className="space-y-2 bg-linear-to-b from-gray-500/40 to-gray-500/80 pb-2">
+        {/* Class Details Content */}
+        <ClassesDetailsContent ThisModule={ThisModule} />
 
-      {/* Key Features */}
-      <div className="max-w-7xl py-5 px-5 mx-auto mt-5 bg-gray-50 rounded-lg shadow-2xl">
-        <h3 className="text-xl md:text-2xl font-semibold text-gray-800">
-          Key Features :
-        </h3>
-        <div className="flex flex-wrap px-3 gap-3 md:gap-5 pt-5">
-          {ThisModule.tags.map((feature, index) => (
-            <p
-              key={index}
-              className="bg-[#F72C5B] text-white font-semibold px-4 md:px-6 py-2 rounded-full text-center text-sm sm:text-base hover:scale-110"
-            >
-              {feature}
-            </p>
-          ))}
-        </div>
-      </div>
+        {/* Detailed Description */}
+        <ClassesDetailsDescription ThisModule={ThisModule} />
 
-      {/* Detailed Description */}
-      <div className="max-w-7xl py-10 px-5 mx-auto mt-5 bg-gray-50 rounded-lg shadow-2xl">
-        <h3 className="text-2xl font-semibold text-gray-800 py-2">
-          Detailed Description
-        </h3>
-        <p className="leading-relaxed text-lg italic">
-          {ThisModule.detailedDescription || ThisModule.bigDescription}
-        </p>
-      </div>
+        {/* Key Features */}
+        <ClassesDetailsKeyFeatures ThisModule={ThisModule} />
 
-      {/* Pricing Section */}
-      <CDPrice ThisModule={ThisModule} />
-
-      {/* Class Schedule */}
-      <CDSchedule ClassScheduleData={ClassScheduleData} />
-
-      {/* Trainer Cards */}
-      <CDTrainers TrainersData={TrainersData} ThisModule={ThisModule} />
-
-      {/* More Info */}
-      <CDMore ThisModule={ThisModule} />
-
-      {/* Reviews Section */}
-      <CDReview ThisModule={ThisModule} />
-
-      {/* Module */}
-      <dialog id="my_modal_2" className="modal">
-        <ClassesDetailsModal
+        {/* Pricing Section */}
+        <ClassesDetailsPrice
           ThisModule={ThisModule}
           user={user}
           UsersData={UsersData}
         />
-      </dialog>
+
+        {/* Class Schedule */}
+        <CDSchedule ClassScheduleData={ClassScheduleData} />
+
+        {/* Trainers Section */}
+        <CDTrainers TrainersData={TrainersData} ThisModule={ThisModule} />
+
+        {/* Additional Information */}
+        <CDMore ThisModule={ThisModule} />
+
+        {/* Reviews Section */}
+        <CDReview ThisModule={ThisModule} />
+      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import ClassTrainersCard from "../ClassTrainersCard/ClassTrainersCard";
+import TrainerPublicIdCard from "../../../../../Shared/Component/TrainerPublicIdCard";
 const CDTrainers = ({ TrainersData, ThisModule }) => {
   // Helper to categorize and assign roles to trainers
   const getTrainerRole = (trainer) => {
@@ -18,7 +18,7 @@ const CDTrainers = ({ TrainersData, ThisModule }) => {
         {TrainersData.map((trainer) => {
           const role = getTrainerRole(trainer);
           return (
-            <ClassTrainersCard
+            <TrainerPublicIdCard
               key={trainer.id}
               trainer={trainer}
               role={role} // Pass the role to the Card component
