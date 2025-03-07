@@ -12,7 +12,6 @@ import useAuth from "../../../../Hooks/useAuth";
 import Loading from "../../../../Shared/Loading/Loading";
 import FetchingError from "../../../../Shared/Component/FetchingError";
 import ClassesDetailsContent from "./ClassesDetailsContent/ClassesDetailsContent";
-import Classes from "../Classes/Classes";
 import ClassesDetailsKeyFeatures from "./ClassesDetailsKeyFeatures/ClassesDetailsKeyFeatures";
 import ClassesDetailsDescription from "./ClassesDetailsDescription/ClassesDetailsDescription";
 import ClassesDetailsPrice from "./ClassesDetailsPrice/ClassesDetailsPrice";
@@ -44,7 +43,7 @@ const ClassesDetails = () => {
     queryKey: ["ClassScheduleData", module],
     queryFn: async () =>
       axiosPublic
-        .get(`/Our_Classes/searchByModule?moduleName=${module}`)
+        .get(`/Our_Classes_Schedule/searchByModule?moduleName=${module}`)
         .then((res) => res.data),
   });
 
@@ -110,6 +109,8 @@ const ClassesDetails = () => {
   }
 
   const ThisModule = ModuleData[0]; // Extract the main module data
+
+  console.log(ClassScheduleData);
 
   return (
     <div

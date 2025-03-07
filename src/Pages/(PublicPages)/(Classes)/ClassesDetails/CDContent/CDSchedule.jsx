@@ -17,11 +17,14 @@ const CDSchedule = ({ ClassScheduleData }) => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-xl my-4 px-5 py-5">
+    <div className="max-w-7xl mx-auto bg-gradient-to-bl from-gray-200 to-gray-400  rounded-xl shadow-xl my-4 px-5 py-5">
+      {/* Title Section */}
       <h3 className="text-2xl font-semibold text-gray-800 mb-6">
         Class Schedule
       </h3>
-      <div className="overflow-x-auto">
+
+      {/* Content Section */}
+      <div className="overflow-x-auto text-black">
         <table className="table w-full border-collapse border border-gray-200">
           {/* Table Head */}
           <thead className="bg-gray-200">

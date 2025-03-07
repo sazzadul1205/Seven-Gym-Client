@@ -91,15 +91,19 @@ const ClassesDetailsModal = ({ ThisModule, user, UsersData }) => {
       applicantPhone: UsersData.phone,
     };
 
+    console.log(formData);
+
     try {
-      await axiosPublic.post("/Trainers_Booking_Request", formData);
+      await axiosPublic.post("/Class_Booking_Request", formData);
 
       Swal.fire({
         title: "Thank You!",
         text: "Your booking request has been submitted successfully. Please wait for the trainer's response.",
         icon: "success",
         confirmButtonText: "OK",
-      }).then(() => document.getElementById("Class_Booking_Modal").close());
+      });
+
+      document.getElementById("Class_Booking_Modal").close();
     } catch (error) {
       Swal.fire({
         title: "Error!",
@@ -241,8 +245,8 @@ const ClassesDetailsModal = ({ ThisModule, user, UsersData }) => {
             className={`${
               loading || !understandRisks
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#F72C5B] hover:bg-[#F72C5B]"
-            } py-2 px-5 text-white rounded-lg font-semibold`}
+                : "bg-linear-to-tl hover:bg-linear-to-br from-[#c23e5f] to-[#ff0040]"
+            } py-3 px-16 text-white rounded-lg font-semibold`}
           >
             {loading ? "Processing..." : "Submit Request"}
           </button>
