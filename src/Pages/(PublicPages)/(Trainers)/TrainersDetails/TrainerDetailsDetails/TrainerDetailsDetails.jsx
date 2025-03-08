@@ -12,7 +12,7 @@ const TrainerDetailsDetails = ({ TrainerDetails }) => {
     <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5 pt-3">
       {/* Trainer Certifications Section */}
       <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full space-y-6">
-        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center">
+        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-black pb-2">
           <FaCertificate className="mr-3 text-2xl text-blue-600" />
           Certifications
         </h2>
@@ -31,7 +31,7 @@ const TrainerDetailsDetails = ({ TrainerDetails }) => {
 
       {/* Trainer Awards Section */}
       <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full space-y-6">
-        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center">
+        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-black pb-2">
           <FaAward className="mr-3 text-2xl text-yellow-500" />
           Awards
         </h2>
@@ -53,7 +53,7 @@ const TrainerDetailsDetails = ({ TrainerDetails }) => {
 
       {/* Trainer Preferences Section */}
       <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full space-y-6">
-        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center">
+        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-black pb-2">
           <FaRegCalendarAlt className="mr-3 text-2xl text-green-500" />
           Training Preferences
         </h2>
@@ -98,7 +98,7 @@ const TrainerDetailsDetails = ({ TrainerDetails }) => {
 
       {/* Additional Services Section */}
       <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full space-y-6">
-        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center">
+        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-black pb-2">
           <FaTools className="mr-3 text-2xl text-purple-600" />
           Additional Services
         </h2>
@@ -119,7 +119,7 @@ const TrainerDetailsDetails = ({ TrainerDetails }) => {
 
       {/* Equipment Used Section */}
       <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full space-y-6">
-        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center">
+        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-black pb-2">
           <FaTools className="mr-3 text-2xl text-orange-500" />
           Equipment Used
         </h2>
@@ -138,7 +138,7 @@ const TrainerDetailsDetails = ({ TrainerDetails }) => {
 
       {/* Partnerships Section */}
       <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full space-y-6">
-        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center">
+        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-black pb-2">
           <FaHandshake className="mr-3 text-2xl text-teal-600" />
           Partnerships
         </h2>

@@ -54,7 +54,7 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
         <Link
           to={`/Trainers/Bookings/${TrainerDetails.name}?classType=${classType}&day=${day}&timeStart=${start}`}
         >
-          <button className="bg-linear-to-bl hover:bg-linear-to-tr from-[#d1234f] to-[#fc003f] w-[200px] py-3 text-xl font-semibold text-white rounded-3xl shadow-lg hover:shadow-2xl">
+          <button className="w-[240px] font-semibold text-white text-xl bg-linear-to-bl hover:bg-linear-to-tr from-[#d1234f] to-[#fc003f] border border-red-500 rounded-2xl shadow-lg hover:shadow-2xl py-2">
             Book Session
           </button>
         </Link>
@@ -63,7 +63,7 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
 
     if (classLinks.free.includes(classType)) {
       return (
-        <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full md:w-2/3 mx-auto">
+        <button className="w-[240px] font-semibold text-black text-xl bg-gray-300 border border-gray-500 rounded-2xl shadow-lg py-2 cursor-not-allowed">
           Free Class
         </button>
       );
@@ -71,18 +71,15 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
 
     if (classType === "Break") {
       return (
-        <button className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-500 to-gray-400 w-[200px] py-3 text-xl font-semibold text-white rounded-3xl shadow-lg hover:shadow-2xl">
+        <button className="w-[240px] font-semibold text-white text-xl bg-gray-300 border border-gray-500 rounded-2xl shadow-lg py-2 cursor-not-allowed">
           On a Break
         </button>
       );
     }
 
     return (
-      <Link
-        to={`/Classes/${classType.split(" ").slice(0, -1).join(" ")}`}
-        className="w-full"
-      >
-        <button className="bg-linear-to-bl hover:bg-linear-to-tr from-green-600 to-green-400 w-[200px] py-3 text-xl font-semibold text-white rounded-3xl shadow-lg hover:shadow-2xl">
+      <Link to={`/Classes/${classType.split(" ").slice(0, -1).join(" ")}`}>
+        <button className="w-[240px] font-semibold text-black text-xl bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-500 border border-green-600 rounded-2xl shadow-lg hover:shadow-2xl py-2">
           Visit Class
         </button>
       </Link>
@@ -138,7 +135,7 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                               ? "Free"
                               : `$${classDetails.classPrice}`}
                           </div>
-                          <div className="flex justify-center">
+                          <div className="flex justify-center ">
                             {getClassButton(
                               classDetails.classType,
                               classDetails.start,
