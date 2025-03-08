@@ -86,7 +86,7 @@ const TrainerDetailsTestimonials = ({ TrainerDetails }) => {
                 {testimonial.clientName}
               </h3>
               <div className="my-2">{renderStars(testimonial.rating)}</div>
-              <p className="text-gray-600">{testimonial.testimonial}</p>
+              <p className="text-gray-600 mt-2">{testimonial.testimonial}</p>
             </div>
           ))}
         </Slider>

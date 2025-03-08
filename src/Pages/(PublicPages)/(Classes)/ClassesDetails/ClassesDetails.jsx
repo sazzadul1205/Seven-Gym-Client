@@ -3,18 +3,19 @@ import { useQuery } from "@tanstack/react-query";
 
 import Classes_Background from "../../../../assets/Classes-Background/Classes_Background.jpg";
 
-import CDTrainers from "./CDContent/CDTrainers";
-import CDSchedule from "./CDContent/CDSchedule";
-import CDReview from "./CDContent/CDReview";
-import CDMore from "./CDContent/CDMore";
+import CDReview from "./ClassesDetailsReview/ClassesDetailsReview";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../Hooks/useAuth";
 import Loading from "../../../../Shared/Loading/Loading";
 import FetchingError from "../../../../Shared/Component/FetchingError";
+
+import ClassesDetailsMore from "./ClassesDetailsMore/ClassesDetailsMore";
+import ClassesDetailsPrice from "./ClassesDetailsPrice/ClassesDetailsPrice";
 import ClassesDetailsContent from "./ClassesDetailsContent/ClassesDetailsContent";
+import ClassesDetailsSchedule from "./ClassesDetailsSchedule/ClassesDetailsSchedule";
+import ClassesDetailsTrainers from "./ClassesDetailsTrainers/ClassesDetailsTrainers";
 import ClassesDetailsKeyFeatures from "./ClassesDetailsKeyFeatures/ClassesDetailsKeyFeatures";
 import ClassesDetailsDescription from "./ClassesDetailsDescription/ClassesDetailsDescription";
-import ClassesDetailsPrice from "./ClassesDetailsPrice/ClassesDetailsPrice";
 
 const ClassesDetails = () => {
   const axiosPublic = useAxiosPublic();
@@ -156,13 +157,16 @@ const ClassesDetails = () => {
         />
 
         {/* Class Schedule */}
-        <CDSchedule ClassScheduleData={ClassScheduleData} />
+        <ClassesDetailsSchedule ClassScheduleData={ClassScheduleData} />
 
         {/* Trainers Section */}
-        <CDTrainers TrainersData={TrainersData} ThisModule={ThisModule} />
+        <ClassesDetailsTrainers
+          TrainersData={TrainersData}
+          ThisModule={ThisModule}
+        />
 
         {/* Additional Information */}
-        <CDMore ThisModule={ThisModule} />
+        <ClassesDetailsMore ThisModule={ThisModule} />
 
         {/* Reviews Section */}
         <CDReview ThisModule={ThisModule} />

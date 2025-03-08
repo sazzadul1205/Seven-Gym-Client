@@ -28,9 +28,9 @@ const ClassesDetailsModal = ({ ThisModule, user, UsersData }) => {
   const fees = useMemo(() => {
     return {
       daily: dailyClassFee,
-      weekly: parseFloat((dailyClassFee * 7 * 0.9).toFixed(2)), // 10% discount
-      monthly: parseFloat((dailyClassFee * 30 * 0.7).toFixed(2)), // 30% discount
-      yearly: parseFloat((dailyClassFee * 365 * 0.6).toFixed(2)), // 40% discount
+      weekly: parseFloat((dailyClassFee * 7).toFixed(2)), 
+      monthly: parseFloat((dailyClassFee * 30).toFixed(2)),
+      yearly: parseFloat((dailyClassFee * 365).toFixed(2)),
     };
   }, [dailyClassFee]);
 
@@ -90,8 +90,6 @@ const ClassesDetailsModal = ({ ThisModule, user, UsersData }) => {
       applicantName: UsersData.fullName,
       applicantPhone: UsersData.phone,
     };
-
-    console.log(formData);
 
     try {
       await axiosPublic.post("/Class_Booking_Request", formData);
