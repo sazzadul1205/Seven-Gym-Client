@@ -1,16 +1,18 @@
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 
+// Import Background Image
 import Classes_Background from "../../../../assets/Classes-Background/Classes_Background.jpg";
 
-import CDReview from "./ClassesDetailsReview/ClassesDetailsReview";
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../Hooks/useAuth";
 import Loading from "../../../../Shared/Loading/Loading";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../Shared/Component/FetchingError";
 
+// Component Import
 import ClassesDetailsMore from "./ClassesDetailsMore/ClassesDetailsMore";
 import ClassesDetailsPrice from "./ClassesDetailsPrice/ClassesDetailsPrice";
+import ClassesDetailsReview from "./ClassesDetailsReview/ClassesDetailsReview";
 import ClassesDetailsContent from "./ClassesDetailsContent/ClassesDetailsContent";
 import ClassesDetailsSchedule from "./ClassesDetailsSchedule/ClassesDetailsSchedule";
 import ClassesDetailsTrainers from "./ClassesDetailsTrainers/ClassesDetailsTrainers";
@@ -169,7 +171,7 @@ const ClassesDetails = () => {
         <ClassesDetailsMore ThisModule={ThisModule} />
 
         {/* Reviews Section */}
-        <CDReview ThisModule={ThisModule} />
+        <ClassesDetailsReview ThisModule={ThisModule} />
       </div>
     </div>
   );

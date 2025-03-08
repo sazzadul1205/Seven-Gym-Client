@@ -73,14 +73,14 @@ const Classes = () => {
     >
       <div className="bg-gradient-to-b from-gray-500/50 to-gray-500/20">
         {/* Class Modules Section */}
-        <section className="max-w-7xl mx-auto pt-10">
+        <section className="max-w-7xl mx-auto pt-0 md:pt-10">
           {/* Section Title */}
           <div className="mb-6 px-6">
             <Title titleContent="Our Class Modules" />
           </div>
 
           {/* Modules Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 px-5 gap-0 lg:gap-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-1 lg:gap-2 px-0 md:px-5">
             {Our_Classes_ModuleData.map((module, index) => {
               // Find matching class details
               const classDetail = Class_DetailsData.find(
