@@ -1,10 +1,7 @@
 import { useState, useMemo } from "react";
-
 import { ImCross } from "react-icons/im";
-
 import Swal from "sweetalert2";
 import PropTypes from "prop-types";
-
 import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
 
 const ClassesDetailsModal = ({ ThisModule, user, UsersData }) => {
@@ -20,15 +17,15 @@ const ClassesDetailsModal = ({ ThisModule, user, UsersData }) => {
   const { registrationFee = 0, dailyClassFee = 0 } = ThisModule;
 
   // Additional Fees
-  const equipmentMaintenanceFee = 10; // Example value, adjust as needed
-  const facilityMaintenanceFee = 5; // Example value, adjust as needed
-  const cleaningFee = 2; // Example value, adjust as needed
+  const equipmentMaintenanceFee = 10;
+  const facilityMaintenanceFee = 5;
+  const cleaningFee = 2;
 
   // Memoized Fee Calculation
   const fees = useMemo(() => {
     return {
       daily: dailyClassFee,
-      weekly: parseFloat((dailyClassFee * 7).toFixed(2)), 
+      weekly: parseFloat((dailyClassFee * 7).toFixed(2)),
       monthly: parseFloat((dailyClassFee * 30).toFixed(2)),
       yearly: parseFloat((dailyClassFee * 365).toFixed(2)),
     };
@@ -46,30 +43,29 @@ const ClassesDetailsModal = ({ ThisModule, user, UsersData }) => {
   let discountPercentage = 0;
   switch (UsersData?.tier) {
     case "Silver":
-      discountPercentage = 0.05; // 5% Discount
+      discountPercentage = 0.05;
       break;
     case "Gold":
-      discountPercentage = 0.1; // 10% Discount
+      discountPercentage = 0.1;
       break;
     case "Diamond":
-      discountPercentage = 0.15; // 15% Discount
+      discountPercentage = 0.15;
       break;
     case "Platinum":
-      discountPercentage = 0.25; // 25% Discount
+      discountPercentage = 0.25;
       break;
     default:
-      discountPercentage = 0; // No discount for Bronze
+      discountPercentage = 0;
       break;
   }
 
-  // Calculate Discount and Apply to Total Fee
   const discountAmount = totalFee * discountPercentage;
   totalFee = totalFee - discountAmount;
 
   // Handles Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!understandRisks) return; // Prevent submission if risks are not acknowledged
+    if (!understandRisks) return;
 
     setLoading(true);
     const submittedDate = new Date().toLocaleString("en-US", {
@@ -93,14 +89,12 @@ const ClassesDetailsModal = ({ ThisModule, user, UsersData }) => {
 
     try {
       await axiosPublic.post("/Class_Booking_Request", formData);
-
       Swal.fire({
         title: "Thank You!",
         text: "Your booking request has been submitted successfully. Please wait for the trainer's response.",
         icon: "success",
         confirmButtonText: "OK",
       });
-
       document.getElementById("Class_Booking_Modal").close();
     } catch (error) {
       Swal.fire({
@@ -162,8 +156,6 @@ const ClassesDetailsModal = ({ ThisModule, user, UsersData }) => {
           <h4 className="text-xl font-semibold text-gray-800 border-b-2 border-gray-800">
             Fee Breakdown
           </h4>
-
-          {/* Fee Breakdown */}
           <div className="text-lg text-gray-700 space-y-2 pt-5">
             {[
               { label: "Registration Fee", value: registrationFee },
@@ -195,7 +187,6 @@ const ClassesDetailsModal = ({ ThisModule, user, UsersData }) => {
                 <span>${value.toFixed(2)}</span>
               </div>
             ))}
-
             <hr className="border-b border-gray-500" />
             <div className="flex justify-between font-bold text-gray-900">
               <span>Total Fee:</span>

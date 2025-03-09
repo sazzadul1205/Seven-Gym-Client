@@ -30,7 +30,7 @@ const ClassesDetails = () => {
     isLoading: ModuleDataIsLoading,
     error: ModuleDataError,
   } = useQuery({
-    queryKey: ["ModuleData", module], // Depend on `module`
+    queryKey: ["ModuleData", module],
     queryFn: async () =>
       axiosPublic
         .get(`/Class_Details?module=${module}`)
@@ -57,7 +57,7 @@ const ClassesDetails = () => {
           ModuleData[0].classTeacher,
           ...ModuleData[0].helperTeachers,
           ModuleData[0].fallbackTeacher,
-        ].filter(Boolean) // Remove null/undefined values
+        ].filter(Boolean)
       : [];
 
   // Fetch Trainers Data
@@ -71,7 +71,7 @@ const ClassesDetails = () => {
       axiosPublic
         .get(`/Trainers/SearchTrainersByNames?names=${teacherNames.join(",")}`)
         .then((res) => res.data),
-    enabled: teacherNames.length > 0, // Fetch only if teachers exist
+    enabled: teacherNames.length > 0,
   });
 
   // Fetch User Data (Only if user exists)
@@ -83,12 +83,12 @@ const ClassesDetails = () => {
     queryKey: ["UsersData", user?.email],
     queryFn: async () =>
       axiosPublic
-        .get(`/Users?email=${user.email}`)
+        .get(`/Users?email=${user?.email}`)
         .then((res) => res.data)
         .catch((error) =>
           error.response?.status === 404 ? null : Promise.reject(error)
         ),
-    enabled: !!user, // Fetch only if user exists
+    enabled: !!user,
   });
 
   // Handle Loading State
@@ -111,13 +111,11 @@ const ClassesDetails = () => {
     return <FetchingError />;
   }
 
-  const ThisModule = ModuleData[0]; // Extract the main module data
-
-  console.log(ClassScheduleData);
+  const ThisModule = ModuleData[0];
 
   return (
     <div
-      className="min-h-screen bg-fixed bg-cover bg-center "
+      className="min-h-screen bg-fixed bg-cover bg-center"
       style={{
         backgroundImage: `url(${Classes_Background})`,
         backgroundSize: "cover",
@@ -163,7 +161,7 @@ const ClassesDetails = () => {
 
         {/* Trainers Section */}
         <ClassesDetailsTrainers
-          TrainersData={TrainersData}
+          TrainersData={TrainersData || []}
           ThisModule={ThisModule}
         />
 

@@ -1,6 +1,6 @@
 import { FaSearch } from "react-icons/fa";
 
-const ForumBanner = ({ Wall, searchQuery, setSearchQuery }) => {
+const ForumCategoryBanner = ({ Wall, searchQuery, setSearchQuery }) => {
   return (
     <div className="relative">
       <img
@@ -27,4 +27,4 @@ const ForumBanner = ({ Wall, searchQuery, setSearchQuery }) => {
   );
 };
 
-export default ForumBanner;
+export default ForumCategoryBanner;

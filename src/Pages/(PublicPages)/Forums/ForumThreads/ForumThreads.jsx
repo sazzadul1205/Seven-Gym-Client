@@ -1,3 +1,5 @@
+import ViewDetails from "../ViewDetails/ViewDetails";
+
 const ForumThreads = ({
   threadsToDisplay,
   setSelectedThread,
@@ -97,6 +99,11 @@ const ForumThreads = ({
           )}
         </div>
       </div>
+
+
+      <dialog id="Modal_View_Details" className="modal">
+        <ViewDetails thread={selectedThread} />
+      </dialog>
     </div>
   );
 };

@@ -56,22 +56,33 @@ const ClassesDetailsPrice = ({ ThisModule, user, UsersData }) => {
 
       {/* Join Class Button */}
       <div className="flex justify-center mt-5">
-        <button
-          onClick={handleJoinClass}
-          className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 border-2 border-red-500 bg-linear-to-tl hover:bg-linear-to-br from-[#c23e5f] to-[#ff0040] py-2 font-semibold rounded-xl hover:text-white"
-        >
-          Join Class
-        </button>
+        {user && UsersData ? (
+          <button
+            onClick={handleJoinClass}
+            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 border-2 border-red-500 bg-linear-to-tl hover:bg-linear-to-br from-[#c23e5f] to-[#ff0040] py-2 font-semibold rounded-xl hover:text-white"
+          >
+            Join Class
+          </button>
+        ) : (
+          <button
+            disabled
+            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 border-2 border-gray-400 bg-gray-300 py-2 font-semibold rounded-xl cursor-not-allowed"
+          >
+            Login to Join Class
+          </button>
+        )}
       </div>
 
       {/* Class Booking Modal */}
-      <dialog id="Class_Booking_Modal" className="modal">
-        <ClassBookingFormModal
-          ThisModule={ThisModule}
-          user={user}
-          UsersData={UsersData}
-        />
-      </dialog>
+      {user && UsersData && (
+        <dialog id="Class_Booking_Modal" className="modal">
+          <ClassBookingFormModal
+            ThisModule={ThisModule}
+            user={user}
+            UsersData={UsersData}
+          />
+        </dialog>
+      )}
     </div>
   );
 };
@@ -81,8 +92,8 @@ ClassesDetailsPrice.propTypes = {
   ThisModule: PropTypes.shape({
     dailyClassFee: PropTypes.number,
   }),
-  user: PropTypes.object, // Further shape validation can be added
-  UsersData: PropTypes.object, // Further shape validation can be added
+  user: PropTypes.object, // You can add a more specific shape if needed
+  UsersData: PropTypes.object, // You can add a more specific shape if needed
 };
 
 export default ClassesDetailsPrice;
