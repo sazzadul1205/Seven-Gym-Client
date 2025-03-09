@@ -1,4 +1,6 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
+import ViewDetailsThreadsModal from "../ViewDetailsThreadsModal/ViewDetailsThreadsModal";
 
 const ForumThreads = ({
   topThreads,
@@ -7,7 +9,10 @@ const ForumThreads = ({
   visibleThreadsCount,
   setVisibleThreadsCount,
 }) => {
-  // Utility function to calculate time ago
+  // State to track the selected thread for the modal
+  const [selectedThread, setSelectedThread] = useState(null);
+
+  // Utility function to calculate the time ago from timestamp
   const timeAgo = (timestamp) => {
     const now = new Date();
     const timeDiff = now - new Date(timestamp);
@@ -23,43 +28,44 @@ const ForumThreads = ({
   };
 
   return (
-    <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-2 pb-5">
+    <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-4 bg-white/20 mb-5 p-4">
       {/* Threads Section */}
-      <div className="lg:w-3/5 bg-white/30 p-2">
-        {/* Threads Title */}
-        <h5 className="text-2xl font-bold italic border-b-2 border-black">
+      <div className="lg:w-3/5 bg-white/30 p-4 rounded-lg shadow-md">
+        {/* Section Title */}
+        <h5 className="text-2xl font-bold italic border-b-2 border-black pb-2">
           Threads
         </h5>
 
-        {/* Threads Content */}
+        {/* Threads List */}
         <div className="grid gap-4 pt-2">
           {threadsToDisplay?.length > 0 ? (
             threadsToDisplay.map((thread) => (
               <div
                 key={thread.id}
-                className="border p-4 rounded-lg bg-linear-to-br hover:bg-linear-to-tl from-white to-gray-300 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-700"
+                onClick={() => {
+                  setSelectedThread(thread);
+                  document
+                    .getElementById("View_Details_Threads_Modal")
+                    .showModal();
+                }}
+                className="cursor-pointer border p-4 rounded-lg bg-gradient-to-br from-white to-gray-300 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
               >
-                {/* Title */}
-                <h3 className="text-lg font-bold text-black">
-                  {thread.title}
-                </h3>
-                {/* Description */}
+                {/* Thread Title */}
+                <h3 className="text-lg font-bold text-black">{thread.title}</h3>
+                {/* Thread Description */}
                 <p className="text-gray-600 italic py-2">
                   {thread.description}
                 </p>
-                {/* Extra */}
-                <div className="flex gap-5 font-semibold text-gray-800 mt-2 ">
+                {/* Thread Stats */}
+                <div className="flex gap-5 font-semibold text-gray-800 mt-2">
                   <p>Comments: {thread.comments?.length || 0}</p> |
-                  <p>
-                    Likes:
-                    {thread.likes}
-                  </p>
-                  | <p>{timeAgo(thread.createdAt)}</p>
+                  <p>Likes: {thread.likes}</p> |
+                  <p>{timeAgo(thread.createdAt)}</p>
                 </div>
               </div>
             ))
           ) : (
-            <p className="text-gray-500">No threads found.</p>
+            <p className="text-gray-500 text-center">No threads found.</p>
           )}
         </div>
 
@@ -68,7 +74,7 @@ const ForumThreads = ({
           <div className="text-center pt-4">
             <button
               onClick={() => setVisibleThreadsCount(visibleThreadsCount + 8)}
-              className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400"
+              className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
             >
               Show More
             </button>
@@ -77,17 +83,28 @@ const ForumThreads = ({
       </div>
 
       {/* Top Threads Section */}
-      <div className="pt-8 pb-4 px-6 lg:w-2/5">
-        <h2 className="text-2xl font-bold pb-2 text-center lg:text-left italic">
+      <div className="lg:w-2/5 bg-white/50 p-4 rounded-lg shadow-md">
+        {/* Section Title */}
+        <h5 className="text-2xl font-bold italic border-b-2 border-black pb-2">
           Top Threads
-        </h2>
+        </h5>
+
+        {/* Top Threads List */}
         <div className="grid gap-4 pt-2">
           {topThreads?.map((thread) => (
             <div
               key={thread.id}
-              className="border-2 border-green-300 p-4 rounded-lg bg-white shadow-md"
+              onClick={() => {
+                setSelectedThread(thread);
+                document
+                  .getElementById("View_Details_Threads_Modal")
+                  .showModal();
+              }}
+              className="cursor-pointer p-4 rounded-lg bg-gradient-to-bl from-gray-100 to-gray-300 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
             >
-              <h3 className="text-lg font-semibold">{thread.title}</h3>
+              {/* Thread Title */}
+              <h3 className="text-lg font-bold text-black">{thread.title}</h3>
+              {/* Short Description */}
               <p className="text-gray-600">
                 {thread.description.split(" ").slice(0, 20).join(" ")}...
               </p>
@@ -95,16 +112,23 @@ const ForumThreads = ({
           ))}
         </div>
       </div>
+
+      {/* Thread Details Modal */}
+
+      <dialog id="View_Details_Threads_Modal" className="modal">
+        <ViewDetailsThreadsModal thread={selectedThread} />
+      </dialog>
     </div>
   );
 };
 
+// PropTypes Validation
 ForumThreads.propTypes = {
-  threadsToDisplay: PropTypes.array,
-  filteredThreads: PropTypes.array,
+  threadsToDisplay: PropTypes.array.isRequired,
+  filteredThreads: PropTypes.array.isRequired,
   visibleThreadsCount: PropTypes.number.isRequired,
   setVisibleThreadsCount: PropTypes.func.isRequired,
-  topThreads: PropTypes.array,
+  topThreads: PropTypes.array.isRequired,
 };
 
 export default ForumThreads;
