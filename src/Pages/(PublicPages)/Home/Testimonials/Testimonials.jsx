@@ -1,14 +1,18 @@
 import { useRef } from "react";
+import { Link } from "react-router";
 
+// Imports
+import PropTypes from "prop-types";
+
+// Slider Import
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import PropTypes from "prop-types";
-import { Link } from "react-router";
+// Component Import
 import Title from "../../../../Shared/Component/Title";
 
-const Testimonials = ({ testimonialsData }) => {
+const Testimonials = ({ testimonialsData = [] }) => {
   const sliderRef = useRef(null);
 
   // Slider settings for responsiveness and autoplay
@@ -90,7 +94,6 @@ const Testimonials = ({ testimonialsData }) => {
   );
 };
 
-// PropTypes validation with default values
 Testimonials.propTypes = {
   testimonialsData: PropTypes.arrayOf(
     PropTypes.shape({
@@ -101,10 +104,6 @@ Testimonials.propTypes = {
       quote: PropTypes.string,
     })
   ),
-};
-
-Testimonials.defaultProps = {
-  testimonialsData: [],
 };
 
 export default Testimonials;

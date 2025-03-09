@@ -1,30 +1,45 @@
+import PropTypes from "prop-types";
+
 import { FaSearch } from "react-icons/fa";
 
 const ForumCategoryBanner = ({ Wall, searchQuery, setSearchQuery }) => {
   return (
     <div className="relative">
+      {/* Banner Background Image */}
       <img
         src={Wall}
         alt="Forum Banner"
         className="w-full h-[300px] object-cover"
       />
-      <div className="absolute inset-0 flex flex-col justify-center items-center">
+
+      {/* Overlay container with gradient background */}
+      <div className="absolute inset-0 flex flex-col justify-center items-center bg-gradient-to-br from-gray-300/50 to-gray-400/50">
+        {/* Banner Title */}
         <p className="text-3xl font-bold text-white">Search Thread</p>
-        <div className="flex md:w-2/3 max-w-xl">
+
+        {/* Search Input Label */}
+        <label className="input rounded-xl input-lg w-1/4 gap-2 bg-white flex items-center px-3">
+          {/* Search Icon */}
+          <FaSearch className="text-black font-semibold" />
+
+          {/* Search Input Field */}
           <input
-            type="text"
+            type="search"
             placeholder="Search threads by title..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-4 border bg-white shadow-lg rounded-l-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+            className="text-xl text-black flex-grow outline-none"
           />
-          <button className="bg-green-500 hover:bg-green-400 p-4 rounded-r-lg">
-            <FaSearch className="text-xl text-white" />
-          </button>
-        </div>
+        </label>
       </div>
     </div>
   );
+};
+
+ForumCategoryBanner.propTypes = {
+  Wall: PropTypes.string.isRequired,
+  searchQuery: PropTypes.string.isRequired,
+  setSearchQuery: PropTypes.func.isRequired,
 };
 
 export default ForumCategoryBanner;

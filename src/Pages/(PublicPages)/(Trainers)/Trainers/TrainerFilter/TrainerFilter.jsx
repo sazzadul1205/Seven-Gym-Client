@@ -29,7 +29,7 @@ Dropdown.propTypes = {
   selectedValue: PropTypes.string,
 };
 
-//  TrainerFilter Component - Provides various filters for selecting trainers.
+// TrainerFilter Component - Provides various filters for selecting trainers.
 const TrainerFilter = ({
   searchName,
   setSearchName,
@@ -45,6 +45,7 @@ const TrainerFilter = ({
   setSelectedClassType,
   selectedFocusArea,
   setSelectedFocusArea,
+  // Default values provided via destructuring:
   TrainersSpecializationsData = [],
   TrainersTiersData = [],
   TrainersLanguagesData = [],
@@ -86,7 +87,6 @@ const TrainerFilter = ({
       <div className="mt-6">
         <p className="font-bold text-black text-lg">Select Gender</p>
         <div className="flex justify-between mt-3 space-x-2 gap-2">
-          {/* Gender Selection Buttons */}
           {[
             {
               value: "Male",
@@ -146,7 +146,6 @@ const TrainerFilter = ({
   );
 };
 
-// **Prop Validation**
 TrainerFilter.propTypes = {
   searchName: PropTypes.string.isRequired,
   setSearchName: PropTypes.func.isRequired,
@@ -167,15 +166,6 @@ TrainerFilter.propTypes = {
   TrainersLanguagesData: PropTypes.arrayOf(PropTypes.string),
   TrainersClassTypesData: PropTypes.arrayOf(PropTypes.string),
   TrainersFocusAreasData: PropTypes.arrayOf(PropTypes.string),
-};
-
-// **Default Props**
-TrainerFilter.defaultProps = {
-  TrainersSpecializationsData: [],
-  TrainersTiersData: [],
-  TrainersLanguagesData: [],
-  TrainersClassTypesData: [],
-  TrainersFocusAreasData: [],
 };
 
 export default TrainerFilter;

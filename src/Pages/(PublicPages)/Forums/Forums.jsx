@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 // Background images
@@ -46,32 +46,38 @@ const Forums = () => {
       axiosPublic.get(`/Forums/categories`).then((res) => res.data),
   });
 
-  // Show loading component while fetching data
-  if (forumsLoading || categoriesLoading) return <Loading />;
+  // Memoize sorted forum threads
+  const sortedForumsData = useMemo(() => {
+    return forumsData
+      ?.slice()
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }, [forumsData]);
 
-  // Show error component if fetching fails
-  if (forumsError || categoriesError) return <FetchingError />;
+  // Memoize filtered threads
+  const filteredThreads = useMemo(() => {
+    return sortedForumsData?.filter(
+      (thread) =>
+        thread.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (selectedCategory === "All" || thread.category === selectedCategory)
+    );
+  }, [sortedForumsData, searchQuery, selectedCategory]);
 
-  // Sort forum threads by most recent
-  const sortedForumsData = forumsData
-    ?.slice()
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  // Memoize top threads
+  const topThreads = useMemo(() => {
+    return forumsData
+      ?.slice()
+      .sort(
+        (a, b) => b.comments.length - a.comments.length || b.likes - a.likes
+      )
+      .slice(0, 5);
+  }, [forumsData]);
 
-  // Filter threads based on search query and selected category
-  const filteredThreads = sortedForumsData?.filter(
-    (thread) =>
-      thread.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      (selectedCategory === "All" || thread.category === selectedCategory)
-  );
-
-  // Get top 5 threads based on engagement (comments & likes)
-  const topThreads = forumsData
-    ?.slice()
-    .sort((a, b) => b.comments.length - a.comments.length || b.likes - a.likes)
-    .slice(0, 5);
-
-  // Limit the number of displayed threads
+  // Get threads to display
   const threadsToDisplay = filteredThreads?.slice(0, visibleThreadsCount);
+
+  // Early return for loading/error states
+  if (forumsLoading || categoriesLoading) return <Loading />;
+  if (forumsError || categoriesError) return <FetchingError />;
 
   return (
     <div>
@@ -95,17 +101,17 @@ const Forums = () => {
           {/* Forum Categories Section */}
           <ForumCategory
             Categories={categories}
-            setSelectedCategory={setSelectedCategory}
             selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
           />
 
           {/* Forum Threads Section */}
           <ForumThreads
-            threadsToDisplay={threadsToDisplay}
+            topThreads={topThreads}
             filteredThreads={filteredThreads}
+            threadsToDisplay={threadsToDisplay}
             visibleThreadsCount={visibleThreadsCount}
             setVisibleThreadsCount={setVisibleThreadsCount}
-            topThreads={topThreads}
           />
         </div>
       </div>
