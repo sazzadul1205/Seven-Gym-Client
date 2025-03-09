@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ImCross } from "react-icons/im";
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { MdOutlineAddComment } from "react-icons/md";
+import useAuth from "../../../../Hooks/useAuth";
 
 // Utility function to calculate time ago
 const timeAgo = (timestamp) => {
@@ -20,17 +21,37 @@ const timeAgo = (timestamp) => {
 };
 
 const ViewDetailsThreadsModal = ({ thread, onClose }) => {
-  if (!thread) return null; // Handle undefined thread case
+  const { user } = useAuth();
+
+  // Ensure thread is always available
+  const defaultThread = {
+    title: "",
+    description: "",
+    author: { name: "", profileUrl: "" },
+    createdAt: new Date().toISOString(),
+    tags: [],
+    likes: 0,
+    comments: [],
+  };
+
+  const validThread = thread || defaultThread;
 
   // State for like functionality
-  const [likes, setLikes] = useState(thread.likes || 0);
+  const [likes, setLikes] = useState(validThread.likes);
   const [isLiked, setIsLiked] = useState(false);
 
   // State for comments
   const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false);
   const [newComment, setNewComment] = useState("");
-  const [comments, setComments] = useState(thread.comments || []);
+  const [comments, setComments] = useState(validThread.comments);
   const [showAllComments, setShowAllComments] = useState(false);
+
+  useEffect(() => {
+    // Ensure likedBy is always an array before calling .includes
+    setIsLiked(
+      Array.isArray(thread?.likedBy) && thread.likedBy.includes(user.email)
+    );
+  }, [thread?.likedBy, user?.email]);
 
   // Handle like button click
   const handleLikeClick = () => {
@@ -50,7 +71,7 @@ const ViewDetailsThreadsModal = ({ thread, onClose }) => {
     const commentToAdd = {
       name: "You", // Replace with actual logged-in user
       comment: newComment,
-      commentedAt: new Date(),
+      commentedAt: new Date().toISOString(),
     };
 
     setComments((prevComments) => [commentToAdd, ...prevComments]);
@@ -62,12 +83,9 @@ const ViewDetailsThreadsModal = ({ thread, onClose }) => {
     <div className="modal-box max-w-3xl sm:max-w-4xl p-6 bg-white rounded-lg shadow-lg">
       {/* Close Button */}
       <div className="flex justify-between items-center text-xl">
-        {/* Title */}
-        <h2 className="font-bold text-black">{thread.title}</h2>
+        <h2 className="font-bold text-black">{validThread.title}</h2>
         <ImCross
-          onClick={() => {
-            document.getElementById("View_Details_Threads_Modal").close();
-          }}
+          onClick={onClose}
           className="text-black hover:text-gray-700 cursor-pointer"
         />
       </div>
@@ -75,37 +93,37 @@ const ViewDetailsThreadsModal = ({ thread, onClose }) => {
       <div className="pt-5">
         {/* Description */}
         <p className="text-gray-600 mb-6 leading-relaxed italic">
-          {thread.description}
+          {validThread.description}
         </p>
 
         {/* Author & Time */}
         <div className="flex justify-between items-center flex-wrap text-sm text-gray-700 bg-gray-200 px-2 py-1">
           <div>
             <p>Posted By</p>
-            {thread.author?.name && (
+            {validThread.author?.name && (
               <a
-                href={thread.author?.profileUrl}
+                href={validThread.author?.profileUrl}
                 className="text-blue-500 hover:underline"
               >
-                {thread.author?.name}
+                {validThread.author?.name}
               </a>
             )}
           </div>
-          <p className="text-gray-500">{timeAgo(thread.createdAt)}</p>
+          <p className="text-gray-500">{timeAgo(validThread.createdAt)}</p>
         </div>
 
-        {/* Tags */}
-        {thread.tags?.length > 0 && (
+        {/* Tags with Random Colors */}
+        {validThread.tags.length > 0 && (
           <div className="mt-4 flex items-center flex-wrap gap-2">
             <h3 className="font-semibold text-gray-800">Tags:</h3>
             <div className="flex flex-wrap gap-2 ml-4">
-              {thread.tags.map((tag, index) => {
-                const randomColor = `hsl(${Math.random() * 360}, 70%, 75%)`; // Generates a random pastel color
+              {validThread.tags.map((tag, index) => {
+                const randomColor = `hsl(${Math.random() * 360}, 70%, 75%)`;
                 return (
                   <span
                     key={index}
                     className="px-3 py-2 rounded-full text-xs font-semibold"
-                    style={{ backgroundColor: randomColor, color: "#333" }} // Text color adjusted for readability
+                    style={{ backgroundColor: randomColor, color: "#333" }}
                   >
                     {tag}
                   </span>
@@ -127,7 +145,7 @@ const ViewDetailsThreadsModal = ({ thread, onClose }) => {
 
           {/* Like Button */}
           <div
-            className="flex items-center gap-3 px-4 py-2 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 transition w-[180px]"
+            className="flex items-center bg-gray-100 hover:bg-gray-300 rounded-lg transition cursor-pointer gap-3 px-4 py-2"
             onClick={handleLikeClick}
           >
             {isLiked ? (
@@ -145,14 +163,21 @@ const ViewDetailsThreadsModal = ({ thread, onClose }) => {
         {isCommentBoxVisible && (
           <div className="mt-4">
             <textarea
-              className="textarea textarea-accent w-full px-5 py-4 mb-2"
-              placeholder="Add a comment..."
+              className="w-full textarea bg-white border border-gray-500 text-black rounded-xl"
+              placeholder="Write a comment..."
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
             ></textarea>
-            <div className="flex justify-end">
+
+            <div className="flex justify-between items-center pt-3">
               <button
-                className="px-10 py-2 bg-green-500 hover:bg-green-700 text-white font-semibold rounded-lg"
+                className="px-10 py-2 bg-red-400 hover:bg-red-500 text-white font-semibold rounded-lg"
+                onClick={toggleCommentBox}
+              >
+                Close
+              </button>
+              <button
+                className="px-10 py-2 bg-green-400 hover:bg-green-500 text-white font-semibold rounded-lg"
                 onClick={handleAddComment}
               >
                 Submit
@@ -199,25 +224,7 @@ const ViewDetailsThreadsModal = ({ thread, onClose }) => {
 
 // PropTypes for validation
 ViewDetailsThreadsModal.propTypes = {
-  thread: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    author: PropTypes.shape({
-      name: PropTypes.string,
-      profileUrl: PropTypes.string,
-    }),
-    createdAt: PropTypes.string.isRequired,
-    category: PropTypes.string,
-    tags: PropTypes.arrayOf(PropTypes.string),
-    likes: PropTypes.number,
-    comments: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        comment: PropTypes.string.isRequired,
-        commentedAt: PropTypes.string.isRequired,
-      })
-    ),
-  }).isRequired,
+  thread: PropTypes.object,
   onClose: PropTypes.func.isRequired,
 };
 

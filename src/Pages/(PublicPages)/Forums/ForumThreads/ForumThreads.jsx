@@ -27,6 +27,12 @@ const ForumThreads = ({
     return `${seconds} second${seconds > 1 ? "s" : ""} ago`;
   };
 
+  // Function to close the modal
+  const closeModal = () => {
+    setSelectedThread(null);
+    document.getElementById("View_Details_Threads_Modal").close();
+  };
+
   return (
     <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-4 bg-white/20 mb-5 p-4">
       {/* Threads Section */}
@@ -41,7 +47,7 @@ const ForumThreads = ({
           {threadsToDisplay?.length > 0 ? (
             threadsToDisplay.map((thread) => (
               <div
-                key={thread.id}
+                key={thread._id} // Fix: Ensure each child has a unique key
                 onClick={() => {
                   setSelectedThread(thread);
                   document
@@ -93,7 +99,7 @@ const ForumThreads = ({
         <div className="grid gap-4 pt-2">
           {topThreads?.map((thread) => (
             <div
-              key={thread.id}
+              key={thread._id} // Fix: Ensure each child has a unique key
               onClick={() => {
                 setSelectedThread(thread);
                 document
@@ -114,9 +120,8 @@ const ForumThreads = ({
       </div>
 
       {/* Thread Details Modal */}
-
       <dialog id="View_Details_Threads_Modal" className="modal">
-        <ViewDetailsThreadsModal thread={selectedThread} />
+        <ViewDetailsThreadsModal thread={selectedThread} onClose={closeModal} />
       </dialog>
     </div>
   );
