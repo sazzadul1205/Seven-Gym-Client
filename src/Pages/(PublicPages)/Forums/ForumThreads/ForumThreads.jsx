@@ -47,7 +47,7 @@ const ForumThreads = ({
           {threadsToDisplay?.length > 0 ? (
             threadsToDisplay.map((thread) => (
               <div
-                key={thread._id} // Fix: Ensure each child has a unique key
+                key={thread._id} // Ensure each child has a unique key
                 onClick={() => {
                   setSelectedThread(thread);
                   document
@@ -99,7 +99,7 @@ const ForumThreads = ({
         <div className="grid gap-4 pt-2">
           {topThreads?.map((thread) => (
             <div
-              key={thread._id} // Fix: Ensure each child has a unique key
+              key={thread._id} // Ensure each child has a unique key
               onClick={() => {
                 setSelectedThread(thread);
                 document
@@ -121,13 +121,17 @@ const ForumThreads = ({
 
       {/* Thread Details Modal */}
       <dialog id="View_Details_Threads_Modal" className="modal">
-        <ViewDetailsThreadsModal thread={selectedThread} onClose={closeModal} />
+        {selectedThread && (
+          <ViewDetailsThreadsModal
+            thread={selectedThread}
+            onClose={closeModal}
+          />
+        )}
       </dialog>
     </div>
   );
 };
 
-// PropTypes Validation
 ForumThreads.propTypes = {
   threadsToDisplay: PropTypes.array.isRequired,
   filteredThreads: PropTypes.array.isRequired,
