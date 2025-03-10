@@ -4,6 +4,7 @@ import ViewDetailsThreadsModal from "../ViewDetailsThreadsModal/ViewDetailsThrea
 
 const ForumThreads = ({
   topThreads,
+  forumRefetch,
   filteredThreads,
   threadsToDisplay,
   visibleThreadsCount,
@@ -123,6 +124,7 @@ const ForumThreads = ({
       <dialog id="View_Details_Threads_Modal" className="modal">
         {selectedThread && (
           <ViewDetailsThreadsModal
+            forumRefetch={forumRefetch}
             thread={selectedThread}
             onClose={closeModal}
           />

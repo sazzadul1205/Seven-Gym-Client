@@ -30,6 +30,7 @@ const Forums = () => {
     data: forumsData,
     isLoading: forumsLoading,
     error: forumsError,
+    refetch: forumRefetch,
   } = useQuery({
     queryKey: ["ForumsData"],
     queryFn: () => axiosPublic.get(`/Forums`).then((res) => res.data),
@@ -108,6 +109,7 @@ const Forums = () => {
           {/* Forum Threads Section */}
           <ForumThreads
             topThreads={topThreads}
+            forumRefetch={forumRefetch}
             filteredThreads={filteredThreads}
             threadsToDisplay={threadsToDisplay}
             visibleThreadsCount={visibleThreadsCount}
