@@ -16,9 +16,11 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import ForumBanner from "./ForumBanner/ForumBanner";
 import ForumThreads from "./ForumThreads/ForumThreads";
 import ForumCategory from "./ForumCategory/ForumCategory";
+import useAuth from "../../../Hooks/useAuth";
 
 const Forums = () => {
   const axiosPublic = useAxiosPublic();
+  const { user } = useAuth();
 
   // State management for search, category filter, and visible thread count
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,6 +36,17 @@ const Forums = () => {
   } = useQuery({
     queryKey: ["ForumsData"],
     queryFn: () => axiosPublic.get(`/Forums`).then((res) => res.data),
+  });
+
+  // Fetch User threads
+  const {
+    data: UsersData,
+    isLoading: UsersLoading,
+    error: UsersError,
+  } = useQuery({
+    queryKey: ["UsersData"],
+    queryFn: () =>
+      axiosPublic.get(`/Users?email=${user.email}`).then((res) => res.data),
   });
 
   // Fetch forum categories
@@ -77,8 +90,8 @@ const Forums = () => {
   const threadsToDisplay = filteredThreads?.slice(0, visibleThreadsCount);
 
   // Early return for loading/error states
-  if (forumsLoading || categoriesLoading) return <Loading />;
-  if (forumsError || categoriesError) return <FetchingError />;
+  if (forumsLoading || categoriesLoading || UsersLoading) return <Loading />;
+  if (forumsError || categoriesError || UsersError) return <FetchingError />;
 
   return (
     <div>
@@ -108,6 +121,7 @@ const Forums = () => {
 
           {/* Forum Threads Section */}
           <ForumThreads
+            UsersData={UsersData}
             topThreads={topThreads}
             forumRefetch={forumRefetch}
             filteredThreads={filteredThreads}

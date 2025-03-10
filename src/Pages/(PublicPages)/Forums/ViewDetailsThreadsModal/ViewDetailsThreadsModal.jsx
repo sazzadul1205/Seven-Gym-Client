@@ -1,17 +1,13 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-/* eslint-disable react/prop-types */
-
+import PropTypes from "prop-types";
 import { useState } from "react";
 import { ImCross } from "react-icons/im";
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { MdOutlineAddComment } from "react-icons/md";
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-import useAuth from "../../../../Hooks/useAuth";
 
 // Utility function to calculate time ago
 const timeAgo = (timestamp) => {
   const now = new Date();
-  const timeDiff = now - new Date(timestamp); // Difference in milliseconds
+  const timeDiff = now - new Date(timestamp);
   const seconds = Math.floor(timeDiff / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
@@ -24,49 +20,42 @@ const timeAgo = (timestamp) => {
 };
 
 const ViewDetails = ({ thread, closeModal }) => {
-  const axiosPublic = useAxiosPublic();
-  const { user } = useAuth();
   
-  if (!thread) return null; // Handle the case where thread is undefined
-
-  // State for like functionality
-  const [likes, setLikes] = useState(thread.likes || 0);
+  
+  // Ensure hooks are always called
   const [isLiked, setIsLiked] = useState(false);
-
-  // State for toggling the comment section
-  const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false);
   const [newComment, setNewComment] = useState("");
-  const [comments, setComments] = useState(thread.comments || []);
+  const [likes, setLikes] = useState(thread?.likes || 0);
   const [showAllComments, setShowAllComments] = useState(false);
+  const [comments, setComments] = useState(thread?.comments || []);
+  const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false);
+
+  if (!thread) return null; // Now placed AFTER the hooks
 
   // Handle like button click
   const handleLikeClick = () => {
-    if (isLiked) {
-      // Unlike: decrease the count
-      setLikes((prevLikes) => Math.max(prevLikes - 1, 0));
-    } else {
-      // Like: increase the count
-      setLikes((prevLikes) => prevLikes + 1);
-    }
-    setIsLiked((prev) => !prev); // Toggle like state
+    setLikes((prevLikes) =>
+      isLiked ? Math.max(prevLikes - 1, 0) : prevLikes + 1
+    );
+    setIsLiked((prev) => !prev);
   };
 
   // Handle add comment button click
   const toggleCommentBox = () => {
-    setIsCommentBoxVisible((prev) => !prev); // Toggle the comment box visibility
+    setIsCommentBoxVisible((prev) => !prev);
   };
 
   // Handle submit comment
   const handleAddComment = () => {
     if (newComment.trim()) {
       const commentToAdd = {
-        name: "You", // This can be replaced with the logged-in user's name
+        name: "You",
         comment: newComment,
         commentedAt: new Date(),
       };
       setComments((prevComments) => [commentToAdd, ...prevComments]);
-      setNewComment(""); // Clear the text area
-      setIsCommentBoxVisible(false); // Optionally hide the comment box after adding
+      setNewComment("");
+      setIsCommentBoxVisible(false);
     }
   };
 
@@ -79,17 +68,16 @@ const ViewDetails = ({ thread, closeModal }) => {
     <div className="modal-box max-w-3xl sm:max-w-4xl p-6 bg-white rounded-lg shadow-lg">
       {/* Top section */}
       <div className="flex justify-between items-center">
-        {/* Title */}
         <h4 className="font-bold text-xl text-gray-800 text-center">
           {thread.title}
         </h4>
-        {/* Close Btn */}
         <ImCross
           onClick={closeModal}
           className="text-black hover:text-red-500 text-xl cursor-pointer"
         />
       </div>
 
+      {/* Content Section */}
       <div className="pt-5 space-y-3">
         {/* Description */}
         <p className="text-gray-600 italic leading-relaxed">
@@ -136,7 +124,7 @@ const ViewDetails = ({ thread, closeModal }) => {
           </div>
 
           <div
-            className="flex items-center bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-300 gap-4 px-4 py-2 rounded-3xl"
+            className="flex items-center bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-300 gap-4 px-4 py-2 rounded-3xl cursor-pointer"
             onClick={handleLikeClick}
           >
             {isLiked ? (
@@ -152,40 +140,33 @@ const ViewDetails = ({ thread, closeModal }) => {
         </div>
 
         {/* Comment Box */}
-        <div
-          className={`transition-all duration-300 ease-in-out border border-gray-300 p-2 rounded-xl ${
-            isCommentBoxVisible
-              ? "max-h-[300px] opacity-100"
-              : "max-h-0 opacity-0 overflow-hidden"
-          } mt-4`}
-        >
-          {/* Input */}
-          <textarea
-            className="textarea w-full text-black bg-white border border-black rounded-2xl"
-            placeholder="Bio"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-          ></textarea>
-
-          {/* Buttons */}
-          <div className="flex justify-between items-center pt-2">
-            <button
-              className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-700 text-white font-semibold rounded-lg px-10 py-2 "
-              onClick={toggleCommentBox}
-            >
-              close
-            </button>
-            <button
-              className="bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-700 text-white font-semibold rounded-lg px-10 py-2 "
-              onClick={handleAddComment}
-            >
-              Submit
-            </button>
+        {isCommentBoxVisible && (
+          <div className="border border-gray-300 p-2 rounded-xl mt-4">
+            <textarea
+              className="textarea w-full text-black bg-white border border-black rounded-2xl"
+              placeholder="Add a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            ></textarea>
+            <div className="flex justify-between items-center pt-2">
+              <button
+                className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-700 text-white font-semibold rounded-lg px-10 py-2"
+                onClick={toggleCommentBox}
+              >
+                Close
+              </button>
+              <button
+                className="bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-700 text-white font-semibold rounded-lg px-10 py-2"
+                onClick={handleAddComment}
+              >
+                Submit
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Comments */}
-        <div className="mb-6">
+        <div className="mb-6 border-2 border-gray-300 rounded-2xl p-2">
           {comments.length > 0 ? (
             <>
               <ul className="space-y-4 mt-4">
@@ -224,6 +205,30 @@ const ViewDetails = ({ thread, closeModal }) => {
       </div>
     </div>
   );
+};
+
+// Prop Types
+ViewDetails.propTypes = {
+  thread: PropTypes.shape({
+    title: PropTypes.string,
+    description: PropTypes.string,
+    likes: PropTypes.number,
+    createdAt: PropTypes.string,
+    author: PropTypes.shape({
+      name: PropTypes.string,
+      profileUrl: PropTypes.string,
+    }),
+    category: PropTypes.string,
+    tags: PropTypes.arrayOf(PropTypes.string),
+    comments: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string,
+        comment: PropTypes.string,
+        commentedAt: PropTypes.string,
+      })
+    ),
+  }),
+  closeModal: PropTypes.func.isRequired,
 };
 
 export default ViewDetails;

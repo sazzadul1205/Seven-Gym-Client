@@ -2,7 +2,9 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import ViewDetailsThreadsModal from "../ViewDetailsThreadsModal/ViewDetailsThreadsModal";
 
+
 const ForumThreads = ({
+  UsersData,
   topThreads,
   forumRefetch,
   filteredThreads,
@@ -126,6 +128,7 @@ const ForumThreads = ({
           <ViewDetailsThreadsModal
             forumRefetch={forumRefetch}
             thread={selectedThread}
+            UsersData={UsersData}
             onClose={closeModal}
           />
         )}
@@ -139,6 +142,7 @@ ForumThreads.propTypes = {
   filteredThreads: PropTypes.array.isRequired,
   visibleThreadsCount: PropTypes.number.isRequired,
   setVisibleThreadsCount: PropTypes.func.isRequired,
+  forumRefetch: PropTypes.func.isRequired,
   topThreads: PropTypes.array.isRequired,
 };
 
