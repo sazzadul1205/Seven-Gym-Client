@@ -25,18 +25,23 @@ const timeAgo = (timestamp) => {
 const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
   const axiosPublic = useAxiosPublic();
 
-  // State management for comments, likes, and UI interactions
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(thread?.likes || 0);
   const [showAllComments, setShowAllComments] = useState(false);
   const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false);
+  const [message, setMessage] = useState(null);
 
   // Prevent rendering if thread is not available
   if (!thread) return null;
 
-  // Handle Like button click (optimistic UI update)
+  // Check if user has already commented
+  const hasCommented = thread.comments?.some(
+    (comment) => comment.email === UsersData.email
+  );
+
+  // Handle Like button click
   const handleLikeClick = async () => {
     try {
       setIsLiked((prev) => !prev);
@@ -52,7 +57,6 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
   };
 
   // Handle adding a new comment
-
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
 
@@ -67,14 +71,15 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
       setLoading(true);
       await axiosPublic.post(`/Forums/${thread._id}/comment`, commentData);
       setNewComment("");
-      setIsCommentBoxVisible(false);
+      setMessage({ type: "success", text: "Comment submitted successfully!" });
 
-      // Delay refetch slightly to allow backend to update
       setTimeout(() => {
+        setMessage(null);
+        setIsCommentBoxVisible(false);
         refetch();
-      }, 500);
+      }, 1500);
     } catch (error) {
-      console.error("Failed to add comment:", error);
+      setMessage({ type: "error", text: "Failed to add comment. Try again!" });
     } finally {
       setLoading(false);
     }
@@ -99,7 +104,7 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
           {thread.description}
         </p>
 
-        {/* Thread Metadata (Author, Category, Time) */}
+        {/* Thread Metadata */}
         <div className="flex justify-between items-center bg-gray-200 flex-wrap px-2 py-3">
           <div className="text-black font-semibold">
             <a
@@ -113,24 +118,8 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
           <p className="text-gray-500 text-sm">{timeAgo(thread.createdAt)}</p>
         </div>
 
-        {/* Tags Section */}
-        <div className="mb-6 flex items-center flex-wrap gap-2">
-          <h3 className="font-semibold text-xl text-gray-800">Tags:</h3>
-          <div className="flex flex-wrap gap-2 ml-4">
-            {thread.tags?.map((tag, index) => (
-              <span
-                key={index}
-                className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs sm:text-sm font-medium"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-
         {/* Comment & Like Section */}
         <div className="flex justify-between items-center flex-wrap">
-          {/* Add Comment Button */}
           <div className="flex items-center gap-2 text-black">
             <h3 className="font-semibold text-xl">Comments:</h3>
             <MdOutlineAddComment
@@ -159,11 +148,23 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
         {/* Comment Input Box */}
         {isCommentBoxVisible && (
           <div className="border border-gray-300 p-2 rounded-xl mt-4">
+            {message && (
+              <p
+                className={`text-sm ${
+                  message.type === "success" ? "text-green-600" : "text-red-600"
+                } mb-2`}
+              >
+                {message.text}
+              </p>
+            )}
             <textarea
               className="textarea w-full text-black bg-white border border-black rounded-2xl"
-              placeholder="Add a comment..."
+              placeholder={
+                hasCommented ? "Already commented" : "Add a comment..."
+              }
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
+              disabled={hasCommented}
             ></textarea>
             <div className="flex justify-between items-center pt-2">
               <button
@@ -174,54 +175,58 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
                 Close
               </button>
               <button
-                className="bg-green-500 hover:bg-green-700 text-white font-semibold rounded-lg px-6 py-2"
+                className={`font-semibold rounded-lg px-6 py-2 ${
+                  hasCommented
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-500 hover:bg-green-700 text-white"
+                }`}
                 onClick={handleAddComment}
-                disabled={loading}
+                disabled={loading || hasCommented}
               >
                 {loading ? "Submitting..." : "Submit"}
               </button>
             </div>
           </div>
         )}
+      </div>
 
-        {/* Comments Section */}
-        <div className="mb-6 border-2 border-gray-300 rounded-2xl p-2">
-          {thread.comments?.length > 0 ? (
-            <>
-              <ul className="space-y-4 mt-4">
-                {(showAllComments
-                  ? thread.comments
-                  : thread.comments.slice(0, 5)
-                ).map((comment, index) => (
-                  <li
-                    key={index}
-                    className="border-b border-gray-200 pb-3 flex-col"
-                  >
-                    <p className="text-gray-800">
-                      <strong>{comment.name}:</strong>
-                    </p>
-                    <div className="flex justify-between text-black">
-                      <p className="pt-1">{comment.comment}</p>
-                      <p className="text-sm text-gray-500">
-                        {timeAgo(comment.commentedAt)}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-              {thread.comments.length > 5 && (
-                <button
-                  className="mt-4 text-blue-600 hover:underline"
-                  onClick={() => setShowAllComments((prev) => !prev)}
+      {/* Comments Section */}
+      <div className="mb-6 border-2 border-gray-300 rounded-2xl p-2">
+        {thread.comments?.length > 0 ? (
+          <>
+            <ul className="space-y-4 mt-4">
+              {(showAllComments
+                ? thread.comments
+                : thread.comments.slice(0, 5)
+              ).map((comment, index) => (
+                <li
+                  key={index}
+                  className="border-b border-gray-200 pb-3 flex-col"
                 >
-                  {showAllComments ? "Show Less" : "Show More"}
-                </button>
-              )}
-            </>
-          ) : (
-            <p className="text-gray-700">No comments yet.</p>
-          )}
-        </div>
+                  <p className="text-gray-800">
+                    <strong>{comment.name}:</strong>
+                  </p>
+                  <div className="flex justify-between text-black">
+                    <p className="pt-1">{comment.comment}</p>
+                    <p className="text-sm text-gray-500">
+                      {timeAgo(comment.commentedAt)}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            {thread.comments.length > 5 && (
+              <button
+                className="mt-4 text-blue-600 hover:underline"
+                onClick={() => setShowAllComments((prev) => !prev)}
+              >
+                {showAllComments ? "Show Less" : "Show More"}
+              </button>
+            )}
+          </>
+        ) : (
+          <p className="text-gray-700">No comments yet.</p>
+        )}
       </div>
     </div>
   );
