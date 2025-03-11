@@ -25,34 +25,41 @@ const timeAgo = (timestamp) => {
 const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
   const axiosPublic = useAxiosPublic();
 
-  const [newComment, setNewComment] = useState("");
+  // Loading States
   const [loading, setLoading] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-  const [likes, setLikes] = useState(thread?.likes || 0);
+  const [likeLoading, setLikeLoading] = useState(false);
+  
+  // States
+  const [message, setMessage] = useState(null);
+  const [newComment, setNewComment] = useState("");
   const [showAllComments, setShowAllComments] = useState(false);
   const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false);
-  const [message, setMessage] = useState(null);
 
   // Prevent rendering if thread is not available
   if (!thread) return null;
 
   // Check if user has already commented
-  const hasCommented = thread.comments?.some(
-    (comment) => comment.email === UsersData.email
+  const hasCommented = thread?.comments?.some(
+    (comment) => comment?.email === UsersData?.email
   );
 
-  // Handle Like button click
+  // Handle Like button click with loading state
   const handleLikeClick = async () => {
+    if (likeLoading) return; // Prevent multiple clicks
+    setLikeLoading(true);
     try {
-      setIsLiked((prev) => !prev);
-      setLikes((prevLikes) =>
-        isLiked ? Math.max(prevLikes - 1, 0) : prevLikes + 1
-      );
-
-      // Send like update to the server
-      // await axiosPublic.patch(`/Forums/${thread._id}/like`, { like: !isLiked });
+      // Call the PATCH route to toggle the like status
+      await axiosPublic.patch(`/Forums/${thread._id}/like`, {
+        email: UsersData.email,
+      });
+      // Update UI with new like count and status after a short delay
+      setTimeout(() => {
+        refetch();
+        setLikeLoading(false);
+      }, 1500);
     } catch (error) {
       console.error("Failed to update like:", error);
+      setLikeLoading(false);
     }
   };
 
@@ -79,7 +86,11 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
         refetch();
       }, 1500);
     } catch (error) {
-      setMessage({ type: "error", text: "Failed to add comment. Try again!" });
+      setMessage({
+        type: "error",
+        text: "Failed to add comment. Try again!",
+        error,
+      });
     } finally {
       setLoading(false);
     }
@@ -100,6 +111,7 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
 
       {/* Thread Details */}
       <div className="pt-5 space-y-3">
+        {/* Description */}
         <p className="text-gray-600 italic leading-relaxed">
           {thread.description}
         </p>
@@ -130,17 +142,21 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
 
           {/* Like Button */}
           <div
-            className="flex items-center bg-gray-100 hover:bg-gray-300 gap-4 px-4 py-2 rounded-3xl cursor-pointer"
+            className={`flex items-center bg-gray-100 hover:bg-gray-300 gap-4 px-4 py-2 rounded-3xl cursor-pointer ${
+              likeLoading ? "opacity-50 pointer-events-none" : ""
+            }`}
             onClick={handleLikeClick}
           >
-            {isLiked ? (
+            {likeLoading ? (
+              <span className="text-gray-600 text-md">Loading...</span>
+            ) : UsersData && thread.likedBy?.includes(UsersData.email) ? (
               <BiSolidLike className="text-blue-600 text-2xl" />
             ) : (
               <BiLike className="text-gray-600 text-2xl" />
             )}
             <p className="text-black">||</p>
             <p className="text-gray-700 font-medium">
-              {likes} {likes === 1 ? "Like" : "Likes"}
+              {thread?.likes || 0} {thread?.likes === 1 ? "Like" : "Likes"}
             </p>
           </div>
         </div>
@@ -168,17 +184,17 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
             ></textarea>
             <div className="flex justify-between items-center pt-2">
               <button
-                className="bg-red-500 hover:bg-red-700 text-white font-semibold rounded-lg px-6 py-2"
+                className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-700 text-white font-semibold rounded-lg px-10 py-2"
                 onClick={() => setIsCommentBoxVisible(false)}
                 disabled={loading}
               >
                 Close
               </button>
               <button
-                className={`font-semibold rounded-lg px-6 py-2 ${
+                className={`font-semibold rounded-lg px-10 py-2 ${
                   hasCommented
                     ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-500 hover:bg-green-700 text-white"
+                    : "bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-700 text-white"
                 }`}
                 onClick={handleAddComment}
                 disabled={loading || hasCommented}
@@ -191,7 +207,7 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
       </div>
 
       {/* Comments Section */}
-      <div className="mb-6 border-2 border-gray-300 rounded-2xl p-2">
+      <div className="mb-6 border-2 border-gray-300 rounded-2xl p-2 mt-5">
         {thread.comments?.length > 0 ? (
           <>
             <ul className="space-y-4 mt-4">
