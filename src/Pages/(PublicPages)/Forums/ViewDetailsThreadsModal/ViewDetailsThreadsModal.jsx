@@ -1,11 +1,13 @@
-import PropTypes from "prop-types";
 import { useState } from "react";
+
+import PropTypes from "prop-types";
 import { ImCross } from "react-icons/im";
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { MdOutlineAddComment } from "react-icons/md";
 
-import ViewDetailsThreadComment from "./ViewDetailsThreadComment/ViewDetailsThreadComment";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
+// Utility function to format timestamps into "time ago" format
 const timeAgo = (timestamp) => {
   const now = new Date();
   const timeDiff = now - new Date(timestamp);
@@ -21,30 +23,66 @@ const timeAgo = (timestamp) => {
 };
 
 const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
+  const axiosPublic = useAxiosPublic();
+
+  // State management for comments, likes, and UI interactions
+  const [newComment, setNewComment] = useState("");
+  const [loading, setLoading] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(thread?.likes || 0);
   const [showAllComments, setShowAllComments] = useState(false);
   const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false);
 
+  // Prevent rendering if thread is not available
   if (!thread) return null;
 
-  const handleLikeClick = () => {
-    setLikes((prevLikes) =>
-      isLiked ? Math.max(prevLikes - 1, 0) : prevLikes + 1
-    );
-    setIsLiked((prev) => !prev);
+  // Handle Like button click (optimistic UI update)
+  const handleLikeClick = async () => {
+    try {
+      setIsLiked((prev) => !prev);
+      setLikes((prevLikes) =>
+        isLiked ? Math.max(prevLikes - 1, 0) : prevLikes + 1
+      );
+
+      // Send like update to the server
+      // await axiosPublic.patch(`/Forums/${thread._id}/like`, { like: !isLiked });
+    } catch (error) {
+      console.error("Failed to update like:", error);
+    }
   };
 
-  const toggleCommentBox = () => {
-    setIsCommentBoxVisible((prev) => !prev);
-  };
+  // Handle adding a new comment
 
-  const toggleShowAllComments = () => {
-    setShowAllComments((prev) => !prev);
+  const handleAddComment = async () => {
+    if (!newComment.trim()) return;
+
+    const commentData = {
+      name: UsersData.fullName || "Anonymous",
+      email: UsersData.email,
+      comment: newComment,
+      commentedAt: new Date(),
+    };
+
+    try {
+      setLoading(true);
+      await axiosPublic.post(`/Forums/${thread._id}/comment`, commentData);
+      setNewComment("");
+      setIsCommentBoxVisible(false);
+
+      // Delay refetch slightly to allow backend to update
+      setTimeout(() => {
+        refetch();
+      }, 500);
+    } catch (error) {
+      console.error("Failed to add comment:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="modal-box max-w-3xl sm:max-w-4xl p-6 bg-white rounded-lg shadow-lg">
+      {/* Modal Header with Close Button */}
       <div className="flex justify-between items-center">
         <h4 className="font-bold text-xl text-gray-800 text-center">
           {thread.title}
@@ -55,11 +93,13 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
         />
       </div>
 
+      {/* Thread Details */}
       <div className="pt-5 space-y-3">
         <p className="text-gray-600 italic leading-relaxed">
           {thread.description}
         </p>
 
+        {/* Thread Metadata (Author, Category, Time) */}
         <div className="flex justify-between items-center bg-gray-200 flex-wrap px-2 py-3">
           <div className="text-black font-semibold">
             <a
@@ -73,6 +113,7 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
           <p className="text-gray-500 text-sm">{timeAgo(thread.createdAt)}</p>
         </div>
 
+        {/* Tags Section */}
         <div className="mb-6 flex items-center flex-wrap gap-2">
           <h3 className="font-semibold text-xl text-gray-800">Tags:</h3>
           <div className="flex flex-wrap gap-2 ml-4">
@@ -87,15 +128,18 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
           </div>
         </div>
 
+        {/* Comment & Like Section */}
         <div className="flex justify-between items-center flex-wrap">
+          {/* Add Comment Button */}
           <div className="flex items-center gap-2 text-black">
             <h3 className="font-semibold text-xl">Comments:</h3>
             <MdOutlineAddComment
               className="text-2xl hover:text-yellow-500 cursor-pointer"
-              onClick={toggleCommentBox}
+              onClick={() => setIsCommentBoxVisible((prev) => !prev)}
             />
           </div>
 
+          {/* Like Button */}
           <div
             className="flex items-center bg-gray-100 hover:bg-gray-300 gap-4 px-4 py-2 rounded-3xl cursor-pointer"
             onClick={handleLikeClick}
@@ -112,16 +156,35 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
           </div>
         </div>
 
+        {/* Comment Input Box */}
         {isCommentBoxVisible && (
-          <ViewDetailsThreadComment
-            refetch={refetch}
-            threadId={thread._id}
-            UsersData={UsersData}
-            toggleCommentBox={toggleCommentBox}
-            setIsCommentBoxVisible={setIsCommentBoxVisible}
-          />
+          <div className="border border-gray-300 p-2 rounded-xl mt-4">
+            <textarea
+              className="textarea w-full text-black bg-white border border-black rounded-2xl"
+              placeholder="Add a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            ></textarea>
+            <div className="flex justify-between items-center pt-2">
+              <button
+                className="bg-red-500 hover:bg-red-700 text-white font-semibold rounded-lg px-6 py-2"
+                onClick={() => setIsCommentBoxVisible(false)}
+                disabled={loading}
+              >
+                Close
+              </button>
+              <button
+                className="bg-green-500 hover:bg-green-700 text-white font-semibold rounded-lg px-6 py-2"
+                onClick={handleAddComment}
+                disabled={loading}
+              >
+                {loading ? "Submitting..." : "Submit"}
+              </button>
+            </div>
+          </div>
         )}
 
+        {/* Comments Section */}
         <div className="mb-6 border-2 border-gray-300 rounded-2xl p-2">
           {thread.comments?.length > 0 ? (
             <>
@@ -149,7 +212,7 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
               {thread.comments.length > 5 && (
                 <button
                   className="mt-4 text-blue-600 hover:underline"
-                  onClick={toggleShowAllComments}
+                  onClick={() => setShowAllComments((prev) => !prev)}
                 >
                   {showAllComments ? "Show Less" : "Show More"}
                 </button>
@@ -165,27 +228,8 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
 };
 
 ViewDetails.propTypes = {
-  thread: PropTypes.shape({
-    title: PropTypes.string,
-    _id: PropTypes.string,
-    description: PropTypes.string,
-    likes: PropTypes.number,
-    createdAt: PropTypes.string,
-    author: PropTypes.shape({
-      name: PropTypes.string,
-      profileUrl: PropTypes.string,
-    }),
-    category: PropTypes.string,
-    tags: PropTypes.arrayOf(PropTypes.string),
-    comments: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string,
-        comment: PropTypes.string,
-        commentedAt: PropTypes.string,
-      })
-    ),
-  }),
-  Close: PropTypes.func,
+  thread: PropTypes.object.isRequired,
+  Close: PropTypes.func.isRequired,
   UsersData: PropTypes.object.isRequired,
   refetch: PropTypes.func.isRequired,
 };

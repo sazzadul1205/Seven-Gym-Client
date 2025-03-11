@@ -1,11 +1,12 @@
-import { useState } from "react";
+/* eslint-disable react/prop-types */
+import { useEffect, useState } from "react";
 
 import ViewDetailsThreadsModal from "../ViewDetailsThreadsModal/ViewDetailsThreadsModal";
 
 const ForumThreads = ({
+  refetch,
   UsersData,
   forumsData,
-  refetch,
   searchQuery,
   selectedCategory,
   visibleThreadsCount,
@@ -53,6 +54,17 @@ const ForumThreads = ({
     if (minutes > 0) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
     return `${seconds} second${seconds > 1 ? "s" : ""} ago`;
   };
+
+  useEffect(() => {
+    if (selectedThread) {
+      const updatedThread = forumsData.find(
+        (thread) => thread._id === selectedThread._id
+      );
+      if (updatedThread) {
+        setSelectedThread(updatedThread);
+      }
+    }
+  }, [forumsData, selectedThread]);
 
   const closeModal = () => {
     setSelectedThread(null);
