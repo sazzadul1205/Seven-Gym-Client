@@ -4,7 +4,8 @@ import { ImCross } from "react-icons/im";
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { MdOutlineAddComment } from "react-icons/md";
 
-// Utility function to calculate time ago
+import ViewDetailsThreadComment from "./ViewDetailsThreadComment/ViewDetailsThreadComment";
+
 const timeAgo = (timestamp) => {
   const now = new Date();
   const timeDiff = now - new Date(timestamp);
@@ -19,20 +20,14 @@ const timeAgo = (timestamp) => {
   return `${seconds} second${seconds > 1 ? "s" : ""} ago`;
 };
 
-const ViewDetails = ({ thread, closeModal }) => {
-  
-  
-  // Ensure hooks are always called
+const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
   const [isLiked, setIsLiked] = useState(false);
-  const [newComment, setNewComment] = useState("");
   const [likes, setLikes] = useState(thread?.likes || 0);
   const [showAllComments, setShowAllComments] = useState(false);
-  const [comments, setComments] = useState(thread?.comments || []);
   const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false);
 
-  if (!thread) return null; // Now placed AFTER the hooks
+  if (!thread) return null;
 
-  // Handle like button click
   const handleLikeClick = () => {
     setLikes((prevLikes) =>
       isLiked ? Math.max(prevLikes - 1, 0) : prevLikes + 1
@@ -40,51 +35,31 @@ const ViewDetails = ({ thread, closeModal }) => {
     setIsLiked((prev) => !prev);
   };
 
-  // Handle add comment button click
   const toggleCommentBox = () => {
     setIsCommentBoxVisible((prev) => !prev);
   };
 
-  // Handle submit comment
-  const handleAddComment = () => {
-    if (newComment.trim()) {
-      const commentToAdd = {
-        name: "You",
-        comment: newComment,
-        commentedAt: new Date(),
-      };
-      setComments((prevComments) => [commentToAdd, ...prevComments]);
-      setNewComment("");
-      setIsCommentBoxVisible(false);
-    }
-  };
-
-  // Toggle "Show More" comments
   const toggleShowAllComments = () => {
     setShowAllComments((prev) => !prev);
   };
 
   return (
     <div className="modal-box max-w-3xl sm:max-w-4xl p-6 bg-white rounded-lg shadow-lg">
-      {/* Top section */}
       <div className="flex justify-between items-center">
         <h4 className="font-bold text-xl text-gray-800 text-center">
           {thread.title}
         </h4>
         <ImCross
-          onClick={closeModal}
+          onClick={Close}
           className="text-black hover:text-red-500 text-xl cursor-pointer"
         />
       </div>
 
-      {/* Content Section */}
       <div className="pt-5 space-y-3">
-        {/* Description */}
         <p className="text-gray-600 italic leading-relaxed">
           {thread.description}
         </p>
 
-        {/* Author and Date */}
         <div className="flex justify-between items-center bg-gray-200 flex-wrap px-2 py-3">
           <div className="text-black font-semibold">
             <a
@@ -98,7 +73,6 @@ const ViewDetails = ({ thread, closeModal }) => {
           <p className="text-gray-500 text-sm">{timeAgo(thread.createdAt)}</p>
         </div>
 
-        {/* Tags */}
         <div className="mb-6 flex items-center flex-wrap gap-2">
           <h3 className="font-semibold text-xl text-gray-800">Tags:</h3>
           <div className="flex flex-wrap gap-2 ml-4">
@@ -113,7 +87,6 @@ const ViewDetails = ({ thread, closeModal }) => {
           </div>
         </div>
 
-        {/* Likes and Add Comment Button */}
         <div className="flex justify-between items-center flex-wrap">
           <div className="flex items-center gap-2 text-black">
             <h3 className="font-semibold text-xl">Comments:</h3>
@@ -124,7 +97,7 @@ const ViewDetails = ({ thread, closeModal }) => {
           </div>
 
           <div
-            className="flex items-center bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-300 gap-4 px-4 py-2 rounded-3xl cursor-pointer"
+            className="flex items-center bg-gray-100 hover:bg-gray-300 gap-4 px-4 py-2 rounded-3xl cursor-pointer"
             onClick={handleLikeClick}
           >
             {isLiked ? (
@@ -139,57 +112,41 @@ const ViewDetails = ({ thread, closeModal }) => {
           </div>
         </div>
 
-        {/* Comment Box */}
         {isCommentBoxVisible && (
-          <div className="border border-gray-300 p-2 rounded-xl mt-4">
-            <textarea
-              className="textarea w-full text-black bg-white border border-black rounded-2xl"
-              placeholder="Add a comment..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-            ></textarea>
-            <div className="flex justify-between items-center pt-2">
-              <button
-                className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-700 text-white font-semibold rounded-lg px-10 py-2"
-                onClick={toggleCommentBox}
-              >
-                Close
-              </button>
-              <button
-                className="bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-700 text-white font-semibold rounded-lg px-10 py-2"
-                onClick={handleAddComment}
-              >
-                Submit
-              </button>
-            </div>
-          </div>
+          <ViewDetailsThreadComment
+            refetch={refetch}
+            threadId={thread._id}
+            UsersData={UsersData}
+            toggleCommentBox={toggleCommentBox}
+            setIsCommentBoxVisible={setIsCommentBoxVisible}
+          />
         )}
 
-        {/* Comments */}
         <div className="mb-6 border-2 border-gray-300 rounded-2xl p-2">
-          {comments.length > 0 ? (
+          {thread.comments?.length > 0 ? (
             <>
               <ul className="space-y-4 mt-4">
-                {(showAllComments ? comments : comments.slice(0, 5)).map(
-                  (comment, index) => (
-                    <li
-                      key={index}
-                      className="border-b border-gray-200 pb-3 flex-col"
-                    >
-                      <p className="text-gray-800">
-                        <strong>{comment.name}:</strong>
+                {(showAllComments
+                  ? thread.comments
+                  : thread.comments.slice(0, 5)
+                ).map((comment, index) => (
+                  <li
+                    key={index}
+                    className="border-b border-gray-200 pb-3 flex-col"
+                  >
+                    <p className="text-gray-800">
+                      <strong>{comment.name}:</strong>
+                    </p>
+                    <div className="flex justify-between text-black">
+                      <p className="pt-1">{comment.comment}</p>
+                      <p className="text-sm text-gray-500">
+                        {timeAgo(comment.commentedAt)}
                       </p>
-                      <div className="flex justify-between text-black">
-                        <p className="pt-1">{comment.comment}</p>
-                        <p className="text-sm text-gray-500">
-                          {timeAgo(comment.commentedAt)}
-                        </p>
-                      </div>
-                    </li>
-                  )
-                )}
+                    </div>
+                  </li>
+                ))}
               </ul>
-              {comments.length > 5 && (
+              {thread.comments.length > 5 && (
                 <button
                   className="mt-4 text-blue-600 hover:underline"
                   onClick={toggleShowAllComments}
@@ -207,10 +164,10 @@ const ViewDetails = ({ thread, closeModal }) => {
   );
 };
 
-// Prop Types
 ViewDetails.propTypes = {
   thread: PropTypes.shape({
     title: PropTypes.string,
+    _id: PropTypes.string,
     description: PropTypes.string,
     likes: PropTypes.number,
     createdAt: PropTypes.string,
@@ -228,7 +185,9 @@ ViewDetails.propTypes = {
       })
     ),
   }),
-  closeModal: PropTypes.func.isRequired,
+  Close: PropTypes.func,
+  UsersData: PropTypes.object.isRequired,
+  refetch: PropTypes.func.isRequired,
 };
 
 export default ViewDetails;
