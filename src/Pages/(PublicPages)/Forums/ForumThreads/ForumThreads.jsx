@@ -188,7 +188,7 @@ ForumThreads.propTypes = {
   UsersData: PropTypes.shape({
     email: PropTypes.string.isRequired,
     fullName: PropTypes.string,
-  }).isRequired,
+  }),
   forumsData: PropTypes.arrayOf(
     PropTypes.shape({
       _id: PropTypes.string.isRequired,

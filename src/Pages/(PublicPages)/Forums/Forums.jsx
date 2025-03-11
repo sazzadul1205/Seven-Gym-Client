@@ -28,7 +28,7 @@ const Forums = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [visibleThreadsCount, setVisibleThreadsCount] = useState(7);
 
-  // Fetch forums data 
+  // Fetch forums data
   const {
     data: forumsData,
     isLoading: forumsLoading,
@@ -47,7 +47,8 @@ const Forums = () => {
   } = useQuery({
     queryKey: ["UsersData"],
     queryFn: () =>
-      axiosPublic.get(`/Users?email=${user.email}`).then((res) => res.data),
+      axiosPublic.get(`/Users?email=${user?.email}`).then((res) => res.data),
+    enabled: !!user, // Only fetch if the user is logged in
   });
 
   // Fetch available forum categories.
@@ -93,7 +94,7 @@ const Forums = () => {
           <ForumThreads
             refetch={refetch}
             UsersData={UsersData}
-            forumsData={forumsData} 
+            forumsData={forumsData}
             searchQuery={searchQuery}
             selectedCategory={selectedCategory}
             visibleThreadsCount={visibleThreadsCount}

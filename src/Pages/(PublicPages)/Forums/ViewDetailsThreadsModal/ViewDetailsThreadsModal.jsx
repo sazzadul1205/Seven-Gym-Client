@@ -28,15 +28,18 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
   // Loading States
   const [loading, setLoading] = useState(false);
   const [likeLoading, setLikeLoading] = useState(false);
-  
+
   // States
   const [message, setMessage] = useState(null);
   const [newComment, setNewComment] = useState("");
-  const [showAllComments, setShowAllComments] = useState(false);
+  const [showAllComments] = useState(false);
   const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false);
 
   // Prevent rendering if thread is not available
   if (!thread) return null;
+
+  // Check if user is logged in
+  const isLoggedIn = UsersData && UsersData.email;
 
   // Check if user has already commented
   const hasCommented = thread?.comments?.some(
@@ -45,14 +48,13 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
 
   // Handle Like button click with loading state
   const handleLikeClick = async () => {
+    if (!isLoggedIn) return; // Prevent action if not logged in
     if (likeLoading) return; // Prevent multiple clicks
     setLikeLoading(true);
     try {
-      // Call the PATCH route to toggle the like status
       await axiosPublic.patch(`/Forums/${thread._id}/like`, {
         email: UsersData.email,
       });
-      // Update UI with new like count and status after a short delay
       setTimeout(() => {
         refetch();
         setLikeLoading(false);
@@ -65,7 +67,7 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
 
   // Handle adding a new comment
   const handleAddComment = async () => {
-    if (!newComment.trim()) return;
+    if (!isLoggedIn || !newComment.trim()) return;
 
     const commentData = {
       name: UsersData.fullName || "Anonymous",
@@ -98,6 +100,13 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
 
   return (
     <div className="modal-box max-w-3xl sm:max-w-4xl p-6 bg-white rounded-lg shadow-lg">
+      {/* Show login prompt if user is not logged in */}
+      {!isLoggedIn && (
+        <div className="bg-red-100 text-red-600 p-3 rounded-lg text-center font-semibold mb-4">
+          You must log in to like and comment on this thread.
+        </div>
+      )}
+
       {/* Modal Header with Close Button */}
       <div className="flex justify-between items-center">
         <h4 className="font-bold text-xl text-gray-800 text-center">
@@ -109,9 +118,9 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
         />
       </div>
 
-      {/* Thread Details */}
+      {/* Details */}
       <div className="pt-5 space-y-3">
-        {/* Description */}
+        {/* Thread Details */}
         <p className="text-gray-600 italic leading-relaxed">
           {thread.description}
         </p>
@@ -132,24 +141,31 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
 
         {/* Comment & Like Section */}
         <div className="flex justify-between items-center flex-wrap">
+          {/* Comments Part */}
           <div className="flex items-center gap-2 text-black">
             <h3 className="font-semibold text-xl">Comments:</h3>
             <MdOutlineAddComment
-              className="text-2xl hover:text-yellow-500 cursor-pointer"
-              onClick={() => setIsCommentBoxVisible((prev) => !prev)}
+              className={`text-2xl ${
+                isLoggedIn
+                  ? "hover:text-yellow-500 cursor-pointer"
+                  : "opacity-50"
+              }`}
+              onClick={() =>
+                isLoggedIn && setIsCommentBoxVisible((prev) => !prev)
+              }
             />
           </div>
 
           {/* Like Button */}
           <div
             className={`flex items-center bg-gray-100 hover:bg-gray-300 gap-4 px-4 py-2 rounded-3xl cursor-pointer ${
-              likeLoading ? "opacity-50 pointer-events-none" : ""
+              likeLoading || !isLoggedIn ? "opacity-50 pointer-events-none" : ""
             }`}
             onClick={handleLikeClick}
           >
             {likeLoading ? (
               <span className="text-gray-600 text-md">Loading...</span>
-            ) : UsersData && thread.likedBy?.includes(UsersData.email) ? (
+            ) : isLoggedIn && thread.likedBy?.includes(UsersData.email) ? (
               <BiSolidLike className="text-blue-600 text-2xl" />
             ) : (
               <BiLike className="text-gray-600 text-2xl" />
@@ -162,7 +178,7 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
         </div>
 
         {/* Comment Input Box */}
-        {isCommentBoxVisible && (
+        {isCommentBoxVisible && isLoggedIn && (
           <div className="border border-gray-300 p-2 rounded-xl mt-4">
             {message && (
               <p
@@ -184,7 +200,7 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
             ></textarea>
             <div className="flex justify-between items-center pt-2">
               <button
-                className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-700 text-white font-semibold rounded-lg px-10 py-2"
+                className="bg-red-500 hover:bg-red-700 text-white font-semibold rounded-lg px-10 py-2"
                 onClick={() => setIsCommentBoxVisible(false)}
                 disabled={loading}
               >
@@ -194,7 +210,7 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
                 className={`font-semibold rounded-lg px-10 py-2 ${
                   hasCommented
                     ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-700 text-white"
+                    : "bg-green-500 hover:bg-green-700 text-white"
                 }`}
                 onClick={handleAddComment}
                 disabled={loading || hasCommented}
@@ -231,14 +247,6 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
                 </li>
               ))}
             </ul>
-            {thread.comments.length > 5 && (
-              <button
-                className="mt-4 text-blue-600 hover:underline"
-                onClick={() => setShowAllComments((prev) => !prev)}
-              >
-                {showAllComments ? "Show Less" : "Show More"}
-              </button>
-            )}
           </>
         ) : (
           <p className="text-gray-700">No comments yet.</p>
@@ -251,7 +259,7 @@ const ViewDetails = ({ thread, Close, UsersData, refetch }) => {
 ViewDetails.propTypes = {
   thread: PropTypes.object.isRequired,
   Close: PropTypes.func.isRequired,
-  UsersData: PropTypes.object.isRequired,
+  UsersData: PropTypes.object,
   refetch: PropTypes.func.isRequired,
 };
 
