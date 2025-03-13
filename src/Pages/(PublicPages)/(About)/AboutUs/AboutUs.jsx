@@ -1,161 +1,165 @@
-
-import Background from "../../../../assets/Background.jpeg";
-
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+
+// Import Assets
+import Background from "../../../../assets/Home-Background/Home-Background.jpeg";
+import AboutUsBanner from "../../../../assets/AboutUS/AboutUsBanner.jpg";
+
+// Shared Components
 import Loading from "../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import FetchingError from "../../../../Shared/Component/FetchingError";
 
 const AboutUs = () => {
   const axiosPublic = useAxiosPublic();
 
-  // Fetching AboutUs Data
-  const {
-    data: AboutUsData,
-    isLoading: AboutUsDataIsLoading,
-    error: AboutUsDataError,
-  } = useQuery({
+  // Fetching About Us Data using React Query
+  const { data, isLoading, error } = useQuery({
     queryKey: ["AboutUsData"],
-    queryFn: () => axiosPublic.get(`/AboutUs`).then((res) => res.data[0]), // Access the first object
+    queryFn: async () => {
+      const response = await axiosPublic.get(`/AboutUs`);
+      return response.data[0]; // Accessing the first object
+    },
   });
 
-  // Loading and error states (render below hooks)
-  if (AboutUsDataIsLoading) {
-    return <Loading />;
-  }
+  // Memoizing the data to prevent unnecessary re-renders
+  const AboutUsData = useMemo(() => data, [data]);
 
-  if (AboutUsDataError) {
-    return (
-      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
-        <p className="text-center text-red-500 font-bold text-3xl mb-8">
-          Something went wrong. Please reload the page.
-        </p>
-        <button
-          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
-          onClick={() => window.location.reload()}
-        >
-          Reload
-        </button>
-      </div>
-    );
-  }
+  // Handle loading and error states
+  if (isLoading) return <Loading />;
+  if (error) return <FetchingError />;
 
   return (
     <div
+      className="min-h-screen bg-fixed bg-cover bg-center"
       style={{
         backgroundImage: `url(${Background})`,
         backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
-      className="bg-fixed bg-cover bg-center min-h-screen"
     >
-      {/* Header */}
-      <div className="bg-[#F72C5B] py-11"></div>
+      {/* Top Section with Banner */}
+      <img src={AboutUsBanner} alt="About Us" className="w-full" />
 
-      {/* Hero Section */}
-      <div
-        className="relative bg-cover bg-center h-96"
-        style={{ backgroundImage: `url(${AboutUsData.heroImage})` }}
-      ></div>
-
-      {/* Introduction Section */}
-      <div className="container mx-auto px-4 py-16 text-white">
-        <h2 className="text-3xl md:text-4xl font-bold  text-center mb-8">
-          {AboutUsData.introduction.title}
-        </h2>
-        <p className="text-lg text-center max-w-4xl mx-auto">
-          {AboutUsData.introduction.description}
-        </p>
-        <div className="flex justify-center mt-8">
+      {/* Content Wrapper */}
+      <div className="bg-gradient-to-b from-black/50 to-black/20">
+        {/* Introduction Section */}
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-8 px-4 py-2">
+          {/* Image Section */}
           <img
-            src={AboutUsData.introduction.image}
+            src={AboutUsData?.introduction?.image}
             alt="Our Gym"
-            className="rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/2"
+            className="rounded-3xl w-full md:w-1/3"
           />
-        </div>
-      </div>
 
-      {/* Mission, Vision, and Values Section */}
-      <div className="bg-white py-16">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
-          {AboutUsData.missionVisionValues.map((item, index) => (
-            <div key={index} className="text-center">
-              <img src={item.image} alt={item.title} className="w-16 mx-auto" />
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                {item.title}
-              </h3>
-              <p className="text-gray-600">{item.description}</p>
+          {/* Text Content */}
+          <div className="w-full md:w-2/3 space-y-3 text-white text-center md:text-left">
+            <h2 className="text-3xl font-bold">
+              {AboutUsData?.introduction?.title}
+            </h2>
+            <p className="text-lg ">
+              {AboutUsData?.introduction?.description}
+            </p>
+          </div>
+        </div>
+
+        {/* Mission, Vision, and Values Section */}
+        <div className="bg-gradient-to-bl from-gray-200/50 to-gray-500/50 py-8">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+            {AboutUsData?.missionVisionValues?.map((item, index) => (
+              <div
+                key={index}
+                className="text-center border border-black rounded-3xl p-6 bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-100 to-gray-400 transition-all"
+              >
+                <img
+                  src={item?.image}
+                  alt={item?.title}
+                  className="w-16 mx-auto mb-4"
+                />
+                <h3 className="text-2xl font-bold text-gray-800">
+                  {item?.title}
+                </h3>
+                <p className="text-lg text-black">{item?.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Why Choose Us Section */}
+        <div className="py-16">
+          <div className="max-w-7xl mx-auto px-4">
+            {/* Section Title */}
+            <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-8">
+              Why Choose <span className="text-yellow-500">Us?</span>
+            </h2>
+
+            {/* Features List */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {AboutUsData?.features?.map((feature, index) => (
+                <div
+                  key={index}
+                  className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-100 to-gray-400 p-6 rounded-lg shadow-lg text-center"
+                >
+                  <img
+                    src={feature?.image}
+                    alt={feature?.title}
+                    className="w-20 mx-auto"
+                  />
+                  <h3 className="text-xl font-semibold text-gray-800 mt-2">
+                    {feature?.title}
+                  </h3>
+                  <p className="text-gray-600">{feature?.description}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Why Choose Us Section */}
-      <div className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-8">
-            Why Choose <span className="text-yellow-500">Us</span>?
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {AboutUsData.features.map((feature, index) => (
-              <div
-                key={index}
-                className="bg-white p-6 rounded-lg shadow-lg text-center"
-              >
-                <img
-                  src={feature.image}
-                  alt={feature.title}
-                  className="w-20 mx-auto"
-                />
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </div>
-            ))}
           </div>
         </div>
-      </div>
 
-      {/* Our Team Section */}
-      <div className="bg-white py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-8">
-            Meet Our <span className="text-yellow-500">Team</span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {AboutUsData.teamMembers.map((member, index) => (
-              <div
-                key={index}
-                className="text-center bg-gray-50 p-6 rounded-lg shadow-lg"
-              >
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-32 h-32 rounded-full mx-auto mb-4"
-                />
-                <h3 className="text-xl font-semibold text-gray-800">
-                  {member.name}
-                </h3>
-                <p className="text-gray-600">{member.role}</p>
-              </div>
-            ))}
+        {/* Our Team Section */}
+        <div className="bg-gradient-to-bl from-gray-50/90 to-gray-100/80 py-16">
+          <div className="container mx-auto px-4">
+            {/* Section Title */}
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-8">
+              Meet Our <span className="text-yellow-500">Team</span>
+            </h2>
+
+            {/* Team Members */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {AboutUsData?.teamMembers?.map((member, index) => (
+                <div
+                  key={index}
+                  className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-100 to-gray-400 p-6 rounded-lg shadow-lg text-center"
+                >
+                  <img
+                    src={member?.image}
+                    alt={member?.name}
+                    className="w-32 h-32 rounded-full mx-auto mb-4"
+                  />
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    {member?.name}
+                  </h3>
+                  <p className="text-gray-600">{member?.role}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Call to Action */}
-      <div className="bg-yellow-500 py-12 text-center">
-        <h2 className="text-3xl font-bold text-white mb-4">
-          {AboutUsData.callToAction.title}
-        </h2>
-        <p className="text-lg text-white mb-6">
-          {AboutUsData.callToAction.description}
-        </p>
-        <a
-          href={AboutUsData.callToAction.buttonLink}
-          className="px-6 py-3 bg-white text-yellow-500 font-semibold rounded-lg shadow-sm hover:bg-gray-200 transition"
-        >
-          {AboutUsData.callToAction.buttonText}
-        </a>
+        {/* Call to Action Section */}
+        <div className="bg-gradient-to-bl from-yellow-500 to-yellow-600 py-12 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            {AboutUsData?.callToAction?.title}
+          </h2>
+          <p className="text-lg text-white mb-6">
+            {AboutUsData?.callToAction?.description}
+          </p>
+          <a
+            href={AboutUsData?.callToAction?.buttonLink}
+            className="bg-gradient-to-bl hover:bg-gradient-to-tr from-white to-gray-300 text-black font-semibold text-lg rounded-xl shadow-lg hover:shadow-2xl px-10 py-3 inline-block transition-all"
+          >
+            {AboutUsData?.callToAction?.buttonText}
+          </a>
+        </div>
       </div>
     </div>
   );

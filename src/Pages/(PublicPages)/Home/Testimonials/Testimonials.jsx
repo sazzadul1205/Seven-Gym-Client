@@ -13,6 +13,10 @@ import "slick-carousel/slick/slick-theme.css";
 import Title from "../../../../Shared/Component/Title";
 
 const Testimonials = ({ testimonialsData = [] }) => {
+
+
+
+  
   const sliderRef = useRef(null);
 
   // Slider settings for responsiveness and autoplay

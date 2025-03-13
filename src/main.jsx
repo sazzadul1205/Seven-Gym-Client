@@ -31,7 +31,7 @@ import Classes from "./Pages/(PublicPages)/(Classes)/Classes/Classes.jsx";
 import Feedback from "./Pages/(PublicPages)/(About)/Feedback/Feedback.jsx";
 import Trainers from "./Pages/(PublicPages)/(Trainers)/Trainers/Trainers.jsx";
 import OurMission from "./Pages/(PublicPages)/(About)/OurMission/OurMission.jsx";
-import Testimonials from "./Pages/(PublicPages)/Home/Testimonials/Testimonials.jsx";
+// import Testimonials from "./Pages/(PublicPages)/Home/Testimonials/Testimonials.jsx";
 import ClassesDetails from "./Pages/(PublicPages)/(Classes)/ClassesDetails/ClassesDetails.jsx";
 import TrainersDetails from "./Pages/(PublicPages)/(Trainers)/TrainersDetails/TrainersDetails.jsx";
 import TrainersBookings from "./Pages/(PublicPages)/(Trainers)/TrainersBookings/TrainersBookings.jsx";
@@ -42,6 +42,7 @@ import UserSettings from "./Pages/(UserPages)/UserSettings/UserSettings.jsx";
 import UserTearUpgrade from "./Pages/(UserPages)/UserTearUpgrade/UserTearUpgrade.jsx";
 import TearUpgradePayment from "./Pages/(UserPages)/TearUpgradePayment/TearUpgradePayment.jsx";
 import UserSchedulePlanner from "./Pages/(UserPages)/UserSchedulePlanner/UserSchedulePlanner.jsx";
+import TestimonialsPage from "./Pages/(PublicPages)/(About)/TestimonialsPage/TestimonialsPage.jsx";
 
 const queryClient = new QueryClient();
 
@@ -79,7 +80,10 @@ createRoot(document.getElementById("root")).render(
               <Route path="/Classes/:module" element={<ClassesDetails />} />
               <Route path="/Forums" element={<Forums />} />
               <Route path="/About/OurMission" element={<OurMission />} />
-              <Route path="/About/Testimonials" element={<Testimonials />} />
+              <Route
+                path="/About/Testimonials"
+                element={<TestimonialsPage />}
+              />
               <Route path="/About/AboutUs" element={<AboutUs />} />
               <Route path="/About/Feedback" element={<Feedback />} />
 
