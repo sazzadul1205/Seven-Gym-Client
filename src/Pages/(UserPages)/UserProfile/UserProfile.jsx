@@ -9,7 +9,6 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import Loading from "../../../Shared/Loading/Loading";
 import useAuth from "../../../Hooks/useAuth";
 
-import UPMainInfo from "./UPDetailes/UPMainInfo/UPMainInfo";
 import UPSocialLinks from "./UPDetailes/UPSocialLinks/UPSocialLinks";
 import UPSelectedGoals from "./UPDetailes/UPSelectedGoals/UPSelectedGoals";
 import UPAchievements from "./UPDetailes/UPAchievements/UPAchievements";
@@ -19,6 +18,7 @@ import UPAttendingClasses from "./UPDetailes/UPAttendingClasses/UPAttendingClass
 import UPTodaysWorkout from "./UPDetailes/UPTodaysWorkout/UPTodaysWorkout";
 
 // Component Import
+import UserProfileAboutMe from "./UserProfileAboutMe/UserProfileAboutMe";
 import UserProfileTop from "./UserProfileTop/UserProfileTop";
 
 const UserProfile = () => {
@@ -106,8 +106,8 @@ const UserProfile = () => {
           <div className="bg-black p-[1px] my-2"></div>
           {/* Content */}
           <div className="space-y-6 pt-2">
-            {/* Main Info */}
-            <UPMainInfo usersData={UsersData} />
+            {/* About Me */}
+            <UserProfileAboutMe usersData={UsersData} />
 
             {/* Socials Links */}
             <UPSocialLinks usersData={UsersData} />
