@@ -46,7 +46,7 @@ const UPTodaysWorkout = ({ usersData, refetch }) => {
   };
 
   return (
-    <div className="mt-6 bg-white p-4 sm:p-6 rounded-xl shadow-2xl">
+    <div className="bg-linear-to-bl from-gray-200 to-gray-400 p-5 shadow-xl rounded-xl">
       {/* Header */}
       <div className="flex items-center justify-between border-b-2 border-gray-400 pb-2">
         <div className="flex items-center gap-3">
