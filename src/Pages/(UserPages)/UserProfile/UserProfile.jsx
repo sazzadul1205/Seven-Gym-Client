@@ -11,7 +11,6 @@ import useAuth from "../../../Hooks/useAuth";
 
 import UPAchievements from "./UPDetailes/UPAchievements/UPAchievements";
 import UPRecentWorkout from "./UPDetailes/UPRecentWorkout/UPRecentWorkout";
-import UPAttendingClasses from "./UPDetailes/UPAttendingClasses/UPAttendingClasses";
 import UPTodaysWorkout from "./UPDetailes/UPTodaysWorkout/UPTodaysWorkout";
 
 // Component Import
@@ -20,6 +19,7 @@ import UserProfileSocial from "./UserProfileSocial/UserProfileSocial";
 import UserProfileGoals from "./UserProfileGoals/UserProfileGoals";
 import UserProfileTop from "./UserProfileTop/UserProfileTop";
 import UserProfileTrainers from "./UserProfileTrainers/UserProfileTrainers";
+import UserProfileAttendingClasses from "./UserProfileAttendingClasses/UserProfileAttendingClasses";
 
 const UserProfile = () => {
   const { user } = useAuth();
@@ -119,7 +119,7 @@ const UserProfile = () => {
             <UserProfileTrainers BookedTrainerData={BookedTrainerData} />
 
             {/* Current Attending Classes */}
-            <UPAttendingClasses ClassesData={ClassesData} />
+            <UserProfileAttendingClasses ClassesData={ClassesData} />
           </div>
         </div>
 

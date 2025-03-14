@@ -2,10 +2,10 @@ import { Link } from "react-router";
 
 import PropTypes from "prop-types";
 
-import USTrainer from "../../../../../assets/UserProfile/USTrainer.png";
+import USTrainer from "../../../../assets/UserProfile/USTrainer.png";
 
 // Component Import
-import TrainerPublicIdCard from "../../../../../Shared/Component/TrainerPublicIdCard";
+import TrainerPublicIdCard from "../../../../Shared/Component/TrainerPublicIdCard";
 
 const UserProfileTrainers = ({ BookedTrainerData }) => {
   return (

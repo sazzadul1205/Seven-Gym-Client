@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 import groupClass from "../../../../../assets/UserProfile/GroupClass.png";
 
-const UPAttendingClasses = ({ ClassesData }) => {
+const UserProfileAttendingClasses = ({ ClassesData }) => {
   return (
     <div className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-300 p-5 shadow-xl rounded-xl transition-transform duration-700 md:hover:scale-105 hover:shadow-2xl">
       {/* Header Section */}
@@ -65,7 +65,7 @@ const UPAttendingClasses = ({ ClassesData }) => {
 };
 
 // PropTypes validation
-UPAttendingClasses.propTypes = {
+UserProfileAttendingClasses.propTypes = {
   ClassesData: PropTypes.arrayOf(
     PropTypes.shape({
       module: PropTypes.string.isRequired, // Name of the module
@@ -74,4 +74,4 @@ UPAttendingClasses.propTypes = {
   ).isRequired, // ClassesData must be an array and is required
 };
 
-export default UPAttendingClasses;
+export default UserProfileAttendingClasses;
