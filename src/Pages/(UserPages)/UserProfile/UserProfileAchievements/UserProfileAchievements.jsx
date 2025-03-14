@@ -7,10 +7,10 @@ import PropTypes from "prop-types";
 import { FaAward, FaChevronRight } from "react-icons/fa";
 
 // import Modal
-import AwardViewMoreModal from "../../UserProfileAchievements/AwardViewMoreModal/AwardViewMoreModal";
-import SelectedAwardModal from "../../UserProfileAchievements/SelectedAwardModal/SelectedAwardModal";
+import SelectedAwardModal from "./SelectedAwardModal/SelectedAwardModal";
+import AwardViewMoreModal from "./AwardViewMoreModal/AwardViewMoreModal";
 
-const UPAchievements = ({ usersData, refetch }) => {
+const UserProfileAchievements = ({ usersData, refetch }) => {
   const { email } = useParams();
   const PageEmail = email;
 
@@ -79,6 +79,7 @@ const UPAchievements = ({ usersData, refetch }) => {
                 alt={award.awardName}
                 className="w-12 h-12 rounded-full"
               />
+
               {/* Award Details */}
               <div className="text-sm text-black">
                 <div className="font-semibold">{award.awardName}</div>
@@ -118,7 +119,7 @@ const UPAchievements = ({ usersData, refetch }) => {
 };
 
 // PropTypes validation
-UPAchievements.propTypes = {
+UserProfileAchievements.propTypes = {
   usersData: PropTypes.shape({
     awards: PropTypes.arrayOf(
       PropTypes.shape({
@@ -132,4 +133,4 @@ UPAchievements.propTypes = {
   refetch: PropTypes.func.isRequired,
 };
 
-export default UPAchievements;
+export default UserProfileAchievements;

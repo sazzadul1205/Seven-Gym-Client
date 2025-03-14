@@ -266,7 +266,7 @@ const Navbar = () => {
             </div>
           ) : (
             <Link to="/Login">
-              <button className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-500 to-blue-300 py-3 px-14 text-white font-semibold">
+              <button className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-500 to-blue-300 py-3 px-14 text-white font-semibold rounded-xl shadow-lg hover:shadow-2xl cursor-pointer">
                 Login
               </button>
             </Link>

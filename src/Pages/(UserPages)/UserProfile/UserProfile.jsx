@@ -9,22 +9,24 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import Loading from "../../../Shared/Loading/Loading";
 import useAuth from "../../../Hooks/useAuth";
 
-import UPAchievements from "./UPDetailes/UPAchievements/UPAchievements";
 import UPRecentWorkout from "./UPDetailes/UPRecentWorkout/UPRecentWorkout";
 import UPTodaysWorkout from "./UPDetailes/UPTodaysWorkout/UPTodaysWorkout";
 
 // Component Import
+import UserProfileAttendingClasses from "./UserProfileAttendingClasses/UserProfileAttendingClasses";
+import UserProfileAchievements from "./UserProfileAchievements/UserProfileAchievements";
+import UserProfileTrainers from "./UserProfileTrainers/UserProfileTrainers";
 import UserProfileAboutMe from "./UserProfileAboutMe/UserProfileAboutMe";
 import UserProfileSocial from "./UserProfileSocial/UserProfileSocial";
 import UserProfileGoals from "./UserProfileGoals/UserProfileGoals";
 import UserProfileTop from "./UserProfileTop/UserProfileTop";
-import UserProfileTrainers from "./UserProfileTrainers/UserProfileTrainers";
-import UserProfileAttendingClasses from "./UserProfileAttendingClasses/UserProfileAttendingClasses";
 
 const UserProfile = () => {
   const { user } = useAuth();
   const { email } = useParams();
   const axiosPublic = useAxiosPublic();
+
+  console.log(email);
 
   // Fetch data
   const {
@@ -126,7 +128,7 @@ const UserProfile = () => {
         {/* Achievements and Notifications */}
         <div className="w-full lg:w-1/2 space-y-8 pt-10">
           {/* Achievements */}
-          <UPAchievements usersData={UsersData} refetch={refetch} />
+          <UserProfileAchievements usersData={UsersData} refetch={refetch} />
 
           {/* Recent Workouts */}
           <UPTodaysWorkout usersData={UsersData} refetch={refetch} />

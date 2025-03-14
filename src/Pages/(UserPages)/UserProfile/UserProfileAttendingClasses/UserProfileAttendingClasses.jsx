@@ -2,7 +2,7 @@ import { Link } from "react-router";
 
 import PropTypes from "prop-types";
 
-import groupClass from "../../../../../assets/UserProfile/GroupClass.png";
+import groupClass from "../../../../assets/UserProfile/GroupClass.png";
 
 const UserProfileAttendingClasses = ({ ClassesData }) => {
   return (
