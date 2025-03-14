@@ -64,7 +64,7 @@ const TrainerPublicIdCard = ({ trainer }) => {
         {/* View Details Button */}
         <div className="mt-auto p-4">
           <Link to={`/Trainers/${trainer?.name}`}>
-            <button className="w-full border-2 border-red-500 bg-linear-to-tl hover:bg-linear-to-br from-[#c23e5f] to-[#ff0040] py-2 font-semibold rounded-xl hover:text-white">
+            <button className="w-full border-2 border-red-500 bg-linear-to-tl hover:bg-linear-to-br from-[#c23e5f] to-[#ff0040] py-2 font-semibold rounded-xl hover:text-white cursor-pointer">
               View Details
             </button>
           </Link>

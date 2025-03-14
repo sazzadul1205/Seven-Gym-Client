@@ -9,17 +9,17 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import Loading from "../../../Shared/Loading/Loading";
 import useAuth from "../../../Hooks/useAuth";
 
-import UPSocialLinks from "./UPDetailes/UPSocialLinks/UPSocialLinks";
-import UPSelectedGoals from "./UPDetailes/UPSelectedGoals/UPSelectedGoals";
 import UPAchievements from "./UPDetailes/UPAchievements/UPAchievements";
 import UPRecentWorkout from "./UPDetailes/UPRecentWorkout/UPRecentWorkout";
-import UPTeachers from "./UPDetailes/UPTeachers/UPTeachers";
 import UPAttendingClasses from "./UPDetailes/UPAttendingClasses/UPAttendingClasses";
 import UPTodaysWorkout from "./UPDetailes/UPTodaysWorkout/UPTodaysWorkout";
 
 // Component Import
 import UserProfileAboutMe from "./UserProfileAboutMe/UserProfileAboutMe";
+import UserProfileSocial from "./UserProfileSocial/UserProfileSocial";
+import UserProfileGoals from "./UserProfileGoals/UserProfileGoals";
 import UserProfileTop from "./UserProfileTop/UserProfileTop";
+import UserProfileTrainers from "./UserProfileTrainers/UserProfileTrainers";
 
 const UserProfile = () => {
   const { user } = useAuth();
@@ -47,11 +47,11 @@ const UserProfile = () => {
 
   // Fetch trainer details
   const {
-    data: TrainerDetailsData,
-    isLoading: TrainerDetailsLoading,
-    error: TrainerDetailsError,
+    data: BookedTrainerData,
+    isLoading: BookedTrainerLoading,
+    error: BookedTrainerError,
   } = useQuery({
-    queryKey: ["TrainerDetails", trainerNames],
+    queryKey: ["BookedTrainer", trainerNames],
     queryFn: async () => {
       if (trainerNames.length === 0) return [];
       const res = await axiosPublic.get(
@@ -79,12 +79,12 @@ const UserProfile = () => {
     enabled: classesName.length > 0,
   });
 
-  if (UsersLoading || TrainerDetailsLoading || ClassesIsLoading)
+  if (UsersLoading || BookedTrainerLoading || ClassesIsLoading)
     return <Loading />;
-  if (UsersError || TrainerDetailsError || ClassesError) {
+  if (UsersError || BookedTrainerError || ClassesError) {
     console.error(
       "Error fetching data:",
-      UsersError || TrainerDetailsError || ClassesError
+      UsersError || BookedTrainerError || ClassesError
     );
     return <FetchingError />;
   }
@@ -110,13 +110,13 @@ const UserProfile = () => {
             <UserProfileAboutMe usersData={UsersData} />
 
             {/* Socials Links */}
-            <UPSocialLinks usersData={UsersData} />
+            <UserProfileSocial usersData={UsersData} />
 
             {/* Selected Goals */}
-            <UPSelectedGoals usersData={UsersData} />
+            <UserProfileGoals usersData={UsersData} />
 
             {/* Current Teacher */}
-            <UPTeachers TrainerDetailsData={TrainerDetailsData} />
+            <UserProfileTrainers BookedTrainerData={BookedTrainerData} />
 
             {/* Current Attending Classes */}
             <UPAttendingClasses ClassesData={ClassesData} />

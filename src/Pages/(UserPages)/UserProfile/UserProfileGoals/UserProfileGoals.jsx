@@ -1,7 +1,8 @@
-import PropTypes from "prop-types"; // Import PropTypes for prop validation
+import PropTypes from "prop-types";
+
 import { FaBullseye, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
-const UPSelectedGoals = ({ usersData }) => {
+const UserProfileGoals = ({ usersData }) => {
   // Check if the user has selected goals
   const selectedGoals = usersData?.selectedGoals || [];
 
@@ -106,10 +107,10 @@ const UPSelectedGoals = ({ usersData }) => {
 };
 
 // PropTypes validation to ensure usersData and selectedGoals are correctly structured
-UPSelectedGoals.propTypes = {
+UserProfileGoals.propTypes = {
   usersData: PropTypes.shape({
     selectedGoals: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
 };
 
-export default UPSelectedGoals;
+export default UserProfileGoals;

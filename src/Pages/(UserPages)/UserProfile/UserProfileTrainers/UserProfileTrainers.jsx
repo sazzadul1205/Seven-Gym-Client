@@ -7,7 +7,7 @@ import USTrainer from "../../../../../assets/UserProfile/USTrainer.png";
 // Component Import
 import TrainerPublicIdCard from "../../../../../Shared/Component/TrainerPublicIdCard";
 
-const UPTeachers = ({ TrainerDetailsData }) => {
+const UserProfileTrainers = ({ BookedTrainerData }) => {
   return (
     <div className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-300 p-5 shadow-xl rounded-xl transition-transform duration-700 md:hover:scale-105 hover:shadow-2xl">
       {/* Header Section */}
@@ -20,10 +20,10 @@ const UPTeachers = ({ TrainerDetailsData }) => {
       <div className="bg-black p-[1px]"></div>
 
       {/* Trainer List */}
-      {TrainerDetailsData?.length > 0 ? (
+      {BookedTrainerData?.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
           {/* Map through each trainer and display their details using TrainerPublicIdCard */}
-          {TrainerDetailsData.map((trainer, index) => (
+          {BookedTrainerData.map((trainer, index) => (
             <TrainerPublicIdCard
               key={trainer.trainersID || index} // Use trainer ID or index as key
               trainer={trainer} // Pass the trainer data
@@ -48,8 +48,8 @@ const UPTeachers = ({ TrainerDetailsData }) => {
 };
 
 // PropTypes validation to ensure correct data structure
-UPTeachers.propTypes = {
-  TrainerDetailsData: PropTypes.arrayOf(
+UserProfileTrainers.propTypes = {
+  BookedTrainerData: PropTypes.arrayOf(
     PropTypes.shape({
       trainersID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
@@ -60,4 +60,4 @@ UPTeachers.propTypes = {
   ).isRequired,
 };
 
-export default UPTeachers;
+export default UserProfileTrainers;
