@@ -1,3 +1,4 @@
+// Import Icons-
 import PropTypes from "prop-types";
 import {
   FaBirthdayCake,
@@ -14,7 +15,7 @@ const UserProfileAboutMe = ({ usersData }) => {
         <FaUser className="text-black text-xl" />
         <h2 className="text-xl font-bold text-gray-800">About Me</h2>
       </div>
-      
+
       {/* Divider */}
       <div className="p-[1px] bg-black"></div>
 

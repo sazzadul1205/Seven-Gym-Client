@@ -195,10 +195,10 @@ ViewAllTodaysWorkoutModal.propTypes = {
       PropTypes.shape({
         workoutId: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
-        durationValue: PropTypes.number.isRequired,
+        durationValue: PropTypes.string.isRequired,
         durationUnit: PropTypes.string.isRequired,
         date: PropTypes.string.isRequired,
-        calories: PropTypes.number.isRequired,
+        calories: PropTypes.string.isRequired,
         location: PropTypes.string.isRequired,
         type: PropTypes.string.isRequired,
         intensity: PropTypes.string.isRequired,

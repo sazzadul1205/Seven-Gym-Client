@@ -6,7 +6,7 @@ import groupClass from "../../../../assets/UserProfile/GroupClass.png";
 
 const UserProfileAttendingClasses = ({ ClassesData }) => {
   return (
-    <div className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-300 p-5 shadow-xl rounded-xl transition-transform duration-700 md:hover:scale-105 hover:shadow-2xl">
+    <div className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-300 p-5 shadow-xl rounded-xl*">
       {/* Header Section */}
       <div className="flex items-center space-x-2 border-b pb-2">
         <img src={groupClass} alt="Group Class Icon" className="w-6 h-6" />

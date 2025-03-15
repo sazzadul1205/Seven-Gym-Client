@@ -111,7 +111,7 @@ UserProfileTop.propTypes = {
   }),
   user: PropTypes.shape({
     email: PropTypes.string.isRequired,
-  }).isRequired,
+  }),
   confEmail: PropTypes.string.isRequired,
 };
 

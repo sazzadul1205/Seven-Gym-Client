@@ -106,7 +106,7 @@ const UserProfileSocial = ({ usersData }) => {
   ];
 
   return (
-    <div className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-300 p-5 shadow-xl rounded-xl transition-transform duration-700 md:hover:scale-105 hover:shadow-2xl">
+    <div className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-300 p-5 shadow-xl rounded-xl">
       {/* Header */}
       <div className="flex items-center gap-4 pb-2">
         <FaLink className="text-blue-500 text-xl" />

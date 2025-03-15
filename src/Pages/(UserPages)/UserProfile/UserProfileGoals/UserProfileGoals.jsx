@@ -71,7 +71,7 @@ const UserProfileGoals = ({ usersData }) => {
   };
 
   return (
-    <div className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-300 p-5 shadow-xl rounded-xl transition-transform duration-700 md:hover:scale-105 hover:shadow-2xl">
+    <div className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-300 p-5 shadow-xl rounded-xl">
       {/* Header */}
       <div className="flex items-center space-x-2 border-b pb-2">
         <FaBullseye className="text-red-500 text-lg" />
@@ -83,11 +83,12 @@ const UserProfileGoals = ({ usersData }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 text-gray-600 mt-5 gap-3">
         {selectedGoals.length > 0 ? (
           selectedGoals.map((goal, index) => {
-            const { bg, text } = getBackgroundColor(index); // Get colors for each goal
+            // Get colors for each goal
+            const { bg, text } = getBackgroundColor(index);
             return (
               <p
                 key={index}
-                className={`flex items-center space-x-2 ${bg} ${text} py-2 px-3 rounded-lg hover:bg-opacity-90 transition-colors duration-300`}
+                className={`flex items-center space-x-2 ${bg} ${text} py-2 px-3 rounded-lg hover:bg-opacity-90 transition-colors duration-300 cursor-pointer`}
               >
                 <FaCheckCircle className="text-lg " />
                 <span>{goal}</span>
