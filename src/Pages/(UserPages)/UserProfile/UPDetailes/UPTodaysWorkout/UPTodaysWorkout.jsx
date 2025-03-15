@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 
 import { formatDistanceToNowStrict } from "date-fns";
 
@@ -21,20 +22,32 @@ const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
   </li>
 );
 
+// PropTypes for WorkoutDetailItem
+WorkoutDetailItem.propTypes = {
+  icon: PropTypes.element.isRequired,
+  label: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  iconColor: PropTypes.string.isRequired,
+};
+
 const UPTodaysWorkout = ({ usersData, refetch }) => {
+  // State to store the selected workout for displaying details in a modal
   const [selectedWorkout, setSelectedWorkout] = useState(null);
 
+  // Function to safely parse a date string into a Date object
   const safeParseDate = (dateStr) => {
     if (!dateStr) return null;
     const parsedDate = new Date(dateStr);
     return isNaN(parsedDate.getTime()) ? null : parsedDate;
   };
 
+  // Function to get today's date in YYYY-MM-DD format
   const getTodayDate = () => {
     const today = new Date();
     return today.toISOString().split("T")[0];
   };
 
+  // Filter recent workouts to include only today's workouts, limit to 5
   const todaysWorkouts = usersData?.recentWorkouts
     ?.filter((workout) => {
       const workoutDate = safeParseDate(workout.date);
@@ -43,6 +56,7 @@ const UPTodaysWorkout = ({ usersData, refetch }) => {
     })
     .slice(0, 5);
 
+  // Function to handle workout selection and open the details modal
   const handleWorkoutClick = (workout) => {
     setSelectedWorkout(workout);
     document.getElementById("Selected_Workout_Details_Modal").showModal();
@@ -144,11 +158,11 @@ const UPTodaysWorkout = ({ usersData, refetch }) => {
           })
         ) : (
           <div className="flex flex-col items-center justify-center">
-            <p className="text-gray-500 italic text-center text-sm sm:text-base">
+            <p className="text-black italic text-center text-sm sm:text-base font-semibold mb-5">
               No Today&apos;s workouts to display.
             </p>
             <button
-              className="bg-green-400 hover:bg-green-300 font-bold text-gray-600 hover:text-gray-500 px-8 py-2 rounded-lg mt-4 text-sm sm:text-base"
+              className="bg-linear-to-bl hover:bg-linear-to-tr from-green-400 to-green-600 rounded-xl shadow-xl hover:shadow-2xl text-white font-semibold py-2 px-10 cursor-pointer "
               onClick={() =>
                 document.getElementById("Add_Workout_Modal").showModal()
               }
@@ -173,6 +187,21 @@ const UPTodaysWorkout = ({ usersData, refetch }) => {
       </dialog>
     </div>
   );
+};
+
+// PropTypes for UPTodaysWorkout
+UPTodaysWorkout.propTypes = {
+  usersData: PropTypes.shape({
+    recentWorkouts: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string,
+        date: PropTypes.string,
+        duration: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        calories: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      })
+    ),
+  }),
+  refetch: PropTypes.func.isRequired,
 };
 
 export default UPTodaysWorkout;
