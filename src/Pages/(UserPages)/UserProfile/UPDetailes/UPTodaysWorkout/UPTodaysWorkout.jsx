@@ -1,13 +1,16 @@
-/* eslint-disable react/prop-types */
 import React, { useState } from "react";
-import { FcViewDetails } from "react-icons/fc";
+
 import { formatDistanceToNowStrict } from "date-fns";
+
+// Import Icons
+import { FcViewDetails } from "react-icons/fc";
 import { MdOutlineLibraryAdd, MdOutlineRecentActors } from "react-icons/md";
 import { FaClock, FaFire, FaWeight } from "react-icons/fa";
 
+// Import Modal
 import AddWorkoutModal from "../../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
 import ViewAllTodaysWorkoutModal from "./ViewAllTodaysWorkoutModal/ViewAllTodaysWorkoutModal";
-import RecentWorkoutDetailsModal from "../UPRecentWorkout/RecentWorkoutDetailsModal/RecentWorkoutDetailsModal";
+import SelectedWorkoutDetailsModal from "../UPRecentWorkout/SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
 
 // Reusable component for workout details
 const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
@@ -42,22 +45,25 @@ const UPTodaysWorkout = ({ usersData, refetch }) => {
 
   const handleWorkoutClick = (workout) => {
     setSelectedWorkout(workout);
-    document.getElementById("Recent_Workout_Details_Modal").showModal();
+    document.getElementById("Selected_Workout_Details_Modal").showModal();
   };
 
   return (
     <div className="bg-linear-to-bl from-gray-200 to-gray-400 p-5 shadow-xl rounded-xl">
       {/* Header */}
       <div className="flex items-center justify-between border-b-2 border-gray-400 pb-2">
+        {/* Title */}
         <div className="flex items-center gap-3">
-          <MdOutlineRecentActors className="text-[#EFBF04] text-2xl sm:text-3xl" />
+          <MdOutlineRecentActors className="text-[#ffcc00] text-3xl sm:text-3xl" />
           <h2 className="text-lg sm:text-xl font-semibold text-black">
             Today&apos;s Workouts
           </h2>
         </div>
+
+        {/* Icons */}
         <div className="flex gap-4">
           <MdOutlineLibraryAdd
-            className="text-2xl sm:text-3xl transition-all duration-300 hover:scale-110 cursor-pointer"
+            className="text-2xl sm:text-3xl text-red-500 hover:text-red-300 transition-all duration-300 hover:scale-110 cursor-pointer"
             title="Add New Workout"
             onClick={() =>
               document.getElementById("Add_Workout_Modal").showModal()
@@ -96,7 +102,7 @@ const UPTodaysWorkout = ({ usersData, refetch }) => {
               <div
                 key={index}
                 onClick={() => handleWorkoutClick(workout)}
-                className="cursor-pointer items-center justify-between bg-gray-100 px-3 py-3 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-300"
+                className="cursor-pointer items-center justify-between bg-linear-to-bl hover:bg-linear-to-tr from-gray-50 to-gray-200  px-3 py-3 rounded-lg shadow-md  transition-all duration-300 text-black"
                 role="button"
                 tabIndex={0}
                 aria-label={`View details of ${workout.name}`}
@@ -154,8 +160,8 @@ const UPTodaysWorkout = ({ usersData, refetch }) => {
       </div>
 
       {/* Modals */}
-      <dialog id="Recent_Workout_Details_Modal" className="modal">
-        <RecentWorkoutDetailsModal selectedWorkout={selectedWorkout} />
+      <dialog id="Selected_Workout_Details_Modal" className="modal">
+        <SelectedWorkoutDetailsModal selectedWorkout={selectedWorkout} />
       </dialog>
 
       <dialog id="Add_Workout_Modal" className="modal">

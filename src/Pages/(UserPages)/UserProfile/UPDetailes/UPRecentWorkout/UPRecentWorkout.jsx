@@ -5,7 +5,7 @@ import { formatDistanceToNowStrict } from "date-fns";
 import { FaClock, FaFire, FaWeight } from "react-icons/fa";
 import { MdOutlineLibraryAdd, MdOutlineRecentActors } from "react-icons/md";
 
-import RecentWorkoutDetailsModal from "./RecentWorkoutDetailsModal/RecentWorkoutDetailsModal";
+import RecentWorkoutDetailsModal from "./SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
 import AddWorkoutModal from "../../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
 import ViewAllRecentWorkoutModal from "./ViewAllRecentWorkoutModal/ViewAllRecentWorkoutModal";
 

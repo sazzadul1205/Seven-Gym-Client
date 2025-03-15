@@ -1,14 +1,21 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
+
+import PropTypes from "prop-types";
 import Swal from "sweetalert2";
+
+// Import Icons
 import { ImCross } from "react-icons/im";
 import { FaRegTrashAlt } from "react-icons/fa";
+
+// Import Utility
 import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
 
 const ViewAllTodaysWorkoutModal = ({ usersData, refetch }) => {
   const axiosPublic = useAxiosPublic();
-  const [deleteConfirmation, setDeleteConfirmation] = useState(null); // State for delete confirmation message
-  const [successMessage, setSuccessMessage] = useState(null); // State for success message
+
+  // State Control
+  const [deleteConfirmation, setDeleteConfirmation] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split("T")[0];
@@ -29,20 +36,39 @@ const ViewAllTodaysWorkoutModal = ({ usersData, refetch }) => {
   const deleteWorkout = async (workoutId) => {
     // Set the delete confirmation message
     setDeleteConfirmation(
-      <div className="bg-red-500 text-white p-3 mb-4 flex justify-between items-center">
-        <span>Are you sure you want to delete this workout?</span>
-        <div>
+      <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-lg flex flex-col sm:flex-row justify-between items-center">
+        {/* Warning Icon & Message */}
+        <div className="flex items-center">
+          <svg
+            className="w-6 h-6 text-red-600 mr-2"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M8.257 3.099c.765-1.36 2.72-1.36 3.485 0l6.516 11.607c.75 1.337-.213 3.004-1.742 3.004H3.483c-1.529 0-2.492-1.667-1.742-3.004L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-.25-3.25a.75.75 0 00-1.5 0V10a.75.75 0 001.5 0v-.25z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <span className="font-semibold">
+            Are you sure you want to{" "}
+            <span className="text-red-600">delete</span> this workout?
+          </span>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex mt-3 sm:mt-0">
           <button
-            className="bg-white text-red-500 px-4 py-1 rounded-lg mr-2 hover:bg-gray-100"
+            className="bg-linear-to-bl hover:bg-linear-to-tr from-red-400 to-red-600 text-white px-4 py-2 rounded-lg font-medium shadow-md  transition duration-200 ease-in-out mr-2 cursor-pointer"
             onClick={() => confirmDelete(workoutId)}
           >
-            Yes
+            Yes, Delete
           </button>
           <button
-            className="bg-white text-red-500 px-4 py-1 rounded-lg hover:bg-gray-100"
+            className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium shadow-md hover:bg-gray-300 transition duration-200 ease-in-out cursor-pointer"
             onClick={() => setDeleteConfirmation(null)}
           >
-            No
+            Cancel
           </button>
         </div>
       </div>
@@ -69,19 +95,18 @@ const ViewAllTodaysWorkoutModal = ({ usersData, refetch }) => {
   };
 
   return (
-    <div className="modal-box max-w-[1200px] p-0">
+    <div className="modal-box max-w-6xl bg-gray-100 rounded-xl shadow-xl w-full relative">
       {/* Modal Header */}
-      <div className="flex items-center justify-between border-b-2 border-gray-400 mb-2 px-5 py-3">
-        <h2 className="text-2xl font-bold text-gray-800">
+      <div className="flex justify-between items-center text-black mb-4 border-b-2 border-black pb-2 px-2">
+        <h3 className="font-bold text-lg flex items-center">
           View All Today&apos;s Workouts
-        </h2>
+        </h3>
         <button
           onClick={() =>
             document.getElementById("View_All_Todays_Workout_Modal").close()
           }
-          className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 focus:outline-hidden"
         >
-          <ImCross className="text-xl text-gray-500 hover:text-gray-700" />
+          <ImCross className="hover:text-red-500 text-xl cursor-pointer" />
         </button>
       </div>
 
@@ -97,29 +122,35 @@ const ViewAllTodaysWorkoutModal = ({ usersData, refetch }) => {
         )}
       </div>
 
-      {/* Table to display today's workouts */}
-      <div className="p-2">
+      {/* Table for today's workouts */}
+      <div className="overflow-x-auto bg-white text-black shadow-lg rounded-lg">
         {todaysWorkouts.length > 0 ? (
-          <table className="table-auto w-full border-collapse border border-gray-300 bg-white shadow-md rounded-lg">
-            <thead>
-              <tr className="bg-gray-400 text-white">
-                <th className="px-4 py-2 border">#</th>
-                <th className="px-4 py-2 border">Name</th>
-                <th className="px-4 py-2 border">Duration</th>
-                <th className="px-4 py-2 border">Date</th>
-                <th className="px-4 py-2 border">Calories</th>
-                <th className="px-4 py-2 border">Location</th>
-                <th className="px-4 py-2 border">Type</th>
-                <th className="px-4 py-2 border">Intensity</th>
-                <th className="px-4 py-2 border">Notes</th>
-                <th className="px-4 py-2 border">Action</th>
+          <table className="w-full text-left border-collapse border border-gray-200">
+            <thead className="bg-blue-100">
+              <tr>
+                {[
+                  "#",
+                  "Name",
+                  "Duration",
+                  "Date",
+                  "Calories",
+                  "Location",
+                  "Type",
+                  "Intensity",
+                  "Notes",
+                  "Action",
+                ].map((header, index) => (
+                  <th key={index} className="p-3 border border-gray-200">
+                    {header}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-sm">
               {todaysWorkouts.map((workout, index) => (
                 <tr
-                  key={index}
-                  className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
+                  key={workout.workoutId}
+                  className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
                 >
                   <td className="px-4 py-2 border text-center">{index + 1}</td>
                   <td className="px-4 py-2 border">{workout.name}</td>
@@ -136,7 +167,7 @@ const ViewAllTodaysWorkoutModal = ({ usersData, refetch }) => {
                   <td className="px-4 py-2 border italic">{workout.notes}</td>
                   <td className="px-4 py-2 border">
                     <button
-                      className="bg-red-500 hover:bg-red-400 p-2 rounded-xl"
+                      className="bg-red-500 hover:bg-red-400 p-3 rounded-md cursor-pointer"
                       onClick={() => deleteWorkout(workout.workoutId)}
                     >
                       <FaRegTrashAlt className="text-white" />
@@ -154,6 +185,28 @@ const ViewAllTodaysWorkoutModal = ({ usersData, refetch }) => {
       </div>
     </div>
   );
+};
+
+// Prop Types
+ViewAllTodaysWorkoutModal.propTypes = {
+  usersData: PropTypes.shape({
+    email: PropTypes.string.isRequired,
+    recentWorkouts: PropTypes.arrayOf(
+      PropTypes.shape({
+        workoutId: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        durationValue: PropTypes.number.isRequired,
+        durationUnit: PropTypes.string.isRequired,
+        date: PropTypes.string.isRequired,
+        calories: PropTypes.number.isRequired,
+        location: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired,
+        intensity: PropTypes.string.isRequired,
+        notes: PropTypes.string,
+      })
+    ).isRequired,
+  }).isRequired,
+  refetch: PropTypes.func.isRequired,
 };
 
 export default ViewAllTodaysWorkoutModal;

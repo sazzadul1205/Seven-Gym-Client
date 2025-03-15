@@ -95,12 +95,14 @@ const AwardViewMoreModal = ({ usersData, refetch, PageEmail }) => {
           <ImCross className="hover:text-red-500 text-xl cursor-pointer" />
         </button>
       </div>
+
       {/* Warning/Error Banner */}
       {warning && (
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
           <p>{warning}</p>
         </div>
       )}
+      
       {/* Awards Table */}
       <div className="overflow-x-auto bg-white text-black shadow-lg rounded-lg">
         <table className="w-full text-left border-collapse border border-gray-200">
