@@ -1,16 +1,17 @@
 import React, { useState } from "react";
+
 import PropTypes from "prop-types";
 import { formatDistanceToNowStrict } from "date-fns";
 
 // Import Icons
 import { FcViewDetails } from "react-icons/fc";
-import { MdOutlineLibraryAdd, MdOutlineRecentActors } from "react-icons/md";
 import { FaClock, FaFire, FaWeight } from "react-icons/fa";
+import { MdOutlineLibraryAdd, MdOutlineRecentActors } from "react-icons/md";
 
 // Import Component
-import SelectedWorkoutDetailsModal from "./SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
-import ViewAllTodaysWorkoutModal from "./ViewAllTodaysWorkoutModal/ViewAllTodaysWorkoutModal";
 import AddWorkoutModal from "../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
+import ViewAllTodaysWorkoutModal from "./ViewAllTodaysWorkoutModal/ViewAllTodaysWorkoutModal";
+import SelectedWorkoutDetailsModal from "./SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
 
 // Reusable component for workout details
 const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
@@ -21,6 +22,7 @@ const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
   </li>
 );
 
+// Prop types for WorkoutDetailItem component
 WorkoutDetailItem.propTypes = {
   icon: PropTypes.element.isRequired,
   label: PropTypes.string.isRequired,
@@ -29,8 +31,10 @@ WorkoutDetailItem.propTypes = {
 };
 
 const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
+  // State for selected workout details
   const [selectedWorkout, setSelectedWorkout] = useState(null);
 
+  // Function to safely parse date strings
   const safeParseDate = (dateStr) => {
     if (!dateStr) return null;
     const parsedDate = new Date(dateStr);
@@ -52,10 +56,16 @@ const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
     })
     .slice(0, 5);
 
+  // Open workout details modal
   const handleWorkoutClick = (workout) => {
     setSelectedWorkout(workout);
-    // Use a unique modal ID for today's workouts
     document.getElementById("Todays_Workout_Details_Modal").showModal();
+  };
+
+  // Close workout details modal
+  const handleCloseModal = () => {
+    setSelectedWorkout("");
+    document.getElementById("Todays_Workout_Details_Modal").close();
   };
 
   return (
@@ -69,6 +79,7 @@ const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
           </h2>
         </div>
         <div className="flex gap-4">
+          {/* Add New Workout Button */}
           <MdOutlineLibraryAdd
             className="text-2xl sm:text-3xl text-red-500 hover:text-red-300 transition-all duration-300 hover:scale-110 cursor-pointer"
             title="Add New Workout"
@@ -76,6 +87,7 @@ const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
               document.getElementById("Add_Workout_Modal").showModal()
             }
           />
+          {/* View All Workouts Button */}
           <FcViewDetails
             className="text-2xl sm:text-3xl transition-all duration-300 hover:scale-110 cursor-pointer"
             title="Show All"
@@ -154,6 +166,7 @@ const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
             <p className="text-black italic text-center text-sm sm:text-base font-semibold mb-5">
               No Today&apos;s workouts to display.
             </p>
+            {/* Add Workout Button */}
             <button
               className="bg-linear-to-bl hover:bg-linear-to-tr from-green-400 to-green-600 rounded-xl shadow-xl hover:shadow-2xl text-white font-semibold py-2 px-10 cursor-pointer "
               onClick={() =>
@@ -166,15 +179,20 @@ const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
         )}
       </div>
 
-      {/* Workout Details Modal with unique ID */}
+      {/* Workout Details Modal */}
       <dialog id="Todays_Workout_Details_Modal" className="modal">
-        <SelectedWorkoutDetailsModal selectedWorkout={selectedWorkout} />
+        <SelectedWorkoutDetailsModal
+          selectedWorkout={selectedWorkout}
+          handleCloseModal={handleCloseModal}
+        />
       </dialog>
 
+      {/* Add Workout Modal */}
       <dialog id="Add_Workout_Modal" className="modal">
         <AddWorkoutModal refetch={refetch} />
       </dialog>
 
+      {/* View All Today's Workout Modal */}
       <dialog id="View_All_Todays_Workout_Modal" className="modal">
         <ViewAllTodaysWorkoutModal usersData={usersData} refetch={refetch} />
       </dialog>
@@ -182,6 +200,7 @@ const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
   );
 };
 
+// Prop types validation
 UserProfileTodaysWorkout.propTypes = {
   usersData: PropTypes.shape({
     recentWorkouts: PropTypes.arrayOf(

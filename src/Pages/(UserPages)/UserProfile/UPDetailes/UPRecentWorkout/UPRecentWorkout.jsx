@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+
 import PropTypes from "prop-types";
 import { formatDistanceToNowStrict } from "date-fns";
 
 // Import Icons
 import { FcViewDetails } from "react-icons/fc";
-import { MdOutlineLibraryAdd, MdOutlineRecentActors } from "react-icons/md";
 import { FaClock, FaFire, FaWeight } from "react-icons/fa";
+import { MdOutlineLibraryAdd, MdOutlineRecentActors } from "react-icons/md";
 
 // Import Modals
 import AddWorkoutModal from "../../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
@@ -17,10 +18,11 @@ const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
   <li className="flex items-center gap-2 sm:gap-3 text-sm sm:text-base">
     {React.cloneElement(icon, { className: `text-lg ${iconColor}` })}
     <span className="font-medium">{label}:</span>
-    <span>{String(value ?? "N/A")}</span>
+    <span>{String(value ?? "N/A")}</span>{" "}
   </li>
 );
 
+// Prop types for WorkoutDetailItem components
 WorkoutDetailItem.propTypes = {
   icon: PropTypes.element.isRequired,
   label: PropTypes.string.isRequired,
@@ -29,15 +31,20 @@ WorkoutDetailItem.propTypes = {
 };
 
 const UPRecentWorkout = ({ usersData, refetch }) => {
+  // State for selected workout details
   const [selectedWorkout, setSelectedWorkout] = useState(null);
+
+  // Get the last 5 recent workouts
   const recentWorkouts = usersData?.recentWorkouts?.slice(0, 5) || [];
 
+  // Function to safely parse date strings
   const safeParseDate = (dateStr) => {
     if (!dateStr) return null;
     const parsedDate = new Date(dateStr);
     return isNaN(parsedDate.getTime()) ? null : parsedDate;
   };
 
+  // Function to format time ago
   const formatTimeAgo = (date) => {
     if (!date) return "Unknown Date";
     let timeAgo = formatDistanceToNowStrict(date, { addSuffix: false });
@@ -50,15 +57,21 @@ const UPRecentWorkout = ({ usersData, refetch }) => {
       .replace(" day", " day");
   };
 
+  // Handle clicking on a workout
   const handleWorkoutClick = (workout) => {
     setSelectedWorkout(workout);
-    // Use a unique modal ID for recent workouts
-    document.getElementById("Recent_Workout_Details_Modal").showModal();
+    document.getElementById("Recent_Workout_Details_Modal").showModal(); // Open modal
+  };
+
+  // Close modal function
+  const handleCloseModal = () => {
+    setSelectedWorkout(""); // Clear selected workout
+    document.getElementById("Recent_Workout_Details_Modal").close(); // Close modal
   };
 
   return (
     <div className="bg-linear-to-bl from-gray-200 to-gray-400 p-5 shadow-xl rounded-xl">
-      {/* Header Section */}
+      {/* Header */}
       <div className="flex items-center justify-between border-b-2 border-gray-400 pb-2">
         <div className="flex items-center gap-3">
           <MdOutlineRecentActors className="text-[#ffcc00] text-3xl sm:text-3xl" />
@@ -67,6 +80,7 @@ const UPRecentWorkout = ({ usersData, refetch }) => {
           </h2>
         </div>
         <div className="flex gap-4">
+          {/* Add New Workout Button */}
           <MdOutlineLibraryAdd
             className="text-2xl sm:text-3xl text-red-500 hover:text-red-300 transition-all duration-300 hover:scale-110 cursor-pointer"
             title="Add New Workout"
@@ -74,6 +88,7 @@ const UPRecentWorkout = ({ usersData, refetch }) => {
               document.getElementById("Add_Workout_Modal").showModal()
             }
           />
+          {/* Show All Recent Workouts Button */}
           <FcViewDetails
             className="text-2xl sm:text-3xl transition-all duration-300 hover:scale-110 cursor-pointer"
             title="Show All"
@@ -86,7 +101,7 @@ const UPRecentWorkout = ({ usersData, refetch }) => {
         </div>
       </div>
 
-      {/* Workout List Section */}
+      {/* Workout List */}
       <div className="space-y-3 pt-2">
         {recentWorkouts.length > 0 ? (
           recentWorkouts.map((workout, index) => {
@@ -95,7 +110,7 @@ const UPRecentWorkout = ({ usersData, refetch }) => {
             return (
               <div
                 key={index}
-                onClick={() => handleWorkoutClick(workout)}
+                onClick={() => handleWorkoutClick(workout)} // Handle workout click
                 className="cursor-pointer items-center justify-between bg-linear-to-bl hover:bg-linear-to-tr from-gray-50 to-gray-200 px-3 py-3 rounded-lg shadow-md transition-all duration-300 text-black"
                 role="button"
                 tabIndex={0}
@@ -141,6 +156,7 @@ const UPRecentWorkout = ({ usersData, refetch }) => {
             <p className="text-black italic text-center text-sm sm:text-base font-semibold mb-5">
               No Recent workouts to display.
             </p>
+            {/* Button to Add Workout */}
             <button
               className="bg-linear-to-bl hover:bg-linear-to-tr from-green-400 to-green-600 rounded-xl shadow-xl hover:shadow-2xl text-white font-semibold py-2 px-10 cursor-pointer"
               onClick={() =>
@@ -153,15 +169,20 @@ const UPRecentWorkout = ({ usersData, refetch }) => {
         )}
       </div>
 
-      {/* Workout Details Modal with unique ID */}
+      {/* Workout Details Modal */}
       <dialog id="Recent_Workout_Details_Modal" className="modal">
-        <SelectedWorkoutDetailsModal selectedWorkout={selectedWorkout} />
+        <SelectedWorkoutDetailsModal
+          selectedWorkout={selectedWorkout}
+          handleCloseModal={handleCloseModal}
+        />
       </dialog>
 
+      {/* Add Workout Modal */}
       <dialog id="Add_Workout_Modal" className="modal">
         <AddWorkoutModal refetch={refetch} />
       </dialog>
 
+      {/* View All Recent Workouts Modal */}
       <dialog id="View_All_Recent_Workout_Modal" className="modal">
         <ViewAllRecentWorkoutModal usersData={usersData} refetch={refetch} />
       </dialog>
@@ -169,6 +190,7 @@ const UPRecentWorkout = ({ usersData, refetch }) => {
   );
 };
 
+// Prop Types
 UPRecentWorkout.propTypes = {
   usersData: PropTypes.shape({
     recentWorkouts: PropTypes.arrayOf(

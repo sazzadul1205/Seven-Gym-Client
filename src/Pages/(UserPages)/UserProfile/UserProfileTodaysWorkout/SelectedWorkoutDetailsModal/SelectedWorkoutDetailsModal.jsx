@@ -16,9 +16,9 @@ import { ImCross } from "react-icons/im";
 const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
   <li className="flex items-center gap-4 py-2">
     {React.cloneElement(icon, { className: `text-xl ${iconColor}` })}
-    <div className="flex-1">
-      <span className="font-semibold text-gray-700">{label}</span>
-      <span className="block text-gray-600">{String(value ?? "N/A")}</span>
+    <div className="flex-1 space-x-2">
+      <p className="font-bold text-black">{label}</p>
+      <p className="block text-gray-900 ml-5"> {String(value ?? "N/A")}</p>
     </div>
   </li>
 );
@@ -31,7 +31,7 @@ WorkoutDetailItem.propTypes = {
   iconColor: PropTypes.string.isRequired,
 };
 
-const SelectedWorkoutDetailsModal = ({ selectedWorkout }) => {
+const SelectedWorkoutDetailsModal = ({ selectedWorkout, handleCloseModal }) => {
   if (!selectedWorkout) {
     return (
       <div className="modal-box bg-white rounded-lg shadow-xl max-w-md mx-auto p-6 text-center">
@@ -51,14 +51,14 @@ const SelectedWorkoutDetailsModal = ({ selectedWorkout }) => {
           {selectedWorkout.name}
         </h2>
         <button
-          onClick={() =>
-            document.getElementById("Selected_Workout_Details_Modal").close()
-          }
+          onClick={() => handleCloseModal()}
           className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 focus:outline-hidden cursor-pointer"
         >
-          <ImCross className="text-xl text-gray-500 hover:text-gray-700" />
+          <ImCross className="text-xl text-black hover:text-red-500" />
         </button>
       </div>
+
+      <div className="p-[1px] bg-black"></div>
 
       {/* Workout Details */}
       <ul className="space-y-1">
@@ -71,7 +71,11 @@ const SelectedWorkoutDetailsModal = ({ selectedWorkout }) => {
         <WorkoutDetailItem
           icon={<FaFire />}
           label="Calories Burned"
-          value={selectedWorkout.calories}
+          value={
+            selectedWorkout.calories
+              ? `${selectedWorkout.calories} kcal`
+              : "N/A"
+          }
           iconColor="text-red-500"
         />
         <WorkoutDetailItem
@@ -114,6 +118,7 @@ SelectedWorkoutDetailsModal.propTypes = {
     intensity: PropTypes.string,
     notes: PropTypes.string,
   }),
+  handleCloseModal: PropTypes.func.isRequired,
 };
 
 export default SelectedWorkoutDetailsModal;
