@@ -4,22 +4,21 @@ import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 
 // Utility Import
-import FetchingError from "../../../Shared/Component/FetchingError";
-import useAxiosPublic from "../../../Hooks/useAxiosPublic";
-import Loading from "../../../Shared/Loading/Loading";
 import useAuth from "../../../Hooks/useAuth";
-
-import UPRecentWorkout from "./UPDetailes/UPRecentWorkout/UPRecentWorkout";
+import Loading from "../../../Shared/Loading/Loading";
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
+import FetchingError from "../../../Shared/Component/FetchingError";
 
 // Component Import
+import UserProfileTop from "./UserProfileTop/UserProfileTop";
+import UserProfileGoals from "./UserProfileGoals/UserProfileGoals";
+import UserProfileSocial from "./UserProfileSocial/UserProfileSocial";
+import UserProfileAboutMe from "./UserProfileAboutMe/UserProfileAboutMe";
+import UserProfileTrainers from "./UserProfileTrainers/UserProfileTrainers";
+import UserProfileAchievements from "./UserProfileAchievements/UserProfileAchievements";
+import UserProfileRecentWorkout from "./UserProfileRecentWorkout/UserProfileRecentWorkout";
 import UserProfileTodaysWorkout from "./UserProfileTodaysWorkout/UserProfileTodaysWorkout";
 import UserProfileAttendingClasses from "./UserProfileAttendingClasses/UserProfileAttendingClasses";
-import UserProfileAchievements from "./UserProfileAchievements/UserProfileAchievements";
-import UserProfileTrainers from "./UserProfileTrainers/UserProfileTrainers";
-import UserProfileAboutMe from "./UserProfileAboutMe/UserProfileAboutMe";
-import UserProfileSocial from "./UserProfileSocial/UserProfileSocial";
-import UserProfileGoals from "./UserProfileGoals/UserProfileGoals";
-import UserProfileTop from "./UserProfileTop/UserProfileTop";
 
 const UserProfile = () => {
   const { user } = useAuth();
@@ -41,6 +40,7 @@ const UserProfile = () => {
   // Extract trainer names from usersData.attendingTrainer
   const trainerNames =
     UsersData?.attendingTrainer?.map((trainer) => trainer.name) || [];
+
   // Extract class names from usersData.attendingClasses
   const classesName =
     UsersData?.attendingClasses?.map((classItem) => classItem.className) || [];
@@ -79,8 +79,11 @@ const UserProfile = () => {
     enabled: classesName.length > 0,
   });
 
+  // Load States
   if (UsersLoading || BookedTrainerLoading || ClassesIsLoading)
     return <Loading />;
+
+  // Error States
   if (UsersError || BookedTrainerError || ClassesError) {
     console.error(
       "Error fetching data:",
@@ -132,7 +135,7 @@ const UserProfile = () => {
           <UserProfileTodaysWorkout usersData={UsersData} refetch={refetch} />
 
           {/* Recent Workouts */}
-          <UPRecentWorkout usersData={UsersData} refetch={refetch} />
+          <UserProfileRecentWorkout usersData={UsersData} refetch={refetch} />
         </div>
       </div>
     </div>

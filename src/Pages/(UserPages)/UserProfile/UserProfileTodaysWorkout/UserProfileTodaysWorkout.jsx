@@ -148,7 +148,9 @@ const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
                   <WorkoutDetailItem
                     icon={<FaFire />}
                     label="Calories"
-                    value={workout.calories}
+                    value={
+                      workout.calories ? `${workout.calories} kcal` : "N/A"
+                    }
                     iconColor="text-red-500"
                   />
                   <WorkoutDetailItem

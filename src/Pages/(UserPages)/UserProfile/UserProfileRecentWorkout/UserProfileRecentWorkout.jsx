@@ -7,11 +7,11 @@ import { formatDistanceToNowStrict } from "date-fns";
 import { FcViewDetails } from "react-icons/fc";
 import { FaClock, FaFire, FaWeight } from "react-icons/fa";
 import { MdOutlineLibraryAdd, MdOutlineRecentActors } from "react-icons/md";
+import SelectedWorkoutDetailsModal from "../UserProfileTodaysWorkout/SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
+import AddWorkoutModal from "../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
+import ViewAllRecentWorkoutModal from "./ViewAllRecentWorkoutModal/ViewAllRecentWorkoutModal";
 
 // Import Modals
-import AddWorkoutModal from "../../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
-import ViewAllRecentWorkoutModal from "../../UserProfileRecentWorkout/ViewAllRecentWorkoutModal/ViewAllRecentWorkoutModal";
-import SelectedWorkoutDetailsModal from "../../UserProfileTodaysWorkout/SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
 
 // Reusable component for displaying workout details
 const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
@@ -30,7 +30,7 @@ WorkoutDetailItem.propTypes = {
   iconColor: PropTypes.string.isRequired,
 };
 
-const UPRecentWorkout = ({ usersData, refetch }) => {
+const UserProfileRecentWorkout = ({ usersData, refetch }) => {
   // State for selected workout details
   const [selectedWorkout, setSelectedWorkout] = useState(null);
 
@@ -193,7 +193,7 @@ const UPRecentWorkout = ({ usersData, refetch }) => {
 };
 
 // Prop Types
-UPRecentWorkout.propTypes = {
+UserProfileRecentWorkout.propTypes = {
   usersData: PropTypes.shape({
     recentWorkouts: PropTypes.arrayOf(
       PropTypes.shape({
@@ -207,4 +207,4 @@ UPRecentWorkout.propTypes = {
   refetch: PropTypes.func.isRequired,
 };
 
-export default UPRecentWorkout;
+export default UserProfileRecentWorkout;

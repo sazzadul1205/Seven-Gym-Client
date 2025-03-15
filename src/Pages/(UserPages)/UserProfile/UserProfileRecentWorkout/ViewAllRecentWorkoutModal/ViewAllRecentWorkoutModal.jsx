@@ -3,7 +3,7 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import { ImCross } from "react-icons/im";
 import { FaRegTrashAlt } from "react-icons/fa";
-import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
 const ViewAllRecentWorkoutModal = ({ usersData, refetch }) => {
   const axiosPublic = useAxiosPublic();

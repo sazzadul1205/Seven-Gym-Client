@@ -9,15 +9,20 @@ import { IoSettings } from "react-icons/io5";
 // Function to determine tier badge styles
 const getTierBadge = (tier) => {
   const tierStyles = {
-    Bronze: "bg-gradient-to-r from-orange-300 to-orange-500",
-    Silver: "bg-gradient-to-r from-gray-300 to-gray-500",
-    Gold: "bg-gradient-to-r from-yellow-300 to-yellow-500",
-    Diamond: "bg-gradient-to-r from-blue-300 to-blue-500",
-    Platinum: "bg-gradient-to-r from-gray-500 to-gray-700",
+    Bronze:
+      "bg-gradient-to-r hover:bg-gradient-to-l from-orange-300 to-orange-500 hover:scale-105",
+    Silver:
+      "bg-gradient-to-r hover:bg-gradient-to-l from-gray-300 to-gray-500 hover:scale-105",
+    Gold: "bg-gradient-to-r hover:bg-gradient-to-l from-yellow-300 to-yellow-500 hover:scale-105",
+    Diamond:
+      "bg-gradient-to-r hover:bg-gradient-to-l from-blue-300 to-blue-500 hover:scale-105",
+    Platinum:
+      "bg-gradient-to-r hover:bg-gradient-to-l from-gray-500 to-gray-700 hover:scale-105",
   };
 
   return `px-4 py-2 mt-2 rounded-full text-sm font-semibold shadow-lg transition-transform ${
-    tierStyles[tier] || "bg-gradient-to-r from-green-300 to-green-500"
+    tierStyles[tier] ||
+    "bg-gradient-to-r hover:bg-gradient-to-l from-green-300 to-green-500 hover:scale-105"
   }`;
 };
 
