@@ -8,7 +8,7 @@ import { ImCross } from "react-icons/im";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 // Import Utility
-import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
 const ViewAllTodaysWorkoutModal = ({ usersData, refetch }) => {
   const axiosPublic = useAxiosPublic();

@@ -10,8 +10,8 @@ import { FaClock, FaFire, FaWeight } from "react-icons/fa";
 
 // Import Modal
 import AddWorkoutModal from "../../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
-import ViewAllTodaysWorkoutModal from "./ViewAllTodaysWorkoutModal/ViewAllTodaysWorkoutModal";
-import SelectedWorkoutDetailsModal from "../UPRecentWorkout/SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
+import ViewAllTodaysWorkoutModal from "../../UserProfileTodaysWorkout/ViewAllTodaysWorkoutModal/ViewAllTodaysWorkoutModal";
+import SelectedWorkoutDetailsModal from "../../UserProfileTodaysWorkout/SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
 
 // Reusable component for workout details
 const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (

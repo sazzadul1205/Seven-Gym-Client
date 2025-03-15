@@ -10,9 +10,9 @@ import Loading from "../../../Shared/Loading/Loading";
 import useAuth from "../../../Hooks/useAuth";
 
 import UPRecentWorkout from "./UPDetailes/UPRecentWorkout/UPRecentWorkout";
-import UPTodaysWorkout from "./UPDetailes/UPTodaysWorkout/UPTodaysWorkout";
 
 // Component Import
+import UserProfileTodaysWorkout from "./UserProfileTodaysWorkout/UserProfileTodaysWorkout";
 import UserProfileAttendingClasses from "./UserProfileAttendingClasses/UserProfileAttendingClasses";
 import UserProfileAchievements from "./UserProfileAchievements/UserProfileAchievements";
 import UserProfileTrainers from "./UserProfileTrainers/UserProfileTrainers";
@@ -25,8 +25,6 @@ const UserProfile = () => {
   const { user } = useAuth();
   const { email } = useParams();
   const axiosPublic = useAxiosPublic();
-
-  console.log(email);
 
   // Fetch data
   const {
@@ -131,7 +129,7 @@ const UserProfile = () => {
           <UserProfileAchievements usersData={UsersData} refetch={refetch} />
 
           {/* Recent Workouts */}
-          <UPTodaysWorkout usersData={UsersData} refetch={refetch} />
+          <UserProfileTodaysWorkout usersData={UsersData} refetch={refetch} />
 
           {/* Recent Workouts */}
           <UPRecentWorkout usersData={UsersData} refetch={refetch} />
