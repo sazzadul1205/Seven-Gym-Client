@@ -15,6 +15,7 @@ const AddWorkoutModal = ({ refetch }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
+  // Loading Sate
   const [loading, setLoading] = useState(false);
 
   // React Hook Form configuration
@@ -25,33 +26,52 @@ const AddWorkoutModal = ({ refetch }) => {
     formState: { errors },
   } = useForm();
 
+  // A Function for Submitting Form
   const onSubmit = async (data) => {
     setLoading(true);
 
     try {
       const today = new Date();
-      const formattedDate = today.toISOString().split("T")[0];
 
+      // Format date as "16-03-2025"
+      const formattedDate = `${String(today.getDate()).padStart(
+        2,
+        "0"
+      )}-${String(today.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}-${today.getFullYear()}`;
+
+      // Ensure time is provided
       if (!data.time) {
         throw new Error("Invalid time input. Please select a valid time.");
       }
 
-      const workoutDateTime = `${formattedDate}T${data.time}`;
+      // Convert time to "2025-03-16T13:30" format
+      const isoDate = today.toISOString().split("T")[0]; // "yyyy-mm-dd"
+      const workoutDateTime = `${isoDate}T${data.time}`;
 
-      // Generate a unique workout ID using user email, date, and a UUID
-      const uniqueId = `${user.email}-${formattedDate}-${crypto.randomUUID()}`;
+      // Generate a unique 5-digit random workout ID
+      const randomCode = Math.floor(10000 + Math.random() * 90000);
+      const uniqueId = `${user?.email}-${formattedDate}-${randomCode}`;
 
       // Prepare workout data payload
       const workoutData = {
         workoutId: uniqueId,
-        ...data,
+        name: data.name,
+        type: data.type,
+        intensity: data.intensity,
+        location: data.location,
+        date: formattedDate,
+        registeredDateAndTime: workoutDateTime,
         duration: `${data.durationValue} ${data.durationUnit}`,
-        date: workoutDateTime,
+        calories: data.calories,
+        notes: data.notes,
       };
 
       // Make API POST request to save workout
       await axiosPublic.post("/Users/Add_Workout", {
-        email: user.email,
+        email: user?.email,
         workout: workoutData,
       });
 

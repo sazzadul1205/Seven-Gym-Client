@@ -60,13 +60,13 @@ const UserProfileRecentWorkout = ({ usersData, refetch }) => {
   // Handle clicking on a workout
   const handleWorkoutClick = (workout) => {
     setSelectedWorkout(workout);
-    document.getElementById("Recent_Workout_Details_Modal").showModal(); // Open modal
+    document.getElementById("Recent_Workout_Details_Modal").showModal(); 
   };
 
   // Close modal function
   const handleCloseModal = () => {
-    setSelectedWorkout(""); // Clear selected workout
-    document.getElementById("Recent_Workout_Details_Modal").close(); // Close modal
+    setSelectedWorkout(null);
+    document.getElementById("Recent_Workout_Details_Modal").close(); 
   };
 
   return (

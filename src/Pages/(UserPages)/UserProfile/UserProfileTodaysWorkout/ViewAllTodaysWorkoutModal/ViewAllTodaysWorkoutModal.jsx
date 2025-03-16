@@ -10,21 +10,14 @@ import { FaRegTrashAlt } from "react-icons/fa";
 // Import Utility
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
-const ViewAllTodaysWorkoutModal = ({ usersData, refetch }) => {
+const ViewAllTodaysWorkoutModal = ({ todaysWorkouts, refetch }) => {
+  console.log(todaysWorkouts);
+
   const axiosPublic = useAxiosPublic();
 
   // State Control
   const [deleteConfirmation, setDeleteConfirmation] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-
-  // Get today's date in YYYY-MM-DD format
-  const today = new Date().toISOString().split("T")[0];
-
-  // Filter workouts to only include today's workouts
-  const todaysWorkouts = usersData.recentWorkouts.filter((workout) => {
-    const workoutDate = workout.date.split("T")[0];
-    return workoutDate === today;
-  });
 
   // Function to format the date
   const formatDate = (dateString) => {
@@ -79,7 +72,7 @@ const ViewAllTodaysWorkoutModal = ({ usersData, refetch }) => {
   const confirmDelete = async (workoutId) => {
     try {
       const response = await axiosPublic.delete("/Users/delete-workout", {
-        data: { email: usersData.email, workoutId },
+        data: { email: todaysWorkouts.email, workoutId },
       });
       if (response.status === 200) {
         setDeleteConfirmation(null); // Clear the confirmation message
@@ -154,9 +147,7 @@ const ViewAllTodaysWorkoutModal = ({ usersData, refetch }) => {
                 >
                   <td className="px-4 py-2 border text-center">{index + 1}</td>
                   <td className="px-4 py-2 border">{workout.name}</td>
-                  <td className="px-4 py-2 border">
-                    {workout.durationValue} {workout.durationUnit}
-                  </td>
+                  <td className="px-4 py-2 border">{workout.duration}</td>
                   <td className="px-4 py-2 border">
                     {formatDate(workout.date)}
                   </td>
@@ -189,7 +180,7 @@ const ViewAllTodaysWorkoutModal = ({ usersData, refetch }) => {
 
 // Prop Types
 ViewAllTodaysWorkoutModal.propTypes = {
-  usersData: PropTypes.shape({
+  todaysWorkouts: PropTypes.shape({
     email: PropTypes.string.isRequired,
     recentWorkouts: PropTypes.arrayOf(
       PropTypes.shape({

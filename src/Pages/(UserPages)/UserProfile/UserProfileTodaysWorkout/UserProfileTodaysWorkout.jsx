@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import PropTypes from "prop-types";
 import { formatDistanceToNowStrict } from "date-fns";
 
@@ -8,7 +7,7 @@ import { FcViewDetails } from "react-icons/fc";
 import { FaClock, FaFire, FaWeight } from "react-icons/fa";
 import { MdOutlineLibraryAdd, MdOutlineRecentActors } from "react-icons/md";
 
-// Import Component
+// Import Components
 import AddWorkoutModal from "../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
 import ViewAllTodaysWorkoutModal from "./ViewAllTodaysWorkoutModal/ViewAllTodaysWorkoutModal";
 import SelectedWorkoutDetailsModal from "./SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
@@ -30,29 +29,34 @@ WorkoutDetailItem.propTypes = {
   iconColor: PropTypes.string.isRequired,
 };
 
-const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
+const UserProfileTodaysWorkout = ({ recentWorkouts, refetch }) => {
   // State for selected workout details
   const [selectedWorkout, setSelectedWorkout] = useState(null);
 
-  // Function to safely parse date strings
+  // Function to safely parse date strings in "dd-mm-yyyy" format
   const safeParseDate = (dateStr) => {
     if (!dateStr) return null;
-    const parsedDate = new Date(dateStr);
+    const [day, month, year] = dateStr.split("-");
+    // Create a date in ISO format ("yyyy-mm-dd") assuming time 00:00:00 UTC
+    const parsedDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
     return isNaN(parsedDate.getTime()) ? null : parsedDate;
   };
 
-  // Get today's date in YYYY-MM-DD format
+  // Get today's date in "YYYY-MM-DD" format
   const getTodayDate = () => {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
+    return new Date().toISOString().split("T")[0];
   };
 
-  // Filter workouts to include only today's workouts, limited to 5
-  const todaysWorkouts = usersData?.recentWorkouts
+  // Filter workouts to include only those whose date (converted to ISO format)
+  // matches today's date, and limit to 5 workouts.
+  const todaysWorkouts = recentWorkouts
     ?.filter((workout) => {
+      if (!workout.date) return false;
       const workoutDate = safeParseDate(workout.date);
-      if (!workoutDate) return false;
-      return workoutDate.toISOString().split("T")[0] === getTodayDate();
+      return (
+        workoutDate &&
+        workoutDate.toISOString().split("T")[0] === getTodayDate()
+      );
     })
     .slice(0, 5);
 
@@ -64,13 +68,13 @@ const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
 
   // Close workout details modal
   const handleCloseModal = () => {
-    setSelectedWorkout("");
+    setSelectedWorkout(null);
     document.getElementById("Todays_Workout_Details_Modal").close();
   };
 
   return (
     <div className="bg-linear-to-bl from-gray-200 to-gray-400 p-5 shadow-xl rounded-xl">
-      {/* Header */}
+      {/* Header Section */}
       <div className="flex items-center justify-between border-b-2 border-gray-400 pb-2">
         <div className="flex items-center gap-3">
           <MdOutlineRecentActors className="text-[#ffcc00] text-3xl sm:text-3xl" />
@@ -100,15 +104,17 @@ const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
         </div>
       </div>
 
-      {/* Workout List */}
+      {/* Workout List Section */}
       <div className="space-y-3 pt-2">
         {todaysWorkouts && todaysWorkouts.length > 0 ? (
           todaysWorkouts.map((workout, index) => {
+            // Parse the workout date from "dd-mm-yyyy"
             const workoutDate = safeParseDate(workout.date);
             let timeAgo = workoutDate
               ? formatDistanceToNowStrict(workoutDate, { addSuffix: false })
               : "Unknown Date";
 
+            // Shorten the time ago string
             timeAgo = timeAgo
               .replace(" minutes", " min")
               .replace(" minute", " min")
@@ -121,7 +127,7 @@ const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
               <div
                 key={index}
                 onClick={() => handleWorkoutClick(workout)}
-                className="cursor-pointer items-center justify-between bg-linear-to-bl hover:bg-linear-to-tr from-gray-50 to-gray-200  px-3 py-3 rounded-lg shadow-md  transition-all duration-300 text-black"
+                className="cursor-pointer items-center justify-between bg-linear-to-bl hover:bg-linear-to-tr from-gray-50 to-gray-200 px-3 py-3 rounded-lg shadow-md transition-all duration-300 text-black"
                 role="button"
                 tabIndex={0}
                 aria-label={`View details of ${workout.name}`}
@@ -133,16 +139,15 @@ const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
                   </p>
                 </div>
 
-                {/* Workout Details */}
+                {/* Workout Details (Duration, Calories, Time) */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4">
                   <WorkoutDetailItem
                     icon={<FaClock />}
                     label="Duration"
+                    // Replace "minute" with "min" for display
                     value={String(workout.duration ?? "")
                       .replace(" minutes", " min")
-                      .replace(" minute", " min")
-                      .replace(" hours", " hr")
-                      .replace(" hour", " hr")}
+                      .replace(" minute", " min")}
                     iconColor="text-blue-500"
                   />
                   <WorkoutDetailItem
@@ -164,13 +169,13 @@ const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
             );
           })
         ) : (
+          // No Workouts Message
           <div className="flex flex-col items-center justify-center">
             <p className="text-black italic text-center text-sm sm:text-base font-semibold mb-5">
               No Today&apos;s workouts to display.
             </p>
-            {/* Add Workout Button */}
             <button
-              className="bg-linear-to-bl hover:bg-linear-to-tr from-green-400 to-green-600 rounded-xl shadow-xl hover:shadow-2xl text-white font-semibold py-2 px-10 cursor-pointer "
+              className="bg-linear-to-bl hover:bg-linear-to-tr from-green-400 to-green-600 rounded-xl shadow-xl hover:shadow-2xl text-white font-semibold py-2 px-10 cursor-pointer"
               onClick={() =>
                 document.getElementById("Add_Workout_Modal").showModal()
               }
@@ -181,7 +186,7 @@ const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
         )}
       </div>
 
-      {/* Workout Details Modal */}
+      {/* Uncomment if you want to enable the modal */}
       <dialog id="Todays_Workout_Details_Modal" className="modal">
         <SelectedWorkoutDetailsModal
           selectedWorkout={selectedWorkout}
@@ -196,24 +201,31 @@ const UserProfileTodaysWorkout = ({ usersData, refetch }) => {
 
       {/* View All Today's Workout Modal */}
       <dialog id="View_All_Todays_Workout_Modal" className="modal">
-        <ViewAllTodaysWorkoutModal usersData={usersData} refetch={refetch} />
+        <ViewAllTodaysWorkoutModal
+          todaysWorkouts={todaysWorkouts}
+          refetch={refetch}
+        />
       </dialog>
     </div>
   );
 };
 
-// Prop types validation
+// Prop Types validation (expect recentWorkouts as an array)
 UserProfileTodaysWorkout.propTypes = {
-  usersData: PropTypes.shape({
-    recentWorkouts: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string,
-        date: PropTypes.string,
-        duration: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        calories: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      })
-    ),
-  }),
+  recentWorkouts: PropTypes.arrayOf(
+    PropTypes.shape({
+      workoutId: PropTypes.string,
+      name: PropTypes.string,
+      type: PropTypes.string,
+      intensity: PropTypes.string,
+      location: PropTypes.string,
+      date: PropTypes.string,
+      registeredDateAndTime: PropTypes.string,
+      duration: PropTypes.string,
+      calories: PropTypes.string,
+      notes: PropTypes.string,
+    })
+  ),
   refetch: PropTypes.func.isRequired,
 };
 
