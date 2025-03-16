@@ -185,10 +185,10 @@ const UserProfileRecentWorkout = ({ recentWorkouts, refetch }) => {
 
       {/* View All Recent Workouts Modal */}
       <dialog id="View_All_Recent_Workout_Modal" className="modal">
-        {/* <ViewAllRecentWorkoutModal
-          usersData={{ recentWorkouts }}
+        <ViewAllRecentWorkoutModal
+          recentWorkouts={recentWorkouts}
           refetch={refetch}
-        /> */}
+        />
       </dialog>
     </div>
   );

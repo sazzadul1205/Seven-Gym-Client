@@ -32,8 +32,9 @@ const ViewAllTodaysWorkoutModal = ({ todaysWorkouts, refetch }) => {
     return date ? date.toLocaleString() : "Invalid date";
   };
 
-  // Function to handle workout deletion confirmation
-  const deleteWorkout = (workoutId) => {
+  // Function to handle workout deletion
+  const deleteWorkout = async (workoutId) => {
+    // Set the delete confirmation message
     setDeleteConfirmation(
       <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-lg flex flex-col sm:flex-row justify-between items-center">
         {/* Warning Icon & Message */}
@@ -84,7 +85,6 @@ const ViewAllTodaysWorkoutModal = ({ todaysWorkouts, refetch }) => {
         setSuccessMessage("Workout deleted successfully!");
         refetch();
         setTimeout(() => setSuccessMessage(null), 1000);
-        
       } else {
         throw new Error("Failed to delete workout.");
       }
