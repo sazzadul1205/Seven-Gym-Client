@@ -1,37 +1,35 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, NavLink } from "react-router";
-import Swal from "sweetalert2";
+import { NavLink } from "react-router";
+
 import { useQuery } from "@tanstack/react-query";
 
-// Icons
-import { ImExit } from "react-icons/im";
-import { FaUser } from "react-icons/fa";
-import { GiUpgrade } from "react-icons/gi";
-import { AiTwotoneSchedule } from "react-icons/ai";
-import { IoMenu, IoSettingsOutline } from "react-icons/io5";
+// import Icons
+import { IoMenu } from "react-icons/io5";
 
-// Assets
+// import Assets
 import icon from "../../assets/Icons/Seven-Gym-Icon.png";
 
-// Data
+// import Data
 import MenuItems from "../../JSON/Menu_Items.json";
 
-// Components & Hooks
+// import Components
 import Loading from "../Loading/Loading";
+import NavDrawer from "./NavDrawer/NavDrawer";
+import NavbarEnd from "./NavbarEnd/NavbarEnd";
 import FetchingError from "../Component/FetchingError";
+
+// Import Utility
 import useAuth from "../../Hooks/useAuth";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
-import NavDrawer from "./NavDrawer/NavDrawer";
 
 const Navbar = () => {
   const axiosPublic = useAxiosPublic();
-  const { user, logOut } = useAuth();
+  const { user } = useAuth();
 
   // State variables
   const [isScrolled, setIsScrolled] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [setIsDropdownOpen] = useState(false);
 
   // Refs for handling outside clicks
   const menuRef = useRef(null);
@@ -77,66 +75,11 @@ const Navbar = () => {
       window.removeEventListener("scroll", handleScroll);
       document.removeEventListener("click", handleClickOutside);
     };
-  }, []);
+  }, [setIsDropdownOpen]);
 
   // Handle submenu hover
   const handleMouseEnter = (itemName) => setOpenSubmenu(itemName);
   const handleMouseLeave = () => setTimeout(() => setOpenSubmenu(null), 200);
-
-  // Logout function
-  const handleSignOut = async () => {
-    setIsLoggingOut(true);
-    try {
-      await logOut();
-      window.location.reload(); // Refresh the page after logout
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Logout Failed",
-        text: `Error logging out: ${error.message}`,
-        confirmButtonColor: "#d33",
-        timer: 3000,
-      });
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
-
-  // Role-based navigation links
-  const roleBasedLinks = {
-    Member: [
-      {
-        name: UsersData?.fullName,
-        path: `/User/${user?.email}/UserProfile`,
-        icon: <FaUser />,
-      },
-      {
-        name: "Tier Upgrade",
-        path: `/User/${user?.email}/TierUpgrade`,
-        icon: <GiUpgrade />,
-      },
-      {
-        name: "Schedule Planner",
-        path: `/User/${user?.email}/UserSchedulePlanner`,
-        icon: <AiTwotoneSchedule />,
-      },
-      {
-        name: "Settings",
-        path: "/User/UserSettings",
-        icon: <IoSettingsOutline />,
-      },
-    ],
-    Trainer: [
-      { name: "Trainer Dashboard", path: "/TrainerDashboard" },
-      { name: "Class Management", path: "/ClassManagement" },
-    ],
-    ClassManager: [{ name: "Dashboard", path: "/ClassManagerDashboard" }],
-    Moderator: [{ name: "Moderator Dashboard", path: "/ModeratorDashboard" }],
-    Admin: [
-      { name: "Admin Dashboard", path: "/AdminDashboard" },
-      { name: "User Management", path: "/UserManagement" },
-    ],
-  };
 
   // Loading and error handling
   if (UsersDataIsLoading) return <Loading />;
@@ -145,7 +88,9 @@ const Navbar = () => {
   return (
     <nav
       className={`navbar fixed w-full top-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-[#F72C5B]" : "bg-transparent"
+        isScrolled
+          ? "bg-linear-to-bl from-[#F72C5B]/90 to-[#f7003a]/90 "
+          : "bg-transparent"
       }`}
     >
       <div className="navbar flex-none w-full justify-between items-center px-0 lg:px-24">
@@ -217,61 +162,7 @@ const Navbar = () => {
         </div>
 
         {/* Navbar End - User Profile & Login */}
-        <div className="navbar-end flex items-center ">
-          {UsersData ? (
-            <div
-              className="relative rounded-full border-4 border-white"
-              ref={dropdownRef}
-            >
-              <img
-                src={
-                  UsersData.profileImage ||
-                  "https://i.ibb.co.com/XtrM9rc/UsersData.jpg"
-                }
-                alt="User Avatar"
-                className="w-14 h-14 rounded-full cursor-pointer hover:scale-105 "
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              />
-              <div>
-                {isDropdownOpen && (
-                  <div className="absolute right-0 mt-1 w-[280px] bg-white text-black  z-10">
-                    <ul>
-                      {(roleBasedLinks[UsersData?.role] || []).map((link) => (
-                        <Link to={link.path} key={link.name}>
-                          <li className="flex py-3 px-5 gap-2 hover:bg-gray-100 border-b border-gray-300">
-                            <span className="border-r border-black pr-2">
-                              {link.icon}
-                            </span>
-                            <span>{link.name}</span>
-                          </li>
-                        </Link>
-                      ))}
-                      <li
-                        className="p-2 py-3 px-5 text-red-500 font-semibold hover:bg-gray-100 flex items-center justify-between"
-                        onClick={handleSignOut}
-                      >
-                        {isLoggingOut ? (
-                          "Logging Out..."
-                        ) : (
-                          <>
-                            <ImExit />
-                            Logout
-                          </>
-                        )}
-                      </li>
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            <Link to="/Login">
-              <button className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-500 to-blue-300 py-3 px-14 text-white font-semibold rounded-xl shadow-lg hover:shadow-2xl cursor-pointer">
-                Login
-              </button>
-            </Link>
-          )}
-        </div>
+        <NavbarEnd UsersData={UsersData} />
       </div>
 
       {/* Drawer Component for Mobile */}

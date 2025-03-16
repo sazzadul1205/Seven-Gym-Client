@@ -74,7 +74,7 @@ const UserProfileTop = ({ usersData, user, confEmail }) => {
               <div className="pb-1 pt-5">
                 {isProfileOwner ? (
                   // Clickable badge for profile owner
-                  <Link to={`/User/${user.email}/TierUpgrade`}>
+                  <Link to={`/User/TierUpgrade/${user?.email}`}>
                     <button
                       className={`${getTierBadge(
                         usersData.tier

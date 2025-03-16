@@ -89,12 +89,12 @@ createRoot(document.getElementById("root")).render(
 
               {/* User Pages Link */}
               <Route
-                path="/User/:email/UserProfile"
+                path="/User/UserProfile/:email"
                 element={<UserProfile />}
               />
               <Route path="/User/UserSettings" element={<UserSettings />} />
               <Route
-                path="/User/:email/TierUpgrade"
+                path="/User/TierUpgrade/:email"
                 element={<UserTearUpgrade />}
               />
               <Route
