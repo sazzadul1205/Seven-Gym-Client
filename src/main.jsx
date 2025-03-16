@@ -98,12 +98,12 @@ createRoot(document.getElementById("root")).render(
                 element={<UserTearUpgrade />}
               />
               <Route
-                path="/User/:email/UserSchedulePlanner"
-                element={<UserSchedulePlanner />}
+                path="/User/TierUpgradePayment/:email/:tier"
+                element={<TearUpgradePayment />}
               />
               <Route
-                path="/User/:email/:tier/TierUpgradePayment"
-                element={<TearUpgradePayment />}
+                path="/User/:email/UserSchedulePlanner"
+                element={<UserSchedulePlanner />}
               />
             </Route>
           </Routes>
