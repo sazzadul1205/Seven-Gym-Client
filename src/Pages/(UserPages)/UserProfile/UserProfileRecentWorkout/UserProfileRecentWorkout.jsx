@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import PropTypes from "prop-types";
 import { formatDistanceToNowStrict } from "date-fns";
 
@@ -7,22 +6,21 @@ import { formatDistanceToNowStrict } from "date-fns";
 import { FcViewDetails } from "react-icons/fc";
 import { FaClock, FaFire, FaWeight } from "react-icons/fa";
 import { MdOutlineLibraryAdd, MdOutlineRecentActors } from "react-icons/md";
-import SelectedWorkoutDetailsModal from "../UserProfileTodaysWorkout/SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
-import AddWorkoutModal from "../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
-import ViewAllRecentWorkoutModal from "./ViewAllRecentWorkoutModal/ViewAllRecentWorkoutModal";
 
 // Import Modals
+import AddWorkoutModal from "../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
+import ViewAllRecentWorkoutModal from "./ViewAllRecentWorkoutModal/ViewAllRecentWorkoutModal";
+import SelectedWorkoutDetailsModal from "../UserProfileTodaysWorkout/SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
 
 // Reusable component for displaying workout details
 const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
   <li className="flex items-center gap-2 sm:gap-3 text-sm sm:text-base">
     {React.cloneElement(icon, { className: `text-lg ${iconColor}` })}
     <span className="font-medium">{label}:</span>
-    <span>{String(value ?? "N/A")}</span>{" "}
+    <span>{String(value ?? "N/A")}</span>
   </li>
 );
 
-// Prop types for WorkoutDetailItem components
 WorkoutDetailItem.propTypes = {
   icon: PropTypes.element.isRequired,
   label: PropTypes.string.isRequired,
@@ -30,43 +28,32 @@ WorkoutDetailItem.propTypes = {
   iconColor: PropTypes.string.isRequired,
 };
 
-const UserProfileRecentWorkout = ({ usersData, refetch }) => {
+const UserProfileRecentWorkout = ({ recentWorkouts, refetch }) => {
   // State for selected workout details
   const [selectedWorkout, setSelectedWorkout] = useState(null);
 
   // Get the last 5 recent workouts
-  const recentWorkouts = usersData?.recentWorkouts?.slice(0, 5) || [];
+  const slicedRecentWorkouts = recentWorkouts.slice(0, 5);
 
-  // Function to safely parse date strings
+  // Function to safely parse date strings in "dd-mm-yyyy" format
   const safeParseDate = (dateStr) => {
     if (!dateStr) return null;
-    const parsedDate = new Date(dateStr);
+    const [day, month, year] = dateStr.split("-");
+    // Create a date in ISO format ("yyyy-mm-dd") assuming time 00:00:00 UTC
+    const parsedDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
     return isNaN(parsedDate.getTime()) ? null : parsedDate;
-  };
-
-  // Function to format time ago
-  const formatTimeAgo = (date) => {
-    if (!date) return "Unknown Date";
-    let timeAgo = formatDistanceToNowStrict(date, { addSuffix: false });
-    return timeAgo
-      .replace(" minutes", " min")
-      .replace(" minute", " min")
-      .replace(" hours", " hr")
-      .replace(" hour", " hr")
-      .replace(" days", " days")
-      .replace(" day", " day");
   };
 
   // Handle clicking on a workout
   const handleWorkoutClick = (workout) => {
     setSelectedWorkout(workout);
-    document.getElementById("Recent_Workout_Details_Modal").showModal(); 
+    document.getElementById("Recent_Workout_Details_Modal").showModal();
   };
 
   // Close modal function
   const handleCloseModal = () => {
     setSelectedWorkout(null);
-    document.getElementById("Recent_Workout_Details_Modal").close(); 
+    document.getElementById("Recent_Workout_Details_Modal").close();
   };
 
   return (
@@ -103,14 +90,27 @@ const UserProfileRecentWorkout = ({ usersData, refetch }) => {
 
       {/* Workout List */}
       <div className="space-y-3 pt-2">
-        {recentWorkouts.length > 0 ? (
-          recentWorkouts.map((workout, index) => {
+        {slicedRecentWorkouts.length > 0 ? (
+          slicedRecentWorkouts.map((workout, index) => {
+            // Parse the workout date from "dd-mm-yyyy"
             const workoutDate = safeParseDate(workout.date);
-            const timeAgo = formatTimeAgo(workoutDate);
+            let timeAgo = workoutDate
+              ? formatDistanceToNowStrict(workoutDate, { addSuffix: false })
+              : "Unknown Date";
+
+            // Shorten the time ago string
+            timeAgo = timeAgo
+              .replace(" minutes", " min")
+              .replace(" minute", " min")
+              .replace(" hours", " hr")
+              .replace(" hour", " hr")
+              .replace(" days", " days")
+              .replace(" day", " day");
+
             return (
               <div
                 key={index}
-                onClick={() => handleWorkoutClick(workout)} // Handle workout click
+                onClick={() => handleWorkoutClick(workout)}
                 className="cursor-pointer items-center justify-between bg-linear-to-bl hover:bg-linear-to-tr from-gray-50 to-gray-200 px-3 py-3 rounded-lg shadow-md transition-all duration-300 text-black"
                 role="button"
                 tabIndex={0}
@@ -123,16 +123,15 @@ const UserProfileRecentWorkout = ({ usersData, refetch }) => {
                   </p>
                 </div>
 
-                {/* Workout Details */}
+                {/* Workout Details (Duration, Calories, Time) */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4">
                   <WorkoutDetailItem
                     icon={<FaClock />}
                     label="Duration"
+                    // Replace "minute" with "min" for display
                     value={String(workout.duration ?? "")
                       .replace(" minutes", " min")
-                      .replace(" minute", " min")
-                      .replace(" hours", " hr")
-                      .replace(" hour", " hr")}
+                      .replace(" minute", " min")}
                     iconColor="text-blue-500"
                   />
                   <WorkoutDetailItem
@@ -186,24 +185,24 @@ const UserProfileRecentWorkout = ({ usersData, refetch }) => {
 
       {/* View All Recent Workouts Modal */}
       <dialog id="View_All_Recent_Workout_Modal" className="modal">
-        <ViewAllRecentWorkoutModal usersData={usersData} refetch={refetch} />
+        {/* <ViewAllRecentWorkoutModal
+          usersData={{ recentWorkouts }}
+          refetch={refetch}
+        /> */}
       </dialog>
     </div>
   );
 };
 
-// Prop Types
 UserProfileRecentWorkout.propTypes = {
-  usersData: PropTypes.shape({
-    recentWorkouts: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string,
-        date: PropTypes.string,
-        duration: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        calories: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      })
-    ),
-  }),
+  recentWorkouts: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      date: PropTypes.string,
+      duration: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      calories: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    })
+  ),
   refetch: PropTypes.func.isRequired,
 };
 

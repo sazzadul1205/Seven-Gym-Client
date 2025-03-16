@@ -138,10 +138,10 @@ const UserProfile = () => {
           />
 
           {/* Recent Workouts */}
-          {/* <UserProfileRecentWorkout
+          <UserProfileRecentWorkout
             recentWorkouts={UsersData.recentWorkouts}
             refetch={refetch}
-          /> */}
+          />
         </div>
       </div>
     </div>

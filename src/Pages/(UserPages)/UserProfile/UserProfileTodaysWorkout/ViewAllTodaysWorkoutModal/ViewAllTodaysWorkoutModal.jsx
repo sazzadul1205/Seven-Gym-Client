@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import PropTypes from "prop-types";
 import Swal from "sweetalert2";
 
@@ -7,27 +6,34 @@ import Swal from "sweetalert2";
 import { ImCross } from "react-icons/im";
 import { FaRegTrashAlt } from "react-icons/fa";
 
-// Import Utility
+// Import Utility Hooks
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import useAuth from "../../../../../Hooks/useAuth";
 
 const ViewAllTodaysWorkoutModal = ({ todaysWorkouts, refetch }) => {
-  console.log(todaysWorkouts);
-
   const axiosPublic = useAxiosPublic();
+  const { user } = useAuth();
 
-  // State Control
+  // State for delete confirmation and success message
   const [deleteConfirmation, setDeleteConfirmation] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  // Function to format the date
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleString(); // Adjust the format as needed
+  // Helper function: Safely parse a date in "dd-mm-yyyy" format
+  const safeParseDate = (dateStr) => {
+    if (!dateStr) return null;
+    const [day, month, year] = dateStr.split("-");
+    const parsedDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+    return isNaN(parsedDate.getTime()) ? null : parsedDate;
   };
 
-  // Function to handle workout deletion
-  const deleteWorkout = async (workoutId) => {
-    // Set the delete confirmation message
+  // Function to format the date for display
+  const formatDate = (dateString) => {
+    const date = safeParseDate(dateString);
+    return date ? date.toLocaleString() : "Invalid date";
+  };
+
+  // Function to handle workout deletion confirmation
+  const deleteWorkout = (workoutId) => {
     setDeleteConfirmation(
       <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-lg flex flex-col sm:flex-row justify-between items-center">
         {/* Warning Icon & Message */}
@@ -48,11 +54,10 @@ const ViewAllTodaysWorkoutModal = ({ todaysWorkouts, refetch }) => {
             <span className="text-red-600">delete</span> this workout?
           </span>
         </div>
-
-        {/* Buttons */}
+        {/* Confirmation Buttons */}
         <div className="flex mt-3 sm:mt-0">
           <button
-            className="bg-linear-to-bl hover:bg-linear-to-tr from-red-400 to-red-600 text-white px-4 py-2 rounded-lg font-medium shadow-md  transition duration-200 ease-in-out mr-2 cursor-pointer"
+            className="bg-linear-to-bl hover:bg-linear-to-tr from-red-400 to-red-600 text-white px-4 py-2 rounded-lg font-medium shadow-md transition duration-200 ease-in-out mr-2 cursor-pointer"
             onClick={() => confirmDelete(workoutId)}
           >
             Yes, Delete
@@ -68,17 +73,18 @@ const ViewAllTodaysWorkoutModal = ({ todaysWorkouts, refetch }) => {
     );
   };
 
-  // Function to confirm deletion
+  // Function to confirm deletion via API
   const confirmDelete = async (workoutId) => {
     try {
       const response = await axiosPublic.delete("/Users/delete-workout", {
-        data: { email: todaysWorkouts.email, workoutId },
+        data: { email: user.email, workoutId },
       });
       if (response.status === 200) {
-        setDeleteConfirmation(null); // Clear the confirmation message
-        setSuccessMessage("Workout deleted successfully!"); // Set success message
-        refetch(); // Refetch data
-        setTimeout(() => setSuccessMessage(null), 5000); // Clear success message after 5 seconds
+        setDeleteConfirmation(null);
+        setSuccessMessage("Workout deleted successfully!");
+        refetch();
+        setTimeout(() => setSuccessMessage(null), 1000);
+        
       } else {
         throw new Error("Failed to delete workout.");
       }
@@ -107,15 +113,11 @@ const ViewAllTodaysWorkoutModal = ({ todaysWorkouts, refetch }) => {
       {deleteConfirmation}
 
       {/* Success Message */}
-      <div>
-        {successMessage && (
-          <div className="bg-green-500 text-white p-3 mb-4">
-            {successMessage}
-          </div>
-        )}
-      </div>
+      {successMessage && (
+        <div className="bg-green-500 text-white p-3 mb-4">{successMessage}</div>
+      )}
 
-      {/* Table for today's workouts */}
+      {/* Table for Today's Workouts */}
       <div className="overflow-x-auto bg-white text-black shadow-lg rounded-lg">
         {todaysWorkouts.length > 0 ? (
           <table className="w-full text-left border-collapse border border-gray-200">
@@ -147,7 +149,11 @@ const ViewAllTodaysWorkoutModal = ({ todaysWorkouts, refetch }) => {
                 >
                   <td className="px-4 py-2 border text-center">{index + 1}</td>
                   <td className="px-4 py-2 border">{workout.name}</td>
-                  <td className="px-4 py-2 border">{workout.duration}</td>
+                  <td className="px-4 py-2 border">
+                    {workout.duration
+                      .replace(" minutes", " min")
+                      .replace(" minute", " min")}
+                  </td>
                   <td className="px-4 py-2 border">
                     {formatDate(workout.date)}
                   </td>
@@ -178,25 +184,21 @@ const ViewAllTodaysWorkoutModal = ({ todaysWorkouts, refetch }) => {
   );
 };
 
-// Prop Types
+// Prop Types: todaysWorkouts is expected to be an array of workout objects
 ViewAllTodaysWorkoutModal.propTypes = {
-  todaysWorkouts: PropTypes.shape({
-    email: PropTypes.string.isRequired,
-    recentWorkouts: PropTypes.arrayOf(
-      PropTypes.shape({
-        workoutId: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        durationValue: PropTypes.string.isRequired,
-        durationUnit: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired,
-        calories: PropTypes.string.isRequired,
-        location: PropTypes.string.isRequired,
-        type: PropTypes.string.isRequired,
-        intensity: PropTypes.string.isRequired,
-        notes: PropTypes.string,
-      })
-    ).isRequired,
-  }).isRequired,
+  todaysWorkouts: PropTypes.arrayOf(
+    PropTypes.shape({
+      workoutId: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      duration: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired,
+      calories: PropTypes.string.isRequired,
+      location: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired,
+      intensity: PropTypes.string.isRequired,
+      notes: PropTypes.string,
+    })
+  ).isRequired,
   refetch: PropTypes.func.isRequired,
 };
 

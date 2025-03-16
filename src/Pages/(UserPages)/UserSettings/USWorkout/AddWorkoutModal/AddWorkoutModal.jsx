@@ -80,6 +80,8 @@ const AddWorkoutModal = ({ refetch }) => {
         icon: "success",
         title: "Workout Added",
         text: "Your workout has been successfully added!",
+        showConfirmButton: false,
+        timer: 1500,
       });
 
       refetch();
