@@ -1,13 +1,19 @@
 /* eslint-disable react/prop-types */
-import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
-import Swal from "sweetalert2";
-import TUPaymentModal from "./TUPaymentModal/TUPaymentModal";
+import { useState, useEffect } from "react";
 
-const TUPaymentBox = ({ CurrentTierData }) => {
+// Import Packages
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import { useForm } from "react-hook-form";
+import Swal from "sweetalert2";
+
+// Import Utility
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+
+// Import Modal
+import TearUpgradePaymentModal from "./TearUpgradePaymentModal/TearUpgradePaymentModal";
+
+const TearUpgradePaymentBox = ({ CurrentTierData }) => {
   // Initialize hooks and state
   const axiosPublic = useAxiosPublic();
   const elements = useElements();
@@ -209,7 +215,7 @@ const TUPaymentBox = ({ CurrentTierData }) => {
         ].map((option, index) => (
           <div
             key={index}
-            className={`px-4 py-6 border-4 rounded-xl shadow-lg bg-linear-to-br from-white to-blue-50 transition-all duration-300 cursor-pointer ${
+            className={`px-4 py-6 border-4 rounded-xl shadow-lg bg-linear-to-br hover:bg-linear-to-tl from-gray-200 transition-all duration-300 cursor-pointer ${
               selectedDuration?.duration === option.duration
                 ? "border-blue-500 shadow-2xl scale-105"
                 : "border-gray-200 hover:border-blue-300 hover:shadow-xl"
@@ -314,10 +320,10 @@ const TUPaymentBox = ({ CurrentTierData }) => {
 
       {/* Payment success modal */}
       <dialog id="Payment_Finished" className="modal">
-        <TUPaymentModal PaymentID={PaymentID} />
+        <TearUpgradePaymentModal PaymentID={PaymentID} />
       </dialog>
     </div>
   );
 };
 
-export default TUPaymentBox;
+export default TearUpgradePaymentBox;

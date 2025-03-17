@@ -1,13 +1,18 @@
 /* eslint-disable react/prop-types */
 import { useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
-import Loading from "../../../../../Shared/Loading/Loading";
-import domToImage from "dom-to-image"; // Import dom-to-image
-import { jsPDF } from "jspdf"; // Import jsPDF library
 import { Link, useParams } from "react-router";
 
-const TUPaymentModal = ({ PaymentID }) => {
+// Import Package
+import { jsPDF } from "jspdf";
+import domToImage from "dom-to-image";
+import { useQuery } from "@tanstack/react-query";
+
+// Import Utility
+import Loading from "../../../../../Shared/Loading/Loading";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import FetchingError from "../../../../../Shared/Component/FetchingError";
+
+const TearUpgradePaymentModal = ({ PaymentID }) => {
   const axiosPublic = useAxiosPublic();
   const receiptRef = useRef();
   const { email } = useParams();
@@ -31,19 +36,7 @@ const TUPaymentModal = ({ PaymentID }) => {
 
   // Error handling
   if (PaymentIDDataError) {
-    return (
-      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-[#ffffff]">
-        <p className="text-3xl text-red-500 font-bold mb-8">
-          Failed to load payment data.
-        </p>
-        <button
-          className="px-6 py-3 bg-blue-500 text-[#ffffff] font-bold rounded-lg hover:bg-blue-400"
-          onClick={() => window.location.reload()}
-        >
-          Reload
-        </button>
-      </div>
-    );
+    return <FetchingError />;
   }
 
   const payment = PaymentIDData ? PaymentIDData[0] : null;
@@ -71,7 +64,6 @@ const TUPaymentModal = ({ PaymentID }) => {
       console.error("Error generating PDF:", error);
     }
   };
-
   return (
     <div className="modal-box bg-[#ffffff] shadow-lg rounded-lg max-w-md mx-auto">
       {/* Receipt Section */}
@@ -169,4 +161,4 @@ const TUPaymentModal = ({ PaymentID }) => {
   );
 };
 
-export default TUPaymentModal;
+export default TearUpgradePaymentModal;
