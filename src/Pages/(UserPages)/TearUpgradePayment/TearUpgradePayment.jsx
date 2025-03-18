@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router";
 
+// Import Icons
+import { IoMdArrowRoundBack } from "react-icons/io";
+
 // Import Package
 import { loadStripe } from "@stripe/stripe-js";
 import { useQuery } from "@tanstack/react-query";
@@ -15,9 +18,8 @@ import Loading from "../../../Shared/Loading/Loading";
 import FetchingError from "../../../Shared/Component/FetchingError";
 
 // Import Background Image
-import GalleryBackground from "../../../assets/Home-Background/Home-Background.jpeg";
 import TearUpgradePaymentBox from "./TearUpgradePaymentBox/TearUpgradePaymentBox";
-import { IoMdArrowRoundBack } from "react-icons/io";
+import GalleryBackground from "../../../assets/Home-Background/Home-Background.jpeg";
 import TearUpgradePaymentBronze from "./TearUpgradePaymentBox/TearUpgradePaymentBronze/TearUpgradePaymentBronze";
 
 const TearUpgradePayment = () => {
