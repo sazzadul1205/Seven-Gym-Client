@@ -65,7 +65,7 @@ const TearUpgradePaymentPlan = ({
           return (
             <div
               key={index}
-              className={`px-6 py-8 border-4 rounded-xl shadow-lg bg-linear-to-bl hover:bg-linear-to-tr from-white to-gray-400 transition-all duration-300 cursor-pointer 
+              className={`border-4 rounded-xl shadow-lg bg-linear-to-bl hover:bg-linear-to-tr from-white to-gray-400 transition-all duration-300 cursor-pointer py-1 
               ${
                 isSelected
                   ? "border-blue-500 shadow-2xl scale-105"
@@ -84,16 +84,22 @@ const TearUpgradePaymentPlan = ({
                 {option.name}
               </h2>
 
+              {/* Divider */}
+              <div className="p-[1px] bg-black w-1/2 mx-auto"></div>
+
               {/* Icon & Plan Details */}
-              <div className="flex flex-col items-center gap-4 border-b border-t border-gray-300 py-4">
+              <div className="flex flex-col items-center gap-4 py-4">
                 <img src={option.icon} alt={option.name} className="w-16" />
                 <div className="text-center">
                   <h3 className="text-lg font-semibold text-blue-700">
                     {option.duration}
                   </h3>
-                  <p className="text-sm text-gray-600">{option.description}</p>
+                  <p className="text-sm text-gray-800">{option.description}</p>
                 </div>
               </div>
+
+              {/* Divider */}
+              <div className="p-[1px] bg-black w-1/2 mx-auto"></div>
 
               {/* Price */}
               <p className="text-lg font-bold text-gray-800 text-center mt-2">
@@ -101,7 +107,7 @@ const TearUpgradePaymentPlan = ({
               </p>
 
               {/* Expiration Date */}
-              <p className="text-xs text-gray-500 text-center mt-2">
+              <p className="text-xs text-black text-center mt-2">
                 Expires on: {expirationDate}
               </p>
             </div>

@@ -17,10 +17,12 @@ import FetchingError from "../../../Shared/Component/FetchingError";
 // Import Background Image
 import GalleryBackground from "../../../assets/Home-Background/Home-Background.jpeg";
 import TearUpgradePaymentBox from "./TearUpgradePaymentBox/TearUpgradePaymentBox";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 const TearUpgradePayment = () => {
-  const navigate = useNavigate();
+  // Hooks & Dependencies
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { tier, email } = useParams();
   const axiosPublic = useAxiosPublic();
 
@@ -28,10 +30,10 @@ const TearUpgradePayment = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    if (user?.email !== email) {
+    if (user && user.email !== email) {
       setShowModal(true);
     }
-  }, [user?.email, email]);
+  }, [user, email]);
 
   // Fetch tier data
   const {
@@ -117,8 +119,18 @@ const TearUpgradePayment = () => {
         </div>
       )}
 
+      {/* Main Content (Only displayed if user is authorized) */}
       {!showModal && (
-        <div className="min-h-screen bg-gradient-to-t from-black/40 to-black/70 py-5">
+        <div className="min-h-screen bg-gradient-to-t from-black/40 to-black/70 py-5 relative">
+          {/* Back Button at Top Left inside the container */}
+          <div
+            className="absolute top-4 left-4 flex items-center space-x-2 bg-gray-600 px-3 py-2 rounded-md cursor-pointer z-50"
+            onClick={() => navigate(-1)}
+          >
+            <IoMdArrowRoundBack className="text-white" />
+            <p className="text-white">Back</p>
+          </div>
+
           {/* Page Header */}
           <p className="text-3xl font-bold text-center text-white">
             Payment for {CurrentTierData?.name || "Loading..."} Tier
@@ -131,7 +143,7 @@ const TearUpgradePayment = () => {
           <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-4">
             {/* Tier Details Box */}
             <div
-              className={` items-center p-6 shadow-lg rounded-lg border border-gray-200 ${getTierBackgroundColor(
+              className={`flex flex-col items-center p-6 shadow-lg rounded-lg border border-gray-200 ${getTierBackgroundColor(
                 tier
               )} min-h-[500px] w-[380px] shadow-xl`}
             >

@@ -13,6 +13,7 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 
 // Import Background Image
 import GalleryBackground from "../../../assets/Home-Background/Home-Background.jpeg";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 const UserTierUpgrade = () => {
   // Hooks & Dependencies
@@ -26,7 +27,7 @@ const UserTierUpgrade = () => {
 
   // Check if user is unauthorized (handled in useEffect to avoid unnecessary re-renders)
   useEffect(() => {
-    if (!user?.email || user.email !== email) {
+    if (user && user.email !== email) {
       setShowModal(true);
     }
   }, [user, email]);
@@ -127,7 +128,16 @@ const UserTierUpgrade = () => {
 
       {/* Main Content (Only displayed if user is authorized) */}
       {!showModal && (
-        <div className="min-h-screen bg-gradient-to-t from-black/40 to-black/70 py-5">
+        <div className="min-h-screen bg-gradient-to-t from-black/40 to-black/70 py-5 relative">
+          {/* Back Button at Top Left inside the container */}
+          <div
+            className="absolute top-4 left-4 flex items-center space-x-2 bg-gray-600 px-3 py-2 rounded-md cursor-pointer z-50"
+            onClick={() => navigate(-1)}
+          >
+            <IoMdArrowRoundBack className="text-white" />
+            <p className="text-white">Back</p>
+          </div>
+
           {/* Page Title */}
           <p className="text-3xl font-bold text-center text-white">
             Choose Your Membership
@@ -177,7 +187,9 @@ const UserTierUpgrade = () => {
                     <p className="text-lg font-bold text-gray-800 mb-2">
                       {tier.price} / month
                     </p>
-                    <p className="text-sm text-white mb-4">{tier?.discount}</p>
+                    <p className="text-sm text-gray-600 mb-4">
+                      {tier?.discount}
+                    </p>
                     <Link
                       to={`/User/TierUpgradePayment/${email}/${tier?.name}`}
                     >
