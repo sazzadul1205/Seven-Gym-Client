@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useParams } from "react-router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 // Import Packages
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
@@ -21,9 +21,8 @@ const TearUpgradePaymentBox = ({ CurrentTierData }) => {
   const { email } = useParams();
   const stripe = useStripe();
 
-  // State variables for tracking the selected plan, payment client secret, confirmation, and processing state
+  // State variables for tracking the selected plan, confirmation, processing state, and Payment ID
   const [selectedDuration, setSelectedDuration] = useState(null);
-  const [clientSecret, setClientSecret] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [PaymentID, setIsPaymentID] = useState(null);
@@ -35,30 +34,6 @@ const TearUpgradePaymentBox = ({ CurrentTierData }) => {
     formState: { errors, isSubmitting },
     reset,
   } = useForm();
-
-  // Fetch the client secret when a plan is selected
-  useEffect(() => {
-    const fetchClientSecret = async () => {
-      try {
-        if (selectedDuration) {
-          const response = await axiosPublic.post("/Create_Payment_Intent", {
-            tier: CurrentTierData?.name, // Tier name
-            totalPrice: selectedDuration.totalPrice, // Total price based on duration
-          });
-          setClientSecret(response.data.clientSecret); // Store the client secret
-        }
-      } catch (error) {
-        console.error("Failed to fetch client secret:", error);
-        Swal.fire(
-          "Error",
-          "Failed to initiate payment. Please try again later.",
-          "error"
-        );
-      }
-    };
-
-    fetchClientSecret();
-  }, [selectedDuration, CurrentTierData, axiosPublic]);
 
   // Function to generate a unique payment ID
   const generatePaymentID = () => {
@@ -75,11 +50,33 @@ const TearUpgradePaymentBox = ({ CurrentTierData }) => {
 
   // Handle form submission and payment processing
   const onSubmit = async (data) => {
-    // Check if Stripe, Elements, and client secret are ready
-    if (!stripe || !elements || !clientSecret) {
+    if (!stripe || !elements) {
       Swal.fire(
         "Error",
         "Stripe is not ready. Please refresh the page and try again.",
+        "error"
+      );
+      return;
+    }
+
+    if (!selectedDuration) {
+      Swal.fire("Error", "Please select a plan.", "error");
+      return;
+    }
+
+    // Fetch the client secret when user submits the payment form
+    let clientSecret;
+    try {
+      const response = await axiosPublic.post("/Create_Payment_Intent", {
+        tier: CurrentTierData?.name, // Tier name
+        totalPrice: selectedDuration.totalPrice, // Total price based on duration
+      });
+      clientSecret = response.data.clientSecret;
+    } catch (error) {
+      console.error("Failed to fetch client secret:", error);
+      Swal.fire(
+        "Error",
+        "Failed to initiate payment. Please try again later.",
         "error"
       );
       return;
@@ -183,12 +180,7 @@ const TearUpgradePaymentBox = ({ CurrentTierData }) => {
   };
 
   return (
-    <div className=" px-4 space-y-5 rounded-lg shadow-xl mt-4">
-      {/* Plan selection section */}
-      <h1 className="text-4xl italic font-bold text-center mb-2">
-        Select a Plan
-      </h1>
-
+    <div className="px-4 space-y-5 rounded-lg shadow-xl mt-4">
       <TearUpgradePaymentPlan
         CurrentTierData={CurrentTierData}
         selectedDuration={selectedDuration}
@@ -196,8 +188,8 @@ const TearUpgradePaymentBox = ({ CurrentTierData }) => {
       />
 
       {/* Payment information section */}
-      <div className="w-full p-6 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300">
-        <h2 className="text-xl font-semibold text-center mb-4 py-2 bg-blue-500 text-white rounded-3xl">
+      <div className="w-full bg-white/80 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 p-6">
+        <h2 className="text-xl font-semibold text-center bg-linear-to-bl from-blue-300 to-blue-600 text-white rounded-xl mb-4 py-2">
           Payment Information
         </h2>
         <form
@@ -206,7 +198,7 @@ const TearUpgradePaymentBox = ({ CurrentTierData }) => {
         >
           {/* Cardholder name input */}
           <div>
-            <label className="block text-lg font-semibold mb-2">
+            <label className="block text-lg font-semibold text-black mb-2">
               Cardholder Name
             </label>
             <input
@@ -214,7 +206,7 @@ const TearUpgradePaymentBox = ({ CurrentTierData }) => {
               {...register("cardholderName", {
                 required: "Cardholder name is required.",
               })}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-white text-black px-4 py-3 border rounded-lg focus:outline-hidden "
               placeholder="Enter cardholder name"
             />
             {errors.cardholderName && (
@@ -226,10 +218,10 @@ const TearUpgradePaymentBox = ({ CurrentTierData }) => {
 
           {/* Card details input */}
           <div>
-            <label className="block text-lg font-semibold mb-2">
+            <label className="block text-lg font-semibold text-black mb-2">
               Card Details
             </label>
-            <div className="w-full px-4 py-2 border rounded-lg">
+            <div className="w-full bg-white text-black px-4 py-3 border rounded-lg">
               <CardElement options={{ hidePostalCode: true }} />
             </div>
           </div>
@@ -239,7 +231,7 @@ const TearUpgradePaymentBox = ({ CurrentTierData }) => {
             <input
               type="checkbox"
               id="confirmation"
-              className="w-5 h-5"
+              className="w-5 h-5 cursor-pointer"
               onChange={(e) => setIsConfirmed(e.target.checked)}
             />
             <label htmlFor="confirmation" className="text-sm text-gray-700">
@@ -254,7 +246,6 @@ const TearUpgradePaymentBox = ({ CurrentTierData }) => {
             disabled={
               !stripe ||
               !elements ||
-              !clientSecret ||
               isSubmitting ||
               !isConfirmed ||
               isProcessing

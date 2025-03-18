@@ -169,7 +169,7 @@ const TearUpgradePayment = () => {
             </div>
 
             {/* Payment Form Box */}
-            <div className="w-full lg:w-2/3 bg-gray-300/90">
+            <div className="w-full lg:w-2/3">
               {/* Stripe Elements Wrapper */}
               <Elements stripe={stripePromise}>
                 {/* Payment Component */}
