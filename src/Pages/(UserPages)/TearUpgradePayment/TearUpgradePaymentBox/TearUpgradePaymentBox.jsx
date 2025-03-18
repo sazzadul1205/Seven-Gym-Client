@@ -12,6 +12,7 @@ import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 // Import Modal
 import TearUpgradePaymentModal from "./TearUpgradePaymentModal/TearUpgradePaymentModal";
+import TearUpgradePaymentPlan from "./TearUpgradePaymentPlan/TearUpgradePaymentPlan";
 
 const TearUpgradePaymentBox = ({ CurrentTierData }) => {
   // Initialize hooks and state
@@ -188,65 +189,11 @@ const TearUpgradePaymentBox = ({ CurrentTierData }) => {
         Select a Plan
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Render available plans */}
-        {[
-          {
-            name: "Basic Plan",
-            duration: "1 Month",
-            multiplier: 1,
-            icon: "📅",
-            description: "Perfect for short-term needs.",
-          },
-          {
-            name: "Value Plan",
-            duration: "5 Months",
-            multiplier: 4.8,
-            icon: "⏳",
-            description: "Great value for medium-term plans.",
-          },
-          {
-            name: "Premium Plan",
-            duration: "12 Months",
-            multiplier: 11.5,
-            icon: "🏆",
-            description: "Best for long-term commitment.",
-          },
-        ].map((option, index) => (
-          <div
-            key={index}
-            className={`px-4 py-6 border-4 rounded-xl shadow-lg bg-linear-to-br hover:bg-linear-to-tl from-gray-200 transition-all duration-300 cursor-pointer ${
-              selectedDuration?.duration === option.duration
-                ? "border-blue-500 shadow-2xl scale-105"
-                : "border-gray-200 hover:border-blue-300 hover:shadow-xl"
-            }`}
-            onClick={() =>
-              setSelectedDuration({
-                duration: option.duration,
-                name: option.name,
-                totalPrice: (CurrentTierData?.price || 0) * option.multiplier,
-              })
-            }
-          >
-            {/* Plan details */}
-            <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
-              {option.name}
-            </h2>
-            <div className="flex items-center gap-4 border-b border-t border-gray-400 py-4">
-              <div className="text-5xl">{option.icon}</div>
-              <div>
-                <h3 className="text-lg font-semibold text-blue-700">
-                  {option.duration}
-                </h3>
-                <p className="text-sm text-gray-600">{option.description}</p>
-              </div>
-            </div>
-            <p className="text-lg font-bold text-gray-800 text-center mt-2">
-              Price: ${(CurrentTierData?.price || 0) * option.multiplier}
-            </p>
-          </div>
-        ))}
-      </div>
+      <TearUpgradePaymentPlan
+        CurrentTierData={CurrentTierData}
+        selectedDuration={selectedDuration}
+        setSelectedDuration={setSelectedDuration}
+      />
 
       {/* Payment information section */}
       <div className="w-full p-6 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300">
