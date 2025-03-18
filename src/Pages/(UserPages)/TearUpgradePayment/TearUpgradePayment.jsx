@@ -18,6 +18,7 @@ import FetchingError from "../../../Shared/Component/FetchingError";
 import GalleryBackground from "../../../assets/Home-Background/Home-Background.jpeg";
 import TearUpgradePaymentBox from "./TearUpgradePaymentBox/TearUpgradePaymentBox";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import TearUpgradePaymentBronze from "./TearUpgradePaymentBox/TearUpgradePaymentBronze/TearUpgradePaymentBronze";
 
 const TearUpgradePayment = () => {
   // Hooks & Dependencies
@@ -26,9 +27,10 @@ const TearUpgradePayment = () => {
   const { tier, email } = useParams();
   const axiosPublic = useAxiosPublic();
 
-  // State Management
+  // State Management for unauthorized modal
   const [showModal, setShowModal] = useState(false);
 
+  // Check for unauthorized access (wait until user is loaded)
   useEffect(() => {
     if (user && user.email !== email) {
       setShowModal(true);
@@ -43,19 +45,15 @@ const TearUpgradePayment = () => {
   } = useQuery({
     queryKey: ["CurrentTierData", tier],
     queryFn: () => axiosPublic.get(`/TierData/${tier}`).then((res) => res.data),
-    enabled: !showModal, // Disable query if modal is shown
+    enabled: !showModal, // Only fetch if user is authorized
   });
 
-  // Loading
+  // Loading and Error handling
   if (CurrentTierDataLoading) return <Loading />;
-
-  // Error handling
-  if (CurrentTierDataError) {
-    return <FetchingError />;
-  }
+  if (CurrentTierDataError) return <FetchingError />;
 
   // Function to get button style based on tier type
-  const getTierBadge = (tier) => {
+  const getTierBadge = (tierName) => {
     const tierStyles = {
       Bronze:
         "bg-gradient-to-bl hover:bg-gradient-to-tr from-orange-300 to-orange-500",
@@ -69,12 +67,12 @@ const TearUpgradePayment = () => {
     };
 
     return `px-4 py-2 mt-2 rounded-full text-sm font-semibold shadow-lg transition-transform ${
-      tierStyles[tier] || "bg-gradient-to-r from-green-300 to-green-500"
+      tierStyles[tierName] || "bg-gradient-to-r from-green-300 to-green-500"
     }`;
   };
 
   // Function to get background color based on tier type
-  const getTierBackgroundColor = (tier) => {
+  const getTierBackgroundColor = (tierName) => {
     const styles = {
       Bronze: "bg-orange-500/90",
       Silver: "bg-gray-500/90",
@@ -82,11 +80,15 @@ const TearUpgradePayment = () => {
       Diamond: "bg-blue-500/90",
       Platinum: "bg-gray-500/90",
     };
-    return styles[tier] || "bg-white"; // Default background color
+    return styles[tierName] || "bg-white"; // Default background color
   };
 
   // Stripe promise
   const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PROMISE);
+
+  // Determine if we need to show the Bronze modal.
+  // Only show if the user is authorized and the selected tier is Bronze.
+  const showBronzeModal = !showModal && CurrentTierData?.name === "Bronze";
 
   return (
     <div
@@ -119,8 +121,11 @@ const TearUpgradePayment = () => {
         </div>
       )}
 
-      {/* Main Content (Only displayed if user is authorized) */}
-      {!showModal && (
+      {/* Bronze Modal (if current tier is Bronze) */}
+      {showBronzeModal && <TearUpgradePaymentBronze />}
+
+      {/* Main Content (Only displayed if user is authorized and not on Bronze tier) */}
+      {!showModal && !showBronzeModal && (
         <div className="min-h-screen bg-gradient-to-t from-black/40 to-black/70 py-5 relative">
           {/* Back Button at Top Left inside the container */}
           <div
@@ -143,7 +148,7 @@ const TearUpgradePayment = () => {
           <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-4">
             {/* Tier Details Box */}
             <div
-              className={`flex flex-col items-center p-6 shadow-lg rounded-lg border border-gray-200 ${getTierBackgroundColor(
+              className={`flex flex-col items-center p-6 rounded-lg border border-gray-200 ${getTierBackgroundColor(
                 tier
               )} min-h-[500px] w-[380px] shadow-xl`}
             >
