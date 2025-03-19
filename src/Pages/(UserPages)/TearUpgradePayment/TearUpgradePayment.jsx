@@ -18,8 +18,8 @@ import Loading from "../../../Shared/Loading/Loading";
 import FetchingError from "../../../Shared/Component/FetchingError";
 
 // Import Background Image
-import TearUpgradePaymentBox from "./TearUpgradePaymentBox/TearUpgradePaymentBox";
 import GalleryBackground from "../../../assets/Home-Background/Home-Background.jpeg";
+import TearUpgradePaymentBox from "./TearUpgradePaymentBox/TearUpgradePaymentBox";
 import TearUpgradePaymentBronze from "./TearUpgradePaymentBox/TearUpgradePaymentBronze/TearUpgradePaymentBronze";
 
 const TearUpgradePayment = () => {

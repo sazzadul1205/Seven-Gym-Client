@@ -1,9 +1,14 @@
 import { useNavigate, useParams } from "react-router";
+
+// Import Packages
 import { useQuery } from "@tanstack/react-query";
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+
+// Import Utility
 import useAuth from "../../../../../Hooks/useAuth";
 import Loading from "../../../../../Shared/Loading/Loading";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../../Shared/Component/FetchingError";
+import TearResetToBronzeModal from "../TearResetToBronzeModal/TearResetToBronzeModal";
 
 const TearUpgradePaymentBronze = () => {
   const navigate = useNavigate();
@@ -31,53 +36,78 @@ const TearUpgradePaymentBronze = () => {
     enabled: !!user, // Fetch only if user exists
   });
 
-  const handleResetToBronze = async () => {
-    try {
-      await axiosPublic.post("/resetTier", { email, tier: "Bronze" });
-      alert(
-        "Your tier has been successfully reset to Bronze. Please contact our management staff for further assistance."
-      );
-      navigate(-1);
-    } catch (error) {
-      alert("Failed to reset tier. Please contact our management staff.");
-    }
-  };
 
   // Handle loading and errors
   if (isLoading) return <Loading />;
   if (error) return <FetchingError />;
 
-  console.log("My Tier :", userData?.tier);
-  console.log("My Duration :", userData?.tierDuration?.duration);
-  console.log("My Duration End :", userData?.tierDuration?.end);
+  // Get tier details
+  const userTier = userData?.tier || "Unknown";
+  const duration = userData?.tierDuration?.duration || "N/A";
+  const endDate = userData?.tierDuration?.end
+    ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
+        new Date(userData.tierDuration.end)
+      )
+    : "N/A";
+
+  // Dynamic styling for different tiers
+  const tierColors = {
+    Bronze: "bg-green-500",
+    Silver: "bg-gray-500",
+    Gold: "bg-yellow-500",
+    Diamond: "bg-blue-500",
+  };
+  const tierColor = tierColors[userTier] || "bg-gray-400";
 
   return (
     <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-xl text-center">
-        <div className="text-2xl font-semibold text-green-600 mb-4">
-          <p>Package Already Selected</p> <p>( {userData?.tier} )</p>
+      {/* Bronze Warning */}
+      <div className="max-w-lg w-full bg-white p-8 rounded-lg shadow-xl text-center">
+        {/* Tier Display */}
+        <div
+          className={`text-white text-lg font-semibold py-2 px-4 rounded-md ${tierColor}`}
+        >
+          Current Tier: {userTier}
         </div>
+        <p className="text-gray-700 text-lg mt-2">
+          Duration: <span className="font-semibold">{duration}</span>
+        </p>
+        <p className="text-gray-700 text-lg mb-6">
+          Expires on: <span className="font-semibold">{endDate}</span>
+        </p>
+
+        {/* Message */}
         <p className="text-gray-700 text-lg leading-relaxed mb-6">
           You already have a suitable package selected, so this upgrade
           isn&apos;t required. If you&apos;d like to reset your tier to{" "}
           <strong>Bronze</strong>, click the button below. For further
           assistance, please speak with our management staff.
         </p>
-        <div className="flex justify-center gap-4">
+
+        {/* Buttons */}
+        <div className="flex justify-between gap-4">
           <button
-            onClick={handleResetToBronze}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-all duration-200 shadow-md"
+            // onClick={handleResetToBronze}
+            onClick={() =>
+              document.getElementById("Tear_Reset_To_Bronze_Modal").showModal()
+            }
+            className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-700 text-white font-medium py-2 w-[200px] rounded-lg transition-all duration-200 shadow-md hover:shadow-2xl cursor-pointer border border-gray-500"
           >
             Reset to Bronze
           </button>
           <button
             onClick={() => navigate(-1)}
-            className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-6 rounded-lg transition-all duration-200 shadow-md"
+            className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-300 to-gray-700 text-white font-medium py-2 w-[200px] rounded-lg transition-all duration-200 shadow-md hover:shadow-2xl cursor-pointer border border-gray-500"
           >
             Go Back
           </button>
         </div>
       </div>
+
+      {/* Reset to Bronze Modal */}
+      <dialog id="Tear_Reset_To_Bronze_Modal" className="modal">
+        <TearResetToBronzeModal />
+      </dialog>
     </div>
   );
 };
