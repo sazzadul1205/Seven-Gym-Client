@@ -10,7 +10,7 @@ import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 // Import Utility
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
-const TearUpgradePaymentSubmit = ({
+const TierUpgradePaymentSubmit = ({
   setIsPaymentID,
   CurrentTierData,
   selectedDuration,
@@ -109,6 +109,9 @@ const TearUpgradePaymentSubmit = ({
             }
           );
 
+          // Use Stripe's paymentIntent.id for refunds
+          const stripePaymentID = paymentIntent.id;
+
           if (error) {
             Swal.fire("Payment Failed", error.message, "error");
           } else if (paymentIntent) {
@@ -137,11 +140,13 @@ const TearUpgradePaymentSubmit = ({
               startDate: startDate.toISOString(),
               endDate: endDate.toISOString(),
               totalPrice: selectedDuration?.totalPrice,
-              paymentID: paymentID,
+              paymentID: paymentID, // Your custom ID (for internal use)
+              stripePaymentID: stripePaymentID, // Stripe's ID (for refunds)
               paymentMethod: "Card",
               Payed: true,
               dateTime: todayDateTime,
             };
+
             await axiosPublic.post("/Tier_Upgrade_Payment", postPaymentData);
 
             // Update payment ID state for modal display
@@ -154,6 +159,7 @@ const TearUpgradePaymentSubmit = ({
               duration: selectedDuration?.duration,
               updateTierStart: startDate.toISOString(),
               updateTierEnd: endDate.toISOString(),
+              linkedReceptID: paymentID,
             };
             await axiosPublic.put("/Users/Update_User_Tier", userUpdateData);
 
@@ -255,7 +261,7 @@ const TearUpgradePaymentSubmit = ({
   );
 };
 
-TearUpgradePaymentSubmit.propTypes = {
+TierUpgradePaymentSubmit.propTypes = {
   setIsPaymentID: PropTypes.func.isRequired,
   CurrentTierData: PropTypes.shape({
     name: PropTypes.string,
@@ -269,4 +275,4 @@ TearUpgradePaymentSubmit.propTypes = {
   setSelectedDuration: PropTypes.func.isRequired,
 };
 
-export default TearUpgradePaymentSubmit;
+export default TierUpgradePaymentSubmit;

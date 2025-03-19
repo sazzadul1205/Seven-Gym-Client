@@ -2,25 +2,25 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 
 // Import Modal
-import TearUpgradePaymentModal from "./TearUpgradePaymentModal/TearUpgradePaymentModal";
-import TearUpgradePaymentPlan from "./TearUpgradePaymentPlan/TearUpgradePaymentPlan";
-import TearUpgradePaymentSubmit from "./TearUpgradePaymentSubmit/TearUpgradePaymentSubmit";
+import TierUpgradePaymentPlan from "./TierUpgradePaymentPlan/TierUpgradePaymentPlan";
+import TierUpgradePaymentModal from "./TierUpgradePaymentModal/TierUpgradePaymentModal";
+import TierUpgradePaymentSubmit from "./TierUpgradePaymentSubmit/TierUpgradePaymentSubmit";
 
-const TearUpgradePaymentBox = ({ CurrentTierData }) => {
+const TierUpgradePaymentBox = ({ CurrentTierData }) => {
   // State variables for tracking the selected plan, confirmation, processing state, and Payment ID
   const [selectedDuration, setSelectedDuration] = useState(null);
   const [PaymentID, setIsPaymentID] = useState(null);
 
   return (
     <div className="px-4 space-y-5 rounded-lg shadow-xl mt-4">
-      <TearUpgradePaymentPlan
+      <TierUpgradePaymentPlan
         CurrentTierData={CurrentTierData}
         selectedDuration={selectedDuration}
         setSelectedDuration={setSelectedDuration}
       />
 
       {/* Payment information section */}
-      <TearUpgradePaymentSubmit
+      <TierUpgradePaymentSubmit
         setIsPaymentID={setIsPaymentID}
         CurrentTierData={CurrentTierData}
         selectedDuration={selectedDuration}
@@ -29,17 +29,17 @@ const TearUpgradePaymentBox = ({ CurrentTierData }) => {
 
       {/* Payment success modal */}
       <dialog id="Tier_Upgrade_Payment_Finished" className="modal">
-        <TearUpgradePaymentModal PaymentID={PaymentID} />
+        <TierUpgradePaymentModal PaymentID={PaymentID} />
       </dialog>
     </div>
   );
 };
 
-TearUpgradePaymentBox.propTypes = {
+TierUpgradePaymentBox.propTypes = {
   CurrentTierData: PropTypes.shape({
     name: PropTypes.string,
     price: PropTypes.number,
   }),
 };
 
-export default TearUpgradePaymentBox;
+export default TierUpgradePaymentBox;

@@ -1,16 +1,23 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { ImCross } from "react-icons/im";
 import { useNavigate, useParams } from "react-router";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
-const TearResetToBronzeModal = ({ onClose }) => {
+const TearResetToBronzeModal = ({ userData }) => {
   const navigate = useNavigate();
   const { email } = useParams();
   const axiosPublic = useAxiosPublic();
 
+  console.log("User Email: ", userData?.email);
+  console.log("User Current Tier: ", userData?.tier);
+  console.log("User Tier Data", userData?.tierDuration);
+
   const [selectedReason, setSelectedReason] = useState("");
   const [customComplaint, setCustomComplaint] = useState("");
   const [loading, setLoading] = useState(false);
+
+  
 
   const predefinedReasons = [
     "I no longer need the current plan",
@@ -36,6 +43,8 @@ const TearResetToBronzeModal = ({ onClose }) => {
       () => document.getElementById("Tear_Reset_To_Bronze_Modal").close();
       navigate(-1);
     } catch (error) {
+      console.log(error);
+
       alert("Failed to reset tier. Please contact our management staff.");
     } finally {
       setLoading(false);
@@ -101,27 +110,14 @@ const TearResetToBronzeModal = ({ onClose }) => {
           ></textarea>
         </div>
 
-        {/* Action Buttons */}
-        <div className="modal-action py-4 flex justify-end gap-4">
-          <button
-            type="submit"
-            className={`py-3 px-10 cursor-pointer text-white font-semibold rounded-xl transition-all duration-200 shadow-md ${
-              loading
-                ? "bg-gray-400"
-                : "bg-gradient-to-br from-emerald-400 to-emerald-600 hover:from-emerald-500 hover:to-emerald-700"
-            }`}
-            disabled={loading}
-          >
-            {loading ? (
-              <div className="flex items-center gap-3">
-                <span className="loading loading-spinner loading-sm"></span>
-                Processing...
-              </div>
-            ) : (
-              "Reset"
-            )}
+        {/* Next Button */}
+        <div className="flex justify-end py-4 ">
+          <button className="bg-linear-to-bl hover:bg-linear-to-tr from-emerald-300 to-emerald-600 rounded-xl text-xl  font-semibold px-10 py-2 cursor-pointer">
+            Next
           </button>
         </div>
+
+   
       </form>
     </div>
   );

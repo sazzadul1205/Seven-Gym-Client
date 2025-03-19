@@ -19,8 +19,8 @@ import FetchingError from "../../../Shared/Component/FetchingError";
 
 // Import Background Image
 import GalleryBackground from "../../../assets/Home-Background/Home-Background.jpeg";
-import TearUpgradePaymentBox from "./TearUpgradePaymentBox/TearUpgradePaymentBox";
-import TearUpgradePaymentBronze from "./TearUpgradePaymentBox/TearUpgradePaymentBronze/TearUpgradePaymentBronze";
+import TierUpgradePaymentBox from "./TierUpgradePaymentBox/TierUpgradePaymentBox";
+import TierUpgradePaymentBronze from "./TierUpgradePaymentBox/TierUpgradePaymentBronze/TierUpgradePaymentBronze";
 
 const TearUpgradePayment = () => {
   // Hooks & Dependencies
@@ -124,7 +124,7 @@ const TearUpgradePayment = () => {
       )}
 
       {/* Bronze Modal (if current tier is Bronze) */}
-      {showBronzeModal && <TearUpgradePaymentBronze />}
+      {showBronzeModal && <TierUpgradePaymentBronze />}
 
       {/* Main Content (Only displayed if user is authorized and not on Bronze tier) */}
       {!showModal && !showBronzeModal && (
@@ -192,7 +192,7 @@ const TearUpgradePayment = () => {
               {/* Stripe Elements Wrapper */}
               <Elements stripe={stripePromise}>
                 {/* Payment Component */}
-                <TearUpgradePaymentBox CurrentTierData={CurrentTierData} />
+                <TierUpgradePaymentBox CurrentTierData={CurrentTierData} />
               </Elements>
             </div>
           </div>

@@ -1,4 +1,6 @@
 import PropTypes from "prop-types";
+
+// Import Icons
 import TUPCalender from "../../../../../assets/Tear-Upgrade-Plan/TUPCalendar.png";
 import TUPHourglass from "../../../../../assets/Tear-Upgrade-Plan/TUPHourglass.png";
 import TUPTrophy from "../../../../../assets/Tear-Upgrade-Plan/TUPTrophy.png";
@@ -31,7 +33,7 @@ const plans = [
   },
 ];
 
-const TearUpgradePaymentPlan = ({
+const TierUpgradePaymentPlan = ({
   CurrentTierData,
   selectedDuration,
   setSelectedDuration,
@@ -118,7 +120,7 @@ const TearUpgradePaymentPlan = ({
   );
 };
 
-TearUpgradePaymentPlan.propTypes = {
+TierUpgradePaymentPlan.propTypes = {
   CurrentTierData: PropTypes.shape({
     price: PropTypes.number,
   }),
@@ -130,4 +132,4 @@ TearUpgradePaymentPlan.propTypes = {
   setSelectedDuration: PropTypes.func.isRequired,
 };
 
-export default TearUpgradePaymentPlan;
+export default TierUpgradePaymentPlan;

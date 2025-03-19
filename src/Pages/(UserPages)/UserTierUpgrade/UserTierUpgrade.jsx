@@ -3,6 +3,9 @@ import { Link, useParams, useNavigate } from "react-router";
 
 import { useQuery } from "@tanstack/react-query";
 
+// Import Icons
+import { IoMdArrowRoundBack } from "react-icons/io";
+
 // Import Components
 import Loading from "../../../Shared/Loading/Loading";
 import FetchingError from "../../../Shared/Component/FetchingError";
@@ -13,7 +16,6 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 
 // Import Background Image
 import GalleryBackground from "../../../assets/Home-Background/Home-Background.jpeg";
-import { IoMdArrowRoundBack } from "react-icons/io";
 
 const UserTierUpgrade = () => {
   // Hooks & Dependencies

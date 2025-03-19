@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 
 // Import Packages
 import { useQuery } from "@tanstack/react-query";
@@ -8,12 +8,11 @@ import useAuth from "../../../../../Hooks/useAuth";
 import Loading from "../../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../../Shared/Component/FetchingError";
-import TearResetToBronzeModal from "../TearResetToBronzeModal/TearResetToBronzeModal";
+import TearResetToBronzeModal from "../TierResetToBronzeModal/TierResetToBronzeModal";
 
-const TearUpgradePaymentBronze = () => {
+const TierUpgradePaymentBronze = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { email } = useParams();
   const axiosPublic = useAxiosPublic();
 
   // Fetch user data
@@ -35,7 +34,6 @@ const TearUpgradePaymentBronze = () => {
     },
     enabled: !!user, // Fetch only if user exists
   });
-
 
   // Handle loading and errors
   if (isLoading) return <Loading />;
@@ -62,16 +60,20 @@ const TearUpgradePaymentBronze = () => {
   return (
     <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
       {/* Bronze Warning */}
-      <div className="max-w-lg w-full bg-white p-8 rounded-lg shadow-xl text-center">
+      <div className="max-w-lg w-full bg-white p-4 rounded-lg shadow-xl text-center">
         {/* Tier Display */}
         <div
           className={`text-white text-lg font-semibold py-2 px-4 rounded-md ${tierColor}`}
         >
           Current Tier: {userTier}
         </div>
+
+        {/* Duration */}
         <p className="text-gray-700 text-lg mt-2">
           Duration: <span className="font-semibold">{duration}</span>
         </p>
+
+        {/* Expired */}
         <p className="text-gray-700 text-lg mb-6">
           Expires on: <span className="font-semibold">{endDate}</span>
         </p>
@@ -91,9 +93,9 @@ const TearUpgradePaymentBronze = () => {
             onClick={() =>
               document.getElementById("Tear_Reset_To_Bronze_Modal").showModal()
             }
-            className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-700 text-white font-medium py-2 w-[200px] rounded-lg transition-all duration-200 shadow-md hover:shadow-2xl cursor-pointer border border-gray-500"
+            className="bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-700 text-white font-medium py-2 w-[200px] rounded-lg transition-all duration-200 shadow-md hover:shadow-2xl cursor-pointer border border-gray-500"
           >
-            Reset to Bronze
+            Reset
           </button>
           <button
             onClick={() => navigate(-1)}
@@ -106,10 +108,10 @@ const TearUpgradePaymentBronze = () => {
 
       {/* Reset to Bronze Modal */}
       <dialog id="Tear_Reset_To_Bronze_Modal" className="modal">
-        <TearResetToBronzeModal />
+        <TearResetToBronzeModal userData={userData} />
       </dialog>
     </div>
   );
 };
 
-export default TearUpgradePaymentBronze;
+export default TierUpgradePaymentBronze;

@@ -12,7 +12,7 @@ import Loading from "../../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../../Shared/Component/FetchingError";
 
-const TearUpgradePaymentModal = ({ PaymentID }) => {
+const TierUpgradePaymentModal = ({ PaymentID }) => {
   const axiosPublic = useAxiosPublic();
   const receiptRef = useRef();
   const { email } = useParams();
@@ -72,14 +72,15 @@ const TearUpgradePaymentModal = ({ PaymentID }) => {
         <div className="text-center border-b pb-4 mb-1">
           <h4 className="text-2xl font-bold text-[#1f2937]">Seven Gym</h4>
           <p className="text-sm text-[#6b7280]">Tier Upgrade Payment Receipt</p>
-          <p className="text-sm text-[#6b7280]">www.sevengym.com</p>
+          {/* Change This */}
+          <p className="text-sm text-[#6b7280]">www.SevenGym.com</p> 
         </div>
 
         {/* Receipt Details */}
         <div className="p-4 bg-[#f9fafb] border">
           <div className="pb-1 text-center border-b">
             <p className="text-sm text-[#6b7280]">
-              Receipt #: 001- <span>{payment?.paymentID}</span>
+              Receipt #: SG - TUPR - <span>{payment?.paymentID}</span>
             </p>
             <p className="text-sm font-semibold text-[#6b7280]">
               Customer: <span>{payment?.email}</span>
@@ -161,4 +162,4 @@ const TearUpgradePaymentModal = ({ PaymentID }) => {
   );
 };
 
-export default TearUpgradePaymentModal;
+export default TierUpgradePaymentModal;

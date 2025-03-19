@@ -31,7 +31,6 @@ import Classes from "./Pages/(PublicPages)/(Classes)/Classes/Classes.jsx";
 import Feedback from "./Pages/(PublicPages)/(About)/Feedback/Feedback.jsx";
 import Trainers from "./Pages/(PublicPages)/(Trainers)/Trainers/Trainers.jsx";
 import OurMission from "./Pages/(PublicPages)/(About)/OurMission/OurMission.jsx";
-// import Testimonials from "./Pages/(PublicPages)/Home/Testimonials/Testimonials.jsx";
 import ClassesDetails from "./Pages/(PublicPages)/(Classes)/ClassesDetails/ClassesDetails.jsx";
 import TrainersDetails from "./Pages/(PublicPages)/(Trainers)/TrainersDetails/TrainersDetails.jsx";
 import TrainersBookings from "./Pages/(PublicPages)/(Trainers)/TrainersBookings/TrainersBookings.jsx";
@@ -39,8 +38,8 @@ import TrainersBookings from "./Pages/(PublicPages)/(Trainers)/TrainersBookings/
 // User Pages Import
 import UserProfile from "./Pages/(UserPages)/UserProfile/UserProfile.jsx";
 import UserSettings from "./Pages/(UserPages)/UserSettings/UserSettings.jsx";
-import UserTearUpgrade from "./Pages/(UserPages)/UserTearUpgrade/UserTearUpgrade.jsx";
-import TearUpgradePayment from "./Pages/(UserPages)/TearUpgradePayment/TearUpgradePayment.jsx";
+import UserTierUpgrade from "./Pages/(UserPages)/UserTierUpgrade/UserTierUpgrade.jsx";
+import TearUpgradePayment from "./Pages/(UserPages)/TierUpgradePayment/TierUpgradePayment.jsx";
 import UserSchedulePlanner from "./Pages/(UserPages)/UserSchedulePlanner/UserSchedulePlanner.jsx";
 import TestimonialsPage from "./Pages/(PublicPages)/(About)/TestimonialsPage/TestimonialsPage.jsx";
 
@@ -95,7 +94,7 @@ createRoot(document.getElementById("root")).render(
               <Route path="/User/UserSettings" element={<UserSettings />} />
               <Route
                 path="/User/TierUpgrade/:email"
-                element={<UserTearUpgrade />}
+                element={<UserTierUpgrade />}
               />
               <Route
                 path="/User/TierUpgradePayment/:email/:tier"
