@@ -64,6 +64,9 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
       console.error("Error generating PDF:", error);
     }
   };
+
+  console.log(PaymentIDData);
+
   return (
     <div className="modal-box bg-[#ffffff] shadow-lg rounded-lg max-w-md mx-auto">
       {/* Receipt Section */}
@@ -73,14 +76,14 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
           <h4 className="text-2xl font-bold text-[#1f2937]">Seven Gym</h4>
           <p className="text-sm text-[#6b7280]">Tier Upgrade Payment Receipt</p>
           {/* Change This */}
-          <p className="text-sm text-[#6b7280]">www.SevenGym.com</p> 
+          <p className="text-sm text-[#6b7280]">www.SevenGym.com</p>
         </div>
 
         {/* Receipt Details */}
-        <div className="p-4 bg-[#f9fafb] border">
+        <div className="p-4 bg-[#f9fafb] border text-black">
           <div className="pb-1 text-center border-b">
             <p className="text-sm text-[#6b7280]">
-              Receipt #: SG - TUPR - <span>{payment?.paymentID}</span>
+              Receipt #: SG-TUPR-<span>{payment?.paymentID}</span>
             </p>
             <p className="text-sm font-semibold text-[#6b7280]">
               Customer: <span>{payment?.email}</span>
@@ -94,6 +97,7 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
             </p>
           </div>
 
+          {/* Status and Duration */}
           <div className="space-y-2 mt-4">
             <div className="flex justify-between mt-4">
               <p className="text-sm font-semibold">Payment Status:</p>
@@ -113,16 +117,21 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
               <p className="text-sm font-semibold">Payment Method:</p>
               <p className="text-[#374151]">{payment?.paymentMethod}</p>
             </div>
+            <div className="flex justify-between">
+              <p className="text-sm font-semibold">Exp Date:</p>
+              <p className="text-[#374151]">{payment?.endDate}</p>
+            </div>
           </div>
 
+          {/* Product and Price */}
           <div className="space-y-2 mt-10">
             <div className="flex justify-between font-bold px-2">
               <p className="text-md">Product</p>
               <p className="text-md">Price</p>
             </div>
             <div className="flex justify-between font-semibold border-b border-[#9ca3af] pb-2 px-2">
-              <p className="text-md">{payment?.tier}</p>
-              <p className="text-md">${payment?.totalPrice}</p>
+              <p className="text-md">{payment?.tier} Tier Upgrade</p>
+              <p className="text-md">${payment?.totalPrice.toFixed(2)}</p>
             </div>
             <div className="flex justify-between font-semibold px-2">
               <p className="text-md">Total</p>
@@ -131,6 +140,9 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
           </div>
 
           <div className="mt-6 text-center border-t pt-4">
+            <p className="text-sm text-[#6b7280]">
+              Thank you for choosing Seven Gym. We appreciate your business!
+            </p>
             <p className="text-sm text-[#6b7280]">
               Thank you for choosing Seven Gym. We appreciate your business!
             </p>

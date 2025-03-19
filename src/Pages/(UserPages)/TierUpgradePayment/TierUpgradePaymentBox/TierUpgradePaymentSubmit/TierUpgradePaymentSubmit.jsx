@@ -41,15 +41,28 @@ const TierUpgradePaymentSubmit = ({
     return `TUP${randomDigits}${currentDate}`;
   };
 
-  // Get current date and time in a human-readable format
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
   const getCurrentDateTime = () => {
     const now = new Date();
-    return now.toLocaleString();
+    const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+
+    return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
   };
 
   // Handle form submission and payment processing
   const onSubmit = async (data) => {
-    // Validate if Stripe and Elements are ready
     if (!stripe || !elements) {
       Swal.fire(
         "Error",
@@ -59,13 +72,11 @@ const TierUpgradePaymentSubmit = ({
       return;
     }
 
-    // Ensure a plan has been selected
     if (!selectedDuration) {
       Swal.fire("Error", "Please select a plan.", "error");
       return;
     }
 
-    // Fetch the client secret from the server for the payment intent
     let clientSecret;
     try {
       const response = await axiosPublic.post("/Create_Payment_Intent", {
@@ -83,7 +94,6 @@ const TierUpgradePaymentSubmit = ({
       return;
     }
 
-    // Confirm payment with a confirmation modal
     Swal.fire({
       title: "Are you sure?",
       text: `You are about to spend $${
@@ -95,9 +105,8 @@ const TierUpgradePaymentSubmit = ({
       cancelButtonText: "No, cancel",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        setIsProcessing(true); // Mark as processing
+        setIsProcessing(true);
         try {
-          // Retrieve card details from CardElement and confirm the payment
           const cardElement = elements.getElement(CardElement);
           const { paymentIntent, error } = await stripe.confirmCardPayment(
             clientSecret,
@@ -109,68 +118,60 @@ const TierUpgradePaymentSubmit = ({
             }
           );
 
-          // Use Stripe's paymentIntent.id for refunds
-          const stripePaymentID = paymentIntent.id;
-
           if (error) {
             Swal.fire("Payment Failed", error.message, "error");
-          } else if (paymentIntent) {
-            // Calculate plan start and end dates
-            const startDate = new Date();
-            let endDate = new Date(startDate);
-            const durationInMonths =
-              selectedDuration?.duration === "1 Month"
-                ? 1
-                : selectedDuration?.duration === "5 Months"
-                ? 5
-                : selectedDuration?.duration === "12 Months"
-                ? 12
-                : 0;
-            endDate.setMonth(startDate.getMonth() + durationInMonths);
-
-            // Generate payment ID and timestamp
-            const paymentID = generatePaymentID();
-            const todayDateTime = getCurrentDateTime();
-
-            // Prepare and send payment record to the server
-            const postPaymentData = {
-              tier: CurrentTierData?.name,
-              email: email,
-              duration: selectedDuration?.duration,
-              startDate: startDate.toISOString(),
-              endDate: endDate.toISOString(),
-              totalPrice: selectedDuration?.totalPrice,
-              paymentID: paymentID, // Your custom ID (for internal use)
-              stripePaymentID: stripePaymentID, // Stripe's ID (for refunds)
-              paymentMethod: "Card",
-              Payed: true,
-              dateTime: todayDateTime,
-            };
-
-            await axiosPublic.post("/Tier_Upgrade_Payment", postPaymentData);
-
-            // Update payment ID state for modal display
-            setIsPaymentID(paymentID);
-
-            // Prepare and send user tier update data to the server
-            const userUpdateData = {
-              email: email,
-              tier: CurrentTierData?.name,
-              duration: selectedDuration?.duration,
-              updateTierStart: startDate.toISOString(),
-              updateTierEnd: endDate.toISOString(),
-              linkedReceptID: paymentID,
-            };
-            await axiosPublic.put("/Users/Update_User_Tier", userUpdateData);
-
-            // Reset form and clear selected plan
-            reset();
-            setSelectedDuration(null);
-            // Show payment success modal
-            document
-              .getElementById("Tier_Upgrade_Payment_Finished")
-              .showModal();
+            return;
           }
+
+          const stripePaymentID = paymentIntent.id;
+          const startDate = new Date();
+          let endDate = new Date(startDate);
+
+          const durationInMonths =
+            selectedDuration?.duration === "1 Month"
+              ? 1
+              : selectedDuration?.duration === "6 Months"
+              ? 6
+              : selectedDuration?.duration === "12 Months"
+              ? 12
+              : 0;
+          endDate.setMonth(startDate.getMonth() + durationInMonths);
+
+          const paymentID = generatePaymentID();
+          const todayDateTime = getCurrentDateTime();
+
+          const postPaymentData = {
+            tier: CurrentTierData?.name,
+            email: email,
+            duration: selectedDuration?.duration,
+            startDate: formatDate(startDate),
+            endDate: formatDate(endDate),
+            totalPrice: selectedDuration?.totalPrice,
+            paymentID: paymentID,
+            stripePaymentID: stripePaymentID,
+            paymentMethod: "Card",
+            Payed: true,
+            dateTime: todayDateTime,
+          };
+          console.log(postPaymentData);
+
+          await axiosPublic.post("/Tier_Upgrade_Payment", postPaymentData);
+
+          setIsPaymentID(paymentID);
+
+          const userUpdateData = {
+            email: email,
+            tier: CurrentTierData?.name,
+            duration: selectedDuration?.duration,
+            updateTierStart: formatDate(startDate),
+            updateTierEnd: formatDate(endDate),
+            linkedReceptID: paymentID,
+          };
+          await axiosPublic.put("/Users/Update_User_Tier", userUpdateData);
+
+          reset();
+          setSelectedDuration(null);
+          document.getElementById("Tier_Upgrade_Payment_Finished").showModal();
         } catch (error) {
           console.error("Error processing payment:", error);
           Swal.fire(
@@ -179,7 +180,7 @@ const TierUpgradePaymentSubmit = ({
             "error"
           );
         } finally {
-          setIsProcessing(false); // End processing
+          setIsProcessing(false);
         }
       }
     });
