@@ -82,9 +82,9 @@ const TierUpgradePaymentSubmit = ({
 
     let clientSecret;
     try {
-      const response = await axiosPublic.post("/Create_Payment_Intent", {
+      const response = await axiosPublic.post("/Stripe_Payment_Intent", {
         tier: CurrentTierData?.name,
-        totalPrice: selectedDuration.totalPrice * 100, // Convert dollars to cents
+        totalPrice: selectedDuration.totalPrice, // Convert dollars to cents
       });
       clientSecret = response.data.clientSecret;
     } catch (error) {

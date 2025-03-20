@@ -90,8 +90,7 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
               Transaction ID: TX- <span>{payment?.paymentID.slice(-6)}</span>
             </p>
             <p className="text-sm text-[#6b7280]">
-              Date:{" "}
-              <span>{new Date(payment?.dateTime).toLocaleDateString()}</span>
+              Date & Time : <span>{payment?.dateTime}</span>
             </p>
           </div>
 

@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
 const TierResetDetails = ({
   paymentData,
@@ -9,16 +10,32 @@ const TierResetDetails = ({
 }) => {
   // Use the first payment entry for display
   const payment = paymentData[0];
+  // Initialize Axios instance for API calls
+  const axiosPublic = useAxiosPublic();
+
   // Determine if penalties apply (i.e. if more than 3 days have passed)
   const hasPenalty = daysPassed > 3;
-
   // Calculate full refund if no penalty applies
   const fullRefund = payment.totalPrice.toFixed(2);
 
-  // Handler for confirmation button; only alerts if penalties apply
-  const handleConfirm = () => {
-    if (hasPenalty) {
-      alert("Refund request submitted!");
+  // Handler for confirming refund request using Stripe refund endpoint
+  const handleConfirm = async () => {
+    try {
+      // Use the calculated refund amount if penalty applies; otherwise full refund
+      const refundValue = hasPenalty ? refundAmount : fullRefund;
+      const response = await axiosPublic.post("/stripe/refund", {
+        stripePaymentID: payment.stripePaymentID,
+        refundAmount: parseFloat(refundValue),
+      });
+
+      if (response.data.success) {
+        alert("Refund request submitted successfully!");
+      } else {
+        alert("Refund request failed: " + response.data.message);
+      }
+    } catch (error) {
+      console.error("Refund Error:", error);
+      alert("Refund request error: " + error.message);
     }
   };
 
@@ -41,6 +58,7 @@ const TierResetDetails = ({
             Full refund available. No penalties applied.
           </div>
         )}
+
         {/* Status and Duration */}
         <div className="space-y-2 mt-4">
           <div className="flex justify-between">
@@ -123,20 +141,3 @@ TierResetDetails.propTypes = {
 };
 
 export default TierResetDetails;
-
-
-// The Data paymentData
-// {
-//     "_id": "67dbe9b0ad69b786a54fbf9c",
-//     "tier": "Diamond",
-//     "email": "user@gmail.com",
-//     "duration": "12 Months",
-//     "startDate": "20-03-2025",
-//     "endDate": "20-03-2026",
-//     "totalPrice": 575,
-//     "paymentID": "TUP20032025user@gmail.com74360",
-//     "stripePaymentID": "pi_3R4g3vFTkipGUF291K9TUAWs",
-//     "paymentMethod": "Card",
-//     "Payed": true,
-//     "dateTime": "20-03-2025 16:10:56"
-// }
