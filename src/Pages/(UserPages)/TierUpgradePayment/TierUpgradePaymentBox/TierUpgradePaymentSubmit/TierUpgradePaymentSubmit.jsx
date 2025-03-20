@@ -34,11 +34,14 @@ const TierUpgradePaymentSubmit = ({
     reset,
   } = useForm();
 
-  // Generate a unique payment ID
-  const generatePaymentID = () => {
+  const generatePaymentID = (userEmail) => {
     const randomDigits = Math.floor(10000 + Math.random() * 90000); // Generate 5 random digits
-    const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, ""); // Format date as YYYYMMDD
-    return `TUP${randomDigits}${currentDate}`;
+    const currentDate = new Date()
+      .toLocaleDateString("en-GB") // Format: DD/MM/YYYY
+      .split("/")
+      .join(""); // Convert to DDMMYYYY format
+
+    return `TUP${currentDate}${userEmail}${randomDigits}`;
   };
 
   const formatDate = (date) => {
@@ -137,7 +140,7 @@ const TierUpgradePaymentSubmit = ({
               : 0;
           endDate.setMonth(startDate.getMonth() + durationInMonths);
 
-          const paymentID = generatePaymentID();
+          const paymentID = generatePaymentID(email);
           const todayDateTime = getCurrentDateTime();
 
           const postPaymentData = {

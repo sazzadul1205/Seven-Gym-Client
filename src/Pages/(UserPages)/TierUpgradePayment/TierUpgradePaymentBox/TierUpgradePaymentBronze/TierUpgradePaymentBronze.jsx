@@ -42,11 +42,6 @@ const TierUpgradePaymentBronze = () => {
   // Get tier details
   const userTier = userData?.tier || "Unknown";
   const duration = userData?.tierDuration?.duration || "N/A";
-  const endDate = userData?.tierDuration?.end
-    ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
-        new Date(userData.tierDuration.end)
-      )
-    : "N/A";
 
   // Dynamic styling for different tiers
   const tierColors = {
@@ -75,7 +70,8 @@ const TierUpgradePaymentBronze = () => {
 
         {/* Expired */}
         <p className="text-gray-700 text-lg mb-6">
-          Expires on: <span className="font-semibold">{endDate}</span>
+          Expires on:{" "}
+          <span className="font-semibold">{userData?.tierDuration?.end}</span>
         </p>
 
         {/* Message */}
@@ -93,13 +89,13 @@ const TierUpgradePaymentBronze = () => {
             onClick={() =>
               document.getElementById("Tear_Reset_To_Bronze_Modal").showModal()
             }
-            className="bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-700 text-white font-medium py-2 w-[200px] rounded-lg transition-all duration-200 shadow-md hover:shadow-2xl cursor-pointer border border-gray-500"
+            className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-700 text-white font-medium py-3 w-[200px] rounded-lg transition-all duration-200 shadow-md hover:shadow-2xl cursor-pointer "
           >
             Reset
           </button>
           <button
             onClick={() => navigate(-1)}
-            className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-300 to-gray-700 text-white font-medium py-2 w-[200px] rounded-lg transition-all duration-200 shadow-md hover:shadow-2xl cursor-pointer border border-gray-500"
+            className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-300 to-gray-700 text-white font-medium py-3 w-[200px] rounded-lg transition-all duration-200 shadow-md hover:shadow-2xl cursor-pointer "
           >
             Go Back
           </button>

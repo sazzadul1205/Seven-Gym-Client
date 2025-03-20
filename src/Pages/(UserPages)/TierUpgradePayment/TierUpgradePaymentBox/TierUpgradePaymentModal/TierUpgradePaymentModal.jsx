@@ -65,8 +65,6 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
     }
   };
 
-  console.log(PaymentIDData);
-
   return (
     <div className="modal-box bg-[#ffffff] shadow-lg rounded-lg max-w-md mx-auto">
       {/* Receipt Section */}
@@ -143,8 +141,15 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
             <p className="text-sm text-[#6b7280]">
               Thank you for choosing Seven Gym. We appreciate your business!
             </p>
-            <p className="text-sm text-[#6b7280]">
-              Thank you for choosing Seven Gym. We appreciate your business!
+          </div>
+
+          <div className="mt-6 text-center border-t pt-4">
+            <p className="text-xs text-[#6b7280]">
+              {" "}
+              You are eligible for a full refund within the first 3 days. After
+              that, refunds will be prorated based on the days used, along with
+              a 10% processing fee. Changing tiers will also incur the same
+              conditions.{" "}
             </p>
           </div>
         </div>
@@ -153,8 +158,8 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
       {/* Close Button and PDF Generation Button */}
       <div className="modal-action mt-6 flex justify-between">
         <form method="dialog">
-          <Link to={`/User/${email}/UserProfile`}>
-            <button className="rounded-xl py-3 bg-[#3b82f6] text-[#ffffff] hover:bg-[#60a5fa] w-[150px]">
+          <Link to={`/User/UserProfile/${email}`}>
+            <button className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-400 to-blue-600 rounded-xl py-3 w-[150px] font-semibold cursor-pointer">
               Close
             </button>
           </Link>
@@ -164,7 +169,7 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
         {payment && (
           <button
             onClick={generatePDF}
-            className="rounded-xl py-3 bg-[#22c55e] text-[#ffffff] hover:bg-[#4ade80] w-[150px]"
+            className="bg-linear-to-bl hover:bg-linear-to-tr from-green-400 to-green-600 rounded-xl py-3 w-[150px] font-semibold cursor-pointer"
           >
             Download PDF
           </button>
