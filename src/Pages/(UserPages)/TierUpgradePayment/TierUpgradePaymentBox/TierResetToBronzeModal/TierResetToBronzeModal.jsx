@@ -6,11 +6,14 @@ import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../../../Shared/Loading/Loading";
 import FetchingError from "../../../../../Shared/Component/FetchingError";
 import TierResetReason from "./TierResetReason/TierResetReason";
+import TierResetDetails from "./TierResetDetails/TierResetDetails";
 
 const TearResetToBronzeModal = ({ userData }) => {
   const axiosPublic = useAxiosPublic();
 
+  // State for toggling between reason selection and payment details
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
+  // States to hold calculated refund breakdown values
   const [refundAmount, setRefundAmount] = useState(0);
   const [daysPassed, setDaysPassed] = useState(0);
   const [amountUsed, setAmountUsed] = useState(0);
@@ -35,51 +38,48 @@ const TearResetToBronzeModal = ({ userData }) => {
   if (TierUpgradePaymentLoading) return <Loading />;
   if (TierUpgradePaymentError) return <FetchingError />;
 
+  // Helper function to parse date strings in "DD-MM-YYYY" format
   const parseDate = (dateString) => {
     const [day, month, year] = dateString.split("-").map(Number);
-    return new Date(year, month - 1, day); // Month is zero-based in JS Date
+    return new Date(year, month - 1, day);
   };
 
-  // This function calculates the refund and stores the values in state.
+  // Calculate the refund breakdown based on the payment data
   const calculateRefund = () => {
     if (!TierUpgradePaymentData.length) return;
-
-    const payment = TierUpgradePaymentData[0]; // Get first payment entry
+    const payment = TierUpgradePaymentData[0]; // Using the first payment entry
     const totalPrice = payment.totalPrice;
     const startDate = parseDate(payment.startDate);
-    const currentDate = new Date(); // Get current date
+    const currentDate = new Date();
 
+    // Calculate days passed since the start date
     const calcDaysPassed = Math.floor(
       (currentDate - startDate) / (1000 * 60 * 60 * 24)
-    ); // Days since start
+    );
     setDaysPassed(calcDaysPassed);
 
-    const durationMonths = parseInt(payment.duration.split(" ")[0]); // Extract months
-    const totalDays = durationMonths * 30; // Approximate days in duration
+    // Approximate total days based on duration (in months) and calculate per day cost
+    const durationMonths = parseInt(payment.duration.split(" ")[0]);
+    const totalDays = durationMonths * 30;
     const perDayCost = totalPrice / totalDays;
 
+    // Calculate the amount used and the remaining amount
     const calcAmountUsed = calcDaysPassed * perDayCost;
     setAmountUsed(calcAmountUsed);
-
     const calcRemainingAmount = totalPrice - calcAmountUsed;
     setRemainingAmount(calcRemainingAmount);
 
-    let finalRefund = 0;
+    // Calculate refund: full refund if within 3 days, otherwise deduct a 10% fee
+    let finalRefund =
+      calcDaysPassed <= 3 ? totalPrice : calcRemainingAmount * 0.9;
+    setRefundAmount(finalRefund.toFixed(2));
 
-    if (calcDaysPassed <= 3) {
-      // Full refund if within 3 days
-      finalRefund = totalPrice;
-    } else {
-      // Calculate refund with deductions
-      const refundAfterFee = calcRemainingAmount * 0.9; // Deduct 10%
-      finalRefund = refundAfterFee;
-    }
-
-    setRefundAmount(finalRefund.toFixed(2)); // Set state with final refund amount
-    setShowPaymentDetails(true); // Show the details
+    // Show the payment details modal
+    setShowPaymentDetails(true);
   };
 
-  // This handler is passed to the child component.
+  // This handler is passed to TierResetReason.
+  // When a reason is selected, it triggers the refund calculation.
   const onReasonSelect = (data) => {
     console.log("Selected Reason:", data);
     calculateRefund();
@@ -101,140 +101,17 @@ const TearResetToBronzeModal = ({ userData }) => {
       {/* Divider */}
       <div className="p-[1px] bg-black w-1/2 mx-auto"></div>
 
-      {/* Form */}
+      {/* Conditionally render: first the reason selection, then payment details */}
       {!showPaymentDetails ? (
         <TierResetReason onReasonSelect={onReasonSelect} />
       ) : (
-        // Payment Details
-        <div className="px-4 py-4">
-          {/* Payment & Refund Details */}
-          <div className="p-4 bg-[#f9fafb] border text-black rounded-lg shadow-md">
-            {/* Receipt Header */}
-            <div className="pb-2 text-center border-b border-gray-300">
-              <p className="text-sm text-[#6b7280]">
-                Receipt #: SG-TUPR-
-                <span>{TierUpgradePaymentData[0]?.paymentID}</span>
-              </p>
-              <p className="text-sm font-semibold text-[#6b7280]">
-                Customer: <span>{TierUpgradePaymentData[0]?.email}</span>
-              </p>
-              <p className="text-sm text-[#6b7280]">
-                Transaction ID: TX-{" "}
-                <span>{TierUpgradePaymentData[0]?.paymentID.slice(-6)}</span>
-              </p>
-              <p className="text-sm text-[#6b7280]">
-                Date:{" "}
-                <span>
-                  {new Date(
-                    TierUpgradePaymentData[0]?.dateTime
-                  ).toLocaleDateString()}
-                </span>
-              </p>
-            </div>
-
-            {/* Status and Duration */}
-            <div className="space-y-2 mt-4">
-              <div className="flex justify-between">
-                <p className="text-sm font-semibold">Payment Status:</p>
-                <p
-                  className={`${
-                    TierUpgradePaymentData[0]?.Payed
-                      ? "text-[#22c55e]"
-                      : "text-[#ef4444]"
-                  } font-bold`}
-                >
-                  {TierUpgradePaymentData[0]?.Payed ? "Successful" : "Failed"}
-                </p>
-              </div>
-              <div className="flex justify-between">
-                <p className="text-sm font-semibold">Duration:</p>
-                <p className="text-[#374151]">
-                  {TierUpgradePaymentData[0]?.duration}
-                </p>
-              </div>
-              <div className="flex justify-between">
-                <p className="text-sm font-semibold">Payment Method:</p>
-                <p className="text-[#374151]">
-                  {TierUpgradePaymentData[0]?.paymentMethod}
-                </p>
-              </div>
-              <div className="flex justify-between">
-                <p className="text-sm font-semibold">Exp Date:</p>
-                <p className="text-[#374151]">
-                  {TierUpgradePaymentData[0]?.endDate}
-                </p>
-              </div>
-            </div>
-
-            {/* Product and Refund Calculation */}
-            <div className="space-y-2 mt-10">
-              <div className="flex justify-between font-bold px-2">
-                <p className="text-md">Product</p>
-                <p className="text-md">Price</p>
-              </div>
-              <div className="flex justify-between font-semibold border-b border-[#9ca3af] pb-2 px-2">
-                <p className="text-md">
-                  {TierUpgradePaymentData[0]?.tier} Tier Upgrade
-                </p>
-                <p className="text-md">
-                  ${TierUpgradePaymentData[0]?.totalPrice.toFixed(2)}
-                </p>
-              </div>
-              <div className="flex justify-between font-semibold px-2">
-                <p className="text-md">Total Paid</p>
-                <p className="text-md">
-                  ${TierUpgradePaymentData[0]?.totalPrice.toFixed(2)}
-                </p>
-              </div>
-
-              {/* Days Passed Deduction */}
-              <div className="flex justify-between font-semibold text-red-500 px-2">
-                <p className="text-md">Days Passed ({daysPassed} days)</p>
-                <p className="text-md">- ${amountUsed.toFixed(2)}</p>
-              </div>
-
-              {/* Late Refund Fee (10%) */}
-              <div className="flex justify-between font-semibold text-red-500 px-2">
-                <p className="text-md">Late Refund Fee (10%)</p>
-                <p className="text-md">
-                  - ${(remainingAmount * 0.1).toFixed(2)}
-                </p>
-              </div>
-
-              {/* Final Refund Amount */}
-              <div className="flex justify-between font-semibold text-[#22c55e] px-2">
-                <p className="text-md">Refund Amount</p>
-                <p className="text-md font-bold">${refundAmount}</p>
-              </div>
-            </div>
-
-            {/* Terms & Conditions */}
-            <div className="mt-6 text-center border-t pt-4">
-              <p className="text-sm text-[#6b7280]">
-                Thank you for choosing Seven Gym. We appreciate your business!
-              </p>
-            </div>
-
-            <div className="mt-6 text-center border-t pt-4">
-              <p className="text-xs text-[#6b7280]">
-                You are eligible for a full refund within the first 3 days.
-                After that, refunds will be prorated based on the days used,
-                along with a 10% processing fee. Changing tiers will also incur
-                the same conditions.
-              </p>
-            </div>
-
-            {/* Confirm Refund Button */}
-            <div className="flex justify-center mt-6">
-              <button
-                className="bg-linear-to-bl hover:bg-linear-to-tr from-red-400 to-red-700 text-white font-bold px-8 py-3 rounded-lg shadow-md transition-all cursor-pointer"
-                onClick={() => alert("Refund request submitted!")}
-              >
-                Confirm & Submit
-              </button>
-            </div>
-          </div>
-        </div>
+        <TierResetDetails
+          paymentData={TierUpgradePaymentData}
+          daysPassed={daysPassed}
+          amountUsed={amountUsed}
+          remainingAmount={remainingAmount}
+          refundAmount={refundAmount}
+        />
       )}
     </div>
   );
