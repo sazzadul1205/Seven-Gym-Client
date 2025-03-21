@@ -18,9 +18,7 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import GalleryBackground from "../../../assets/Home-Background/Home-Background.jpeg";
 
 const UserTierUpgrade = () => {
-  // Fetch authenticated user details
   const { user } = useAuth();
-  // Get email from URL parameters
   const { email } = useParams();
   const navigate = useNavigate();
   const axiosPublic = useAxiosPublic();
@@ -147,6 +145,8 @@ const UserTierUpgrade = () => {
           <p className="text-3xl font-bold text-center text-white">
             Choose Your Membership
           </p>
+
+          {/* divider */}
           <div className="mx-auto bg-white p-[1px] w-1/3 my-3"></div>
 
           {/* Tier Cards */}

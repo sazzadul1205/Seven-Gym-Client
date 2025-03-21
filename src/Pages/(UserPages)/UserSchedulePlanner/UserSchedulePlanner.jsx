@@ -1,50 +1,36 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 
-// Component Imports
-import TodaysSchedule from "./TodaysSchedule/TodaysSchedule";
-import useAxiosPublic from "../../../Hooks/useAxiosPublic";
-import Loading from "../../../Shared/Loading/Loading";
-import ExtraList from "./ExtraLists/ExtraLists";
-import NoDefault from "./NoDefault/NoDefault";
+// Import Package
+import { useQuery } from "@tanstack/react-query";
+
+// Import Utility
 import useAuth from "../../../Hooks/useAuth";
+import Loading from "../../../Shared/Loading/Loading";
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
+import FetchingError from "../../../Shared/Component/FetchingError";
+
+// Import Component
+import TodaysSchedule from "./TodaysSchedule/TodaysSchedule";
+import ExtraList from "./ExtraLists/ExtraLists";
 import WrongUser from "./WrongUser/WrongUser";
 
+// import Example JSON
+import ExampleSchedule from "../../../JSON/ExampleSchedule.json";
+
 const UserSchedulePlanner = () => {
+  const axiosPublic = useAxiosPublic();
   const { email } = useParams();
   const { user } = useAuth();
-  const axiosPublic = useAxiosPublic();
-
-  // States
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [selectedDay, setSelectedDay] = useState(null);
-
-  // Weekday Names
-  const weekDays = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-
-  // Auto-update the live clock every second
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   // Fetch user's schedule
   const {
-    data: mySchedulesData = [],
-    isLoading: scheduleDataIsLoading,
-    error: scheduleDataError,
+    data: mySchedulesData,
+    isLoading: UserScheduleIsLoading,
+    error: UserScheduleError,
     refetch,
   } = useQuery({
-    queryKey: ["ScheduleData", email],
+    queryKey: ["UserScheduleData", email],
     queryFn: async () => {
       if (!email) return []; // Prevent API call if email is missing
       try {
@@ -62,37 +48,46 @@ const UserSchedulePlanner = () => {
     },
   });
 
-  // Set default selected day to today's name
+  // State to manage live clock and selected day
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState(
+    new Date().toLocaleDateString("en-US", { weekday: "long" })
+  );
+
+  // Days of the week
+  const weekDays = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  // Update the live clock every second
   useEffect(() => {
-    setSelectedDay(new Date().toLocaleDateString("en-US", { weekday: "long" }));
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer); // Clean up the interval on component unmount
   }, []);
 
-  // Check if the logged-in user is allowed to view this page
-  if (user?.email !== email) return <WrongUser />;
+  // Restrict access if logged-in user does not match the requested email
+  if (user?.email !== email) {
+    return <WrongUser />;
+  }
 
-  // Handle loading and error states
-  if (scheduleDataIsLoading) return <Loading />;
-  if (scheduleDataError || mySchedulesData.length === 0)
-    return <NoDefault refetch={refetch} />;
-
-  // Extract the user’s schedule
-  const userSchedule = mySchedulesData[0];
-  if (!userSchedule) return <NoDefault refetch={refetch} />;
-
-  // Extract available schedule days
+  // Extract user schedule data
+  const userSchedule = ExampleSchedule[0] || {};
   const availableDays = Object.keys(userSchedule.schedule || {});
-
-  // Get the selected day's schedule
   const selectedSchedule = userSchedule.schedule?.[selectedDay] || null;
 
-  // Format date and time
+  // Format date and time for display
   const formattedDate = currentTime.toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
   });
-
   const formattedTime = currentTime.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
@@ -100,81 +95,85 @@ const UserSchedulePlanner = () => {
     hour12: true,
   });
 
+  // Loading and Error handling
+  if (UserScheduleIsLoading) return <Loading />;
+  if (UserScheduleError) return <FetchingError />;
+
   return (
-    <div className="bg-[#f6eee3] min-h-screen">
-      {/* HEADER */}
-      <div className="bg-[#F72C5B] py-12"></div>
-
-      {/* TITLE & LIVE CLOCK */}
-      <div className="text-center">
-        <p className="text-3xl font-semibold py-2 underline underline-offset-4">
-          DAILY SCHEDULE PLANNER
-        </p>
-        <p className="text-2xl font-bold text-gray-500">{formattedTime}</p>
-      </div>
-
-      {/* WEEK SELECTOR & DATE */}
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center p-4 border-b border-gray-300">
-        {/* Display Today's Date */}
-        <div className="flex gap-2 items-center md:items-start text-md md:text-lg">
-          <p className="font-semibold text-gray-800">Date:</p>
-          <p className="text-gray-600 font-semibold underline underline-offset-4">
-            {formattedDate}
+    <div className="bg-linear-to-b from-gray-200 to-gray-500 min-h-screen">
+      <div className="pb-5">
+        {/* Title & Clock */}
+        <div className="text-center pt-5">
+          <p className="text-3xl italic text-black font-semibold py-2">
+            DAILY SCHEDULE PLANNER
           </p>
+          <div className="p-[2px] bg-white w-1/3 mx-auto"></div>
+          <p className="text-2xl font-bold text-gray-800">({formattedTime})</p>
         </div>
 
-        {/* Weekday Selector */}
-        <div className="flex gap-2 mt-4 md:mt-0 flex-wrap justify-center">
-          {weekDays.map((day) => {
-            const isAvailable = availableDays.includes(day);
-            const isSelected = selectedDay === day;
+        {/* Day Selector & Today's Date */}
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center p-2 border-b border-gray-300 bg-white/70 mt-3">
+          {/* Display Today's Date */}
+          <div className="flex gap-2 items-center md:items-start text-md md:text-lg">
+            <p className="font-semibold text-gray-800">Today&apos;s Date:</p>
+            <p className="font-semibold text-black">{formattedDate}</p>
+          </div>
 
-            return (
-              <p
-                key={day}
-                onClick={() => isAvailable && setSelectedDay(day)}
-                className={`rounded-full border border-black w-10 h-10 flex items-center justify-center text-lg font-medium cursor-pointer
-                ${isSelected ? "bg-blue-500 text-white font-bold" : ""}
-                ${
-                  isAvailable
-                    ? "hover:bg-gray-400"
-                    : "opacity-50 cursor-not-allowed"
-                }`}
-              >
-                {day[0]}
+          {/* Day Selector */}
+          <div className="flex gap-2 mt-4 md:mt-0 flex-wrap justify-center">
+            {weekDays.map((day) => {
+              const isAvailable = availableDays.includes(day);
+              const isSelected = selectedDay === day;
+
+              return (
+                <p
+                  key={day}
+                  onClick={() => isAvailable && setSelectedDay(day)}
+                  className={`rounded-full border-2 border-black text-black w-10 h-10 flex items-center justify-center text-lg font-medium cursor-pointer
+                    ${
+                      isSelected
+                        ? "bg-linear-to-bl hover:bg-linear-to-tr from-blue-300 to-blue-600 text-white font-bold"
+                        : "bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-400"
+                    }
+                    ${
+                      isAvailable
+                        ? "cursor-pointer"
+                        : "opacity-50 cursor-not-allowed"
+                    }`}
+                >
+                  {day[0]} {/* Show first letter of each day */}
+                </p>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto flex bg-white/80">
+          {/* Schedule Section */}
+          <section className="w-full md:w-1/2 px-2 py-5">
+            {selectedSchedule ? (
+              <TodaysSchedule
+                scheduleData={selectedSchedule.schedule}
+                scheduleInfo={selectedSchedule}
+              />
+            ) : (
+              <p className="text-center text-gray-500 text-xl">
+                No schedule available for {selectedDay}.
               </p>
-            );
-          })}
+            )}
+          </section>
+
+          {/* Notes & Todo Section */}
+          <section className="w-full md:w-1/2">
+            <ExtraList
+              priority={userSchedule.priority}
+              notes={userSchedule.notes}
+              todo={userSchedule.todo}
+            />
+          </section>
         </div>
       </div>
-
-      {/* MAIN CONTENT SECTION */}
-      <main className="max-w-7xl flex flex-col md:flex-row mx-auto gap-5 p-1 md:p-4">
-        {/* SCHEDULE DISPLAY */}
-        <div className="w-full md:w-1/2">
-          {selectedSchedule ? (
-            <TodaysSchedule
-              scheduleData={selectedSchedule.schedule}
-              scheduleInfo={selectedSchedule}
-              refetch={refetch}
-            />
-          ) : (
-            <p className="text-center text-gray-500 text-xl">
-              No schedule available for {selectedDay}.
-            </p>
-          )}
-        </div>
-
-        {/* NOTES & EXTRAS SECTION */}
-        <div className="w-full md:w-1/2">
-          <ExtraList
-            priority={userSchedule.priority}
-            notes={userSchedule.notes}
-            todo={userSchedule.todo}
-            refetch={refetch}
-          />
-        </div>
-      </main>
     </div>
   );
 };

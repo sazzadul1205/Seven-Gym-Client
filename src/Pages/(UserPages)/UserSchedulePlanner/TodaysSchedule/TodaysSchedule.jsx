@@ -13,6 +13,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   const axiosPublic = useAxiosPublic();
   const { date, dayName } = scheduleInfo;
 
+  // State Management
   const [selectedID, setSelectedID] = useState(null);
 
   const today = new Date();
@@ -21,21 +22,19 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   // Function to format the date as dd mm yyyy
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day} ${month} ${year}`;
   };
 
   // Fixing isToday and isPast logic
-  const isToday = today.toDateString() === providedDate.toDateString(); // Compare full date
-  const isPast = providedDate < today && !isToday; // If provided date is before today and not today
+  const isToday = today.toDateString() === providedDate.toDateString();
+  const isPast = providedDate < today && !isToday;
 
   // Dynamically set the title and styling
   let title = "TODAY'S SCHEDULE";
-  let titleClass = "bg-yellow-500";
   if (!isToday) {
     title = `${dayName.toUpperCase()}'S SCHEDULE`;
-    if (isPast) titleClass = "bg-yellow-500 opacity-60";
   }
 
   // Transform schedule data into a structured format
@@ -74,13 +73,13 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     ];
     const todayIndex = today.getDay();
     const targetIndex = daysOfWeek.indexOf(day);
-    let daysToAdd = (targetIndex - todayIndex + 7) % 7 || 7; // Ensure next occurrence
+    let daysToAdd = (targetIndex - todayIndex + 7) % 7 || 7;
 
     const nextDate = new Date(today);
     nextDate.setDate(today.getDate() + daysToAdd);
     return {
       nextDayName: daysOfWeek[nextDate.getDay()],
-      nextDate: formatDate(nextDate), // Use the formatted date
+      nextDate: formatDate(nextDate),
     };
   };
 
@@ -111,7 +110,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     const regeneratedSchedule = {
       id: updatedScheduleID,
       dayName: nextDayName,
-      date: formattedDate, // Correctly formatted as dd-mm-yyyy
+      date: formattedDate,
       schedule: updatedScheduleData,
     };
 
@@ -154,30 +153,28 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   });
 
   return (
-    <div className="p-1 md:p-4">
+    <div className="border border-gray-100 bg-gray-300/40 rounded-xl shadow-xl">
       <p
-        className={`text-center py-2 font-semibold rounded-full ${titleClass}`}
+        className={`text-center py-3 font-semibold rounded-xl text-black bg-linear-to-b from-yellow-300 to-yellow-600`}
       >
-        {title} [{date}]
+        {title} [ {date} ]
       </p>
 
-      <div>
-        {isPast && (
-          <div className="mt-2 p-2 text-center text-white bg-red-500 animate-pulse rounded-lg shadow-md">
-            <p>
-              This schedule has passed. Regenerate for{" "}
-              <span className="text-lg font-semibold">next {nextDayName}</span>?
-            </p>
-            <p>({nextDate})</p>
-            <button
-              onClick={handleRegenerateClick}
-              className="mt-2 px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition"
-            >
-              Regenerate
-            </button>
-          </div>
-        )}
-      </div>
+      {isPast && (
+        <div className="text-center text-white bg-red-500 border-2 border-red-800 animate-pulse rounded-lg shadow-md mt-2 py-2 space-y-2">
+          <h4>
+            This schedule has passed. Regenerate for next
+            <span className="text-lg font-semibold"> {nextDayName}</span>?
+          </h4>
+          <p>[ {nextDate} ]</p>
+          <button
+            onClick={handleRegenerateClick}
+            className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-400 to-blue-600 text-white font-bold rounded-lg shadow-md hover:shadow-xl  py-2 px-10 cursor-pointer"
+          >
+            Regenerate
+          </button>
+        </div>
+      )}
 
       <div className="pt-4 space-y-3">
         {scheduledTimes.map(({ display, event }, index) => (
@@ -189,10 +186,10 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
               {display} :
             </p>
             <div
-              className={`px-4 py-2 w-full rounded-full shadow-md transition ${
+              className={`px-4 py-3 w-full rounded-xl shadow-md transition ${
                 isPast
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed opacity-60"
-                  : "bg-green-300 text-gray-800 md:hover:scale-105 cursor-pointer"
+                  : "bg-green-300 text-gray-800 md:hover:scale-105 delay-200 cursor-pointer"
               }`}
               onClick={() => handleEventClick(event)}
             >
