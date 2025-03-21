@@ -9,11 +9,15 @@ import Loading from "../../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../../Shared/Component/FetchingError";
 import TearResetToBronzeModal from "../TierResetToBronzeModal/TierResetToBronzeModal";
+import TierResetRecept from "../TierResetRecept/TierResetRecept";
+import { useState } from "react";
 
 const TierUpgradePaymentBronze = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
+
+  const [refundID, setRefundID] = useState();
 
   // Fetch user data
   const {
@@ -70,29 +74,31 @@ const TierUpgradePaymentBronze = () => {
 
         {/* Expired */}
         <p className="text-gray-700 text-lg mb-6">
-          Expires on:{" "}
+          Expires on:
           <span className="font-semibold">{userData?.tierDuration?.end}</span>
         </p>
 
         {/* Message */}
         <p className="text-gray-700 text-lg leading-relaxed mb-6">
-          You already have a suitable package selected, so this upgrade
-          isn&apos;t required. If you&apos;d like to reset your tier to{" "}
-          <strong>Bronze</strong>, click the button below. For further
-          assistance, please speak with our management staff.
+          {userTier === "Bronze"
+            ? "You currently have the Bronze tier. Please choose a different package if you'd like to upgrade. Thank you!"
+            : "You already have a suitable package selected, so this upgrade isn’t required. If you’d like to reset your tier to Bronze, click the button below. For further assistance, please speak with our management staff."}
         </p>
 
         {/* Buttons */}
-        <div className="flex justify-between gap-4">
-          <button
-            // onClick={handleResetToBronze}
-            onClick={() =>
-              document.getElementById("Tear_Reset_To_Bronze_Modal").showModal()
-            }
-            className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-700 text-white font-medium py-3 w-[200px] rounded-lg transition-all duration-200 shadow-md hover:shadow-2xl cursor-pointer "
-          >
-            Reset
-          </button>
+        <div className="flex justify-center gap-4">
+          {userTier !== "Bronze" && (
+            <button
+              onClick={() =>
+                document
+                  .getElementById("Tear_Reset_To_Bronze_Modal")
+                  .showModal()
+              }
+              className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-700 text-white font-medium py-3 w-[200px] rounded-lg transition-all duration-200 shadow-md hover:shadow-2xl cursor-pointer "
+            >
+              Reset
+            </button>
+          )}
           <button
             onClick={() => navigate(-1)}
             className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-300 to-gray-700 text-white font-medium py-3 w-[200px] rounded-lg transition-all duration-200 shadow-md hover:shadow-2xl cursor-pointer "
@@ -104,11 +110,11 @@ const TierUpgradePaymentBronze = () => {
 
       {/* Reset to Bronze Modal */}
       <dialog id="Tear_Reset_To_Bronze_Modal" className="modal">
-        <TearResetToBronzeModal userData={userData} />
+        <TearResetToBronzeModal userData={userData} setRefundID={setRefundID} />
       </dialog>
 
-      <dialog>
-        
+      <dialog id="Tear_Reset_Recept" className="modal">
+        <TierResetRecept userData={userData} refundID={refundID} />
       </dialog>
     </div>
   );

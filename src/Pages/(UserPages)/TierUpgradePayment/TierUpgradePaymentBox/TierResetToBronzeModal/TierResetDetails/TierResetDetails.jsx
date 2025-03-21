@@ -4,8 +4,10 @@ import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
 
 const TierResetDetails = ({
   remainingAmount,
+  linkedReceptID,
   refundAmount,
   paymentData,
+  setRefundID, 
   daysPassed,
   amountUsed,
   refundReason,
@@ -14,21 +16,24 @@ const TierResetDetails = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [showConfirmPrompt, setShowConfirmPrompt] = useState(false);
 
-  if (!paymentData || paymentData.length === 0) return null; // Avoid errors
+  // Exit early if no payment data is available.
+  if (!paymentData || paymentData.length === 0) return null;
 
-  const payment = paymentData[0]; // Use first payment entry
+  // Use the first payment entry.
+  const payment = paymentData[0];
 
+  // Determine if penalties apply and compute the refund value.
   const hasPenalty = daysPassed > 3;
   const fullRefund = parseFloat(payment.totalPrice).toFixed(2);
   const computedRefundValue = hasPenalty ? refundAmount : fullRefund;
 
-  // Generate a unique Refund ID based on user email, current date, and random digits.
+  // Generate a unique Refund ID using user email, current date, and random digits.
   const generateRefundID = (userEmail) => {
-    const randomDigits = Math.floor(10000 + Math.random() * 90000); // Generate 5 random digits
+    const randomDigits = Math.floor(10000 + Math.random() * 90000); // Generate 5 random digits.
     const currentDate = new Date()
-      .toLocaleDateString("en-GB") // Format: DD/MM/YYYY
+      .toLocaleDateString("en-GB") // Format: DD/MM/YYYY.
       .split("/")
-      .join(""); // Convert to DDMMYYYY format
+      .join(""); // Convert to DDMMYYYY format.
     return `TUR${currentDate}${userEmail}${randomDigits}`;
   };
 
@@ -36,7 +41,7 @@ const TierResetDetails = ({
   const getCurrentDateTime = () => {
     const now = new Date();
     const day = String(now.getDate()).padStart(2, "0");
-    const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-based.
     const year = now.getFullYear();
     const hours = String(now.getHours()).padStart(2, "0");
     const minutes = String(now.getMinutes()).padStart(2, "0");
@@ -44,26 +49,26 @@ const TierResetDetails = ({
     return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
   };
 
-  // Process the refund request (called when user confirms in our custom prompt)
+  // Process the refund request when the user confirms in our custom prompt.
   const processRefund = async () => {
     try {
       setIsProcessing(true);
-      // Log the refund value (for debugging)
-      console.log(computedRefundValue);
 
-      // Initiate refund request via API
+      // Call the API to initiate a refund request.
       const response = await axiosPublic.post("/Stripe_Refund_Intent", {
         stripePaymentID: payment.stripePaymentID,
         refundAmount: parseFloat(computedRefundValue),
       });
 
       if (response.data.success) {
+        // Generate a unique refund ID.
         const refundID = generateRefundID(payment?.email);
         const todayDateTime = getCurrentDateTime();
 
-        // Store refund details
+        // Post refund details to the server.
         await axiosPublic.post("/Tier_Upgrade_Refund", {
           RefundID: refundID,
+          linkedPaymentReceptID: linkedReceptID,
           stripeRefundID: response.data.refundID,
           email: payment?.email,
           totalPrice: payment?.totalPrice,
@@ -73,7 +78,7 @@ const TierResetDetails = ({
           dateTime: todayDateTime,
         });
 
-        // Update user data (reset tier details)
+        // Update user data to reset the tier details.
         await axiosPublic.put("/Users/Update_User_Tier", {
           email: payment?.email,
           tier: "Bronze",
@@ -83,9 +88,11 @@ const TierResetDetails = ({
           linkedReceptID: "",
         });
 
-        // You can also set a success message in your modal if needed
-        // For now, we'll simply log success.
-        console.log("Refund request submitted successfully!");
+        // Save the generated refund ID.
+        setRefundID(refundID);
+        // Close the current modal and open the receipt modal.
+        document.getElementById("Tear_Reset_To_Bronze_Modal").close();
+        document.getElementById("Tear_Reset_Recept").showModal();
       } else {
         throw new Error(response.data.message || "Refund request failed.");
       }
@@ -125,9 +132,12 @@ const TierResetDetails = ({
           </div>
         )}
 
+        {/* Refund Breakdown Title */}
         <h3 className="text-center text-black font-semibold text-xl">
           Refund Amount Breakdown
         </h3>
+
+        {/* Penalty Status Message */}
         {hasPenalty ? (
           <div className="mt-2 text-center text-sm bg-red-500 py-2 text-white">
             3 days have passed, so penalties will apply.
@@ -138,6 +148,7 @@ const TierResetDetails = ({
           </div>
         )}
 
+        {/* Payment Details */}
         <div className="space-y-2 mt-4">
           <div className="flex justify-between">
             <p className="text-sm font-semibold">Current Tier:</p>
@@ -157,6 +168,7 @@ const TierResetDetails = ({
           </div>
         </div>
 
+        {/* Refund Calculation Breakdown */}
         <div className="space-y-2 mt-5">
           <div className="flex justify-between font-bold px-2">
             <p className="text-md">Product</p>
@@ -196,6 +208,7 @@ const TierResetDetails = ({
           </div>
         </div>
 
+        {/* Confirm Refund Button */}
         <div className="flex justify-center mt-6">
           <button
             className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-3 rounded-lg shadow-md transition-all cursor-pointer"
@@ -214,10 +227,12 @@ TierResetDetails.propTypes = {
   paymentData: PropTypes.array.isRequired,
   daysPassed: PropTypes.number.isRequired,
   amountUsed: PropTypes.number.isRequired,
+  setRefundID: PropTypes.func.isRequired, 
   refundReason: PropTypes.string.isRequired,
   remainingAmount: PropTypes.number.isRequired,
   refundAmount: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
     .isRequired,
+  linkedReceptID: PropTypes.string.isRequired,
 };
 
 export default TierResetDetails;

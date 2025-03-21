@@ -16,7 +16,7 @@ import FetchingError from "../../../../../Shared/Component/FetchingError";
 import TierResetReason from "./TierResetReason/TierResetReason";
 import TierResetDetails from "./TierResetDetails/TierResetDetails";
 
-const TearResetToBronzeModal = ({ userData }) => {
+const TearResetToBronzeModal = ({ userData, setRefundID }) => {
   const axiosPublic = useAxiosPublic();
 
   // State management
@@ -96,8 +96,6 @@ const TearResetToBronzeModal = ({ userData }) => {
     calculateRefund();
   };
 
-  console.log(refundReason);
-
   return (
     <div className="modal-box bg-gray-100 p-0 rounded-xl">
       {/* Modal Header */}
@@ -121,18 +119,21 @@ const TearResetToBronzeModal = ({ userData }) => {
         <TierResetDetails
           paymentData={TierUpgradePaymentData}
           remainingAmount={remainingAmount}
+          refundReason={refundReason}
           refundAmount={refundAmount}
+          setRefundID={setRefundID}
           daysPassed={daysPassed}
           amountUsed={amountUsed}
-          refundReason={refundReason}
+          linkedReceptID={linkedReceptID}
         />
       )}
     </div>
   );
 };
 
-// **PropTypes for validation**
+// PropTypes for validation
 TearResetToBronzeModal.propTypes = {
+  setRefundID: PropTypes.func,
   userData: PropTypes.shape({
     tierDuration: PropTypes.shape({
       linkedReceptID: PropTypes.string,
