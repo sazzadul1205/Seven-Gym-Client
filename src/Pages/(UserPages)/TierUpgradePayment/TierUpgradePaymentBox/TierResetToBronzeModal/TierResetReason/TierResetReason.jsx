@@ -1,9 +1,12 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 
-const TierResetReason = ({ onReasonSelect }) => {
+const TierResetReason = ({ setRefundReason }) => {
+  // State for storing selected reason and custom complaint
   const [selectedReason, setSelectedReason] = useState("");
   const [customComplaint, setCustomComplaint] = useState("");
 
+  // Predefined list of downgrade reasons
   const predefinedReasons = [
     "I no longer need the current plan",
     "It's too expensive",
@@ -11,9 +14,20 @@ const TierResetReason = ({ onReasonSelect }) => {
     "I found a better alternative",
   ];
 
+  // Handles selection of predefined reason
+  const handleReasonChange = (e) => {
+    setSelectedReason(e.target.value);
+  };
+
+  // Handles input change for custom complaint
+  const handleComplaintChange = (e) => {
+    setCustomComplaint(e.target.value);
+  };
+
+  // Proceed to the next step if at least one input is provided
   const handleNext = () => {
     if (selectedReason || customComplaint.trim()) {
-      onReasonSelect({ reason: selectedReason, complaint: customComplaint });
+      setRefundReason({ reason: selectedReason, complaint: customComplaint });
     }
   };
 
@@ -26,16 +40,15 @@ const TierResetReason = ({ onReasonSelect }) => {
       </p>
 
       <form className="pt-2 space-y-4">
-        {/* Select Reason */}
+        {/* Reason Dropdown Selection */}
         <div className="form-control w-full text-black space-y-2">
           <label className="label font-bold">
             <span className="label-text">Reason for Downgrading</span>
           </label>
           <select
             value={selectedReason}
-            onChange={(e) => setSelectedReason(e.target.value)}
+            onChange={handleReasonChange}
             className="select select-bordered w-full bg-white border-black"
-            required
           >
             <option value="" disabled>
               Select a reason
@@ -48,7 +61,7 @@ const TierResetReason = ({ onReasonSelect }) => {
           </select>
         </div>
 
-        {/* Custom Complaint */}
+        {/* Custom Complaint Input */}
         <div className="form-control w-full text-black space-y-2">
           <label className="label font-bold">
             <span className="label-text">Custom Complaint (optional)</span>
@@ -57,7 +70,7 @@ const TierResetReason = ({ onReasonSelect }) => {
             className="textarea textarea-bordered w-full bg-white border-black"
             placeholder="Type your complaint here..."
             value={customComplaint}
-            onChange={(e) => setCustomComplaint(e.target.value)}
+            onChange={handleComplaintChange}
           ></textarea>
         </div>
 
@@ -65,7 +78,7 @@ const TierResetReason = ({ onReasonSelect }) => {
         <div className="flex justify-end py-4">
           <button
             type="button"
-            className={`rounded-xl text-xl font-semibold px-10 py-2 cursor-pointer ${
+            className={`rounded-xl text-xl font-semibold px-10 py-2 cursor-pointer transition-all duration-200 ${
               selectedReason || customComplaint.trim()
                 ? "bg-gradient-to-bl hover:bg-gradient-to-tr from-emerald-300 to-emerald-600"
                 : "bg-gray-300 cursor-not-allowed"
@@ -79,6 +92,11 @@ const TierResetReason = ({ onReasonSelect }) => {
       </form>
     </div>
   );
+};
+
+// PropTypes validation
+TierResetReason.propTypes = {
+  setRefundReason: PropTypes.func.isRequired,
 };
 
 export default TierResetReason;

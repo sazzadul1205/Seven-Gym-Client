@@ -106,6 +106,10 @@ const TierUpgradePaymentBronze = () => {
       <dialog id="Tear_Reset_To_Bronze_Modal" className="modal">
         <TearResetToBronzeModal userData={userData} />
       </dialog>
+
+      <dialog>
+        
+      </dialog>
     </div>
   );
 };

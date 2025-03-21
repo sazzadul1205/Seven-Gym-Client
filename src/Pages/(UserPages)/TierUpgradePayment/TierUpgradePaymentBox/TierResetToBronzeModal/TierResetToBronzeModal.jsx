@@ -1,89 +1,102 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
-import { ImCross } from "react-icons/im";
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+
+// Import Packages
+import PropTypes from "prop-types";
 import { useQuery } from "@tanstack/react-query";
+
+// Import Icons
+import { ImCross } from "react-icons/im";
+
+// Import Utilities
 import Loading from "../../../../../Shared/Loading/Loading";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../../Shared/Component/FetchingError";
+
+// Import Components
 import TierResetReason from "./TierResetReason/TierResetReason";
 import TierResetDetails from "./TierResetDetails/TierResetDetails";
 
 const TearResetToBronzeModal = ({ userData }) => {
   const axiosPublic = useAxiosPublic();
 
-  // State for toggling between reason selection and payment details
+  // State management
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
-  // States to hold calculated refund breakdown values
-  const [refundAmount, setRefundAmount] = useState(0);
   const [daysPassed, setDaysPassed] = useState(0);
   const [amountUsed, setAmountUsed] = useState(0);
+  const [refundAmount, setRefundAmount] = useState(0);
   const [remainingAmount, setRemainingAmount] = useState(0);
+  const [refundReason, setRefundReason] = useState("");
 
-  // Fetch payment data
+  const linkedReceptID = userData?.tierDuration?.linkedReceptID;
+
+  // Fetch payment data only if linkedReceptID exists
   const {
     data: TierUpgradePaymentData = [],
     isLoading: TierUpgradePaymentLoading,
     error: TierUpgradePaymentError,
   } = useQuery({
-    queryKey: ["TierUpgradePaymentData"],
+    queryKey: ["TierUpgradePaymentData", linkedReceptID],
     queryFn: () =>
-      axiosPublic
-        .get(
-          `/Tier_Upgrade_Payment/search?paymentID=${userData?.tierDuration?.linkedReceptID}`
-        )
-        .then((res) => res.data),
+      linkedReceptID
+        ? axiosPublic
+            .get(`/Tier_Upgrade_Payment/search?paymentID=${linkedReceptID}`)
+            .then((res) => res.data)
+        : Promise.reject(new Error("No payment ID found")),
+    enabled: !!linkedReceptID, // Ensures query only runs if linkedReceptID is available
   });
 
-  // Loading & Error states
+  // Loading & Error Handling
   if (TierUpgradePaymentLoading) return <Loading />;
   if (TierUpgradePaymentError) return <FetchingError />;
 
   // Helper function to parse date strings in "DD-MM-YYYY" format
   const parseDate = (dateString) => {
+    if (!dateString) return new Date();
     const [day, month, year] = dateString.split("-").map(Number);
     return new Date(year, month - 1, day);
   };
 
-  // Calculate the refund breakdown based on the payment data
+  // Calculate refund breakdown
   const calculateRefund = () => {
     if (!TierUpgradePaymentData.length) return;
-    const payment = TierUpgradePaymentData[0]; // Using the first payment entry
+
+    const payment = TierUpgradePaymentData[0]; // First payment entry
     const totalPrice = payment.totalPrice;
     const startDate = parseDate(payment.startDate);
     const currentDate = new Date();
 
-    // Calculate days passed since the start date
+    // Calculate days passed
     const calcDaysPassed = Math.floor(
       (currentDate - startDate) / (1000 * 60 * 60 * 24)
     );
     setDaysPassed(calcDaysPassed);
 
-    // Approximate total days based on duration (in months) and calculate per day cost
-    const durationMonths = parseInt(payment.duration.split(" ")[0]);
+    // Approximate total days based on duration in months
+    const durationMonths = parseInt(payment.duration.split(" ")[0], 10);
     const totalDays = durationMonths * 30;
     const perDayCost = totalPrice / totalDays;
 
-    // Calculate the amount used and the remaining amount
+    // Calculate used and remaining amounts as numbers
     const calcAmountUsed = calcDaysPassed * perDayCost;
-    setAmountUsed(calcAmountUsed);
+    setAmountUsed(Number(calcAmountUsed.toFixed(2)));
     const calcRemainingAmount = totalPrice - calcAmountUsed;
-    setRemainingAmount(calcRemainingAmount);
+    setRemainingAmount(Number(calcRemainingAmount.toFixed(2)));
 
-    // Calculate refund: full refund if within 3 days, otherwise deduct a 10% fee
+    // Refund calculation: Full refund if within 3 days, otherwise 90% of the remaining amount
     let finalRefund =
       calcDaysPassed <= 3 ? totalPrice : calcRemainingAmount * 0.9;
-    setRefundAmount(finalRefund.toFixed(2));
+    setRefundAmount(Number(finalRefund.toFixed(2)));
 
-    // Show the payment details modal
     setShowPaymentDetails(true);
   };
 
-  // This handler is passed to TierResetReason.
-  // When a reason is selected, it triggers the refund calculation.
-  const onReasonSelect = (data) => {
-    console.log("Selected Reason:", data);
+  // Handle refund reason selection
+  const onReasonSelect = (reasonData) => {
+    setRefundReason(reasonData.reason || reasonData.complaint);
     calculateRefund();
   };
+
+  console.log(refundReason);
 
   return (
     <div className="modal-box bg-gray-100 p-0 rounded-xl">
@@ -101,20 +114,30 @@ const TearResetToBronzeModal = ({ userData }) => {
       {/* Divider */}
       <div className="p-[1px] bg-black w-1/2 mx-auto"></div>
 
-      {/* Conditionally render: first the reason selection, then payment details */}
+      {/* Conditionally render: Reason selection or payment details */}
       {!showPaymentDetails ? (
-        <TierResetReason onReasonSelect={onReasonSelect} />
+        <TierResetReason setRefundReason={onReasonSelect} />
       ) : (
         <TierResetDetails
           paymentData={TierUpgradePaymentData}
-          daysPassed={daysPassed}
-          amountUsed={amountUsed}
           remainingAmount={remainingAmount}
           refundAmount={refundAmount}
+          daysPassed={daysPassed}
+          amountUsed={amountUsed}
+          refundReason={refundReason}
         />
       )}
     </div>
   );
+};
+
+// **PropTypes for validation**
+TearResetToBronzeModal.propTypes = {
+  userData: PropTypes.shape({
+    tierDuration: PropTypes.shape({
+      linkedReceptID: PropTypes.string,
+    }),
+  }),
 };
 
 export default TearResetToBronzeModal;

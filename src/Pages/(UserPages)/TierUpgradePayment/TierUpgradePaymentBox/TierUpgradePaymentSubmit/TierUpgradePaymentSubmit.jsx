@@ -97,95 +97,104 @@ const TierUpgradePaymentSubmit = ({
       return;
     }
 
-    Swal.fire({
+    // Immediately set loading state on first click
+    setIsProcessing(true);
+
+    // Customized confirmation prompt using html
+    const result = await Swal.fire({
       title: "Are you sure?",
-      text: `You are about to spend $${
+      html: `<p>You are about to spend <strong>${
         selectedDuration?.totalPrice || 0
-      }. Proceed?`,
+      }</strong>.</p>
+           <p>Are you really sure you want to proceed?</p>`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yes, pay now",
       cancelButtonText: "No, cancel",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        setIsProcessing(true);
-        try {
-          const cardElement = elements.getElement(CardElement);
-          const { paymentIntent, error } = await stripe.confirmCardPayment(
-            clientSecret,
-            {
-              payment_method: {
-                card: cardElement,
-                billing_details: { name: data.cardholderName },
-              },
-            }
-          );
-
-          if (error) {
-            Swal.fire("Payment Failed", error.message, "error");
-            return;
-          }
-
-          const stripePaymentID = paymentIntent.id;
-          const startDate = new Date();
-          let endDate = new Date(startDate);
-
-          const durationInMonths =
-            selectedDuration?.duration === "1 Month"
-              ? 1
-              : selectedDuration?.duration === "6 Months"
-              ? 6
-              : selectedDuration?.duration === "12 Months"
-              ? 12
-              : 0;
-          endDate.setMonth(startDate.getMonth() + durationInMonths);
-
-          const paymentID = generatePaymentID(email);
-          const todayDateTime = getCurrentDateTime();
-
-          const postPaymentData = {
-            tier: CurrentTierData?.name,
-            email: email,
-            duration: selectedDuration?.duration,
-            startDate: formatDate(startDate),
-            endDate: formatDate(endDate),
-            totalPrice: selectedDuration?.totalPrice,
-            paymentID: paymentID,
-            stripePaymentID: stripePaymentID,
-            paymentMethod: "Card",
-            Payed: true,
-            dateTime: todayDateTime,
-          };
-
-          await axiosPublic.post("/Tier_Upgrade_Payment", postPaymentData);
-
-          setIsPaymentID(paymentID);
-
-          const userUpdateData = {
-            email: email,
-            tier: CurrentTierData?.name,
-            duration: selectedDuration?.duration,
-            updateTierStart: formatDate(startDate),
-            updateTierEnd: formatDate(endDate),
-            linkedReceptID: paymentID,
-          };
-          await axiosPublic.put("/Users/Update_User_Tier", userUpdateData);
-
-          reset();
-          setSelectedDuration(null);
-          document.getElementById("Tier_Upgrade_Payment_Finished").showModal();
-        } catch (error) {
-          console.error("Error processing payment:", error);
-          Swal.fire(
-            "Error",
-            "An error occurred during payment. Please try again.",
-            "error"
-          );
-        } finally {
-          setIsProcessing(false);
-        }
-      }
     });
+
+    if (!result.isConfirmed) {
+      // User cancelled; clear loading state and exit
+      setIsProcessing(false);
+      return;
+    }
+
+    try {
+      const cardElement = elements.getElement(CardElement);
+      const { paymentIntent, error } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: cardElement,
+            billing_details: { name: data.cardholderName },
+          },
+        }
+      );
+
+      if (error) {
+        Swal.fire("Payment Failed", error.message, "error");
+        return;
+      }
+
+      const stripePaymentID = paymentIntent.id;
+
+      const startDate = new Date();
+      let endDate = new Date(startDate);
+
+      const durationInMonths =
+        selectedDuration?.duration === "1 Month"
+          ? 1
+          : selectedDuration?.duration === "6 Months"
+          ? 6
+          : selectedDuration?.duration === "12 Months"
+          ? 12
+          : 0;
+      endDate.setMonth(startDate.getMonth() + durationInMonths);
+
+      const paymentID = generatePaymentID(email);
+      const todayDateTime = getCurrentDateTime();
+
+      const postPaymentData = {
+        tier: CurrentTierData?.name,
+        email: email,
+        duration: selectedDuration?.duration,
+        startDate: formatDate(startDate),
+        endDate: formatDate(endDate),
+        totalPrice: selectedDuration?.totalPrice,
+        paymentID: paymentID,
+        stripePaymentID: stripePaymentID,
+        paymentMethod: "Card",
+        Payed: true,
+        dateTime: todayDateTime,
+      };
+
+      await axiosPublic.post("/Tier_Upgrade_Payment", postPaymentData);
+
+      setIsPaymentID(paymentID);
+
+      const userUpdateData = {
+        email: email,
+        tier: CurrentTierData?.name,
+        duration: selectedDuration?.duration,
+        updateTierStart: formatDate(startDate),
+        updateTierEnd: formatDate(endDate),
+        linkedReceptID: paymentID,
+      };
+      await axiosPublic.put("/Users/Update_User_Tier", userUpdateData);
+
+      reset();
+      setSelectedDuration(null);
+      document.getElementById("Tier_Upgrade_Payment_Finished").showModal();
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      Swal.fire(
+        "Error",
+        "An error occurred during payment. Please try again.",
+        "error"
+      );
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -247,7 +256,11 @@ const TierUpgradePaymentSubmit = ({
         <div className="flex justify-end">
           <button
             type="submit"
-            className="w-1/3 py-3 bg-linear-to-bl hover:bg-linear-to-tr from-blue-300 to-blue-600 text-white font-bold rounded-lg transition-all duration-300 cursor-pointer"
+            className={`w-1/3 py-3 text-white font-bold rounded-lg transition-all duration-300 cursor-pointer ${
+              isProcessing
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-linear-to-bl hover:bg-linear-to-tr from-blue-300 to-blue-600"
+            }`}
             disabled={
               !stripe ||
               !elements ||
