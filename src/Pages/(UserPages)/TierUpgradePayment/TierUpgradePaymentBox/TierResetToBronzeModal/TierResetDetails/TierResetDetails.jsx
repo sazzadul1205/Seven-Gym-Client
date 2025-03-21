@@ -3,16 +3,18 @@ import { useState } from "react";
 import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
 
 const TierResetDetails = ({
-  remainingAmount,
-  linkedReceptID,
-  refundAmount,
+  amountUsed,
+  daysPassed,
   paymentData,
   setRefundID, 
-  daysPassed,
-  amountUsed,
+  refundAmount,
   refundReason,
+  linkedReceptID,
+  remainingAmount,
 }) => {
   const axiosPublic = useAxiosPublic();
+
+  // State Management
   const [isProcessing, setIsProcessing] = useState(false);
   const [showConfirmPrompt, setShowConfirmPrompt] = useState(false);
 

@@ -18,19 +18,24 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import GalleryBackground from "../../../assets/Home-Background/Home-Background.jpeg";
 
 const UserTierUpgrade = () => {
+  // Fetch authenticated user details
   const { user } = useAuth();
+  // Get email from URL parameters
   const { email } = useParams();
   const navigate = useNavigate();
   const axiosPublic = useAxiosPublic();
 
+  // State to control unauthorized access modal
   const [showModal, setShowModal] = useState(false);
 
+  // Check if the logged-in user is trying to access another user's tier page
   useEffect(() => {
     if (user?.email && user.email !== email) {
       setShowModal(true);
     }
   }, [user, email]);
 
+  // Fetch user data based on email
   const {
     data: UsersData,
     isLoading: UsersLoading,
@@ -42,6 +47,7 @@ const UserTierUpgrade = () => {
     enabled: user?.email === email,
   });
 
+  // Fetch tier data
   const {
     data: TierData,
     isLoading: TierDataLoading,
@@ -52,9 +58,11 @@ const UserTierUpgrade = () => {
     enabled: user?.email === email,
   });
 
+  // Handle loading and error states
   if (UsersLoading || TierDataLoading) return <Loading />;
   if (UsersError || TierDataError) return <FetchingError />;
 
+  // Function to determine the styling of tier badges
   const getTierBadge = (tier) => {
     const tierStyles = {
       Bronze:
@@ -67,12 +75,12 @@ const UserTierUpgrade = () => {
       Platinum:
         "bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-500 to-gray-700",
     };
-
     return `px-4 py-2 mt-2 rounded-full text-sm font-semibold shadow-lg transition-transform ${
       tierStyles[tier] || "bg-gradient-to-r from-green-300 to-green-500"
     }`;
   };
 
+  // Function to determine the background color of each tier card
   const getTierBackgroundColor = (tier) => {
     const styles = {
       Bronze: "bg-orange-500/90",
@@ -84,13 +92,15 @@ const UserTierUpgrade = () => {
     return styles[tier] || "bg-white";
   };
 
-  // Define the tier order
+  // Define the order of tiers for proper sorting
   const tierOrder = ["Bronze", "Silver", "Gold", "Diamond", "Platinum"];
 
-  // Sort TierData based on the defined order
+  // Sort the TierData based on the defined order
   const sortedTiers = TierData?.slice().sort(
     (a, b) => tierOrder.indexOf(a.name) - tierOrder.indexOf(b.name)
   );
+
+  // Check if the logged-in user is already on a specific tier
   const isCurrentUserTier = (tierName) => UsersData?.tier === tierName;
 
   return (
@@ -102,6 +112,7 @@ const UserTierUpgrade = () => {
         backgroundPosition: "center",
       }}
     >
+      {/* Unauthorized Access Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg text-center">
@@ -120,25 +131,28 @@ const UserTierUpgrade = () => {
         </div>
       )}
 
+      {/* Tier Selection Section */}
       {!showModal && (
         <div className="min-h-screen bg-gradient-to-t from-black/40 to-black/70 py-5 relative">
+          {/* Back Button */}
           <div
-            className="absolute top-4 left-4 flex items-center space-x-2 bg-gray-600 px-3 py-2 rounded-md cursor-pointer z-50"
+            className="absolute top-4 left-4 flex items-center space-x-2 bg-linear-to-bl hover:bg-linear-to-tr from-gray-400 to-gray-700 px-3 py-2 rounded-md cursor-pointer z-50 hover:scale-105"
             onClick={() => navigate(-1)}
           >
             <IoMdArrowRoundBack className="text-white" />
             <p className="text-white">Back</p>
           </div>
 
+          {/* Title */}
           <p className="text-3xl font-bold text-center text-white">
             Choose Your Membership
           </p>
           <div className="mx-auto bg-white p-[1px] w-1/3 my-3"></div>
 
+          {/* Tier Cards */}
           <div className="flex flex-wrap justify-center max-w-7xl mx-auto gap-y-8 gap-x-6 px-4">
             {sortedTiers?.map((tier, index) => {
               const isDisabled = isCurrentUserTier(tier.name);
-
               return (
                 <div
                   key={index}
@@ -155,7 +169,6 @@ const UserTierUpgrade = () => {
                   >
                     {tier.name}
                   </h2>
-
                   <ul className="grow mb-4">
                     {tier.perks.map((perk, idx) => (
                       <li
@@ -167,31 +180,20 @@ const UserTierUpgrade = () => {
                       </li>
                     ))}
                   </ul>
-
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-gray-800 mb-2">
-                      {tier.price} / month
-                    </p>
-                    <p className="text-sm text-gray-600 mb-4">
-                      {tier?.discount}
-                    </p>
-                    <Link
-                      to={`/User/TierUpgradePayment/${email}/${tier?.name}`}
+                  <Link to={`/User/TierUpgradePayment/${email}/${tier?.name}`}>
+                    <button
+                      className={`w-[200px] text-white font-bold rounded-lg transition shadow-xl hover:shadow-2xl py-3 ${getTierBadge(
+                        tier.name
+                      )} ${
+                        isDisabled
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "cursor-pointer"
+                      }`}
+                      disabled={isDisabled}
                     >
-                      <button
-                        className={`w-[200px] text-white font-bold rounded-lg transition shadow-xl hover:shadow-2xl py-3 ${getTierBadge(
-                          tier.name
-                        )} ${
-                          isDisabled
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : "cursor-pointer"
-                        }`}
-                        disabled={isDisabled}
-                      >
-                        {isDisabled ? "Activated Tier" : `Buy ${tier.name}`}
-                      </button>
-                    </Link>
-                  </div>
+                      {isDisabled ? "Activated Tier" : `Buy ${tier.name}`}
+                    </button>
+                  </Link>
                 </div>
               );
             })}

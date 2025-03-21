@@ -1,13 +1,23 @@
+import { useRef } from "react";
+import { Link, useParams } from "react-router";
+
+// Import Package
+import { jsPDF } from "jspdf";
+import PropTypes from "prop-types";
+import domToImage from "dom-to-image";
 import { useQuery } from "@tanstack/react-query";
-import { ImCross } from "react-icons/im";
+
+// Import Utility
 import Loading from "../../../../../Shared/Loading/Loading";
-import FetchingError from "../../../../../Shared/Component/FetchingError";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import FetchingError from "../../../../../Shared/Component/FetchingError";
 
-const TierResetRecept = ({ userData, refundID }) => {
+const TierResetRecept = ({ refundID }) => {
   const axiosPublic = useAxiosPublic();
+  const refundRef = useRef();
+  const { email } = useParams();
 
-  // Fetch refund data only if refundID exists
+  // Fetch refund data using
   const {
     data: TierUpgradeRefundData = [],
     isLoading: TierUpgradeRefundLoading,
@@ -20,12 +30,13 @@ const TierResetRecept = ({ userData, refundID }) => {
             .get(`/Tier_Upgrade_Refund/search?refundID=${refundID}`)
             .then((res) => res.data)
         : Promise.reject(new Error("No Refund ID found")),
-    enabled: !!refundID, // Ensures query only runs if refundID is available
+    enabled: !!refundID,
   });
 
+  // Fetch payment data based on linked payment ID
   const LinkedPaymentID = TierUpgradeRefundData[0]?.linkedPaymentReceptID;
 
-  // Fetch payment data only if linkedReceptID exists
+  // Fetch Payment data
   const {
     data: TierUpgradePaymentData = [],
     isLoading: TierUpgradePaymentLoading,
@@ -38,87 +49,224 @@ const TierResetRecept = ({ userData, refundID }) => {
             .get(`/Tier_Upgrade_Payment/search?paymentID=${LinkedPaymentID}`)
             .then((res) => res.data)
         : Promise.reject(new Error("No payment ID found")),
-    enabled: !!LinkedPaymentID, // Ensures query only runs if LinkedPaymentID is available
+    enabled: !!LinkedPaymentID,
   });
 
-  // Loading & Error Handling
+  // Handle loading and errors
   if (TierUpgradeRefundLoading || TierUpgradePaymentLoading) return <Loading />;
   if (TierUpgradeRefundError || TierUpgradePaymentError)
     return <FetchingError />;
 
-  console.log("Refund Data",TierUpgradeRefundData);
-  console.log("Payment Data: ", TierUpgradePaymentData);
+  // Extract payment and refund data
+  const payment = TierUpgradePaymentData[0] || {};
+  const refund = TierUpgradeRefundData[0] || {};
+
+  // Helper function to parse dates
+  const parseDate = (dateString) => {
+    const [day, month, year] = dateString.split("-");
+    return new Date(year, month - 1, day);
+  };
+
+  // Fetch Date & Time
+  const parseDateTime = (dateTimeString) => {
+    const [datePart] = dateTimeString.split(" ");
+    return parseDate(datePart);
+  };
+
+  // Initialize calculation variables
+  let daysPassed = 0;
+  let amountUsed = 0;
+  let remainingAmount = 0;
+  let computedRefundValue = 0;
+  let hasPenalty = false;
+
+  // Perform calculations if dates are available
+  if (payment.startDate && refund.dateTime) {
+    try {
+      const startDate = parseDate(payment.startDate);
+      const refundDate = parseDateTime(refund.dateTime);
+
+      // Calculate days passed
+      daysPassed = Math.floor((refundDate - startDate) / (1000 * 60 * 60 * 24));
+
+      // Calculate refund breakdown
+      const totalPrice = payment.totalPrice;
+      const durationMonths = parseInt(payment.duration.split(" ")[0], 10);
+      const totalDays = durationMonths * 30;
+      const perDayCost = totalPrice / totalDays;
+
+      amountUsed = daysPassed * perDayCost;
+      remainingAmount = totalPrice - amountUsed;
+      hasPenalty = daysPassed > 3;
+
+      computedRefundValue = hasPenalty
+        ? (remainingAmount * 0.9).toFixed(2)
+        : totalPrice.toFixed(2);
+    } catch (error) {
+      console.error("Error calculating refund:", error);
+    }
+  }
+
+  // Generate PDF from the receipt content
+  const generatePDF = async () => {
+    if (!refundRef.current) return;
+
+    try {
+      const blob = await domToImage.toBlob(refundRef.current);
+      const imgData = URL.createObjectURL(blob);
+
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      const img = new Image();
+      img.src = imgData;
+      img.onload = () => {
+        pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`PaymentReceipt_${payment.paymentID}.pdf`);
+        URL.revokeObjectURL(imgData); // Cleanup
+      };
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    }
+  };
 
   return (
-    <div className="modal-box bg-gray-100 p-0 rounded-xl">
-      {/* Modal Header */}
-      <div className="flex justify-between items-center border-b border-black text-black pb-2 p-5">
-        <h3 className="font-bold text-lg">Reset Tier Recept</h3>
-        <ImCross
-          className="text-xl hover:text-[#F72C5B] cursor-pointer"
-          onClick={() => document.getElementById("Tear_Reset_Recept").close()}
-        />
-      </div>
-
-      <div className="space-y-2 mt-4">
-        <div className="flex justify-between">
-          <p className="text-sm font-semibold">Current Tier:</p>
-          <p className="text-black font-semibold">{payment?.tier || "N/A"}</p>
-        </div>
-        <div className="flex justify-between">
-          <p className="text-sm font-semibold">Duration:</p>
-          <p className="text-black font-semibold">
-            {payment?.duration || "N/A"}
-          </p>
-        </div>
-        <div className="flex justify-between">
-          <p className="text-sm font-semibold">Exp Date:</p>
-          <p className="text-black font-semibold">
-            {payment?.endDate || "N/A"}
-          </p>
-        </div>
-      </div>
-
-      <div className="space-y-2 mt-5">
-        <div className="flex justify-between font-bold px-2">
-          <p className="text-md">Product</p>
-          <p className="text-md">Price</p>
-        </div>
-        <div className="flex justify-between font-semibold border-b border-[#9ca3af] pb-2 px-2">
-          <p className="text-md">{payment.tier} Tier Upgrade</p>
-          <p className="text-md">
-            ${parseFloat(payment.totalPrice).toFixed(2)}
-          </p>
-        </div>
-        <div className="flex justify-between font-semibold px-2">
-          <p className="text-md">Total Paid</p>
-          <p className="text-md">
-            ${parseFloat(payment.totalPrice).toFixed(2)}
-          </p>
+    <div className="modal-box bg-[#ffffff] shadow-lg rounded-lg max-w-md mx-auto">
+      {/* Receipt Section */}
+      <div ref={refundRef} id="Refund">
+        {/* Receipt Header */}
+        <div className="text-center border-b pb-4 mb-1">
+          <h4 className="text-2xl font-bold text-[#1f2937]">Seven Gym</h4>
+          <p className="text-sm text-[#6b7280]">Tier Upgrade Refund Receipt</p>
+          <p className="text-sm text-[#6b7280]">www.SevenGym.com</p>
         </div>
 
-        {hasPenalty && (
-          <>
-            <div className="flex justify-between font-semibold text-red-500 px-2">
-              <p className="text-md">Days Passed ({daysPassed} days)</p>
-              <p className="text-md">- ${Number(amountUsed).toFixed(2)}</p>
-            </div>
-            <div className="flex justify-between font-semibold text-red-500 px-2">
-              <p className="text-md">Late Refund Fee (10%)</p>
-              <p className="text-md">
-                - ${(Number(remainingAmount) * 0.1).toFixed(2)}
+        {/* Receipt Details */}
+        <div className="p-4 bg-[#f9fafb] border text-black">
+          {/* Top Part */}
+          <div className="pb-1 text-center border-b">
+            <p className="text-sm text-[#6b7280]">
+              Receipt #: SG-TURR-
+              <span>{TierUpgradeRefundData[0]?.RefundID}</span>
+            </p>
+            <p className="text-sm font-semibold text-[#6b7280]">
+              Customer: <span>{TierUpgradeRefundData[0]?.email}</span>
+            </p>
+            <p className="text-sm text-[#6b7280]">
+              Transaction ID: TX-{" "}
+              <span>{TierUpgradeRefundData[0]?.RefundID?.slice(-6)}</span>
+            </p>
+            <p className="text-sm text-[#6b7280]">
+              Date & Time : <span>{TierUpgradeRefundData[0]?.dateTime}</span>
+            </p>
+          </div>
+
+          {/* Tier Details */}
+          <div className="px-4 py-4">
+            <div className="flex justify-between">
+              <p className="text-sm font-semibold">Refunded Tier:</p>
+              <p className="text-black font-semibold">
+                {payment?.tier || "N/A"}
               </p>
             </div>
-          </>
-        )}
+            <div className="flex justify-between">
+              <p className="text-sm font-semibold">Refunded Duration:</p>
+              <p className="text-black font-semibold">
+                {payment?.duration || "N/A"}
+              </p>
+            </div>
+            <div className="flex justify-between">
+              <p className="text-sm font-semibold">Refunded Exp Date:</p>
+              <p className="text-black font-semibold">
+                {payment?.endDate || "N/A"}
+              </p>
+            </div>
+          </div>
 
-        <div className="flex justify-between font-semibold text-[#22c55e] px-2">
-          <p className="text-md">Refund Amount</p>
-          <p className="text-md font-bold">${computedRefundValue}</p>
+          {/* Refund Breakdown */}
+          <div className="px-4 py-4 space-y-2">
+            <div className="flex justify-between font-bold px-2">
+              <p className="text-md">Product</p>
+              <p className="text-md">Price</p>
+            </div>
+            <div className="flex justify-between font-semibold border-b border-[#9ca3af] pb-2 px-2">
+              <p className="text-md">{payment?.tier} Tier Upgrade</p>
+              <p className="text-md">
+                ${parseFloat(payment?.totalPrice).toFixed(2)}
+              </p>
+            </div>
+            <div className="flex justify-between font-semibold px-2">
+              <p className="text-md">Total Paid</p>
+              <p className="text-md">
+                ${parseFloat(payment?.totalPrice).toFixed(2)}
+              </p>
+            </div>
+
+            {hasPenalty && (
+              <>
+                <div className="flex justify-between font-semibold text-red-500 px-2">
+                  <p className="text-md">Days Passed ({daysPassed} days)</p>
+                  <p className="text-md">- ${amountUsed.toFixed(2)}</p>
+                </div>
+                <div className="flex justify-between font-semibold text-red-500 px-2">
+                  <p className="text-md">Late Refund Fee (10%)</p>
+                  <p className="text-md">
+                    - ${(remainingAmount * 0.1).toFixed(2)}
+                  </p>
+                </div>
+              </>
+            )}
+
+            <div className="flex justify-between font-semibold text-[#22c55e] px-2">
+              <p className="text-md">Refund Amount</p>
+              <p className="text-md font-bold">${computedRefundValue}</p>
+            </div>
+          </div>
+
+          {/* Refund Reason */}
+          <div className="px-4 py-4 border-t border-gray-300">
+            <p className="text-sm font-semibold">Refund Reason:</p>
+            <p className="text-sm text-[#6b7280]">{refund?.refundedReason}</p>
+          </div>
+
+          {/* Thank You Message */}
+          <div className="text-center border-t pt-4">
+            <p className="text-sm text-[#6b7280]">
+              Thank you for choosing Seven Gym. We appreciate your business!
+            </p>
+          </div>
         </div>
+      </div>
+
+      {/* Close Button and PDF Generation Button */}
+      <div className="modal-action mt-6 flex justify-between">
+        {/* Close Button */}
+        <form method="dialog">
+          <Link to={`/User/TierUpgrade/${email}`}>
+            <button className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-400 to-blue-600 rounded-xl py-3 w-[150px] font-semibold cursor-pointer">
+              Close
+            </button>
+          </Link>
+        </form>
+
+        {/* PDF Generate Button  */}
+        {payment && (
+          <button
+            onClick={generatePDF}
+            className="bg-linear-to-bl hover:bg-linear-to-tr from-green-400 to-green-600 rounded-xl py-3 w-[150px] font-semibold cursor-pointer"
+          >
+            Download PDF
+          </button>
+        )}
       </div>
     </div>
   );
+};
+
+// Add PropTypes to validate props
+TierResetRecept.propTypes = {
+  refundID: PropTypes.string,
 };
 
 export default TierResetRecept;

@@ -20,13 +20,14 @@ const TearResetToBronzeModal = ({ userData, setRefundID }) => {
   const axiosPublic = useAxiosPublic();
 
   // State management
-  const [showPaymentDetails, setShowPaymentDetails] = useState(false);
   const [daysPassed, setDaysPassed] = useState(0);
   const [amountUsed, setAmountUsed] = useState(0);
   const [refundAmount, setRefundAmount] = useState(0);
-  const [remainingAmount, setRemainingAmount] = useState(0);
   const [refundReason, setRefundReason] = useState("");
+  const [remainingAmount, setRemainingAmount] = useState(0);
+  const [showPaymentDetails, setShowPaymentDetails] = useState(false);
 
+  // Fetch Linked Recept ID
   const linkedReceptID = userData?.tierDuration?.linkedReceptID;
 
   // Fetch payment data only if linkedReceptID exists
@@ -60,7 +61,7 @@ const TearResetToBronzeModal = ({ userData, setRefundID }) => {
   const calculateRefund = () => {
     if (!TierUpgradePaymentData.length) return;
 
-    const payment = TierUpgradePaymentData[0]; // First payment entry
+    const payment = TierUpgradePaymentData[0]; 
     const totalPrice = payment.totalPrice;
     const startDate = parseDate(payment.startDate);
     const currentDate = new Date();

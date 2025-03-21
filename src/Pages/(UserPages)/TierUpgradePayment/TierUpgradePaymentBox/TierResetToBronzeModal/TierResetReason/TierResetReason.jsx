@@ -39,6 +39,7 @@ const TierResetReason = ({ setRefundReason }) => {
         complaint below.
       </p>
 
+      {/* Modal Form */}
       <form className="pt-2 space-y-4">
         {/* Reason Dropdown Selection */}
         <div className="form-control w-full text-black space-y-2">

@@ -50,9 +50,20 @@ const TearUpgradePayment = () => {
     enabled: !showModal, // Only fetch if user is authorized
   });
 
+  // Fetch tier data
+  const {
+    data: UserData,
+    isLoading: UserDataLoading,
+    error: UserDataError,
+  } = useQuery({
+    queryKey: ["UserData", tier],
+    queryFn: () =>
+      axiosPublic.get(`/Users?email=${email}`).then((res) => res.data),
+  });
+
   // Loading and Error handling
-  if (CurrentTierDataLoading) return <Loading />;
-  if (CurrentTierDataError) return <FetchingError />;
+  if (CurrentTierDataLoading || UserDataLoading) return <Loading />;
+  if (CurrentTierDataError || UserDataError) return <FetchingError />;
 
   // Function to get button style based on tier type
   const getTierBadge = (tierName) => {
@@ -126,12 +137,15 @@ const TearUpgradePayment = () => {
       {/* Bronze Modal (if current tier is Bronze) */}
       {showBronzeModal && <TierUpgradePaymentBronze />}
 
+      {/* Bronze Modal (if user's current tier is NOT Bronze) */}
+      {UserData?.tier !== "Bronze" && <TierUpgradePaymentBronze />}
+
       {/* Main Content (Only displayed if user is authorized and not on Bronze tier) */}
       {!showModal && !showBronzeModal && (
         <div className="min-h-screen bg-gradient-to-t from-black/40 to-black/70 py-5 relative">
           {/* Back Button at Top Left inside the container */}
           <div
-            className="absolute top-4 left-4 flex items-center space-x-2 bg-gray-600 px-3 py-2 rounded-md cursor-pointer z-50"
+            className="absolute top-4 left-4 flex items-center space-x-2 bg-linear-to-bl hover:bg-linear-to-tr from-gray-400 to-gray-700 px-3 py-2 rounded-md cursor-pointer z-50 hover:scale-105"
             onClick={() => navigate(-1)}
           >
             <IoMdArrowRoundBack className="text-white" />

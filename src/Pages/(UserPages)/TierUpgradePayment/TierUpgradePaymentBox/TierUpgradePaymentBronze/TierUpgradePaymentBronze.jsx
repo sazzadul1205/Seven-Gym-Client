@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router";
 
 // Import Packages
@@ -8,15 +9,17 @@ import useAuth from "../../../../../Hooks/useAuth";
 import Loading from "../../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../../Shared/Component/FetchingError";
-import TearResetToBronzeModal from "../TierResetToBronzeModal/TierResetToBronzeModal";
+
+// Import Component
 import TierResetRecept from "../TierResetRecept/TierResetRecept";
-import { useState } from "react";
+import TearResetToBronzeModal from "../TierResetToBronzeModal/TierResetToBronzeModal";
 
 const TierUpgradePaymentBronze = () => {
-  const navigate = useNavigate();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const axiosPublic = useAxiosPublic();
 
+  // State Management
   const [refundID, setRefundID] = useState();
 
   // Fetch user data
@@ -36,7 +39,7 @@ const TierUpgradePaymentBronze = () => {
         throw error;
       }
     },
-    enabled: !!user, // Fetch only if user exists
+    enabled: !!user,
   });
 
   // Handle loading and errors
@@ -113,6 +116,7 @@ const TierUpgradePaymentBronze = () => {
         <TearResetToBronzeModal userData={userData} setRefundID={setRefundID} />
       </dialog>
 
+      {/* Reset Successful Recept */}
       <dialog id="Tear_Reset_Recept" className="modal">
         <TierResetRecept userData={userData} refundID={refundID} />
       </dialog>

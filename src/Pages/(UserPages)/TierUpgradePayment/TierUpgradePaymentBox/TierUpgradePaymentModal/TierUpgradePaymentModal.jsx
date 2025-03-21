@@ -28,13 +28,11 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
       axiosPublic
         .get(`/Tier_Upgrade_Payment/search?paymentID=${PaymentID}`)
         .then((res) => res.data),
-    enabled: !!PaymentID, // Only fetch if PaymentID is truthy
+    enabled: !!PaymentID,
   });
 
-  // Loading
+  // Loading & Error handling
   if (PaymentIDDataLoading) return <Loading />;
-
-  // Error handling
   if (PaymentIDDataError) {
     return <FetchingError />;
   }
@@ -79,6 +77,7 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
 
         {/* Receipt Details */}
         <div className="p-4 bg-[#f9fafb] border text-black">
+          {/* Top Part */}
           <div className="pb-1 text-center border-b">
             <p className="text-sm text-[#6b7280]">
               Receipt #: SG-TUPR-<span>{payment?.paymentID}</span>
@@ -136,12 +135,14 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
             </div>
           </div>
 
+          {/* Thank you Message */}
           <div className="mt-6 text-center border-t pt-4">
             <p className="text-sm text-[#6b7280]">
               Thank you for choosing Seven Gym. We appreciate your business!
             </p>
           </div>
 
+          {/* Conditions */}
           <div className="mt-6 text-center border-t pt-4">
             <p className="text-xs text-[#6b7280]">
               {" "}
