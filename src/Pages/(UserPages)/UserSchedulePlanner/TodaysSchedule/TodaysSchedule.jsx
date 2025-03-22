@@ -11,10 +11,21 @@ import useAuth from "../../../../Hooks/useAuth";
 const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
+
+  const [selectedID, setSelectedID] = useState(null);
+
+  // If there's no scheduleInfo, display a fallback message
+  if (!scheduleInfo) {
+    return (
+      <div className="text-center text-gray-500 text-xl">
+        No schedule information available.
+      </div>
+    );
+  }
+
   const { date, dayName } = scheduleInfo;
 
   // State Management
-  const [selectedID, setSelectedID] = useState(null);
 
   const today = new Date();
   const providedDate = new Date(date.split("-").reverse().join("-"));
@@ -153,7 +164,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   });
 
   return (
-    <div className="border border-gray-100 bg-gray-300/40 rounded-xl shadow-xl">
+    <div className="border border-gray-100 bg-gray-300/40 rounded-xl shadow-xl pb-5">
       <p
         className={`text-center py-3 font-semibold rounded-xl text-black bg-linear-to-b from-yellow-300 to-yellow-600`}
       >
@@ -189,7 +200,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
               className={`px-4 py-3 w-full rounded-xl shadow-md transition ${
                 isPast
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed opacity-60"
-                  : "bg-green-300 text-gray-800 md:hover:scale-105 delay-200 cursor-pointer"
+                  : "bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-500 text-gray-800 delay-200 cursor-pointer"
               }`}
               onClick={() => handleEventClick(event)}
             >

@@ -151,7 +151,7 @@ const WrongUser = () => {
             {/* Modal Actions */}
             <div className="flex justify-center gap-4 mt-4">
               <button
-                onClick={() => window.history.back()} // This will take the user back to the previous page
+                onClick={() => window.history.back()}
                 className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
               >
                 Back to Previous Page

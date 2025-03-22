@@ -101,7 +101,7 @@ createRoot(document.getElementById("root")).render(
                 element={<TearUpgradePayment />}
               />
               <Route
-                path="/User/:email/UserSchedulePlanner"
+                path="/User/UserSchedule/:email"
                 element={<UserSchedulePlanner />}
               />
             </Route>

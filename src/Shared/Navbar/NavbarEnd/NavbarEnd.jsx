@@ -60,7 +60,7 @@ const NavbarEnd = ({ UsersData }) => {
       },
       {
         name: "Schedule Planner",
-        path: `/User/${user?.email}/UserSchedulePlanner`,
+        path: `/User/UserSchedule/${user?.email}`,
         icon: <AiTwotoneSchedule />,
       },
       {
