@@ -83,7 +83,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     if (event.title) {
       document.getElementById("Details_view_Modal").showModal();
     } else {
-      document.getElementById("Add_Plan_Modal").showModal();
+      document.getElementById("Todays_Schedule_Add_Modal").showModal();
     }
   };
 
@@ -221,7 +221,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
         />
       </dialog>
 
-      <dialog id="Add_Plan_Modal" className="modal">
+      <dialog id="Todays_Schedule_Add_Modal" className="modal">
         <TodaysScheduleAddModal
           scheduleData={scheduleData}
           selectedID={selectedID}

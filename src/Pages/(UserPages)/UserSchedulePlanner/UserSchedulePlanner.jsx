@@ -81,10 +81,12 @@ const UserSchedulePlanner = () => {
 
   // Open modal if the logged-in user does not match the URL email
   useEffect(() => {
+    if (!user?.email) return; // Wait for user to be available
+
     if (!isOwnSchedule && unauthorizedModalRef.current) {
       unauthorizedModalRef.current.showModal();
     }
-  }, [isOwnSchedule]);
+  }, [isOwnSchedule, user]); // Re-run when the user data or isOwnSchedule changes
 
   // If authorized but no schedule data, open the "generate schedule" modal
   useEffect(() => {
