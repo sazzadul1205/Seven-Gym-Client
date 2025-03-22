@@ -121,7 +121,6 @@ const UserSchedulePlanner = () => {
     hour12: true,
   });
 
-
   return (
     <div className="bg-linear-to-b from-gray-200 to-gray-500 min-h-screen">
       <div className="pb-5">
@@ -225,7 +224,7 @@ const UserSchedulePlanner = () => {
         id="Generate_Schedule_Modal"
         className="modal bg-gray-500/20"
       >
-        <GenerateUserScheduleModal />
+        <GenerateUserScheduleModal refetch={refetch} />
       </dialog>
     </div>
   );

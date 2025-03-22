@@ -1,20 +1,38 @@
-/* eslint-disable react/prop-types */
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import PropTypes from "prop-types";
+
+// Import Package
+import { useQuery } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 
+// Import Utility
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-import ViewPlanModal from "./ViewPlanModal/ViewPlanModal";
-import AddPlanModal from "./AddPlanModal/AddPlanModal";
 import useAuth from "../../../../Hooks/useAuth";
+
+// Import Modal
+import ViewPlanModal from "./ViewPlanModal/ViewPlanModal";
+import TodaysScheduleAddModal from "./TodaysScheduleAddModal/TodaysScheduleAddModal";
 
 const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
+  // Selected event ID state
   const [selectedID, setSelectedID] = useState(null);
 
-  // If there's no scheduleInfo, display a fallback message
+  // Fetch event details based on selected ID
+  const { data: eventDetails, isLoading } = useQuery({
+    queryKey: ["IndividualPlansIdsData", selectedID],
+    queryFn: () =>
+      axiosPublic
+        .get(
+          `Schedule/SchedulesById?email=${user?.email}&scheduleIDs=${selectedID}`
+        )
+        .then((res) => res.data),
+    enabled: !!selectedID, // Only run query when selectedID exists
+  });
+
+  // If scheduleInfo is missing, display fallback message
   if (!scheduleInfo) {
     return (
       <div className="text-center text-gray-500 text-xl">
@@ -23,14 +41,12 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     );
   }
 
-  const { date, dayName } = scheduleInfo;
+  const { date, dayName } = scheduleInfo; // Extract date and day name
 
-  // State Management
+  const today = new Date(); // Get current date
+  const providedDate = new Date(date.split("-").reverse().join("-")); // Convert provided date
 
-  const today = new Date();
-  const providedDate = new Date(date.split("-").reverse().join("-"));
-
-  // Function to format the date as dd mm yyyy
+  // Format date as dd mm yyyy
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -38,21 +54,21 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     return `${day} ${month} ${year}`;
   };
 
-  // Fixing isToday and isPast logic
+  // Determine if the provided date is today or in the past
   const isToday = today.toDateString() === providedDate.toDateString();
   const isPast = providedDate < today && !isToday;
 
-  // Dynamically set the title and styling
+  // Set dynamic title
   let title = "TODAY'S SCHEDULE";
   if (!isToday) {
     title = `${dayName.toUpperCase()}'S SCHEDULE`;
   }
 
-  // Transform schedule data into a structured format
+  // Transform scheduleData into an array of time slots
   const scheduledTimes = Object.keys(scheduleData).map((time) => {
     const hour = parseInt(time.split(":")[0], 10);
     const period = hour < 12 ? "AM" : "PM";
-    const displayHour = hour % 12 || 12; // Convert 0 to 12 AM
+    const displayHour = hour % 12 || 12; // Convert 0 to 12 for AM
     return {
       display: `${displayHour}:00 ${period}`,
       key: time,
@@ -60,9 +76,9 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     };
   });
 
-  // Handle clicking on an event
+  // Handle event click, prevent past interactions
   const handleEventClick = (event) => {
-    if (isPast) return; // Prevent interaction with past schedules
+    if (isPast) return;
     setSelectedID(event.id);
     if (event.title) {
       document.getElementById("Details_view_Modal").showModal();
@@ -71,7 +87,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     }
   };
 
-  // Get next occurrence of a given weekday
+  // Get next occurrence of the given weekday
   const getNextOccurrence = (day) => {
     const daysOfWeek = [
       "Sunday",
@@ -96,19 +112,18 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
 
   const { nextDayName, nextDate } = getNextOccurrence(dayName);
 
-  // Handle regenerating schedule for the next occurrence
+  // Regenerate schedule for next occurrence
   const handleRegenerateClick = async () => {
     const updatedScheduleID = `${nextDayName}-${nextDate
       .split(" ")
       .reverse()
       .join("-")}`;
 
+    // Clear details for each time slot
     const updatedScheduleData = {};
-
-    // Create new schedule entries with cleared details
     Object.keys(scheduleData).forEach((time) => {
       updatedScheduleData[time] = {
-        id: `sche-${updatedScheduleID}-${time}`,
+        id: `schedule-${updatedScheduleID}-${time}`,
         title: "",
         notes: "",
         location: "",
@@ -124,8 +139,6 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
       date: formattedDate,
       schedule: updatedScheduleData,
     };
-
-    console.log(regeneratedSchedule);
 
     try {
       await axiosPublic.put("/Schedule/RegenerateNewDaySchedule", {
@@ -151,26 +164,14 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     }
   };
 
-  // Fetch event details when an ID is selected
-  const { data: eventDetails, isLoading } = useQuery({
-    queryKey: ["IndividualPlansIdsData", selectedID],
-    queryFn: () =>
-      axiosPublic
-        .get(
-          `Schedule/SchedulesById?email=${user?.email}&scheduleIDs=${selectedID}`
-        )
-        .then((res) => res.data),
-    enabled: !!selectedID,
-  });
-
   return (
     <div className="border border-gray-100 bg-gray-300/40 rounded-xl shadow-xl pb-5">
-      <p
-        className={`text-center py-3 font-semibold rounded-xl text-black bg-linear-to-b from-yellow-300 to-yellow-600`}
-      >
+      {/* Title and date display */}
+      <p className="text-center py-3 font-semibold rounded-xl text-black bg-linear-to-b from-yellow-300 to-yellow-600">
         {title} [ {date} ]
       </p>
 
+      {/* Regeneration option for past schedules */}
       {isPast && (
         <div className="text-center text-white bg-red-500 border-2 border-red-800 animate-pulse rounded-lg shadow-md mt-2 py-2 space-y-2">
           <h4>
@@ -180,13 +181,14 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
           <p>[ {nextDate} ]</p>
           <button
             onClick={handleRegenerateClick}
-            className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-400 to-blue-600 text-white font-bold rounded-lg shadow-md hover:shadow-xl  py-2 px-10 cursor-pointer"
+            className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-400 to-blue-600 text-white font-bold rounded-lg shadow-md hover:shadow-xl py-2 px-10 cursor-pointer"
           >
             Regenerate
           </button>
         </div>
       )}
 
+      {/* Time slots mapping */}
       <div className="pt-4 space-y-3">
         {scheduledTimes.map(({ display, event }, index) => (
           <div
@@ -210,6 +212,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
         ))}
       </div>
 
+      {/* Modals */}
       <dialog id="Details_view_Modal" className="modal">
         <ViewPlanModal
           eventDetails={eventDetails}
@@ -217,8 +220,9 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
           refetch={refetch}
         />
       </dialog>
+
       <dialog id="Add_Plan_Modal" className="modal">
-        <AddPlanModal
+        <TodaysScheduleAddModal
           scheduleData={scheduleData}
           selectedID={selectedID}
           refetch={refetch}
@@ -226,6 +230,13 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
       </dialog>
     </div>
   );
+};
+
+// PropTypes validation
+TodaysSchedule.propTypes = {
+  scheduleData: PropTypes.object.isRequired,
+  scheduleInfo: PropTypes.object,
+  refetch: PropTypes.func.isRequired,
 };
 
 export default TodaysSchedule;

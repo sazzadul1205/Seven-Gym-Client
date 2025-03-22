@@ -8,14 +8,15 @@ import Swal from "sweetalert2";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../../Hooks/useAuth";
 
-const AddPlanModal = ({ selectedID, refetch }) => {
+const TodaysScheduleAddModal = ({ selectedID, refetch }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  //
   const [multiHour, setMultiHour] = useState(false);
-  const [selectedTimes, setSelectedTimes] = useState([]);
   const [scheduleIDs, setScheduleIDs] = useState([]);
+  const [selectedTimes, setSelectedTimes] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     register,
@@ -294,4 +295,4 @@ const AddPlanModal = ({ selectedID, refetch }) => {
   );
 };
 
-export default AddPlanModal;
+export default TodaysScheduleAddModal;
