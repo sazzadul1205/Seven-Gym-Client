@@ -2,8 +2,8 @@
 import { useState, useRef } from "react";
 import { ImCross } from "react-icons/im";
 import { FaEdit, FaRegTrashAlt, FaCheck, FaTimes } from "react-icons/fa";
-import useAuth from "../../../../../Hooks/useAuth";
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import useAuth from "../../../../../../Hooks/useAuth";
+import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
 
 const tagColors = [
   "bg-red-500",

@@ -11,8 +11,8 @@ import { FiEdit, FiClock } from "react-icons/fi";
 import { IoMdPricetag } from "react-icons/io";
 import { ImCross } from "react-icons/im";
 
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
-import useAuth from "../../../../../Hooks/useAuth";
+import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
+import useAuth from "../../../../../../Hooks/useAuth";
 
 const tagColors = [
   "bg-red-400",
