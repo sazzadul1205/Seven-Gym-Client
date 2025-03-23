@@ -184,7 +184,7 @@ const UserSchedulePlanner = () => {
           </section>
 
           {/* Notes & Todo Section */}
-          <section className="w-full md:w-1/2">
+          <section className="w-full md:w-1/2 px-2 py-5">
             <ExtraList
               priority={userSchedule.priority}
               notes={userSchedule.notes}

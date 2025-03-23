@@ -30,7 +30,7 @@ const ExtraList = ({ priority, notes, todo, refetch }) => {
   const [selectedNote, setSelectedNote] = useState(null);
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="space-y-6">
       {/* Priority List */}
       <ExtraPriorityList priority={priority} refetch={refetch} />
 
