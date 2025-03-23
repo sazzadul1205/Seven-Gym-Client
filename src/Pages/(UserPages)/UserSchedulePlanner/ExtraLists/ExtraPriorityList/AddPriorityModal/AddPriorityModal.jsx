@@ -63,8 +63,9 @@ const AddPriorityModal = ({ refetch }) => {
 
       Swal.fire({
         icon: "success",
-        title: "Success!",
-        text: "Priority updated successfully.",
+        title: "Priority updated successfully.",
+        timer: 1500, 
+        showConfirmButton: false, 
       });
 
       reset();
@@ -83,12 +84,12 @@ const AddPriorityModal = ({ refetch }) => {
   };
 
   return (
-    <div className="modal-box p-0">
+    <div className="modal-box p-0 bg-linear-to-b from-white to-gray-300 text-black">
       {/* Header with title and close button */}
-      <div className="flex justify-between items-center border-b border-gray-300 p-4 pb-2">
+      <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
         <h3 className="font-bold text-lg">Add New Priority</h3>
         <ImCross
-          className="hover:text-[#F72C5B] cursor-pointer transition duration-200"
+          className="text-xl hover:text-[#F72C5B] cursor-pointer"
           onClick={() => document.getElementById("Add_Priority_Modal")?.close()}
         />
       </div>
@@ -123,12 +124,12 @@ const AddPriorityModal = ({ refetch }) => {
         />
 
         {/* Very Important Checkbox */}
-        <div className="flex items-center space-x-2 bg-yellow-200 p-1">
+        <div className="flex items-center space-x-2 bg-yellow-200 rounded-xl px-2 py-2 gap-3">
           <input
             {...register("isImportant")}
             type="checkbox"
             id="isImportant"
-            className="checkbox border-black"
+            className="checkbox checkbox-error"
           />
           <label
             htmlFor="isImportant"
@@ -149,7 +150,7 @@ const AddPriorityModal = ({ refetch }) => {
             <input
               id="tags"
               type="text"
-              className="input input-bordered rounded-xl w-full"
+              className="input input-bordered w-full bg-white border-gray-600 py-3"
               placeholder="Enter tag"
               onBlur={(e) => {
                 handleAddTag(e.target.value);
@@ -158,7 +159,7 @@ const AddPriorityModal = ({ refetch }) => {
             />
             <button
               type="button"
-              className="font-semibold bg-green-400 hover:bg-green-500 shadow-lg py-2 px-8"
+              className="font-semibold text-2xl bg-linear-to-bl hover:bg-linear-to-tr from-emerald-300 to-emerald-600 shadow-lg py-2 px-8 cursor-pointer"
               onClick={() => {
                 const tagInput = document.getElementById("tags");
                 handleAddTag(tagInput.value);
@@ -170,7 +171,7 @@ const AddPriorityModal = ({ refetch }) => {
           </div>
 
           {/* Displaying added tags */}
-          <div className="mt-2 flex flex-wrap gap-2 border border-gray-300 rounded-xl p-2 ">
+          <div className="mt-2 flex flex-wrap gap-2 border border-gray-300 rounded-xl bg-white min-h-[50px] p-2 ">
             {tags.map((tag, index) => (
               <span
                 key={index}
@@ -193,7 +194,7 @@ const AddPriorityModal = ({ refetch }) => {
         <div className="mt-6 flex justify-end">
           <button
             type="submit"
-            className="font-semibold bg-linear-to-br hover:bg-linear-to-tl from-green-400 to-green-500 rounded-xl shadow-xl px-10 py-3"
+            className="font-semibold bg-linear-to-br hover:bg-linear-to-tl from-green-300 to-green-600 rounded-xl shadow-xl text-white px-10 py-3 cursor-pointer"
           >
             Add Priority
           </button>
@@ -216,23 +217,23 @@ const InputField = ({
   options = [],
 }) => (
   <div>
-    <label htmlFor={id} className="block text-md font-semibold pb-1">
+    <label htmlFor={id} className="block font-bold ml-1 mb-2">
       {label}
     </label>
     {type === "textarea" ? (
       <textarea
+        className="textarea textarea-bordered w-full rounded-lg bg-white border-gray-600"
         {...register(id, options)}
-        id={id}
-        className="textarea textarea-bordered rounded-xl w-full"
         placeholder={placeholder}
+        id={id}
       />
     ) : (
       <input
+        className="input input-bordered w-full rounded-lg bg-white border-gray-600"
         {...register(id, options)}
+        placeholder={placeholder}
         type={type}
         id={id}
-        className="input input-bordered rounded-xl w-full"
-        placeholder={placeholder}
       />
     )}
     {errors[id] && (

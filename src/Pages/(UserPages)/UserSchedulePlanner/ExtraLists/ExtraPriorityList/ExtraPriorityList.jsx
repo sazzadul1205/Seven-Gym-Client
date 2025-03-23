@@ -91,7 +91,7 @@ const ExtraPriorityList = ({ priority, refetch }) => {
                 <p className="flex font-bold md:font-semibold">
                   {event.title}
                   {event.isImportant && (
-                    <span className="text-red-500 font-bold ml-4">★</span>
+                    <span className="text-yellow-500 font-bold ml-4">★</span>
                   )}
                 </p>
 
@@ -120,13 +120,19 @@ const ExtraPriorityList = ({ priority, refetch }) => {
         )}
       </div>
 
-      {/* Modals */}
+      {/* Modal's */}
+
+      {/* Add Priority */}
       <dialog id="Add_Priority_Modal" className="modal">
         <AddPriorityModal refetch={refetch} />
       </dialog>
+
+      {/* View Selected Priority */}
       <dialog id="View_Priority_Modal" className="modal">
         <ViewPriorityModal refetch={refetch} Priority={selectedPriority} />
       </dialog>
+
+      {/* View All priority's */}
       <dialog id="View_All_Priority_Modal" className="modal">
         <ViewAllPriorityModal refetch={refetch} priority={priority} />
       </dialog>

@@ -23,3 +23,19 @@
 input[type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
+
+
+input[type="datetime-local"] {
+  color-scheme: dark;
+  /* Ensures icons respect dark mode */
+  appearance: none;
+  /* Removes default styling */
+  color: black;
+  /* Changes text color */
+}
+
+/* For Webkit-based browsers (Chrome, Safari) */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  /* Inverts white to black */
+}
