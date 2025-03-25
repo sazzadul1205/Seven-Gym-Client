@@ -1,7 +1,13 @@
-/* eslint-disable react/prop-types */
 import { useState, useRef } from "react";
+
+// Import Packages
+import PropTypes from "prop-types";
+
+// UImport icons
 import { ImCross } from "react-icons/im";
 import { FaEdit, FaRegTrashAlt, FaCheck, FaTimes } from "react-icons/fa";
+
+// Import Hooks
 import useAuth from "../../../../../../Hooks/useAuth";
 import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
 
@@ -20,9 +26,12 @@ const ViewAllPriorityModal = ({ refetch, priority }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  // state Management
   const [selectedPriority, setSelectedPriority] = useState(null);
-  const modalRef = useRef(null); // Use a reference to the modal
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // Use a reference to the modal
+  const modalRef = useRef(null);
 
   // Handle delete confirmation click
   const handleDeleteClick = (priority) => {
@@ -62,90 +71,106 @@ const ViewAllPriorityModal = ({ refetch, priority }) => {
   };
 
   return (
-    <div className="modal-box p-0" ref={modalRef}>
-      {/* Delete Confirmation Banner */}
-      {showDeleteConfirm && selectedPriority && (
-        <div className="absolute top-0 left-0 w-full bg-red-500 text-white p-3 flex justify-between items-center animate-fadeIn">
-          <p className="font-semibold">
-            ⚠️ Are you sure you want to delete **{selectedPriority.title}**?
-          </p>
-          <div className="flex space-x-3">
-            <button
-              onClick={handleConfirmDelete}
-              className="p-2 bg-green-600 rounded-lg hover:bg-green-700 transition"
-            >
-              <FaCheck className="text-white" />
-            </button>
-            <button
-              onClick={handleCancelDelete}
-              className="p-2 bg-gray-700 rounded-lg hover:bg-gray-800 transition"
-            >
-              <FaTimes className="text-white" />
-            </button>
-          </div>
-        </div>
-      )}
-
+    <div
+      className="modal-box p-0 bg-linear-to-b from-white to-gray-300 text-black"
+      ref={modalRef}
+    >
       {/* Top Section */}
-      <div className="flex justify-between items-center border-b border-gray-300 px-4 py-3">
-        <h3 className="font-bold text-xl">All Priorities</h3>
+      <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
+        <h3 className="font-bold text-lg">All Priorities</h3>
         <ImCross
-          className="hover:text-[#F72C5B] cursor-pointer transition duration-200"
+          className="text-xl hover:text-[#F72C5B] cursor-pointer"
           onClick={() =>
             document.getElementById("View_All_Priority_Modal")?.close()
           }
         />
       </div>
 
+      {/* Delete Confirmation Banner */}
+      {showDeleteConfirm && selectedPriority && (
+        <div className="absolute top-0 left-0 w-full bg-red-500 text-white p-3 rounded-t-lg flex justify-between items-center animate-fadeIn">
+          <p className="font-semibold">
+            ⚠️ Are you sure you want to delete this event?
+          </p>
+          <div className="flex gap-3">
+            <button
+              onClick={handleConfirmDelete} // Confirm delete action
+              className="p-2 bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-600 rounded-lg cursor-pointer"
+            >
+              <FaCheck className="text-white" /> {/* Confirm button */}
+            </button>
+            <button
+              onClick={handleCancelDelete} // Cancel delete action
+              className="p-2 bg-linear-to-bl hover:bg-linear-to-tr from-gray-300 to-gray-600 rounded-lg cursor-pointer"
+            >
+              <FaTimes className="text-white" /> {/* Cancel button */}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Priority List */}
       {/* Priority List */}
       <div className="p-4 space-y-3">
         {priority?.length ? (
           priority
-            .sort((a, b) => new Date(b.reminder) - new Date(a.reminder)) // Sort by most recent first
-            .sort((a, b) => b.isImportant - a.isImportant) // Prioritize important ones
-            .map((priority) => (
+            // Sort by importance first, then by reminder date (latest first)
+            .sort(
+              (a, b) =>
+                b.isImportant - a.isImportant ||
+                new Date(b.reminder) - new Date(a.reminder)
+            )
+            .map((item) => (
               <div
-                key={priority.id}
+                key={item.id}
                 className="border p-4 rounded-lg shadow-md bg-gray-100 relative"
               >
+                {/* Priority Title & Reminder */}
                 <div className="flex justify-between items-center">
                   <h3 className="font-semibold text-lg">
-                    {priority.title}
-                    {priority.isImportant && (
+                    {item.title}
+                    {item.isImportant && (
                       <span className="text-red-500 font-bold ml-2">★</span>
                     )}
                   </h3>
                   <p className="text-sm text-gray-600">
-                    {new Date(priority.reminder).toLocaleString()}
+                    {new Date(item.reminder).toLocaleString()}
                   </p>
                 </div>
 
-                <p className="text-gray-700 mt-2">{priority.content}</p>
+                {/* Priority Content */}
+                <p className="text-gray-700 mt-2">{item.content}</p>
 
                 {/* Tags */}
-                <div className="flex gap-2 flex-wrap mt-3">
-                  {priority.tags.map((tag, tagIndex) => (
-                    <span
-                      key={tagIndex}
-                      className={`px-3 py-1 text-white text-xs rounded-full ${
-                        tagColors[tagIndex % tagColors.length]
-                      }`}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+                {item.tags.length > 0 && (
+                  <div className="flex gap-2 flex-wrap mt-3">
+                    {item.tags.map((tag, tagIndex) => (
+                      <span
+                        key={tagIndex}
+                        className={`px-3 py-1 text-white text-xs rounded-full ${
+                          tagColors[tagIndex % tagColors.length]
+                        }`}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
 
                 {/* Edit & Delete Buttons */}
-                <div className="flex justify-between items-center pt-3">
-                  <button className="px-4 py-2 bg-yellow-500 rounded-xl shadow-lg hover:shadow-xl transition">
-                    <FaEdit className="text-white text-lg" />
-                  </button>
+                <div className="flex justify-between items-center pt-4">
                   <button
-                    className="px-4 py-2 bg-red-500 rounded-xl shadow-lg hover:shadow-xl transition"
-                    onClick={() => handleDeleteClick(priority)}
+                    className="bg-linear-to-bl hover:bg-linear-to-tr from-yellow-300 to-yellow-600 rounded-xl shadow-xl hover:shadow-2xl cursor-pointer py-2 px-6"
+                    onClick={() => alert("Edit functionality is coming soon!")}
                   >
-                    <FaRegTrashAlt className="text-white text-lg" />
+                    <FaEdit className="text-lg text-white" />
+                  </button>
+
+                  <button
+                    className=" bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-600 rounded-xl shadow-xl hover:shadow-2xl cursor-pointer p-2 px-6"
+                    onClick={() => handleDeleteClick(item)}
+                  >
+                    <FaRegTrashAlt className="text-lg text-white" />
                   </button>
                 </div>
               </div>
@@ -156,6 +181,21 @@ const ViewAllPriorityModal = ({ refetch, priority }) => {
       </div>
     </div>
   );
+};
+
+/** PropTypes for type validation */
+ViewAllPriorityModal.propTypes = {
+  refetch: PropTypes.func.isRequired, // Function to refresh data
+  priority: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      content: PropTypes.string.isRequired,
+      reminder: PropTypes.string.isRequired,
+      isImportant: PropTypes.bool.isRequired,
+      tags: PropTypes.arrayOf(PropTypes.string).isRequired, // Array of tags for the priority
+    })
+  ).isRequired,
 };
 
 export default ViewAllPriorityModal;

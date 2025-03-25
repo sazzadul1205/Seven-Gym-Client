@@ -11,7 +11,11 @@ const AddPriorityModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
   const { email } = useParams();
 
+  // Load State
   const [tags, setTags] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // UseForm Utility
   const {
     register,
     handleSubmit,
@@ -52,7 +56,9 @@ const AddPriorityModal = ({ refetch }) => {
   };
 
   const onSubmit = async (data) => {
-    const uniqueId = generateUniqueId(email); // Generate unique ID
+    setLoading(true); // Set loading to true
+
+    const uniqueId = generateUniqueId(email);
     const newPriority = {
       email,
       newPriority: { id: uniqueId, ...data, tags },
@@ -64,14 +70,14 @@ const AddPriorityModal = ({ refetch }) => {
       Swal.fire({
         icon: "success",
         title: "Priority updated successfully.",
-        timer: 1500, 
-        showConfirmButton: false, 
+        timer: 1500,
+        showConfirmButton: false,
       });
 
       reset();
       refetch();
       setTags([]);
-      document.getElementById("Add_Priority_Modal")?.close(); 
+      document.getElementById("Add_Priority_Modal")?.close();
     } catch (error) {
       console.error("Error updating priority:", error);
 
@@ -80,6 +86,8 @@ const AddPriorityModal = ({ refetch }) => {
         title: "Oops...",
         text: "Something went wrong! Please try again.",
       });
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
@@ -195,8 +203,9 @@ const AddPriorityModal = ({ refetch }) => {
           <button
             type="submit"
             className="font-semibold bg-linear-to-br hover:bg-linear-to-tl from-green-300 to-green-600 rounded-xl shadow-xl text-white px-10 py-3 cursor-pointer"
+            disabled={loading}
           >
-            Add Priority
+            {loading ? "Adding..." : "Add Priority"}
           </button>
         </div>
       </form>

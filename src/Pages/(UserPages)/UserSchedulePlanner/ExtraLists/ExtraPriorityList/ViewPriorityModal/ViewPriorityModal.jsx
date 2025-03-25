@@ -1,5 +1,7 @@
-import PropTypes from "prop-types";
 import { useState } from "react";
+
+// Import Packages
+import PropTypes from "prop-types";
 
 // Import Icons
 import {
@@ -17,15 +19,15 @@ import { ImCross } from "react-icons/im";
 import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../../../Hooks/useAuth";
 
-// Tag color options
 const tagColors = [
-  "bg-red-400",
-  "bg-blue-400",
-  "bg-green-400",
-  "bg-yellow-400",
-  "bg-purple-400",
-  "bg-pink-400",
-  "bg-orange-400",
+  "bg-red-500",
+  "bg-blue-500",
+  "bg-green-500",
+  "bg-yellow-500",
+  "bg-purple-500",
+  "bg-pink-500",
+  "bg-indigo-500",
+  "bg-teal-500",
 ];
 
 const ViewPriorityModal = ({ Priority, refetch }) => {
