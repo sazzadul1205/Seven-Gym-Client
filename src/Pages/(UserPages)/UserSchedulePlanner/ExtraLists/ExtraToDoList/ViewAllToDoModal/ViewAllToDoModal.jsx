@@ -12,8 +12,8 @@ import { ImCross } from "react-icons/im";
 import { FiEdit, FiClock } from "react-icons/fi";
 import { IoMdPricetag } from "react-icons/io";
 
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
-import useAuth from "../../../../../Hooks/useAuth";
+import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
+import useAuth from "../../../../../../Hooks/useAuth";
 
 const ViewAllToDoModal = ({ refetch, todo }) => {
   const { user } = useAuth();

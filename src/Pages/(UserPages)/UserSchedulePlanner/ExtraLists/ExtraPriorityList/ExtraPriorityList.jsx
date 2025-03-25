@@ -31,7 +31,7 @@ const ExtraPriorityList = ({ priority, refetch }) => {
   const topPriorities = sortedPriorities.slice(0, 5);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 bg-gray-200 rounded-xl">
       {/* Title Bar with Action Buttons */}
       <div className="flex justify-between items-center font-semibold rounded-xl text-black bg-linear-to-b from-yellow-300 to-yellow-600 px-3">
         {/* Add Priority Button */}
@@ -40,11 +40,11 @@ const ExtraPriorityList = ({ priority, refetch }) => {
           onClick={() =>
             document.getElementById("Add_Priority_Modal").showModal()
           }
-          data-tooltip-id="Add_Modal_Button_Tooltip"
+          data-tooltip-id="Add_Modal_Button_Tooltip_Priorities"
         >
           <MdAddToPhotos className="text-white text-3xl font-bold p-1" />
           <Tooltip
-            id="Add_Modal_Button_Tooltip"
+            id="Add_Modal_Button_Tooltip_Priorities"
             place="top"
             content="Add Priority"
           />
@@ -59,13 +59,13 @@ const ExtraPriorityList = ({ priority, refetch }) => {
           onClick={() =>
             document.getElementById("View_All_Priority_Modal").showModal()
           }
-          data-tooltip-id="View_List_Button_Tooltip"
+          data-tooltip-id="View_List_Button_Tooltip_Priorities"
         >
           <FaList className="text-white text-3xl font-bold p-1" />
           <Tooltip
-            id="View_List_Button_Tooltip"
+            id="View_List_Button_Tooltip_Priorities"
             place="top"
-            content="View All"
+            content="View All Priorities"
           />
         </button>
       </div>
@@ -83,7 +83,7 @@ const ExtraPriorityList = ({ priority, refetch }) => {
               }}
             >
               {/* Priority Icon */}
-              <FcHighPriority className="text-3xl border border-red-500 rounded-full" />
+              <FcHighPriority className="text-3xl text-red-500 border border-red-500 rounded-full p-1" />
 
               {/* Priority Details */}
               <div className="w-full flex flex-row justify-between bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-500 rounded-xl px-4 py-3 cursor-pointer ">
@@ -107,9 +107,9 @@ const ExtraPriorityList = ({ priority, refetch }) => {
           ))
         ) : (
           // Empty State: Add Priority Button
-          <div className="flex min-h-[100px] justify-center items-center">
+          <div className="flex min-h-[100px] justify-center items-center py-16">
             <button
-              className="px-16 py-2 bg-linear-to-br hover:bg-linear-to-tl from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition"
+              className="px-16 py-2 bg-linear-to-br hover:bg-linear-to-tl from-green-300 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition cursor-pointer"
               onClick={() =>
                 document.getElementById("Add_Priority_Modal").showModal()
               }
@@ -146,7 +146,7 @@ ExtraPriorityList.propTypes = {
     PropTypes.shape({
       title: PropTypes.string.isRequired,
       isImportant: PropTypes.bool.isRequired,
-      reminder: PropTypes.string.isRequired, // Expecting an ISO date string
+      reminder: PropTypes.string.isRequired,
     })
   ),
   refetch: PropTypes.func.isRequired,
