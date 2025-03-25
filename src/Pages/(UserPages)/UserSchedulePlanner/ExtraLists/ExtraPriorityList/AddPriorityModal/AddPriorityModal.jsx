@@ -71,7 +71,7 @@ const AddPriorityModal = ({ refetch }) => {
       reset();
       refetch();
       setTags([]);
-      document.getElementById("Add_Priority_Modal")?.close(); // Ensure modal exists
+      document.getElementById("Add_Priority_Modal")?.close(); 
     } catch (error) {
       console.error("Error updating priority:", error);
 
