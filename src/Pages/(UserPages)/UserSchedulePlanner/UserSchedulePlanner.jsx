@@ -187,7 +187,7 @@ const UserSchedulePlanner = () => {
           <section className="w-full md:w-1/2 px-2 py-5">
             <ExtraList
               priority={userSchedule.priority}
-              notes={userSchedule.notes}
+              note={userSchedule.notes}
               todo={userSchedule.todo}
               refetch={refetch}
             />

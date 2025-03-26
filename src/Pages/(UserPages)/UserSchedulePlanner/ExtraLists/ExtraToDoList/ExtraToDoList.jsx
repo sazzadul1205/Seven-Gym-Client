@@ -68,7 +68,7 @@ const ExtraToDoList = ({ todo, refetch }) => {
       </div>
 
       {/* To-Do Items List */}
-      <div className="space-y-3 px-2 pb-3">
+      <div className="space-y-3 px-2 pb-3 text-black">
         {topTasks?.length ? (
           topTasks.map((task, index) => (
             <div

@@ -1,16 +1,26 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import Swal from "sweetalert2";
-import { ImCross } from "react-icons/im";
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import { useParams } from "react-router";
+
+// Import Package
+import Swal from "sweetalert2";
+import PropTypes from "prop-types";
+import { useForm } from "react-hook-form";
+
+// Import Icons
+import { ImCross } from "react-icons/im";
+
+// Import Utility
+import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
 
 const AddNotesModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
   const { email } = useParams();
 
+  // State management
   const [tags, setTags] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // UseForm Utility
   const {
     register,
     handleSubmit,
@@ -36,7 +46,7 @@ const AddNotesModal = ({ refetch }) => {
 
   // Generate a unique ID
   const generateUniqueId = (userEmail) => {
-    if (!userEmail) return `pri-unknown-${Date.now()}`;
+    if (!userEmail) return `pri-unknown-${Date.now()}`; // Handle missing email
     const date = new Date();
     const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-");
 
@@ -47,10 +57,12 @@ const AddNotesModal = ({ refetch }) => {
     const randomNumber = Math.floor(Math.random() * 900) + 100;
 
     // Construct the ID
-    return `note-${email}-${formattedDate}-${formattedTime}-${randomNumber}`;
+    return `note-${userEmail}-${formattedDate}-${formattedTime}-${randomNumber}`;
   };
 
   const onSubmit = async (data) => {
+    setLoading(true); // Set loading to true
+
     const uniqueId = generateUniqueId(email);
     const newNote = {
       email,
@@ -60,34 +72,38 @@ const AddNotesModal = ({ refetch }) => {
     try {
       await axiosPublic.put("/Schedule/AddNotes", newNote);
 
-      // Show success alert
       Swal.fire({
         icon: "success",
         title: "Success!",
         text: "Note added successfully.",
+        timer: 1500,
+        showConfirmButton: false,
       });
 
       reset();
       refetch();
       setTags([]);
-      document.getElementById("Add_Notes_Modal").close();
+      document.getElementById("Add_Note_Modal").close();
     } catch (error) {
       console.error("Error adding note:", error);
+
       Swal.fire({
         icon: "error",
         title: "Oops...",
         text: "Something went wrong! Please try again.",
       });
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
   return (
-    <div className="modal-box p-0">
+    <div className="modal-box p-0 bg-linear-to-b from-white to-gray-300 text-black">
       {/* Header with title and close button */}
-      <div className="flex justify-between items-center border-b border-gray-300 p-4 pb-2">
+      <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
         <h3 className="font-bold text-lg">Add New Note</h3>
         <ImCross
-          className="hover:text-[#F72C5B] cursor-pointer transition duration-200"
+          className="text-xl hover:text-[#F72C5B] cursor-pointer"
           onClick={() => document.getElementById("Add_Notes_Modal")?.close()}
         />
       </div>
@@ -98,35 +114,37 @@ const AddNotesModal = ({ refetch }) => {
           label="Title"
           id="title"
           type="text"
-          placeholder="Enter note title"
+          placeholder="Enter title"
           register={register}
           errors={errors}
-          options={{ required: "Title is required" }}
+          validation={{ required: "Title is required" }}
         />
         <InputField
           label="Content"
           id="content"
           type="textarea"
-          placeholder="Enter note content"
+          placeholder="Enter content"
           register={register}
           errors={errors}
-          options={{ required: "Content is required" }}
+          validation={{ required: "Content is required" }}
         />
+
         <InputField
           label="Reminder"
           id="reminder"
           type="datetime-local"
           register={register}
           errors={errors}
+          validation={{ required: "Reminder time is required" }}
         />
 
         {/* Very Important Checkbox */}
-        <div className="flex items-center space-x-2 bg-yellow-200 p-1">
+        <div className="flex items-center space-x-2 bg-yellow-200 rounded-xl px-2 py-2 gap-3">
           <input
             {...register("isImportant")}
             type="checkbox"
             id="isImportant"
-            className="checkbox border-black"
+            className="checkbox checkbox-error"
           />
           <label
             htmlFor="isImportant"
@@ -147,7 +165,7 @@ const AddNotesModal = ({ refetch }) => {
             <input
               id="tags"
               type="text"
-              className="input input-bordered rounded-xl w-full"
+              className="input input-bordered w-full bg-white border-gray-600 py-3"
               placeholder="Enter tag"
               onBlur={(e) => {
                 handleAddTag(e.target.value);
@@ -156,7 +174,7 @@ const AddNotesModal = ({ refetch }) => {
             />
             <button
               type="button"
-              className="font-semibold bg-green-400 hover:bg-green-500 shadow-lg py-2 px-4 rounded-xl"
+              className="font-semibold text-2xl bg-linear-to-bl hover:bg-linear-to-tr from-emerald-300 to-emerald-600 shadow-lg py-2 px-8 cursor-pointer"
               onClick={() => {
                 const tagInput = document.getElementById("tags");
                 handleAddTag(tagInput.value);
@@ -168,12 +186,14 @@ const AddNotesModal = ({ refetch }) => {
           </div>
 
           {/* Displaying added tags */}
-          <div className="mt-2 flex flex-wrap gap-2 border border-gray-300 rounded-xl p-2">
+          <div className="mt-2 flex flex-wrap gap-2 border border-gray-300 rounded-xl bg-white min-h-[50px] p-2 ">
             {tags.map((tag, index) => (
               <span
                 key={index}
-                className="flex justify-between items-center gap-2 py-1 px-3 rounded-2xl"
-                style={{ backgroundColor: `hsl(${index * 45}, 80%, 70%)` }}
+                className="flex justify-between items-center gap-3 py-2 px-3 rounded-2xl"
+                style={{
+                  backgroundColor: `hsl(${index * 45}, 80%, 70%)`, // Different bright colors
+                }}
               >
                 <span className="font-semibold">{tag}</span>
                 <ImCross
@@ -189,14 +209,20 @@ const AddNotesModal = ({ refetch }) => {
         <div className="mt-6 flex justify-end">
           <button
             type="submit"
-            className="font-semibold bg-linear-to-br hover:bg-linear-to-tl from-green-400 to-green-500 rounded-xl shadow-xl px-10 py-3"
+            className="font-semibold bg-linear-to-br hover:bg-linear-to-tl from-green-300 to-green-600 rounded-xl shadow-xl text-white px-10 py-3 cursor-pointer"
+            disabled={loading}
           >
-            Add Note
+            {loading ? "Adding..." : "Add Note"}
           </button>
         </div>
       </form>
     </div>
   );
+};
+
+// PropTypes validation
+AddNotesModal.propTypes = {
+  refetch: PropTypes.func.isRequired,
 };
 
 export default AddNotesModal;
@@ -209,30 +235,70 @@ const InputField = ({
   placeholder,
   register,
   errors,
+  validation = {},
   options = [],
 }) => (
   <div>
-    <label htmlFor={id} className="block text-md font-semibold pb-1">
+    <label htmlFor={id} className="block font-bold ml-1 mb-2">
       {label}
     </label>
+
     {type === "textarea" ? (
       <textarea
-        {...register(id, options)}
-        id={id}
-        className="textarea textarea-bordered rounded-xl w-full"
+        className="textarea textarea-bordered w-full rounded-lg bg-white border-gray-600"
+        {...register(id, validation)}
         placeholder={placeholder}
+        id={id}
       />
+    ) : type === "select" ? (
+      <select
+        className="select select-bordered w-full rounded-lg bg-white border-gray-600"
+        {...register(id, validation)}
+        id={id}
+      >
+        {Array.isArray(options) ? (
+          options.map((option, index) => (
+            <option key={index} value={option}>
+              {option}
+            </option>
+          ))
+        ) : (
+          <option value="">Invalid options</option>
+        )}
+      </select>
     ) : (
       <input
-        {...register(id, options)}
+        className="input input-bordered w-full rounded-lg bg-white border-gray-600"
+        {...register(id, validation)}
+        placeholder={placeholder}
         type={type}
         id={id}
-        className="input input-bordered rounded-xl w-full"
-        placeholder={placeholder}
       />
     )}
+
     {errors[id] && (
       <p className="text-red-500 text-sm">{errors[id]?.message}</p>
     )}
   </div>
 );
+
+// PropTypes validation
+InputField.propTypes = {
+  label: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  type: PropTypes.oneOf([
+    "text",
+    "email",
+    "password",
+    "number",
+    "date",
+    "datetime-local",
+    "textarea",
+    "select",
+  ]).isRequired,
+  placeholder: PropTypes.string,
+  register: PropTypes.func.isRequired,
+  errors: PropTypes.object,
+  validation: PropTypes.object,
+  options: PropTypes.arrayOf(PropTypes.string),
+};
