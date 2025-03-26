@@ -99,6 +99,8 @@ const AddToDoModal = ({ refetch }) => {
         icon: "success",
         title: "Success!",
         text: "To-Do added successfully.",
+        timer: 1500,
+        showConfirmButton: false,
       });
 
       reset();
@@ -165,7 +167,7 @@ const AddToDoModal = ({ refetch }) => {
           label="Priority"
           id="priority"
           type="select"
-          options={["High", "Medium", "Low"]}
+          options={["High", "Medium", "Low"]} // Should always be an array
           register={register}
           errors={errors}
         />
@@ -272,7 +274,7 @@ const InputField = ({
   placeholder,
   register,
   errors,
-  options = [],
+  options = [], // default to empty array
 }) => (
   <div>
     <label htmlFor={id} className="block font-bold ml-1 mb-2">
@@ -291,11 +293,15 @@ const InputField = ({
         id={id}
         className="select select-bordered w-full rounded-lg bg-white border-gray-600"
       >
-        {options.map((option, index) => (
-          <option key={index} value={option}>
-            {option}
-          </option>
-        ))}
+        {Array.isArray(options) ? (
+          options.map((option, index) => (
+            <option key={index} value={option}>
+              {option}
+            </option>
+          ))
+        ) : (
+          <option>No options available</option>
+        )}
       </select>
     ) : (
       <input
@@ -322,11 +328,13 @@ InputField.propTypes = {
     "password",
     "number",
     "date",
+    "datetime-local",
     "textarea",
     "select",
   ]).isRequired,
   placeholder: PropTypes.string,
   register: PropTypes.func.isRequired,
   errors: PropTypes.object,
-  options: PropTypes.arrayOf(PropTypes.string), // Only applies if type is "select"
+  validation: PropTypes.object,
+  options: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
 };

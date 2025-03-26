@@ -31,10 +31,10 @@ const tagColors = [
 ];
 
 const ViewPriorityModal = ({ Priority, refetch }) => {
-  console.log(Priority);
-
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
+
+  // state Management
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Handle delete confirmation click

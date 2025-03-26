@@ -74,7 +74,8 @@ const AddPriorityModal = ({ refetch }) => {
 
       Swal.fire({
         icon: "success",
-        title: "Priority updated successfully.",
+        title: "Success!",
+        text: "Priority added successfully.",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -116,7 +117,7 @@ const AddPriorityModal = ({ refetch }) => {
           placeholder="Enter title"
           register={register}
           errors={errors}
-          options={{ required: "Title is required" }}
+          validation={{ required: "Title is required" }}
         />
         <InputField
           label="Content"
@@ -125,15 +126,16 @@ const AddPriorityModal = ({ refetch }) => {
           placeholder="Enter content"
           register={register}
           errors={errors}
-          options={{ required: "Content is required" }}
+          validation={{ required: "Content is required" }}
         />
+
         <InputField
           label="Reminder"
           id="reminder"
           type="datetime-local"
           register={register}
           errors={errors}
-          options={{ required: "Reminder time is required" }}
+          validation={{ required: "Reminder time is required" }}
         />
 
         {/* Very Important Checkbox */}
@@ -233,28 +235,47 @@ const InputField = ({
   placeholder,
   register,
   errors,
+  validation = {},
   options = [],
 }) => (
   <div>
     <label htmlFor={id} className="block font-bold ml-1 mb-2">
       {label}
     </label>
+
     {type === "textarea" ? (
       <textarea
         className="textarea textarea-bordered w-full rounded-lg bg-white border-gray-600"
-        {...register(id, options)}
+        {...register(id, validation)}
         placeholder={placeholder}
         id={id}
       />
+    ) : type === "select" ? (
+      <select
+        className="select select-bordered w-full rounded-lg bg-white border-gray-600"
+        {...register(id, validation)}
+        id={id}
+      >
+        {Array.isArray(options) ? (
+          options.map((option, index) => (
+            <option key={index} value={option}>
+              {option}
+            </option>
+          ))
+        ) : (
+          <option value="">Invalid options</option>
+        )}
+      </select>
     ) : (
       <input
         className="input input-bordered w-full rounded-lg bg-white border-gray-600"
-        {...register(id, options)}
+        {...register(id, validation)}
         placeholder={placeholder}
         type={type}
         id={id}
       />
     )}
+
     {errors[id] && (
       <p className="text-red-500 text-sm">{errors[id]?.message}</p>
     )}
@@ -271,11 +292,13 @@ InputField.propTypes = {
     "password",
     "number",
     "date",
+    "datetime-local",
     "textarea",
     "select",
   ]).isRequired,
   placeholder: PropTypes.string,
   register: PropTypes.func.isRequired,
   errors: PropTypes.object,
-  options: PropTypes.arrayOf(PropTypes.string), // Only applies if type is "select"
+  validation: PropTypes.object,
+  options: PropTypes.arrayOf(PropTypes.string),
 };

@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 // Import Packages
 import PropTypes from "prop-types";
 
-// UImport icons
+// Import icons
 import { ImCross } from "react-icons/im";
 import { FaEdit, FaRegTrashAlt, FaCheck, FaTimes } from "react-icons/fa";
 
@@ -11,6 +11,7 @@ import { FaEdit, FaRegTrashAlt, FaCheck, FaTimes } from "react-icons/fa";
 import useAuth from "../../../../../../Hooks/useAuth";
 import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
 
+// Tags Colors
 const tagColors = [
   "bg-red-500",
   "bg-blue-500",
@@ -110,7 +111,6 @@ const ViewAllPriorityModal = ({ refetch, priority }) => {
       )}
 
       {/* Priority List */}
-      {/* Priority List */}
       <div className="p-4 space-y-3">
         {priority?.length ? (
           priority
@@ -123,7 +123,7 @@ const ViewAllPriorityModal = ({ refetch, priority }) => {
             .map((item) => (
               <div
                 key={item.id}
-                className="border p-4 rounded-lg shadow-md bg-gray-100 relative"
+                className="border p-4 rounded-lg shadow-md bg-gray-100 relative space-y-3"
               >
                 {/* Priority Title & Reminder */}
                 <div className="flex justify-between items-center">

@@ -68,7 +68,7 @@ const ExtraToDoList = ({ todo, refetch }) => {
       </div>
 
       {/* To-Do Items List */}
-      <div className="space-y-3">
+      <div className="space-y-3 px-2 pb-3">
         {topTasks?.length ? (
           topTasks.map((task, index) => (
             <div
@@ -89,7 +89,7 @@ const ExtraToDoList = ({ todo, refetch }) => {
                 </p>
                 <p className="hidden md:flex">-</p>
                 <p className="font-bold">
-                  {new Date(task.reminder).toLocaleString()}
+                  {new Date(task.dueDate).toLocaleDateString("en-GB")}
                 </p>
               </div>
             </div>
@@ -133,13 +133,11 @@ const ExtraToDoList = ({ todo, refetch }) => {
 ExtraToDoList.propTypes = {
   todo: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string,
       task: PropTypes.string.isRequired,
       priority: PropTypes.string.isRequired,
-      dueDate: PropTypes.string,
-      reminder: PropTypes.string.isRequired,
+      dueDate: PropTypes.string.isRequired,
     })
-  ).isRequired,
+  ),
   refetch: PropTypes.func.isRequired,
 };
 

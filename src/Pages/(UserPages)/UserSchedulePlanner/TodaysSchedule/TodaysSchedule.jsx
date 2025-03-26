@@ -100,7 +100,12 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     ];
     const todayIndex = today.getDay();
     const targetIndex = daysOfWeek.indexOf(day);
-    let daysToAdd = (targetIndex - todayIndex + 7) % 7 || 7;
+
+    let daysToAdd = targetIndex - todayIndex;
+    if (daysToAdd < 0) daysToAdd += 7;
+
+    //  today is already the target day, don't skip ahead
+    if (daysToAdd === 0) daysToAdd = 0;
 
     const nextDate = new Date(today);
     nextDate.setDate(today.getDate() + daysToAdd);
@@ -150,7 +155,8 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
         title: "Success!",
         text: "Schedule updated successfully.",
         icon: "success",
-        confirmButtonText: "OK",
+        timer: 1500,
+        showConfirmButton: false,
       });
       refetch();
     } catch (error) {

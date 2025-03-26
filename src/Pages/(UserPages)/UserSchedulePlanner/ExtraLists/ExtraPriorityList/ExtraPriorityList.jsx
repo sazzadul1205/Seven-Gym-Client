@@ -71,7 +71,7 @@ const ExtraPriorityList = ({ priority, refetch }) => {
       </div>
 
       {/* Priority List Display */}
-      <div className="space-y-3">
+      <div className="space-y-3 px-2 pb-3">
         {priority?.length ? (
           topPriorities.map((event, index) => (
             <div
