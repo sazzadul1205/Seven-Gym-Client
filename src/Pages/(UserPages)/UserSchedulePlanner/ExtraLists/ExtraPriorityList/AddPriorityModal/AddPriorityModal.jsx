@@ -1,17 +1,22 @@
-/* eslint-disable react/prop-types */
-import { useForm } from "react-hook-form";
-import { ImCross } from "react-icons/im";
-import { useParams } from "react-router";
 import { useState } from "react";
-import Swal from "sweetalert2";
+import { useParams } from "react-router";
 
+// Import Package
+import Swal from "sweetalert2";
+import PropTypes from "prop-types";
+import { useForm } from "react-hook-form";
+
+// Import Icons
+import { ImCross } from "react-icons/im";
+
+// Import Utility
 import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
 
 const AddPriorityModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
   const { email } = useParams();
 
-  // Load State
+  // State management
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -52,7 +57,7 @@ const AddPriorityModal = ({ refetch }) => {
     const randomNumber = Math.floor(Math.random() * 900) + 100;
 
     // Construct the ID
-    return `pri-${userEmail}-${formattedDate}-${formattedTime}-${randomNumber}`;
+    return `priority-${userEmail}-${formattedDate}-${formattedTime}-${randomNumber}`;
   };
 
   const onSubmit = async (data) => {
@@ -213,6 +218,11 @@ const AddPriorityModal = ({ refetch }) => {
   );
 };
 
+// PropTypes validation
+AddPriorityModal.propTypes = {
+  refetch: PropTypes.func.isRequired,
+};
+
 export default AddPriorityModal;
 
 // Reusable input field component
@@ -250,3 +260,22 @@ const InputField = ({
     )}
   </div>
 );
+
+// PropTypes validation
+InputField.propTypes = {
+  label: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  type: PropTypes.oneOf([
+    "text",
+    "email",
+    "password",
+    "number",
+    "date",
+    "textarea",
+    "select",
+  ]).isRequired,
+  placeholder: PropTypes.string,
+  register: PropTypes.func.isRequired,
+  errors: PropTypes.object,
+  options: PropTypes.arrayOf(PropTypes.string), // Only applies if type is "select"
+};

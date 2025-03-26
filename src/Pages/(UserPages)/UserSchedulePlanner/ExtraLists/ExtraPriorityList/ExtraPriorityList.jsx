@@ -1,13 +1,13 @@
 import { useState } from "react";
-import PropTypes from "prop-types"; // Import PropTypes for type checking
 
 // Import Packages
+import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
 
 // Import Icons
 import { FaList } from "react-icons/fa";
-import { FcHighPriority } from "react-icons/fc";
 import { MdAddToPhotos } from "react-icons/md";
+import { FcHighPriority } from "react-icons/fc";
 
 // Import Modals
 import AddPriorityModal from "./AddPriorityModal/AddPriorityModal";
@@ -28,7 +28,7 @@ const ExtraPriorityList = ({ priority, refetch }) => {
     : [];
 
   // Get top 5 priorities
-  const topPriorities = sortedPriorities.slice(0, 5);
+  const topPriorities = sortedPriorities?.slice(0, 5);
 
   return (
     <div className="space-y-3 bg-gray-200 rounded-xl">
@@ -61,7 +61,7 @@ const ExtraPriorityList = ({ priority, refetch }) => {
           }
           data-tooltip-id="View_List_Button_Tooltip_Priorities"
         >
-          <FaList className="text-white text-3xl font-bold p-1" />
+          <FaList className="text-white text-3xl font-bold p-[6px]" />
           <Tooltip
             id="View_List_Button_Tooltip_Priorities"
             place="top"

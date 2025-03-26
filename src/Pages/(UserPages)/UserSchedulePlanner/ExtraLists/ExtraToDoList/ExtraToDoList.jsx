@@ -1,9 +1,15 @@
 import { useState } from "react";
+
+// Import Package
 import PropTypes from "prop-types";
-import { FaList } from "react-icons/fa";
-import { RiCalendarTodoLine } from "react-icons/ri";
 import { Tooltip } from "react-tooltip";
+
+// Import Icons
+import { FaList } from "react-icons/fa";
 import { MdAddToPhotos } from "react-icons/md";
+import { RiCalendarTodoLine } from "react-icons/ri";
+
+// Import Modals
 import AddToDoModal from "./AddToDoModal/AddToDoModal";
 import ViewToDoModal from "./ViewToDoModal/ViewToDoModal";
 import ViewAllToDoModal from "./ViewAllToDoModal/ViewAllToDoModal";
@@ -52,7 +58,7 @@ const ExtraToDoList = ({ todo, refetch }) => {
           }
           data-tooltip-id="View_List_Button_Tooltip_To-Do"
         >
-          <FaList className="text-white text-3xl font-bold p-1" />
+          <FaList className="text-white text-3xl font-bold p-[6px]" />
           <Tooltip
             id="View_List_Button_Tooltip_To-Do"
             place="top"
@@ -103,15 +109,19 @@ const ExtraToDoList = ({ todo, refetch }) => {
         )}
       </div>
 
-      {/* Modals */}
+      {/* Modal's */}
+
+      {/* Add To-Do */}
       <dialog id="Add_To-Do_Modal" className="modal">
         <AddToDoModal refetch={refetch} />
       </dialog>
 
+      {/* View Selected To-Do */}
       <dialog id="View_To-Do_Modal" className="modal">
         <ViewToDoModal refetch={refetch} ToDo={selectedToDo} />
       </dialog>
 
+      {/* View All To-Do's */}
       <dialog id="View_All_To-Do_Modal" className="modal">
         <ViewAllToDoModal refetch={refetch} todo={todo} />
       </dialog>
