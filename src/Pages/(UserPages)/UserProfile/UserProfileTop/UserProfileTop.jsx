@@ -44,7 +44,7 @@ const UserProfileTop = ({ usersData, user, confEmail }) => {
       {/* Settings Icon (Visible Only to Profile Owner) */}
       {isProfileOwner && (
         <div className="absolute top-2 right-2 bg-gray-400/50 p-3 rounded-full">
-          <Link to="/User/UserSettings">
+          <Link to="/User/UserSettings?tab=Settings_Info">
             <IoSettings className="text-red-500 text-4xl transition-transform duration-500 hover:rotate-180 hover:text-red-300" />
           </Link>
         </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 
 // Import Package
 import { useQuery } from "@tanstack/react-query";
@@ -17,6 +17,7 @@ import ExtraList from "./ExtraLists/ExtraLists";
 // Import Example JSON
 import ExampleSchedule from "../../../JSON/ExampleSchedule.json";
 import GenerateUserScheduleModal from "./GenerateUserScheduleModal/GenerateUserScheduleModal";
+import { IoSettings } from "react-icons/io5";
 
 const UserSchedulePlanner = () => {
   const axiosPublic = useAxiosPublic();
@@ -125,7 +126,14 @@ const UserSchedulePlanner = () => {
 
   return (
     <div className="bg-linear-to-b from-gray-200 to-gray-500 min-h-screen">
-      <div className="pb-5">
+      <div className="pb-5 relative">
+        {/* Settings Part */}
+        <div className="absolute top-2 right-2 p-3 rounded-full">
+          <Link to="/User/UserSettings?tab=Settings_Schedule">
+            <IoSettings className="text-red-500 hover:text-red-400 text-4xl transition-transform duration-500 hover:rotate-180" />
+          </Link>
+        </div>
+
         {/* Title & Clock */}
         <div className="text-center pt-5">
           <p className="text-3xl italic text-black font-semibold py-2">
