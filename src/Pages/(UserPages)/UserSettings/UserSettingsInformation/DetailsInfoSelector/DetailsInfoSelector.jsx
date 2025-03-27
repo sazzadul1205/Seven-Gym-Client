@@ -1,11 +1,63 @@
-import React from 'react';
+import { useState } from "react";
 
-const DetailsInfoSelector = () => {
-    return (
-        <div>
-            
+// Import Package
+import PropTypes from "prop-types";
+
+// Import Component
+import FitnessGoalsSelector from "../../../../(Auth)/SignUpDetails/FitnessGoalsSelector/FitnessGoalsSelector";
+
+const DetailsInfoSelector = ({ UsersData }) => {
+  // Initialize description state with the provided UsersData description or empty string
+  const [description, setDescription] = useState(UsersData?.description || "");
+
+  // Initialize selectedGoals state with the provided UsersData.selectedGoals or an empty array
+  const [selectedGoals, setSelectedGoals] = useState(
+    UsersData?.selectedGoals || []
+  );
+
+  // Handler for updating the description state
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+  };
+
+  return (
+    <div className="bg-gray-400/50 p-3">
+      {/* Title */}
+      <h3 className="text-xl font-semibold text-black py-1">Detailed Info:</h3>
+
+      {/* Divider */}
+      <div className="bg-white p-[2px] w-1/2 mb-4"></div>
+
+      <div className="flex gap-4 text-black">
+        {/* Bio Section */}
+        <div className="w-1/2 bg-gray-300 rounded-xl border border-gray-100 px-2">
+          <h3 className="p-3 font-semibold text-lg">My Bio</h3>
+          {/* Textarea to display and update user description */}
+          <textarea
+            value={description}
+            onChange={handleDescriptionChange}
+            placeholder="Enter your bio..."
+            className="w-full p-2 border border-gray-300 rounded-md bg-white h-[150px] leading-11"
+          />
         </div>
-    );
+
+        {/* Fitness Goals Section */}
+        <div className="w-1/2 bg-gray-300 rounded-xl border border-gray-100 px-2">
+          <FitnessGoalsSelector
+            selectedGoals={selectedGoals}
+            setSelectedGoals={setSelectedGoals}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+DetailsInfoSelector.propTypes = {
+  UsersData: PropTypes.shape({
+    description: PropTypes.string,
+    selectedGoals: PropTypes.arrayOf(PropTypes.string),
+  }),
 };
 
 export default DetailsInfoSelector;

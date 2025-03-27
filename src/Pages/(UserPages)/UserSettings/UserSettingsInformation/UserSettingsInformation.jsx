@@ -1,6 +1,8 @@
 import { GrUserSettings } from "react-icons/gr";
-import BannerSettings from "./BannerSettings/BannerSettings";
-import BasicInfoSettings from "./BasicInfoSettings/BasicInfoSettings";
+import BannerSelector from "./BannerSelector/BannerSelector";
+import BasicInfoSelector from "./BasicInfoSelector/BasicInfoSelector";
+import DetailsInfoSelector from "./DetailsInfoSelector/DetailsInfoSelector";
+import SocialLinkSelector from "./SocialLinkSelector/SocialLinkSelector";
 
 const UserSettingsInformation = ({ UsersData }) => {
   return (
@@ -16,13 +18,16 @@ const UserSettingsInformation = ({ UsersData }) => {
       {/* Content */}
       <div className="space-y-3">
         {/* Banners Section */}
-        <BannerSettings UsersData={UsersData} />
+        <BannerSelector UsersData={UsersData} />
 
         {/* Avatar, Name, Phone, Date, Gender */}
-        <BasicInfoSettings UsersData={UsersData} />
+        <BasicInfoSelector UsersData={UsersData} />
 
         {/* Bio, Goals  */}
-        <DetailsInfoSelector />
+        <DetailsInfoSelector UsersData={UsersData} />
+
+        {/* Social Links */}
+        <SocialLinkSelector UsersData={UsersData} />
       </div>
     </div>
   );

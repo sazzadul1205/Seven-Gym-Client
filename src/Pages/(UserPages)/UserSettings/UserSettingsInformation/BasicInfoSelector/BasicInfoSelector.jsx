@@ -1,8 +1,12 @@
 import { useState } from "react";
-import PropTypes from "prop-types";
-import AvatarSettings from "./AvatarSettings/AvatarSettings";
 
-const BasicInfoSettings = ({ UsersData }) => {
+// Import Package
+import PropTypes from "prop-types";
+
+// Import Component
+import AvatarSelector from "./AvatarSelector/AvatarSelector";
+
+const BasicInfoSelector = ({ UsersData }) => {
   // State for avatar image with a default fallback
   const [profileImage, setProfileImage] = useState(
     UsersData?.profileImage || "https://via.placeholder.com/150"
@@ -24,7 +28,7 @@ const BasicInfoSettings = ({ UsersData }) => {
       <div className="flex gap-4 text-black">
         {/* Avatar Section */}
         <div className="w-1/2 bg-gray-300 rounded-xl border border-gray-100 px-2">
-          <AvatarSettings
+          <AvatarSelector
             profileImage={profileImage}
             setProfileImage={setProfileImage}
           />
@@ -79,7 +83,7 @@ const BasicInfoSettings = ({ UsersData }) => {
 };
 
 // PropTypes for type checking the UsersData prop
-BasicInfoSettings.propTypes = {
+BasicInfoSelector.propTypes = {
   UsersData: PropTypes.shape({
     profileImage: PropTypes.string,
     fullName: PropTypes.string,
@@ -88,4 +92,4 @@ BasicInfoSettings.propTypes = {
   }),
 };
 
-export default BasicInfoSettings;
+export default BasicInfoSelector;

@@ -159,9 +159,7 @@ const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
       >
-        <label className="block text-gray-700 font-semibold text-xl pb-2">
-          My Goals
-        </label>
+        <p className="font-semibold text-lg py-3">My Fitness Goals</p>
         <div className="flex flex-wrap bg-white gap-2 py-4 px-2">
           {selectedGoals.map((goal) => {
             const bgColor = goalColors[goal] || "#F72C5B";
@@ -173,7 +171,7 @@ const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
                 className="flex cursor-pointer font-semibold items-center rounded-full px-5 py-2 gap-5 hover:opacity-90"
                 style={{
                   backgroundColor: bgColor,
-                  
+
                   color: textColor, // Set text color dynamically
                 }}
                 onClick={() => removeGoal(goal)}

@@ -1,11 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
+
+// Import Package
 import PropTypes from "prop-types";
-import CommonButton from "../../../../../../Shared/Buttons/CommonButton";
 import Cropper from "react-easy-crop";
+
+// Import Button
+import CommonButton from "../../../../../../Shared/Buttons/CommonButton";
+
+// Import Icons
 import { FiCamera } from "react-icons/fi";
 import { ImCross } from "react-icons/im";
 
-const AvatarSettings = ({ profileImage, setProfileImage }) => {
+const AvatarSelector = ({ profileImage, setProfileImage }) => {
   // State for zoom and rotation controls
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
@@ -109,12 +115,7 @@ const AvatarSettings = ({ profileImage, setProfileImage }) => {
         {/* Display three avatar styles */}
         <div className="flex items-end gap-5">
           {/* First Avatar (Largest) */}
-          <div
-            className="w-32 h-32 rounded-lg shadow-lg overflow-hidden cursor-pointer"
-            onClick={() =>
-              document.getElementById("User_Image_Modal").showModal()
-            }
-          >
+          <div className="w-32 h-32 rounded-lg shadow-lg overflow-hidden cursor-pointer">
             <img
               src={profileImage}
               alt="User Profile"
@@ -123,12 +124,7 @@ const AvatarSettings = ({ profileImage, setProfileImage }) => {
           </div>
 
           {/* Second Avatar */}
-          <div
-            className="w-20 h-20 rounded-lg shadow-lg overflow-hidden cursor-pointer"
-            onClick={() =>
-              document.getElementById("User_Image_Modal").showModal()
-            }
-          >
+          <div className="w-20 h-20 rounded-lg shadow-lg overflow-hidden cursor-pointer">
             <img
               src={profileImage}
               alt="User Profile"
@@ -137,12 +133,7 @@ const AvatarSettings = ({ profileImage, setProfileImage }) => {
           </div>
 
           {/* Third Avatar (Circular) */}
-          <div
-            className="w-20 h-20 rounded-full shadow-lg overflow-hidden cursor-pointer"
-            onClick={() =>
-              document.getElementById("User_Image_Modal").showModal()
-            }
-          >
+          <div className="w-20 h-20 rounded-full shadow-lg overflow-hidden cursor-pointer">
             <img
               src={profileImage}
               alt="User Profile"
@@ -261,9 +252,9 @@ const AvatarSettings = ({ profileImage, setProfileImage }) => {
   );
 };
 
-AvatarSettings.propTypes = {
+AvatarSelector.propTypes = {
   profileImage: PropTypes.string,
   setProfileImage: PropTypes.func.isRequired,
 };
 
-export default AvatarSettings;
+export default AvatarSelector;

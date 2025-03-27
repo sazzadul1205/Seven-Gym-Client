@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { ImCross } from "react-icons/im";
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
-const BannerSettings = ({ UsersData }) => {
+const BannerSelector = ({ UsersData }) => {
   const [backgroundImage, setBackgroundImage] = useState(
     UsersData?.backgroundImage || "https://via.placeholder.com/1200x400"
   );
@@ -141,10 +141,10 @@ const BannerSettings = ({ UsersData }) => {
 };
 
 // PropTypes for type validation
-BannerSettings.propTypes = {
+BannerSelector.propTypes = {
   UsersData: PropTypes.shape({
     backgroundImage: PropTypes.string,
   }),
 };
 
-export default BannerSettings;
+export default BannerSelector;
