@@ -1,5 +1,6 @@
 import { GrUserSettings } from "react-icons/gr";
 import BannerSettings from "./BannerSettings/BannerSettings";
+import BasicInfoSettings from "./BasicInfoSettings/BasicInfoSettings";
 
 const UserSettingsInformation = ({ UsersData }) => {
   return (
@@ -13,9 +14,15 @@ const UserSettingsInformation = ({ UsersData }) => {
       </div>
 
       {/* Content */}
-      <div className="space-y-3 py-2 px-1">
+      <div className="space-y-3">
         {/* Banners Section */}
         <BannerSettings UsersData={UsersData} />
+
+        {/* Avatar, Name, Phone, Date, Gender */}
+        <BasicInfoSettings UsersData={UsersData} />
+
+        {/* Bio, Goals  */}
+        <DetailsInfoSelector />
       </div>
     </div>
   );

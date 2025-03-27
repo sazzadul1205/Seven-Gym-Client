@@ -1,26 +1,22 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-import axios from "axios";
-import Swal from "sweetalert2";
 import { ImCross } from "react-icons/im";
-
-// Image Hosting API Key & URL
-const IMAGE_HOSTING_KEY = import.meta.env.VITE_IMAGE_HOSTING_KEY;
-const IMAGE_HOSTING_API = `https://api.imgbb.com/1/upload?key=${IMAGE_HOSTING_KEY}`;
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
 const BannerSettings = ({ UsersData }) => {
   const [backgroundImage, setBackgroundImage] = useState(
     UsersData?.backgroundImage || "https://via.placeholder.com/1200x400"
   );
+
   const [selectedFile, setSelectedFile] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDragging, setIsDragging] = useState(false); // Dragging state
+  const [isDragging, setIsDragging] = useState(false);
 
   // Handles file selection (via click or drag-and-drop)
   const handleImageSelect = (file) => {
     if (file) {
+      const imageUrl = URL.createObjectURL(file);
       setSelectedFile(file);
-      setBackgroundImage(URL.createObjectURL(file)); // Show preview
+      setBackgroundImage(imageUrl); // Show preview
     }
   };
 
@@ -41,70 +37,22 @@ const BannerSettings = ({ UsersData }) => {
     handleImageSelect(file);
   };
 
-  // Uploads the selected image to an external hosting service.
-  const handleSaveImage = async () => {
-    if (!selectedFile) {
-      Swal.fire({
-        icon: "error",
-        title: "No Image Selected",
-        text: "Please select an image to upload.",
-      });
-      return;
-    }
-
-    setIsLoading(true);
-
-    const formData = new FormData();
-    formData.append("image", selectedFile);
-
-    try {
-      const res = await axios.post(IMAGE_HOSTING_API, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      const imageUrl = res?.data?.data?.display_url;
-      if (!imageUrl) throw new Error("Image hosting failed. No URL returned.");
-
-      setBackgroundImage(imageUrl);
-      setSelectedFile(null);
-
-      Swal.fire({
-        icon: "success",
-        title: "Image Uploaded",
-        text: "Image uploaded successfully!",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-
-      closeModal();
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Upload Failed",
-        text: `Image upload failed. Please try again. ${error}`,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const closeModal = () => {
-    document.getElementById("Background_Image_Modal")?.close();
-  };
-
-  const openModal = () => {
-    document.getElementById("Background_Image_Modal")?.showModal();
-  };
-
   return (
-    <div className="bg-gray-400 p-3">
+    <div className="bg-gray-400/50 p-3">
       {/* Title */}
-      <p className="text-xl font-semibold">Background:</p>
+      <h3 className="text-xl font-semibold text-black py-1">
+        Profile Background:
+      </h3>
+
+      {/* Divider */}
+      <div className="bg-white p-[2px] w-1/2"></div>
 
       {/* Banner (Click to Change) */}
       <div
         className="relative group w-full h-[400px] rounded-lg shadow-lg overflow-hidden cursor-pointer hover:border-dashed hover:border-black hover:border-2 my-2"
-        onClick={openModal}
+        onClick={() =>
+          document.getElementById("Background_Image_Modal")?.showModal()
+        }
       >
         <img
           src={backgroundImage}
@@ -124,7 +72,9 @@ const BannerSettings = ({ UsersData }) => {
             <h3 className="font-bold text-lg">Background Image Modal</h3>
             <ImCross
               className="text-xl hover:text-[#F72C5B] cursor-pointer"
-              onClick={closeModal}
+              onClick={() =>
+                document.getElementById("Background_Image_Modal")?.close()
+              }
             />
           </div>
 
@@ -155,29 +105,34 @@ const BannerSettings = ({ UsersData }) => {
                   id="fileInput"
                   onChange={(e) => handleImageSelect(e.target.files[0])}
                 />
-                <p
-                  className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-300 to-blue-500 text-white px-10 py-2 rounded-lg cursor-pointer"
-                  onClick={() => document.getElementById("fileInput").click()}
-                >
-                  Select Image
-                </p>
+                {/* Select form file Btn */}
+                <CommonButton
+                  clickEvent={() =>
+                    document.getElementById("fileInput").click()
+                  }
+                  text="Select Image"
+                  bgColor="blue"
+                />
               </>
             )}
           </div>
 
           {/* Save Button */}
-          <div className="flex justify-end px-5 py-3">
-            <button
-              className={`text-white font-semibold px-5 py-3 rounded-lg ${
-                isLoading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-600 cursor-pointer"
-              }`}
-              onClick={handleSaveImage}
-              disabled={isLoading}
-            >
-              {isLoading ? "Uploading..." : "Save Background Image"}
-            </button>
+          <div className="flex justify-between px-5 py-3">
+            {/* Select form file Btn */}
+            <CommonButton
+              clickEvent={() => document.getElementById("fileInput").click()}
+              text="Select Image"
+              bgColor="blue"
+            />
+            {/* Close Modal Btn */}
+            <CommonButton
+              clickEvent={() =>
+                document.getElementById("Background_Image_Modal")?.close()
+              }
+              text="Save Background"
+              bgColor="green"
+            />
           </div>
         </div>
       </dialog>

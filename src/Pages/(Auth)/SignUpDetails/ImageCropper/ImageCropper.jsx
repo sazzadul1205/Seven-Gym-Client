@@ -5,11 +5,11 @@ import { FiCamera } from "react-icons/fi";
 
 const ImageCropper = ({ onImageCropped }) => {
   // State for image cropping
-  const [imageSrc, setImageSrc] = useState(null); // Stores image URL for cropper
   const [zoom, setZoom] = useState(1); // Zoom level
   const [rotation, setRotation] = useState(0); // Rotation angle
-  const [crop, setCrop] = useState({ x: 0, y: 0 }); // Crop position
+  const [imageSrc, setImageSrc] = useState(null); // Stores image URL for cropper
   const [cropArea, setCropArea] = useState(null); // Cropped area in pixels
+  const [crop, setCrop] = useState({ x: 0, y: 0 }); // Crop position
   const [showCropper, setShowCropper] = useState(false); // Show/hide cropper
 
   // Handle file selection
@@ -85,10 +85,6 @@ const ImageCropper = ({ onImageCropped }) => {
 
   return (
     <div>
-      <label className="text-2xl font-semibold text-gray-700 pt-5">
-        Profile Image
-      </label>
-
       {/* Image Preview & Upload */}
       <div
         className="w-[250px] h-[250px] rounded-full mx-auto border-2 border-dashed border-gray-500 flex items-center justify-center relative overflow-hidden hover:scale-105"
