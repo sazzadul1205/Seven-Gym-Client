@@ -1,11 +1,16 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { FcAddImage } from "react-icons/fc";
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+
+// Import Package
 import Swal from "sweetalert2";
-import useAuth from "../../../../../Hooks/useAuth";
+import PropTypes from "prop-types";
+import { useForm } from "react-hook-form";
+
+// Import Icons
+import { FcAddImage } from "react-icons/fc";
 import { ImCross } from "react-icons/im";
+// Import Hooks
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import useAuth from "../../../../../Hooks/useAuth";
 
 // Image Hosting API configuration
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
@@ -15,10 +20,12 @@ const AddAwardModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
   const { user } = useAuth();
 
-  const [previewImage, setPreviewImage] = useState(null);
-  const [imageFile, setImageFile] = useState(null);
+  // Sate Management
   const [loading, setLoading] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
 
+  // Form Control
   const {
     register,
     handleSubmit,
@@ -48,7 +55,7 @@ const AddAwardModal = ({ refetch }) => {
   };
 
   // Handle form submission and award creation
-  const handleFormSubmit = async (data) => {
+  const onSubmit = async (data) => {
     setLoading(true);
     let uploadedImageUrl = null;
 
@@ -97,7 +104,10 @@ const AddAwardModal = ({ refetch }) => {
           icon: "success",
           title: "Award Added Successfully",
           text: "The award has been added successfully!",
+          timer: 1000,
+          showConfirmButton: false,
         });
+        refetch();
       } else {
         Swal.fire({
           icon: "error",
@@ -115,6 +125,7 @@ const AddAwardModal = ({ refetch }) => {
     } finally {
       setLoading(false);
       closeModal();
+      refetch();
     }
   };
 
@@ -128,17 +139,20 @@ const AddAwardModal = ({ refetch }) => {
   };
 
   return (
-    <div className="modal-box">
-      <div className="flex justify-between items-center">
+    <div className="modal-box p-0 bg-linear-to-b from-white to-gray-300 text-black">
+      {/* Header Section */}
+      <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
         <h3 className="font-bold text-lg">Add Award</h3>
         <ImCross
           className="text-xl hover:text-[#F72C5B] cursor-pointer"
           onClick={() => document.getElementById("Add_Award_Modal").close()}
         />
       </div>
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+
+      {/* Form Section */}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-5">
         {/* Award Icon */}
-        <div className="border-y border-gray-300 my-2 py-3">
+        <div className="">
           <label className="block text-lg font-medium text-center pb-2">
             Award Icon
           </label>
@@ -182,11 +196,11 @@ const AddAwardModal = ({ refetch }) => {
 
         {/* Award Name */}
         <div>
-          <label className="block text-sm font-medium pb-2">Award Name</label>
+          <label className="block font-bold ml-1 mb-2">Award Name</label>
           <input
             type="text"
             {...register("awardName", { required: "Award Name is required" })}
-            className="input input-bordered rounded-2xl w-full"
+            className="input input-bordered w-full rounded-lg bg-white border-gray-600"
           />
           {errors.awardName && (
             <span className="text-red-500 text-sm">
@@ -197,15 +211,13 @@ const AddAwardModal = ({ refetch }) => {
 
         {/* Award Ranking */}
         <div>
-          <label className="block text-sm font-medium pb-2">
-            Award Ranking
-          </label>
+          <label className="block font-bold ml-1 mb-2">Award Ranking</label>
           <input
             list="awardRankings"
             {...register("awardRanking", {
               required: "Award Ranking is required",
             })}
-            className="input input-bordered rounded-2xl w-full"
+            className="input input-bordered w-full rounded-lg bg-white border-gray-600"
             placeholder="Select or type Award Ranking"
           />
           <datalist id="awardRankings">
@@ -225,12 +237,12 @@ const AddAwardModal = ({ refetch }) => {
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium pb-2">Description</label>
+          <label className="block font-bold ml-1 mb-2">Description</label>
           <textarea
             {...register("description", {
               required: "Description is required",
             })}
-            className="textarea textarea-bordered rounded-2xl w-full"
+            className="textarea textarea-bordered w-full rounded-lg bg-white border-gray-600"
           ></textarea>
           {errors.description && (
             <span className="text-red-500 text-sm">
@@ -241,13 +253,13 @@ const AddAwardModal = ({ refetch }) => {
 
         {/* Date Awarded */}
         <div>
-          <label className="block text-sm font-medium pb-2">Date Awarded</label>
+          <label className="block font-bold ml-1 mb-2">Date Awarded</label>
           <input
             type="date"
             {...register("dateAwarded", {
               required: "Date Awarded is required",
             })}
-            className="input input-bordered rounded-2xl w-full"
+            className="input input-bordered w-full rounded-lg bg-white border-gray-600"
           />
           {errors.dateAwarded && (
             <span className="text-red-500 text-sm">
@@ -258,11 +270,11 @@ const AddAwardModal = ({ refetch }) => {
 
         {/* Awarded By */}
         <div>
-          <label className="block text-sm font-medium pb-2">Awarded By</label>
+          <label className="block font-bold ml-1 mb-2">Awarded By</label>
           <input
             type="text"
             {...register("awardedBy", { required: "Awarded By is required" })}
-            className="input input-bordered rounded-2xl w-full"
+            className="input input-bordered w-full rounded-lg bg-white border-gray-600"
           />
           {errors.awardedBy && (
             <span className="text-red-500 text-sm">
@@ -276,7 +288,9 @@ const AddAwardModal = ({ refetch }) => {
           <button
             type="submit"
             className={`py-3 mt-3 px-10 ${
-              loading ? "bg-gray-400" : "bg-emerald-400 hover:bg-emerald-500"
+              loading
+                ? "bg-gray-400"
+                : "bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-600 text-white cursor-pointer"
             } font-semibold rounded-xl`}
             disabled={loading}
           >
@@ -292,6 +306,10 @@ const AddAwardModal = ({ refetch }) => {
       </form>
     </div>
   );
+};
+
+AddAwardModal.propTypes = {
+  refetch: PropTypes.func.isRequired,
 };
 
 export default AddAwardModal;

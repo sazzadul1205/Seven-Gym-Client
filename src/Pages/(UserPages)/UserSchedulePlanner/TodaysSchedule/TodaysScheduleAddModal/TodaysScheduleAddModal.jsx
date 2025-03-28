@@ -1,12 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
+
+// Import package
+import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { ImCross } from "react-icons/im";
+import PropTypes from "prop-types";
 import Swal from "sweetalert2";
 
+// import icons
+import { ImCross } from "react-icons/im";
+
+// Import Hooks
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../../Hooks/useAuth";
-import PropTypes from "prop-types"; // Import PropTypes for prop validation
 
 const TodaysScheduleAddModal = ({ selectedID, refetch }) => {
   const { user } = useAuth();

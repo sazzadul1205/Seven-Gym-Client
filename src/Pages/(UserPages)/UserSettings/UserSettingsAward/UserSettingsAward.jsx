@@ -107,18 +107,17 @@ const UserSettingsAward = ({ UsersData, refetch }) => {
       }
     }
   };
-
   return (
     <div className="bg-gradient-to-b from-gray-100 to-gray-200">
       {/* Header */}
-      <div className="bg-gray-400 px-5 py-2 rounded-t-lg">
+      <div className="bg-gray-400 px-5 py-2">
         <p className="flex gap-2 items-center text-xl font-semibold italic text-white">
           <FaTrophy /> User Award Settings
         </p>
       </div>
 
       {/* Add Award Button */}
-      <div className="bg-gray-400/50 p-3">
+      <div className="flex items-center justify-between bg-gray-400/50 p-3">
         <CommonButton
           text="Add New Award"
           bgColor="green"
@@ -229,7 +228,7 @@ const UserSettingsAward = ({ UsersData, refetch }) => {
 
       {/* Modal */}
       <dialog id="Add_Award_Modal" className="modal">
-        <AddAwardModal RefetchData={refetch} />
+        <AddAwardModal refetch={refetch} />
       </dialog>
     </div>
   );

@@ -7,7 +7,6 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import Loading from "../../../Shared/Loading/Loading";
 import useAuth from "../../../Hooks/useAuth";
 
-import USAwards from "./USAwards/USAwards";
 import USWorkout from "./USWorkout/USWorkout";
 import USSchedule from "./USSchedule/USSchedule";
 import UserSettingsInformation from "./UserSettingsInformation/UserSettingsInformation";
@@ -80,12 +79,6 @@ const UserSettings = () => {
       content: (
         <UserSettingsAward UsersData={UsersData} refetch={UsersDataRefetch} />
       ),
-    },
-    {
-      id: "Settings_Awards",
-      Icon: "https://i.ibb.co.com/dmbrdkq/trophy.png",
-      title: "Awards Settings",
-      content: <USAwards UsersData={UsersData} refetch={UsersDataRefetch} />,
     },
     {
       id: "Settings_Workouts",
