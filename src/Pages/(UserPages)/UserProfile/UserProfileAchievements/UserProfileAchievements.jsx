@@ -21,13 +21,13 @@ const UserProfileAchievements = ({ usersData, refetch }) => {
   const getLevelColor = (level) => {
     switch (level) {
       case "Gold":
-        return "text-[#FFD700]";
+        return "text-yellow-500";
       case "Silver":
-        return "text-[#C0C0C0]";
+        return "text-gray-500";
       case "Bronze":
         return "text-[#CD7F32]";
       default:
-        return "text-black";
+        return "text-blue-500";
     }
   };
 
@@ -71,7 +71,7 @@ const UserProfileAchievements = ({ usersData, refetch }) => {
             <div
               key={index}
               onClick={() => handleAwardClick(award)}
-              className="flex items-center bg-gradient-to-bl hover:bg-gradient-to-tr from-white to-gray-200 rounded-4xl border border-gray-500/20 p-1 gap-2 cursor-pointer"
+              className="flex items-center bg-gradient-to-bl hover:bg-gradient-to-tr from-white to-gray-100 rounded-xl border border-gray-500/20 p-1 gap-2 cursor-pointer"
             >
               {/* Award Icon */}
               <img

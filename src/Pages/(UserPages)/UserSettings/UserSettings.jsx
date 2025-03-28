@@ -11,6 +11,7 @@ import USWorkout from "./USWorkout/USWorkout";
 import USSchedule from "./USSchedule/USSchedule";
 import UserSettingsInformation from "./UserSettingsInformation/UserSettingsInformation";
 import UserSettingsAward from "./UserSettingsAward/UserSettingsAward";
+import UserSettingsWorkout from "./UserSettingsWorkout/UserSettingsWorkout";
 
 const UserSettings = () => {
   const { user } = useAuth();
@@ -79,6 +80,14 @@ const UserSettings = () => {
       title: "User Award Settings",
       content: (
         <UserSettingsAward UsersData={UsersData} refetch={UsersDataRefetch} />
+      ),
+    },
+    {
+      id: "User_Workout_Settings",
+      Icon: "https://i.ibb.co.com/nznGSDB/running.png",
+      title: "User Workout Settings",
+      content: (
+        <UserSettingsWorkout UsersData={UsersData} refetch={UsersDataRefetch} />
       ),
     },
     {

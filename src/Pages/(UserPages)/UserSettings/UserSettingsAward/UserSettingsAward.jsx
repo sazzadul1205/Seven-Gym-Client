@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Import Package
 import Swal from "sweetalert2";
@@ -18,8 +18,13 @@ import AddAwardModal from "../USAwards/AddAwardModal/AddAwardModal";
 const UserSettingsAward = ({ UsersData, refetch }) => {
   const axiosPublic = useAxiosPublic();
 
-  //State Management
+  // State Management
   const [UserAwards, setUserAwards] = useState(UsersData?.awards || []);
+
+  // Sync state with updated UsersData
+  useEffect(() => {
+    setUserAwards(UsersData?.awards || []);
+  }, [UsersData]);
 
   // Toggle favorite status for an award
   const toggleFavorite = async (index, awardCode) => {
@@ -44,12 +49,7 @@ const UserSettingsAward = ({ UsersData, refetch }) => {
       });
 
       if (response.status === 200) {
-        setUserAwards((prevAwards) =>
-          prevAwards.map((award, i) =>
-            i === index ? { ...award, favorite: !award.favorite } : award
-          )
-        );
-        refetch();
+        refetch(); // Fetch latest data
       } else {
         Swal.fire(
           "Error",
@@ -68,7 +68,7 @@ const UserSettingsAward = ({ UsersData, refetch }) => {
   };
 
   // Delete an award
-  const deleteAward = async (index, awardCode) => {
+  const deleteAward = async (awardCode) => {
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -86,10 +86,7 @@ const UserSettingsAward = ({ UsersData, refetch }) => {
         });
 
         if (response.status === 200) {
-          setUserAwards((prevAwards) =>
-            prevAwards.filter((_, i) => i !== index)
-          );
-          refetch();
+          refetch(); // Fetch latest data
         } else {
           Swal.fire(
             "Error",
@@ -107,6 +104,7 @@ const UserSettingsAward = ({ UsersData, refetch }) => {
       }
     }
   };
+
   return (
     <div className="bg-gradient-to-b from-gray-100 to-gray-200">
       {/* Header */}
@@ -151,76 +149,84 @@ const UserSettingsAward = ({ UsersData, refetch }) => {
 
             {/* Table Body */}
             <tbody>
-              {UserAwards.map((award, index) => (
-                <tr
-                  key={award.awardCode}
-                  className={`border-b border-gray-200 ${
-                    index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                  }`}
-                >
-                  {/* Award Icon */}
-                  <td className="p-3">
-                    <img
-                      src={award.awardIcon}
-                      alt={award.awardName}
-                      className="w-10 h-10 rounded-full border"
-                    />
-                  </td>
+              {UserAwards.length > 0 ? (
+                UserAwards.map((award, index) => (
+                  <tr
+                    key={award.awardCode}
+                    className={`border-b border-gray-200 ${
+                      index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                    }`}
+                  >
+                    {/* Award Icon */}
+                    <td className="p-3">
+                      <img
+                        src={award.awardIcon}
+                        alt={award.awardName}
+                        className="w-10 h-10 rounded-full border"
+                      />
+                    </td>
 
-                  {/* Award Name */}
-                  <td className="p-3 font-semibold">{award.awardName}</td>
+                    {/* Award Name */}
+                    <td className="p-3 font-semibold">{award.awardName}</td>
 
-                  {/* Award Ranking with Color Styling */}
-                  <td className="p-3 font-semibold">
-                    <span
-                      className={`mx-auto px-2 py-1 rounded-md text-white ${
-                        award.awardRanking.includes("Gold")
-                          ? "bg-yellow-500"
-                          : award.awardRanking.includes("Silver")
-                          ? "bg-gray-400"
-                          : award.awardRanking.includes("Bronze")
-                          ? "bg-orange-500"
-                          : "bg-blue-500"
-                      }`}
-                    >
-                      {award.awardRanking}
-                    </span>
-                  </td>
+                    {/* Award Ranking with Color Styling */}
+                    <td className="p-3 font-semibold">
+                      <span
+                        className={`mx-auto px-2 py-1 rounded-md text-white ${
+                          award.awardRanking.includes("Gold")
+                            ? "bg-yellow-500"
+                            : award.awardRanking.includes("Silver")
+                            ? "bg-gray-400"
+                            : award.awardRanking.includes("Bronze")
+                            ? "bg-orange-500"
+                            : "bg-blue-500"
+                        }`}
+                      >
+                        {award.awardRanking}
+                      </span>
+                    </td>
 
-                  {/* Award Description */}
-                  <td className="p-3">{award.description}</td>
+                    {/* Award Description */}
+                    <td className="p-3">{award.description}</td>
 
-                  {/* Date Awarded */}
-                  <td className="p-3">{award.dateAwarded}</td>
+                    {/* Date Awarded */}
+                    <td className="p-3">{award.dateAwarded}</td>
 
-                  {/* Awarded By */}
-                  <td className="p-3">{award.awardedBy}</td>
+                    {/* Awarded By */}
+                    <td className="p-3">{award.awardedBy}</td>
 
-                  {/* Favorite Status */}
-                  <td className="p-3 text-center">
-                    <button
-                      className="cursor-pointer"
-                      onClick={() => toggleFavorite(index, award.awardCode)}
-                    >
-                      {award.favorite ? (
-                        <FaStar className="text-yellow-400 text-2xl" />
-                      ) : (
-                        <FaRegStar className="text-gray-500 text-2xl" />
-                      )}
-                    </button>
-                  </td>
+                    {/* Favorite Status */}
+                    <td className="p-3 text-center">
+                      <button
+                        className="cursor-pointer"
+                        onClick={() => toggleFavorite(index, award.awardCode)}
+                      >
+                        {award.favorite ? (
+                          <FaStar className="text-yellow-400 text-2xl" />
+                        ) : (
+                          <FaRegStar className="text-gray-500 text-2xl" />
+                        )}
+                      </button>
+                    </td>
 
-                  {/* Delete Action */}
-                  <td className="p-3">
-                    <button
-                      className="px-4 bg-gradient-to-bl hover:bg-gradient-to-tr from-red-400 to-red-600 py-3 text-white text-xl rounded-xl cursor-pointer"
-                      onClick={() => deleteAward(index, award.awardCode)}
-                    >
-                      <FaRegTrashAlt />
-                    </button>
+                    {/* Delete Action */}
+                    <td className="p-3">
+                      <button
+                        className="px-4 bg-gradient-to-bl hover:bg-gradient-to-tr from-red-400 to-red-600 py-3 text-white text-xl rounded-xl cursor-pointer"
+                        onClick={() => deleteAward(award.awardCode)}
+                      >
+                        <FaRegTrashAlt />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className="p-3 text-center text-gray-500">
+                    No awards recorded.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
@@ -233,6 +239,8 @@ const UserSettingsAward = ({ UsersData, refetch }) => {
     </div>
   );
 };
+
+export default UserSettingsAward;
 
 // Define PropTypes for component props
 UserSettingsAward.propTypes = {
@@ -253,5 +261,3 @@ UserSettingsAward.propTypes = {
   }).isRequired,
   refetch: PropTypes.func.isRequired,
 };
-
-export default UserSettingsAward;
