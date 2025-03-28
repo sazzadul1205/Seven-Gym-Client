@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+
+// Import Package
 import PropTypes from "prop-types";
+import { Tooltip } from "react-tooltip";
 
 // Import Icons
 import { FcViewDetails } from "react-icons/fc";
@@ -11,10 +14,9 @@ import {
 } from "react-icons/md";
 
 // Import Modals
-import AddWorkoutModal from "../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
 import ViewAllRecentWorkoutModal from "./ViewAllRecentWorkoutModal/ViewAllRecentWorkoutModal";
 import SelectedWorkoutDetailsModal from "../UserProfileTodaysWorkout/SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
-import { Tooltip } from "react-tooltip";
+import AddWorkoutModal from "../../UserSettings/UserSettingsWorkout/AddWorkoutModal/AddWorkoutModal";
 
 // Reusable component for displaying workout details
 const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (

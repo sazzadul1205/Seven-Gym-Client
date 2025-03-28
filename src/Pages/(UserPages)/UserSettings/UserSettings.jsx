@@ -11,6 +11,7 @@ import USSchedule from "./USSchedule/USSchedule";
 import UserSettingsInformation from "./UserSettingsInformation/UserSettingsInformation";
 import UserSettingsAward from "./UserSettingsAward/UserSettingsAward";
 import UserSettingsWorkout from "./UserSettingsWorkout/UserSettingsWorkout";
+import UserSettingsSchedule from "./UserSettingsSchedule/UserSettingsSchedule";
 
 const UserSettings = () => {
   const { user } = useAuth();
@@ -87,6 +88,17 @@ const UserSettings = () => {
       title: "User Workout Settings",
       content: (
         <UserSettingsWorkout UsersData={UsersData} refetch={UsersDataRefetch} />
+      ),
+    },
+    {
+      id: "User_Workout_Schedule",
+      Icon: "https://i.ibb.co.com/C3WB5f3R/shedule.png",
+      title: "User Schedule Settings",
+      content: (
+        <UserSettingsSchedule
+          userSchedule={userSchedule}
+          refetch={schedulesDataRefetch}
+        />
       ),
     },
 
