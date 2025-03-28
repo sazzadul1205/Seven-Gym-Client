@@ -13,7 +13,7 @@ import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 // Import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-import AddAwardModal from "../USAwards/AddAwardModal/AddAwardModal";
+import AddAwardModal from "./AddAwardModal/AddAwardModal";
 
 const UserSettingsAward = ({ UsersData, refetch }) => {
   const axiosPublic = useAxiosPublic();

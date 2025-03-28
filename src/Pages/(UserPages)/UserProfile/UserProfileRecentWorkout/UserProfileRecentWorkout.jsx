@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { formatDistanceToNowStrict } from "date-fns";
 
 // Import Icons
 import { FcViewDetails } from "react-icons/fc";
-import { FaClock, FaFire, FaWeight } from "react-icons/fa";
-import { MdOutlineLibraryAdd, MdOutlineRecentActors } from "react-icons/md";
+import { FaClock, FaFire } from "react-icons/fa";
+import {
+  MdNotificationImportant,
+  MdOutlineLibraryAdd,
+  MdOutlineRecentActors,
+} from "react-icons/md";
 
 // Import Modals
 import AddWorkoutModal from "../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
 import ViewAllRecentWorkoutModal from "./ViewAllRecentWorkoutModal/ViewAllRecentWorkoutModal";
 import SelectedWorkoutDetailsModal from "../UserProfileTodaysWorkout/SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
+import { Tooltip } from "react-tooltip";
 
 // Reusable component for displaying workout details
 const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
@@ -35,15 +39,6 @@ const UserProfileRecentWorkout = ({ recentWorkouts, refetch }) => {
   // Get the last 5 recent workouts
   const slicedRecentWorkouts = recentWorkouts.slice(0, 5);
 
-  // Function to safely parse date strings in "dd-mm-yyyy" format
-  const safeParseDate = (dateStr) => {
-    if (!dateStr) return null;
-    const [day, month, year] = dateStr.split("-");
-    // Create a date in ISO format ("yyyy-mm-dd") assuming time 00:00:00 UTC
-    const parsedDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
-    return isNaN(parsedDate.getTime()) ? null : parsedDate;
-  };
-
   // Handle clicking on a workout
   const handleWorkoutClick = (workout) => {
     setSelectedWorkout(workout);
@@ -60,31 +55,48 @@ const UserProfileRecentWorkout = ({ recentWorkouts, refetch }) => {
     <div className="bg-linear-to-bl from-gray-200 to-gray-400 p-5 shadow-xl rounded-xl">
       {/* Header */}
       <div className="flex items-center justify-between border-b-2 border-gray-400 pb-2">
+        {/* Title */}
         <div className="flex items-center gap-3">
-          <MdOutlineRecentActors className="text-[#ffcc00] text-3xl sm:text-3xl" />
+          <MdOutlineRecentActors className="text-yellow-300 text-3xl sm:text-3xl" />
           <h2 className="text-lg sm:text-xl font-semibold text-black">
-            Recent Workouts
+            Recent Workout&apos;s
           </h2>
         </div>
+
+        {/* More Btns */}
         <div className="flex gap-4">
           {/* Add New Workout Button */}
-          <MdOutlineLibraryAdd
-            className="text-2xl sm:text-3xl text-red-500 hover:text-red-300 transition-all duration-300 hover:scale-110 cursor-pointer"
-            title="Add New Workout"
-            onClick={() =>
-              document.getElementById("Add_Workout_Modal").showModal()
-            }
-          />
+          <div className="bg-white p-1 rounded-full">
+            <MdOutlineLibraryAdd
+              className="text-3xl text-red-500 hover:text-red-400 transition-all duration-300 hover:scale-105 cursor-pointer"
+              data-tooltip-id="Add_Modal_Button_Tooltip_Workout"
+              onClick={() =>
+                document.getElementById("Add_Workout_Modal").showModal()
+              }
+            />
+            <Tooltip
+              id="Add_Modal_Button_Tooltip_Workout"
+              place="top"
+              content="Add Workout"
+            />
+          </div>
           {/* Show All Recent Workouts Button */}
-          <FcViewDetails
-            className="text-2xl sm:text-3xl transition-all duration-300 hover:scale-110 cursor-pointer"
-            title="Show All"
-            onClick={() =>
-              document
-                .getElementById("View_All_Recent_Workout_Modal")
-                .showModal()
-            }
-          />
+          <div className="bg-white p-1 rounded-full">
+            <FcViewDetails
+              className="text-3xl transition-all duration-300 hover:scale-105 cursor-pointer"
+              data-tooltip-id="view_Modal_Button_Tooltip_All_Workout"
+              onClick={() =>
+                document
+                  .getElementById("View_All_Recent_Workout_Modal")
+                  .showModal()
+              }
+            />
+            <Tooltip
+              id="view_Modal_Button_Tooltip_All_Workout"
+              place="top"
+              content="view All Workout"
+            />
+          </div>
         </div>
       </div>
 
@@ -92,21 +104,6 @@ const UserProfileRecentWorkout = ({ recentWorkouts, refetch }) => {
       <div className="space-y-3 pt-2">
         {slicedRecentWorkouts.length > 0 ? (
           slicedRecentWorkouts.map((workout, index) => {
-            // Parse the workout date from "dd-mm-yyyy"
-            const workoutDate = safeParseDate(workout.date);
-            let timeAgo = workoutDate
-              ? formatDistanceToNowStrict(workoutDate, { addSuffix: false })
-              : "Unknown Date";
-
-            // Shorten the time ago string
-            timeAgo = timeAgo
-              .replace(" minutes", " min")
-              .replace(" minute", " min")
-              .replace(" hours", " hr")
-              .replace(" hour", " hr")
-              .replace(" days", " days")
-              .replace(" day", " day");
-
             return (
               <div
                 key={index}
@@ -143,9 +140,9 @@ const UserProfileRecentWorkout = ({ recentWorkouts, refetch }) => {
                     iconColor="text-red-500"
                   />
                   <WorkoutDetailItem
-                    icon={<FaWeight />}
-                    label="Time"
-                    value={`${timeAgo} ago`}
+                    icon={<MdNotificationImportant />}
+                    label="Intensity"
+                    value={workout.intensity ?? "N/A"}
                     iconColor="text-green-500"
                   />
                 </div>

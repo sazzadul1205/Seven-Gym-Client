@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { formatDistanceToNowStrict } from "date-fns";
 
 // Import Icons
 import { FcViewDetails } from "react-icons/fc";
-import { FaClock, FaFire, FaWeight } from "react-icons/fa";
-import { MdOutlineLibraryAdd, MdOutlineRecentActors } from "react-icons/md";
+import { FaClock, FaFire } from "react-icons/fa";
+import {
+  MdNotificationImportant,
+  MdOutlineLibraryAdd,
+  MdOutlineRecentActors,
+} from "react-icons/md";
 
 // Import Components
 import AddWorkoutModal from "../../UserSettings/USWorkout/AddWorkoutModal/AddWorkoutModal";
 import ViewAllTodaysWorkoutModal from "./ViewAllTodaysWorkoutModal/ViewAllTodaysWorkoutModal";
 import SelectedWorkoutDetailsModal from "./SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
+import { Tooltip } from "react-tooltip";
 
 // Reusable component for workout details
 const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
@@ -33,32 +37,28 @@ const UserProfileTodaysWorkout = ({ recentWorkouts, refetch }) => {
   // State for selected workout details
   const [selectedWorkout, setSelectedWorkout] = useState(null);
 
-  // Function to safely parse date strings in "dd-mm-yyyy" format
-  const safeParseDate = (dateStr) => {
-    if (!dateStr) return null;
-    const [day, month, year] = dateStr.split("-");
-    // Create a date in ISO format ("yyyy-mm-dd") assuming time 00:00:00 UTC
-    const parsedDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
-    return isNaN(parsedDate.getTime()) ? null : parsedDate;
+  // Get today's date in 'dd mm yyyy' format
+  const getCurrentDate = () => {
+    const today = new Date();
+    return today.toLocaleDateString("en-GB").replace(/\//g, " ");
   };
 
-  // Get today's date in "YYYY-MM-DD" format
-  const getTodayDate = () => {
-    return new Date().toISOString().split("T")[0];
+  const todayDate = getCurrentDate();
+
+  // Function to extract and format date from 'registeredDateAndTime'
+  const formatRegisteredDate = (isoDate) => {
+    const [datePart] = isoDate.split("T"); // Extracts 'dd-mm-yy' part
+    const [day, month, year] = datePart.split("-"); // Splits into components
+    return `${day} ${month} 20${year}`; // Converts 'dd-mm-yy' to 'dd mm yyyy'
   };
 
-  // Filter workouts to include only those whose date (converted to ISO format)
-  // matches today's date, and limit to 5 workouts.
+  // Filter workouts for today's workouts based on registeredDateAndTime
   const todaysWorkouts = recentWorkouts
-    ?.filter((workout) => {
-      if (!workout.date) return false;
-      const workoutDate = safeParseDate(workout.date);
-      return (
-        workoutDate &&
-        workoutDate.toISOString().split("T")[0] === getTodayDate()
-      );
-    })
-    .slice(0, 5);
+    .filter(
+      (workout) =>
+        formatRegisteredDate(workout.registeredDateAndTime) === todayDate
+    )
+    .slice(0, 5); // Only show the most recent 5 workouts
 
   // Open workout details modal
   const handleWorkoutClick = (workout) => {
@@ -72,35 +72,54 @@ const UserProfileTodaysWorkout = ({ recentWorkouts, refetch }) => {
     document.getElementById("Todays_Workout_Details_Modal").close();
   };
 
+  console.log(todaysWorkouts);
+
   return (
     <div className="bg-linear-to-bl from-gray-200 to-gray-400 p-5 shadow-xl rounded-xl">
       {/* Header Section */}
       <div className="flex items-center justify-between border-b-2 border-gray-400 pb-2">
+        {/* Title */}
         <div className="flex items-center gap-3">
-          <MdOutlineRecentActors className="text-[#ffcc00] text-3xl sm:text-3xl" />
+          <MdOutlineRecentActors className="text-yellow-300 text-3xl sm:text-3xl" />
           <h2 className="text-lg sm:text-xl font-semibold text-black">
             Today&apos;s Workouts
           </h2>
         </div>
+
+        {/* More Btns */}
         <div className="flex gap-4">
           {/* Add New Workout Button */}
-          <MdOutlineLibraryAdd
-            className="text-2xl sm:text-3xl text-red-500 hover:text-red-300 transition-all duration-300 hover:scale-110 cursor-pointer"
-            title="Add New Workout"
-            onClick={() =>
-              document.getElementById("Add_Workout_Modal").showModal()
-            }
-          />
-          {/* View All Workouts Button */}
-          <FcViewDetails
-            className="text-2xl sm:text-3xl transition-all duration-300 hover:scale-110 cursor-pointer"
-            title="Show All"
-            onClick={() =>
-              document
-                .getElementById("View_All_Todays_Workout_Modal")
-                .showModal()
-            }
-          />
+          <div className="bg-white p-1 rounded-full">
+            <MdOutlineLibraryAdd
+              className="text-3xl text-red-500 hover:text-red-400 transition-all duration-300 hover:scale-105 cursor-pointer"
+              data-tooltip-id="Add_Modal_Button_Tooltip_Workout"
+              onClick={() =>
+                document.getElementById("Add_Workout_Modal").showModal()
+              }
+            />
+            <Tooltip
+              id="Add_Modal_Button_Tooltip_Workout"
+              place="top"
+              content="Add Workout"
+            />
+          </div>
+          {/* Show All Recent Workouts Button */}
+          <div className="bg-white p-1 rounded-full">
+            <FcViewDetails
+              className="text-3xl transition-all duration-300 hover:scale-105 cursor-pointer"
+              data-tooltip-id="view_Modal_Button_Tooltip_All_Workout"
+              onClick={() =>
+                document
+                  .getElementById("View_All_Recent_Workout_Modal")
+                  .showModal()
+              }
+            />
+            <Tooltip
+              id="view_Modal_Button_Tooltip_All_Workout"
+              place="top"
+              content="view All Workout"
+            />
+          </div>
         </div>
       </div>
 
@@ -108,21 +127,6 @@ const UserProfileTodaysWorkout = ({ recentWorkouts, refetch }) => {
       <div className="space-y-3 pt-2">
         {todaysWorkouts && todaysWorkouts.length > 0 ? (
           todaysWorkouts.map((workout, index) => {
-            // Parse the workout date from "dd-mm-yyyy"
-            const workoutDate = safeParseDate(workout.date);
-            let timeAgo = workoutDate
-              ? formatDistanceToNowStrict(workoutDate, { addSuffix: false })
-              : "Unknown Date";
-
-            // Shorten the time ago string
-            timeAgo = timeAgo
-              .replace(" minutes", " min")
-              .replace(" minute", " min")
-              .replace(" hours", " hr")
-              .replace(" hour", " hr")
-              .replace(" days", " days")
-              .replace(" day", " day");
-
             return (
               <div
                 key={index}
@@ -159,9 +163,9 @@ const UserProfileTodaysWorkout = ({ recentWorkouts, refetch }) => {
                     iconColor="text-red-500"
                   />
                   <WorkoutDetailItem
-                    icon={<FaWeight />}
-                    label="Time"
-                    value={`${timeAgo} ago`}
+                    icon={<MdNotificationImportant />}
+                    label="Intensity"
+                    value={workout.intensity ?? "N/A"}
                     iconColor="text-green-500"
                   />
                 </div>

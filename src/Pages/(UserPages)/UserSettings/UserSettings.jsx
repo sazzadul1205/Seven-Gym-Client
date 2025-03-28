@@ -7,7 +7,6 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import Loading from "../../../Shared/Loading/Loading";
 import useAuth from "../../../Hooks/useAuth";
 
-import USWorkout from "./USWorkout/USWorkout";
 import USSchedule from "./USSchedule/USSchedule";
 import UserSettingsInformation from "./UserSettingsInformation/UserSettingsInformation";
 import UserSettingsAward from "./UserSettingsAward/UserSettingsAward";
@@ -89,12 +88,6 @@ const UserSettings = () => {
       content: (
         <UserSettingsWorkout UsersData={UsersData} refetch={UsersDataRefetch} />
       ),
-    },
-    {
-      id: "Settings_Workouts",
-      Icon: "https://i.ibb.co.com/nznGSDB/running.png",
-      title: "Workouts Settings",
-      content: <USWorkout UsersData={UsersData} refetch={UsersDataRefetch} />,
     },
 
     {
