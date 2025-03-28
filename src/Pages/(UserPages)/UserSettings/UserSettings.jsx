@@ -16,12 +16,13 @@ const UserSettings = () => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
+  // Hooks
   const navigate = useNavigate();
   const location = useLocation();
 
   // Extract tab parameter from URL
   const searchParams = new URLSearchParams(location.search);
-  const initialTab = searchParams.get("tab") || "Settings_Image";
+  const initialTab = searchParams.get("tab") || "User_Info_Settings";
 
   const [activeTab, setActiveTab] = useState(initialTab);
 

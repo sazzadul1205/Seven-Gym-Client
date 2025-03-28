@@ -82,7 +82,7 @@ const AwardViewMoreModal = ({ usersData, refetch, PageEmail }) => {
       {/* Modal Header */}
       <div className="flex justify-between items-center text-black mb-4 border-b-2 border-black pb-2 px-2">
         {/* Settings Link */}
-        <Link to={`/User/UserSettings?tab=Settings_Awards`}>
+        <Link to={`/User/UserSettings?tab=User_Award_Settings`}>
           <IoSettingsSharp className="mr-5 text-2xl hover:text-red-500" />
         </Link>
         <h3 className="font-bold text-lg flex items-center">All My Awards</h3>
@@ -102,7 +102,7 @@ const AwardViewMoreModal = ({ usersData, refetch, PageEmail }) => {
           <p>{warning}</p>
         </div>
       )}
-      
+
       {/* Awards Table */}
       <div className="overflow-x-auto bg-white text-black shadow-lg rounded-lg">
         <table className="w-full text-left border-collapse border border-gray-200">
