@@ -11,6 +11,7 @@ import USAwards from "./USAwards/USAwards";
 import USWorkout from "./USWorkout/USWorkout";
 import USSchedule from "./USSchedule/USSchedule";
 import UserSettingsInformation from "./UserSettingsInformation/UserSettingsInformation";
+import UserSettingsAward from "./UserSettingsAward/UserSettingsAward";
 
 const UserSettings = () => {
   const { user } = useAuth();
@@ -70,6 +71,14 @@ const UserSettings = () => {
           UsersData={UsersData}
           refetch={UsersDataRefetch}
         />
+      ),
+    },
+    {
+      id: "User_Award_Settings",
+      Icon: "https://i.ibb.co.com/dmbrdkq/trophy.png",
+      title: "User Award Settings",
+      content: (
+        <UserSettingsAward UsersData={UsersData} refetch={UsersDataRefetch} />
       ),
     },
     {
