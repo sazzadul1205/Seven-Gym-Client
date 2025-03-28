@@ -1,22 +1,19 @@
-import { useState } from "react";
-
 // Import Package
 import PropTypes from "prop-types";
 
 // Import Component
 import AvatarSelector from "./AvatarSelector/AvatarSelector";
 
-const BasicInfoSelector = ({ UsersData }) => {
-  // State for avatar image with a default fallback
-  const [profileImage, setProfileImage] = useState(
-    UsersData?.profileImage || "https://via.placeholder.com/150"
-  );
-
-  // States for additional user information using defaults from UsersData if available
-  const [fullName, setFullName] = useState(UsersData?.fullName || "");
-  const [phone, setPhone] = useState(UsersData?.phone || "");
-  const [dob, setDob] = useState(UsersData?.dob || "");
-
+const BasicInfoSelector = ({
+  profileImage,
+  setProfileImage,
+  fullName,
+  setFullName,
+  phone,
+  setPhone,
+  dob,
+  setDob,
+}) => {
   return (
     <div className="bg-gray-400/50 p-3">
       {/* Title */}
@@ -84,12 +81,14 @@ const BasicInfoSelector = ({ UsersData }) => {
 
 // PropTypes for type checking the UsersData prop
 BasicInfoSelector.propTypes = {
-  UsersData: PropTypes.shape({
-    profileImage: PropTypes.string,
-    fullName: PropTypes.string,
-    phone: PropTypes.string,
-    dob: PropTypes.string,
-  }),
+  profileImage: PropTypes.string.isRequired,
+  setProfileImage: PropTypes.func.isRequired,
+  fullName: PropTypes.string.isRequired,
+  setFullName: PropTypes.func.isRequired,
+  phone: PropTypes.string.isRequired,
+  setPhone: PropTypes.func.isRequired,
+  dob: PropTypes.string.isRequired,
+  setDob: PropTypes.func.isRequired,
 };
 
 export default BasicInfoSelector;

@@ -1,20 +1,15 @@
-import { useState } from "react";
-
 // Import Package
 import PropTypes from "prop-types";
 
 // Import Component
 import FitnessGoalsSelector from "../../../../(Auth)/SignUpDetails/FitnessGoalsSelector/FitnessGoalsSelector";
 
-const DetailsInfoSelector = ({ UsersData }) => {
-  // Initialize description state with the provided UsersData description or empty string
-  const [description, setDescription] = useState(UsersData?.description || "");
-
-  // Initialize selectedGoals state with the provided UsersData.selectedGoals or an empty array
-  const [selectedGoals, setSelectedGoals] = useState(
-    UsersData?.selectedGoals || []
-  );
-
+const DetailsInfoSelector = ({
+  description,
+  setDescription,
+  selectedGoals,
+  setSelectedGoals,
+}) => {
   // Handler for updating the description state
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
@@ -54,10 +49,10 @@ const DetailsInfoSelector = ({ UsersData }) => {
 };
 
 DetailsInfoSelector.propTypes = {
-  UsersData: PropTypes.shape({
-    description: PropTypes.string,
-    selectedGoals: PropTypes.arrayOf(PropTypes.string),
-  }),
+  description: PropTypes.string.isRequired,
+  setDescription: PropTypes.func.isRequired,
+  selectedGoals: PropTypes.arrayOf(PropTypes.string).isRequired,
+  setSelectedGoals: PropTypes.func.isRequired,
 };
 
 export default DetailsInfoSelector;

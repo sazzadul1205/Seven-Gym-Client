@@ -1,15 +1,18 @@
 import { useState } from "react";
+
+// Import PAckage
 import PropTypes from "prop-types";
+
+// Import Icons
 import { ImCross } from "react-icons/im";
+
+// Import Button
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
-const BannerSelector = ({ UsersData }) => {
-  const [backgroundImage, setBackgroundImage] = useState(
-    UsersData?.backgroundImage || "https://via.placeholder.com/1200x400"
-  );
-
-  const [selectedFile, setSelectedFile] = useState(null);
+const BannerSelector = ({ backgroundImage, setBackgroundImage }) => {
+  // State Management
   const [isDragging, setIsDragging] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   // Handles file selection (via click or drag-and-drop)
   const handleImageSelect = (file) => {
@@ -26,10 +29,12 @@ const BannerSelector = ({ UsersData }) => {
     setIsDragging(true);
   };
 
+  // Handle Drag Leave
   const handleDragLeave = () => {
     setIsDragging(false);
   };
 
+  // Drop Handle
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
@@ -142,9 +147,8 @@ const BannerSelector = ({ UsersData }) => {
 
 // PropTypes for type validation
 BannerSelector.propTypes = {
-  UsersData: PropTypes.shape({
-    backgroundImage: PropTypes.string,
-  }),
+  backgroundImage: PropTypes.string.isRequired,
+  setBackgroundImage: PropTypes.func.isRequired,
 };
 
 export default BannerSelector;

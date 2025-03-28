@@ -103,10 +103,7 @@ const socialPlatforms = [
   },
 ];
 
-const SocialLinkSelector = ({ UsersData }) => {
-  // Initialize socialLinks state with fetched UsersData.socialLinks or an empty object
-  const [socialLinks, setSocialLinks] = useState(UsersData?.socialLinks || {});
-
+const SocialLinkSelector = ({ UsersData, socialLinks, setSocialLinks }) => {
   // Keep track of which platforms have been "added" (active)
   const [addedPlatforms, setAddedPlatforms] = useState(() => {
     // Only include platforms that have a non-empty link initially
@@ -239,6 +236,8 @@ SocialLinkSelector.propTypes = {
   UsersData: PropTypes.shape({
     socialLinks: PropTypes.objectOf(PropTypes.string),
   }),
+  socialLinks: PropTypes.objectOf(PropTypes.string).isRequired,
+  setSocialLinks: PropTypes.func.isRequired,
 };
 
 export default SocialLinkSelector;
