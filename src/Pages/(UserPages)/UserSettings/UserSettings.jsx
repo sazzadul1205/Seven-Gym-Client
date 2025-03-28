@@ -7,8 +7,6 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import Loading from "../../../Shared/Loading/Loading";
 import useAuth from "../../../Hooks/useAuth";
 
-import USUserImage from "./USUserImage/USUserImage";
-import USUserInfo from "./USUserInfo/USUserInfo";
 import USAwards from "./USAwards/USAwards";
 import USWorkout from "./USWorkout/USWorkout";
 import USSchedule from "./USSchedule/USSchedule";
@@ -64,16 +62,15 @@ const UserSettings = () => {
   // Tab data
   const tabs = [
     {
-      id: "Settings_Image",
-      Icon: "https://i.ibb.co.com/dmNkVLF/picture.png",
-      title: "User Image Settings",
-      content: <USUserImage UsersData={UsersData} refetch={UsersDataRefetch} />,
-    },
-    {
-      id: "Settings_Info",
-      Icon: "https://i.ibb.co.com/dmhH696/settings.png",
-      title: "User Info Settings",
-      content: <USUserInfo UsersData={UsersData} refetch={UsersDataRefetch} />,
+      id: "User_Info_Settings",
+      Icon: "https://i.ibb.co.com/0yHdfd7c/User-Settings.png",
+      title: "User Information Settings",
+      content: (
+        <UserSettingsInformation
+          UsersData={UsersData}
+          refetch={UsersDataRefetch}
+        />
+      ),
     },
     {
       id: "Settings_Awards",
@@ -87,12 +84,7 @@ const UserSettings = () => {
       title: "Workouts Settings",
       content: <USWorkout UsersData={UsersData} refetch={UsersDataRefetch} />,
     },
-    {
-      id: "User_Info_Settings",
-      Icon: "https://i.ibb.co.com/0yHdfd7c/User-Settings.png",
-      title: "User Information Settings",
-      content: <UserSettingsInformation UsersData={UsersData} refetch={UsersDataRefetch} />,
-    },
+
     {
       id: "Settings_Schedule",
       Icon: "https://i.ibb.co.com/C3WB5f3R/shedule.png",
@@ -141,7 +133,7 @@ const UserSettings = () => {
       </div>
 
       {/* Tabs Sections */}
-      <div className="flex min-h-screen mx-auto border-t border-gray-500">
+      <div className="flex min-h-screen mx-auto bg-linear-to-b from-gray-100 to-gray-500 border-t border-gray-500">
         {/* Tab Names */}
         <div className="w-1/5 bg-gray-200 text-black border-r border-gray-500">
           <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2 ">
