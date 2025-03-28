@@ -14,6 +14,7 @@ import CommonButton from "../../../../Shared/Buttons/CommonButton";
 // Import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import AddAwardModal from "./AddAwardModal/AddAwardModal";
+import Loading from "../../../../Shared/Loading/Loading";
 
 const UserSettingsAward = ({ UsersData, refetch }) => {
   const axiosPublic = useAxiosPublic();
@@ -104,6 +105,11 @@ const UserSettingsAward = ({ UsersData, refetch }) => {
       }
     }
   };
+
+  // Loading state
+  if (!UsersData) {
+    return <Loading />; // Or some other loading indicator
+  }
 
   return (
     <div className="bg-gradient-to-b from-gray-100 to-gray-200">
@@ -258,6 +264,6 @@ UserSettingsAward.propTypes = {
         favorite: PropTypes.bool.isRequired,
       })
     ),
-  }).isRequired,
+  }),
   refetch: PropTypes.func.isRequired,
 };

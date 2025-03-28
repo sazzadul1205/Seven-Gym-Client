@@ -45,7 +45,7 @@ const Navbar = () => {
     queryFn: async () => {
       if (!user) return null;
       try {
-        const res = await axiosPublic.get(`/Users?email=${user.email}`);
+        const res = await axiosPublic.get(`/Users?email=${user?.email}`);
         return res.data;
       } catch (error) {
         if (error.response?.status === 404) return null; // No data found

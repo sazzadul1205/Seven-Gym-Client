@@ -18,6 +18,7 @@ import AddWorkoutModal from "./AddWorkoutModal/AddWorkoutModal";
 
 // Import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import Loading from "../../../../Shared/Loading/Loading";
 
 const UserSettingsWorkout = ({ UsersData, refetch }) => {
   const axiosPublic = useAxiosPublic();
@@ -106,6 +107,11 @@ const UserSettingsWorkout = ({ UsersData, refetch }) => {
       UserWorkout.filter((workout) => workout.workoutId !== workoutId)
     );
   };
+
+  // Loading state
+  if (!UsersData) {
+    return <Loading />; // Or some other loading indicator
+  }
 
   return (
     <div className="bg-gradient-to-b from-gray-100 to-gray-200">
@@ -316,8 +322,8 @@ UserSettingsWorkout.propTypes = {
         calories: PropTypes.string.isRequired,
         notes: PropTypes.string.isRequired,
       })
-    ).isRequired,
-  }).isRequired,
+    ),
+  }),
   refetch: PropTypes.func.isRequired,
 };
 

@@ -1,17 +1,24 @@
 import { useState, useEffect } from "react";
+
+// Import Packages
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router";
+
+// Import Icons
 import { IoMdArrowRoundBack } from "react-icons/io";
 
-import useAxiosPublic from "../../../Hooks/useAxiosPublic";
-import Loading from "../../../Shared/Loading/Loading";
+// Import Hooks
 import useAuth from "../../../Hooks/useAuth";
+import Loading from "../../../Shared/Loading/Loading";
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
+import FetchingError from "../../../Shared/Component/FetchingError";
 
+// Import Tabs Component
 import USSchedule from "./USSchedule/USSchedule";
-import UserSettingsInformation from "./UserSettingsInformation/UserSettingsInformation";
 import UserSettingsAward from "./UserSettingsAward/UserSettingsAward";
 import UserSettingsWorkout from "./UserSettingsWorkout/UserSettingsWorkout";
 import UserSettingsSchedule from "./UserSettingsSchedule/UserSettingsSchedule";
+import UserSettingsInformation from "./UserSettingsInformation/UserSettingsInformation";
 
 const UserSettings = () => {
   const { user } = useAuth();
@@ -20,11 +27,11 @@ const UserSettings = () => {
   // Hooks
   const navigate = useNavigate();
   const location = useLocation();
-
   // Extract tab parameter from URL
   const searchParams = new URLSearchParams(location.search);
   const initialTab = searchParams.get("tab") || "User_Info_Settings";
 
+  // Tab Management
   const [activeTab, setActiveTab] = useState(initialTab);
 
   // Update URL when activeTab changes
@@ -59,7 +66,7 @@ const UserSettings = () => {
       axiosPublic.get(`/Schedule?email=${user?.email}`).then((res) => res.data),
   });
 
-  const userSchedule = schedulesData[0]; // Safe access after checking
+  const userSchedule = schedulesData?.[0] || null; // Ensure safe access
 
   // Tab data
   const tabs = [
@@ -116,23 +123,12 @@ const UserSettings = () => {
     // Add more tabs as needed
   ];
 
+  // Loading state
   if (UsersIsLoading || scheduleDataIsLoading) return <Loading />;
 
+  // Error state
   if (UsersError || scheduleDataError) {
-    console.error("Error fetching data:", UsersError);
-    return (
-      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
-        <p className="text-3xl text-red-500 font-bold mb-8">
-          Failed to load user settings.
-        </p>
-        <button
-          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400"
-          onClick={() => window.location.reload()}
-        >
-          Reload
-        </button>
-      </div>
-    );
+    return <FetchingError />;
   }
 
   return (

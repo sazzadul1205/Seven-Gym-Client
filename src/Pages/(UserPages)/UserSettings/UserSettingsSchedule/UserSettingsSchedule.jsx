@@ -2,7 +2,6 @@ import { GrSchedules } from "react-icons/gr";
 import ScheduleSettings from "./ScheduleSettings/ScheduleSettings";
 
 const UserSettingsSchedule = ({ userSchedule, refetch }) => {
-  console.log(userSchedule);
 
   const UserScheduleData = userSchedule?.schedule;
 
