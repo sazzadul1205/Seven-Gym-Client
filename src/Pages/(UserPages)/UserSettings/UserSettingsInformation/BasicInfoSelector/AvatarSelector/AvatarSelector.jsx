@@ -11,7 +11,11 @@ import CommonButton from "../../../../../../Shared/Buttons/CommonButton";
 import { FiCamera } from "react-icons/fi";
 import { ImCross } from "react-icons/im";
 
-const AvatarSelector = ({ profileImage, setProfileImage }) => {
+const AvatarSelector = ({
+  profileImage,
+  setProfileImage,
+  setProfileImageFile,
+}) => {
   // State for zoom and rotation controls
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
@@ -50,55 +54,63 @@ const AvatarSelector = ({ profileImage, setProfileImage }) => {
 
   // Cropping Function
   const getCroppedImage = async () => {
-    if (!imageSrc || !cropArea) return;
+    if (!imageSrc || !cropArea) {
+      alert("Please select an image first!");
+      return;
+    }
 
     const canvas = document.createElement("canvas");
-    const img = document.createElement("img");
+    const img = new Image();
     img.src = imageSrc;
 
-    return new Promise((resolve) => {
-      img.onload = () => {
-        const ctx = canvas.getContext("2d");
-        // Calculate the scaling factor between natural and displayed image size
-        const scaleX = img.naturalWidth / img.width;
-        const scaleY = img.naturalHeight / img.height;
+    img.onload = () => {
+      const ctx = canvas.getContext("2d");
+      const scaleX = img.naturalWidth / img.width;
+      const scaleY = img.naturalHeight / img.height;
 
-        canvas.width = cropArea.width;
-        canvas.height = cropArea.height;
+      canvas.width = cropArea.width;
+      canvas.height = cropArea.height;
 
-        ctx.save();
-        // Center the canvas context and apply rotation
-        ctx.translate(canvas.width / 2, canvas.height / 2);
-        ctx.rotate((rotation * Math.PI) / 180);
-        // Draw the cropped portion of the image
-        ctx.drawImage(
-          img,
-          cropArea.x * scaleX,
-          cropArea.y * scaleY,
-          cropArea.width * scaleX,
-          cropArea.height * scaleY,
-          -canvas.width / 2,
-          -canvas.height / 2,
-          canvas.width,
-          canvas.height
-        );
-        ctx.restore();
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((rotation * Math.PI) / 180);
+      ctx.drawImage(
+        img,
+        cropArea.x * scaleX,
+        cropArea.y * scaleY,
+        cropArea.width * scaleX,
+        cropArea.height * scaleY,
+        -canvas.width / 2,
+        -canvas.height / 2,
+        canvas.width,
+        canvas.height
+      );
+      ctx.restore();
 
-        // Convert canvas to a blob and update the profile image
-        canvas.toBlob(
-          (blob) => {
-            const croppedImageUrl = URL.createObjectURL(blob);
-            setProfileImage(croppedImageUrl);
-            setShowCropper(false);
-            // Close the crop modal once saved
-            document.getElementById("User_Image_Cropper_Modal").close();
-            resolve(blob);
-          },
-          "image/jpeg",
-          1
-        );
-      };
-    });
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            alert("Failed to process image. Please try again.");
+            return;
+          }
+
+          // Create a file from the blob
+          const file = new File([blob], "cropped-avatar.jpg", {
+            type: "image/jpeg",
+          });
+
+          // Store file for upload
+          setProfileImageFile(file);
+          setProfileImage(URL.createObjectURL(blob)); // Update preview image
+
+          // Close modal
+          setShowCropper(false);
+          document.getElementById("User_Image_Cropper_Modal").close();
+        },
+        "image/jpeg",
+        1
+      );
+    };
   };
 
   // Cleanup the image source object URL when component unmounts or imageSrc changes
@@ -255,6 +267,7 @@ const AvatarSelector = ({ profileImage, setProfileImage }) => {
 AvatarSelector.propTypes = {
   profileImage: PropTypes.string,
   setProfileImage: PropTypes.func.isRequired,
+  setProfileImageFile: PropTypes.func.isRequired,
 };
 
 export default AvatarSelector;

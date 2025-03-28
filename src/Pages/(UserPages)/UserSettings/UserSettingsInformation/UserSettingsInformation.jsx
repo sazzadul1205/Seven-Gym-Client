@@ -1,129 +1,196 @@
-import { useState, useEffect } from "react";
-import PropTypes from "prop-types";
+import { useState, useEffect, useMemo } from "react";
+
+// Import Package
 import axios from "axios";
 import Swal from "sweetalert2";
+import PropTypes from "prop-types";
+
+// Import icons
 import { GrUserSettings } from "react-icons/gr";
+
+// import Hooks
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+
+// Import Component
 import BannerSelector from "./BannerSelector/BannerSelector";
 import BasicInfoSelector from "./BasicInfoSelector/BasicInfoSelector";
 import SocialLinkSelector from "./SocialLinkSelector/SocialLinkSelector";
 import DetailsInfoSelector from "./DetailsInfoSelector/DetailsInfoSelector";
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 // Image Hosting API
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Key}`;
 
-const UserSettingsInformation = ({ UsersData }) => {
+const UserSettingsInformation = ({ UsersData, refetch }) => {
   const axiosPublic = useAxiosPublic();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const initialData = {
-    backgroundImage:
-      UsersData?.backgroundImage ||
-      "https://i.ibb.co/93pjzx2B/My-Background.jpg",
-    profileImage:
-      UsersData?.profileImage || "https://i.ibb.co/4g4F5b0q/blob.jpg",
-    fullName: UsersData?.fullName || "",
-    phone: UsersData?.phone || "",
-    dob: UsersData?.dob || "",
-    description: UsersData?.description || "",
-    selectedGoals: UsersData?.selectedGoals || [],
-    socialLinks: UsersData?.socialLinks || {},
-  };
+  // Define initial values as constants (defaults from UsersData or fallback)
+  const initialBackground =
+    UsersData?.backgroundImage ||
+    "https://i.ibb.co.com/93pjzx2B/My-Background.jpg";
+  const initialProfile =
+    UsersData?.profileImage || "https://i.ibb.co.com/4g4F5b0q/blob.jpg";
+  const initialFullName = UsersData?.fullName || "";
+  const initialPhone = UsersData?.phone || "";
+  const initialDob = UsersData?.dob || "";
+  const initialDescription = UsersData?.description || "";
 
-  const [userData, setUserData] = useState(initialData);
+  // Use useMemo to prevent re-renders due to object/array references
+  const initialSocialLinks = useMemo(
+    () => UsersData?.socialLinks || {},
+    [UsersData?.socialLinks]
+  );
+  const initialSelectedGoals = useMemo(
+    () => UsersData?.selectedGoals || [],
+    [UsersData?.selectedGoals]
+  );
+
+  // State hooks
+  const [dob, setDob] = useState(initialDob);
+  const [phone, setPhone] = useState(initialPhone);
+  const [fullName, setFullName] = useState(initialFullName);
+  const [profileImage, setProfileImage] = useState(initialProfile);
+  const [profileImageFile, setProfileImageFile] = useState(null);
+  const [description, setDescription] = useState(initialDescription);
+  const [socialLinks, setSocialLinks] = useState(initialSocialLinks);
+  const [selectedGoals, setSelectedGoals] = useState(initialSelectedGoals);
+  const [backgroundImage, setBackgroundImage] = useState(initialBackground);
+  const [backgroundImageFile, setBackgroundImageFile] = useState(null);
+
   const [isChanged, setIsChanged] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
-  // Check if any field has changed compared to initialData
+  // Check for changes
   useEffect(() => {
-    setIsChanged(JSON.stringify(userData) !== JSON.stringify(initialData));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userData]);
+    const changed =
+      backgroundImage !== initialBackground ||
+      profileImage !== initialProfile ||
+      fullName !== initialFullName ||
+      phone !== initialPhone ||
+      dob !== initialDob ||
+      description !== initialDescription ||
+      JSON.stringify(selectedGoals) !== JSON.stringify(initialSelectedGoals) ||
+      JSON.stringify(socialLinks) !== JSON.stringify(initialSocialLinks);
 
-  // Update state for each field
-  const handleChange = (key, value) => {
-    setUserData((prevData) => ({
-      ...prevData,
-      [key]: value,
-    }));
-  };
+    setIsChanged(changed);
+  }, [
+    backgroundImage,
+    profileImage,
+    fullName,
+    phone,
+    dob,
+    description,
+    selectedGoals,
+    socialLinks,
+    initialBackground,
+    initialProfile,
+    initialFullName,
+    initialPhone,
+    initialDob,
+    initialDescription,
+    initialSelectedGoals,
+    initialSocialLinks,
+  ]);
 
-  // Helper: Upload image file to ImgBB and return the hosted URL
-  const uploadImage = async (blobUrl) => {
+  // Function to upload image to imgBB
+  const uploadImage = async (file) => {
+    if (!file) {
+      console.error("No file provided for upload.");
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append("image", file);
+
     try {
-      // Fetch the blob data from the blob URL
-      const response = await fetch(blobUrl);
-      const blobData = await response.blob();
-
-      const formData = new FormData();
-      formData.append("image", blobData);
-
       const res = await axios.post(Image_Hosting_API, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      const hostedUrl = res?.data?.data?.display_url;
-      if (!hostedUrl) {
+      const imageUrl = res?.data?.data?.display_url;
+      if (!imageUrl) {
         throw new Error("Image hosting failed. No URL returned.");
       }
-      return hostedUrl;
+
+      return imageUrl;
     } catch (error) {
-      throw new Error(error.message || "Image upload failed.");
+      console.error("Error uploading image:", error);
+      return null;
     }
   };
 
-  // Submit function: Upload any local images and then update user info on the server
-  const handleSubmit = async () => {
-    setIsSaving(true);
-    let updatedData = { ...userData };
+  // Handle save action
+  const handleSave = async () => {
+    if (!isChanged) return;
+
+    setIsLoading(true);
 
     try {
-      // If backgroundImage is a local blob URL, upload it first
-      if (updatedData.backgroundImage.startsWith("blob:")) {
-        const hostedBackground = await uploadImage(updatedData.backgroundImage);
-        updatedData.backgroundImage = hostedBackground;
-      }
-
-      // If profileImage is a local blob URL, upload it first
-      if (updatedData.profileImage.startsWith("blob:")) {
-        const hostedProfile = await uploadImage(updatedData.profileImage);
-        updatedData.profileImage = hostedProfile;
-      }
-
-      // Prepare payload for updating user info on the server
       const payload = {
-        email: UsersData?.email, // ensure email is available in UsersData
-        ...updatedData,
+        email: UsersData?.email,
+        fullName,
+        phone,
+        dob,
+        description,
+        selectedGoals,
+        socialLinks,
       };
 
-      // Make the API call to update only the image type that was provided
-      await axiosPublic.patch(`/Users`, payload);
+      // Upload profile image if changed and file exists
+      if (profileImageFile) {
+        const profileImageUrl = await uploadImage(profileImageFile);
+        if (profileImageUrl) {
+          setProfileImage(profileImageUrl); // Update state with actual URL
+          payload.profileImage = profileImageUrl;
+        } else {
+          console.error("Profile image upload failed.");
+        }
+      } else if (profileImage !== initialProfile) {
+        payload.profileImage = profileImage;
+      }
+
+      // Upload background image if changed and file exists
+      if (backgroundImageFile) {
+        const backgroundImageUrl = await uploadImage(backgroundImageFile);
+        if (backgroundImageUrl) {
+          setBackgroundImage(backgroundImageUrl); // Update state with actual URL
+          payload.backgroundImage = backgroundImageUrl;
+        } else {
+          console.error("Background image upload failed.");
+        }
+      } else if (backgroundImage !== initialBackground) {
+        payload.backgroundImage = backgroundImage;
+      }
+
+      console.log("Payload being sent:", payload);
+
+      // Send the update request
+      await axiosPublic.patch("/Users", payload);
 
       Swal.fire({
         icon: "success",
-        title: "User Updated",
-        text: "User information updated successfully!",
+        title: "Success!",
+        text: "Your profile has been updated successfully.",
       });
 
-      // Update local state with updated data
-      setUserData(updatedData);
+      setProfileImageFile(null);
+      setBackgroundImageFile(null);
+      refetch();
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Update failed. Please try again.";
+      console.error("Error updating profile:", error);
       Swal.fire({
         icon: "error",
-        title: "Update Failed",
-        text: errorMessage,
+        title: "Error",
+        text: "Failed to update profile. Please try again.",
       });
     } finally {
-      setIsSaving(false);
+      setIsLoading(false);
+      setIsChanged(false);
     }
   };
 
   return (
-    <div className="bg-gradient-to-b from-gray-100 to-gray-200">
+    <div className="bg-linear-to-b from-gray-100 to-gray-200">
       {/* Header */}
       <div className="bg-gray-400 px-5 py-2">
         <p className="flex gap-2 items-center text-xl font-semibold italic text-white">
@@ -134,53 +201,51 @@ const UserSettingsInformation = ({ UsersData }) => {
 
       {/* Content */}
       <div className="space-y-3">
-        {/* Banners Section */}
         <BannerSelector
-          backgroundImage={userData.backgroundImage}
-          setBackgroundImage={(value) => handleChange("backgroundImage", value)}
+          backgroundImage={backgroundImage}
+          setBackgroundImage={setBackgroundImage}
+          setBackgroundImageFile={setBackgroundImageFile}
         />
 
-        {/* Avatar, Name, Phone, DOB */}
         <BasicInfoSelector
-          profileImage={userData.profileImage}
-          setProfileImage={(value) => handleChange("profileImage", value)}
-          fullName={userData.fullName}
-          setFullName={(value) => handleChange("fullName", value)}
-          phone={userData.phone}
-          setPhone={(value) => handleChange("phone", value)}
-          dob={userData.dob}
-          setDob={(value) => handleChange("dob", value)}
+          profileImage={profileImage}
+          setProfileImage={setProfileImage}
+          setProfileImageFile={setProfileImageFile}
+          fullName={fullName}
+          setFullName={setFullName}
+          phone={phone}
+          setPhone={setPhone}
+          dob={dob}
+          setDob={setDob}
         />
 
-        {/* Bio, Goals */}
         <DetailsInfoSelector
-          description={userData.description}
-          setDescription={(value) => handleChange("description", value)}
-          selectedGoals={userData.selectedGoals}
-          setSelectedGoals={(value) => handleChange("selectedGoals", value)}
+          description={description}
+          setDescription={setDescription}
+          selectedGoals={selectedGoals}
+          setSelectedGoals={setSelectedGoals}
         />
 
-        {/* Social Links */}
         <SocialLinkSelector
           UsersData={UsersData}
-          socialLinks={userData.socialLinks}
-          setSocialLinks={(value) => handleChange("socialLinks", value)}
+          socialLinks={socialLinks}
+          setSocialLinks={setSocialLinks}
         />
 
-        {/* Confirm Button */}
-        <div className="bg-gray-400/50 p-3 text-black">
+        <div className="bg-gray-400/50 p-3 text-black mb-2">
           <div className="flex justify-end">
             <button
-              onClick={handleSubmit}
-              disabled={!isChanged || isSaving}
-              className={`font-semibold rounded-lg px-20 py-3 cursor-pointer transition-all 
-                ${
-                  isChanged && !isSaving
-                    ? "bg-gradient-to-bl from-green-300 to-green-600 text-white hover:from-green-400 hover:to-green-700"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+              className={`font-bold text-xl rounded-lg px-20 py-3 ${
+                isChanged
+                  ? isLoading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-600 text-white cursor-pointer"
+                  : "bg-linear-to-bl from-gray-300 to-gray-600 text-white cursor-not-allowed"
+              }`}
+              disabled={!isChanged || isLoading}
+              onClick={handleSave}
             >
-              {isSaving ? "Saving..." : "Save"}
+              {isLoading ? "Saving..." : "Save"}
             </button>
           </div>
         </div>
@@ -189,9 +254,9 @@ const UserSettingsInformation = ({ UsersData }) => {
   );
 };
 
-// PropTypes validation
 UserSettingsInformation.propTypes = {
   UsersData: PropTypes.shape({
+    email: PropTypes.string,
     backgroundImage: PropTypes.string,
     profileImage: PropTypes.string,
     fullName: PropTypes.string,
@@ -200,8 +265,8 @@ UserSettingsInformation.propTypes = {
     description: PropTypes.string,
     selectedGoals: PropTypes.arrayOf(PropTypes.string),
     socialLinks: PropTypes.objectOf(PropTypes.string),
-    email: PropTypes.string, // Email is required for updating the user on the server
   }),
+  refetch: PropTypes.func.isRequired,
 };
 
 export default UserSettingsInformation;

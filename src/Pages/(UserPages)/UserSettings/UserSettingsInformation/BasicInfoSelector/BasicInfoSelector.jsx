@@ -7,6 +7,7 @@ import AvatarSelector from "./AvatarSelector/AvatarSelector";
 const BasicInfoSelector = ({
   profileImage,
   setProfileImage,
+  setProfileImageFile,
   fullName,
   setFullName,
   phone,
@@ -28,6 +29,7 @@ const BasicInfoSelector = ({
           <AvatarSelector
             profileImage={profileImage}
             setProfileImage={setProfileImage}
+            setProfileImageFile={setProfileImageFile}
           />
         </div>
 
@@ -89,6 +91,7 @@ BasicInfoSelector.propTypes = {
   setPhone: PropTypes.func.isRequired,
   dob: PropTypes.string.isRequired,
   setDob: PropTypes.func.isRequired,
+  setProfileImageFile: PropTypes.func.isRequired,
 };
 
 export default BasicInfoSelector;

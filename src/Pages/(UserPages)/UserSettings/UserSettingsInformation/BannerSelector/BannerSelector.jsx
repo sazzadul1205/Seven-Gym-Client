@@ -1,25 +1,24 @@
 import { useState } from "react";
-
-// Import PAckage
 import PropTypes from "prop-types";
-
-// Import Icons
 import { ImCross } from "react-icons/im";
-
-// Import Button
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
-const BannerSelector = ({ backgroundImage, setBackgroundImage }) => {
+const BannerSelector = ({
+  backgroundImage,
+  setBackgroundImage,
+  setBackgroundImageFile,
+}) => {
   // State Management
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(backgroundImage);
 
   // Handles file selection (via click or drag-and-drop)
   const handleImageSelect = (file) => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setSelectedFile(file);
-      setBackgroundImage(imageUrl); // Show preview
+      setPreviewImage(imageUrl); // Show preview
     }
   };
 
@@ -29,17 +28,26 @@ const BannerSelector = ({ backgroundImage, setBackgroundImage }) => {
     setIsDragging(true);
   };
 
-  // Handle Drag Leave
   const handleDragLeave = () => {
     setIsDragging(false);
   };
 
-  // Drop Handle
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
     handleImageSelect(file);
+  };
+
+  // Handle Save Button Click
+  const handleSaveBackground = () => {
+    if (!selectedFile) {
+      alert("Please select an image first!");
+      return;
+    }
+    setBackgroundImageFile(selectedFile); // Store file for upload
+    setBackgroundImage(previewImage); // Update displayed image
+    document.getElementById("Background_Image_Modal")?.close();
   };
 
   return (
@@ -60,7 +68,7 @@ const BannerSelector = ({ backgroundImage, setBackgroundImage }) => {
         }
       >
         <img
-          src={backgroundImage}
+          src={previewImage}
           alt="Background"
           className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-50 rounded-lg"
         />
@@ -94,7 +102,7 @@ const BannerSelector = ({ backgroundImage, setBackgroundImage }) => {
           >
             {selectedFile ? (
               <img
-                src={backgroundImage}
+                src={previewImage}
                 alt="Preview"
                 className="w-full h-[300px] mx-auto rounded-lg"
               />
@@ -110,7 +118,6 @@ const BannerSelector = ({ backgroundImage, setBackgroundImage }) => {
                   id="fileInput"
                   onChange={(e) => handleImageSelect(e.target.files[0])}
                 />
-                {/* Select form file Btn */}
                 <CommonButton
                   clickEvent={() =>
                     document.getElementById("fileInput").click()
@@ -124,17 +131,13 @@ const BannerSelector = ({ backgroundImage, setBackgroundImage }) => {
 
           {/* Save Button */}
           <div className="flex justify-between px-5 py-3">
-            {/* Select form file Btn */}
             <CommonButton
               clickEvent={() => document.getElementById("fileInput").click()}
               text="Select Image"
               bgColor="blue"
             />
-            {/* Close Modal Btn */}
             <CommonButton
-              clickEvent={() =>
-                document.getElementById("Background_Image_Modal")?.close()
-              }
+              clickEvent={handleSaveBackground}
               text="Save Background"
               bgColor="green"
             />
@@ -149,6 +152,7 @@ const BannerSelector = ({ backgroundImage, setBackgroundImage }) => {
 BannerSelector.propTypes = {
   backgroundImage: PropTypes.string.isRequired,
   setBackgroundImage: PropTypes.func.isRequired,
+  setBackgroundImageFile: PropTypes.func.isRequired,
 };
 
 export default BannerSelector;
