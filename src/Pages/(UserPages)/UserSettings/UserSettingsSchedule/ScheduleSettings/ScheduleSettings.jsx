@@ -3,36 +3,56 @@ import { useState } from "react";
 import { FaRegClock, FaRegTrashAlt } from "react-icons/fa";
 import { FiRefreshCcw } from "react-icons/fi";
 import { Tooltip } from "react-tooltip";
+import Swal from "sweetalert2";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import useAuth from "../../../../../Hooks/useAuth";
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
+// Function to format time strings
 const formatTime = (timeString) => {
   if (!timeString) return "";
-
   const [hours, minutes] = timeString.split(":").map(Number);
   const date = new Date();
   date.setHours(hours, minutes, 0);
-
   const originalTime = date.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
   });
-
   date.setMinutes(date.getMinutes() + 59);
-
   const updatedTime = date.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
   });
-
   return { originalTime, updatedTime };
 };
 
+// Function to determine if a day is passed, today, or future
+const getDayStatus = (dayDate) => {
+  const today = new Date(); // Current date
+  // Convert provided date (assumed format "DD-MM-YYYY") to a Date object
+  const providedDate = new Date(dayDate.split("-").reverse().join("-"));
+  const isToday = today.toDateString() === providedDate.toDateString();
+  const isPast = providedDate < today && !isToday;
+  if (isPast) {
+    return "passed";
+  }
+  if (isToday) {
+    return "today";
+  }
+  return "future";
+};
+
 const ScheduleSettings = ({ UserScheduleData, refetch }) => {
-  // State Management
+  const { user } = useAuth(); // Get user info
+  const axiosPublic = useAxiosPublic(); // Axios instance for API calls
+
+  // State: selected schedule IDs and expanded days
   const [selectedSchedules, setSelectedSchedules] = useState(new Set());
   const [expandedDays, setExpandedDays] = useState(new Set());
 
+  // Toggle individual schedule checkbox selection
   const handleScheduleCheckboxChange = (scheduleId) => {
     setSelectedSchedules((prev) => {
       const newSelection = new Set(prev);
@@ -45,7 +65,27 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
     });
   };
 
-  const toggleCollapse = (day) => {
+  // Toggle day checkbox to select/deselect all schedules for that day
+  const handleDayCheckboxChange = (dayData) => (e) => {
+    const checked = e.target.checked;
+    setSelectedSchedules((prev) => {
+      const newSelection = new Set(prev);
+      // Loop through each schedule in the day and update selection
+      Object.keys(dayData.schedule).forEach((time) => {
+        const schedule = dayData.schedule[time];
+        if (checked) {
+          newSelection.add(schedule.id);
+        } else {
+          newSelection.delete(schedule.id);
+        }
+      });
+      return newSelection;
+    });
+  };
+
+  // Toggle collapse/expand for a day panel (disabled if day is passed)
+  const toggleCollapse = (day, dayStatus) => {
+    if (dayStatus === "passed") return; // Do nothing if the day has passed
     setExpandedDays((prev) => {
       const newExpanded = new Set(prev);
       if (newExpanded.has(day)) {
@@ -57,84 +97,221 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
     });
   };
 
+  // Handle schedule regeneration for a day
+  const handleRegenerateClick = async (dayName, scheduleData) => {
+    // Calculate next occurrence of the day
+    const getNextOccurrence = (day) => {
+      const daysOfWeek = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+      const today = new Date();
+      const todayIndex = today.getDay();
+      const targetIndex = daysOfWeek.indexOf(day);
+      let daysToAdd = (targetIndex - todayIndex + 7) % 7;
+      if (daysToAdd === 0) daysToAdd = 7; // Move to next week if same day
+      const nextDate = new Date();
+      nextDate.setDate(today.getDate() + daysToAdd);
+      const formattedDate = nextDate
+        .toLocaleDateString("en-GB")
+        .split("/")
+        .join("-");
+      return {
+        nextDayName: daysOfWeek[nextDate.getDay()],
+        nextDate: formattedDate,
+      };
+    };
+
+    // Get the next occurrence details
+    const { nextDayName, nextDate } = getNextOccurrence(dayName);
+    const updatedScheduleID = `${nextDayName}-${nextDate}`; // New schedule ID
+
+    // Build a new empty schedule for the day
+    const updatedScheduleData = {};
+    Object.keys(scheduleData).forEach((time) => {
+      updatedScheduleData[time] = {
+        id: `sche-${updatedScheduleID}-${time}`,
+        title: "",
+        notes: "",
+        location: "",
+        status: "",
+      };
+    });
+
+    // New regenerated schedule object
+    const regeneratedSchedule = {
+      id: updatedScheduleID,
+      dayName: nextDayName,
+      date: nextDate,
+      schedule: updatedScheduleData,
+    };
+
+    try {
+      // API call to update the schedule on the server
+      await axiosPublic.put("/Schedule/RegenerateNewDaySchedule", {
+        email: user.email,
+        dayName: nextDayName,
+        scheduleData: regeneratedSchedule,
+      });
+
+      // Success alert
+      Swal.fire({
+        title: "Success!",
+        text: "Schedule has been updated successfully.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+      refetch(); // Refresh schedule data
+    } catch (error) {
+      console.error("Error updating schedule:", error);
+      // Error alert
+      Swal.fire({
+        title: "Error!",
+        text: "There was an issue updating the schedule. Please try again later.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
   console.log(selectedSchedules);
 
   return (
     <div>
-      {/* Top part */}
+      {/* Top Part: Title and Control Buttons */}
       <div className="bg-gray-400/50 p-3">
+        {/* Title */}
         <h3 className="text-xl font-semibold text-black py-1">
           Schedule for the Whole Week
         </h3>
+
+        {/* Divider */}
         <div className="bg-white p-[2px] w-1/2"></div>
 
-        {/* Buttons */}
+        {/* Button */}
         <div className="flex justify-between items-center pt-2">
+          {/* Delete Button */}
           <button className="flex items-center bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-600 rounded-lg text-xl font-semibold gap-3 px-8 py-3 cursor-pointer">
             Delete <FaRegTrashAlt />
           </button>
 
-          <button
-            className="flex items-center bg-linear-to-bl hover:bg-linear-to-tr from-blue-300 to-blue-600 rounded-lg text-xl font-bold gap-3 px-5 py-3 cursor-pointer"
-            data-tooltip-id="ReGenerateToolTip"
-          >
-            <FiRefreshCcw />
-          </button>
-          <Tooltip
-            id="ReGenerateToolTip"
-            place="top"
-            content="Generate All 'Passed' Schedules"
-          />
+          {/* Regenerate Button */}
+          <div>
+            <button
+              className="flex items-center bg-linear-to-bl hover:bg-linear-to-tr from-blue-300 to-blue-600 rounded-lg text-xl font-bold gap-3 px-5 py-3 cursor-pointer"
+              data-tooltip-id="ReGenerateToolTip"
+            >
+              <FiRefreshCcw />
+            </button>
+            <Tooltip
+              id="ReGenerateToolTip"
+              place="top"
+              content="Generate All 'Passed' Schedules"
+            />
+          </div>
 
-          <button
-            className="flex items-center bg-linear-to-bl hover:bg-linear-to-tr from-yellow-300 to-yellow-600 rounded-lg text-xl font-bold gap-3 px-5 py-3 cursor-pointer"
-            data-tooltip-id="manageTimeToolTip"
-          >
-            <FaRegClock />
-          </button>
-          <Tooltip id="manageTimeToolTip" place="top" content="Time Change" />
+          {/* Time Change Button */}
+          <div>
+            <button
+              className="flex items-center bg-linear-to-bl hover:bg-linear-to-tr from-yellow-300 to-yellow-600 rounded-lg text-xl font-bold gap-3 px-5 py-3 cursor-pointer"
+              data-tooltip-id="manageTimeToolTip"
+            >
+              <FaRegClock />
+            </button>
+            <Tooltip id="manageTimeToolTip" place="top" content="Time Change" />
+          </div>
         </div>
       </div>
 
-      {/* List of days as accordion items */}
-      {/* Week Schedule */}
+      {/* Week Schedule Accordion */}
       <div className="bg-gray-400/50 p-3 mt-4">
+        {/* Title */}
         <h3 className="text-black font-semibold text-lg pb-3">
           Schedule for this Week
         </h3>
+
+        {/* Schedule */}
         <div className="space-y-4">
           {Object.keys(UserScheduleData).map((day) => {
+            // Use dayData.date for day status
             const dayData = UserScheduleData[day];
+            const dayStatus = getDayStatus(dayData.date);
             const isExpanded = expandedDays.has(day);
+            // Get all schedule IDs for the day and check if all are selected
+            const dayScheduleIds = Object.keys(dayData.schedule).map(
+              (time) => dayData.schedule[time].id
+            );
+            const allSelected =
+              dayScheduleIds.length > 0 &&
+              dayScheduleIds.every((id) => selectedSchedules.has(id));
 
             return (
               <div
                 key={day}
                 className="bg-gray-100 border border-gray-300 rounded-lg"
               >
-                {/* Header */}
+                {/* Day Header */}
                 <div
                   className="font-semibold text-black flex items-center gap-3 p-3 cursor-pointer"
-                  onClick={() => toggleCollapse(day)}
+                  onClick={() => toggleCollapse(day, dayStatus)}
                 >
-                  {/* Checkbox */}
+                  {/* Day Checkbox: disabled & grayed if the day has passed */}
                   <input
                     type="checkbox"
                     className="checkbox checkbox-error border-black"
-                    onClick={(e) => e.stopPropagation()} // Prevent toggling collapse
+                    checked={allSelected}
+                    onChange={handleDayCheckboxChange(dayData)}
+                    onClick={(e) => e.stopPropagation()} // Prevent collapse toggle
+                    disabled={dayStatus === "passed"}
                   />
-
-                  {/* Date and Day */}
-                  <div className="flex items-center gap-5 border-l-2 border-black pl-2">
+                  {/* Day Information */}
+                  <div
+                    className={`flex items-center gap-5 border-l-2 pl-2 ${
+                      dayStatus === "passed"
+                        ? "border-gray-400 text-gray-400"
+                        : "border-black text-black"
+                    }`}
+                  >
                     <p className="w-[80px]">{dayData.dayName}</p>
                     <p>[ {dayData.date} ]</p>
                   </div>
+                  {/* Regenerate option for passed day */}
+                  {dayStatus === "passed" && (
+                    <div className="flex items-center gap-4 ml-7">
+                      <p className="text-red-500 font-semibold">
+                        Day has passed. Generate new day.
+                      </p>
+
+                      {/* Generate Button */}
+                      <CommonButton
+                        text="Generate"
+                        bgColor="red"
+                        py="py-2"
+                        clickEvent={() =>
+                          handleRegenerateClick(
+                            dayData.dayName,
+                            dayData.schedule
+                          )
+                        }
+                      />
+                      <p className="text-red-500 font-semibold">
+                        {/* for [{updated date}] */}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
-                {/* Collapse Content with Smooth Animation */}
+                {/* Collapse Content: Schedule Items */}
                 <div
                   className={`grid transition-all duration-300 ease-in-out overflow-hidden ${
-                    isExpanded
+                    dayStatus === "passed"
+                      ? "max-h-0 opacity-0" // Force closed if passed
+                      : isExpanded
                       ? "max-h-screen opacity-100"
                       : "max-h-0 opacity-0"
                   }`}
@@ -147,10 +324,15 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
                         return (
                           <div
                             key={schedule.id}
-                            className="flex justify-between items-center p-3 bg-white border border-gray-300 rounded-lg transition-all duration-300 ease-in-out hover:shadow-md"
+                            // Schedule item: light red background if selected; white otherwise
+                            className={`flex justify-between items-center p-3 border border-gray-300 rounded-lg transition-all duration-300 ease-in-out hover:shadow-md ${
+                              selectedSchedules.has(schedule.id)
+                                ? "bg-red-100"
+                                : "bg-white"
+                            }`}
                           >
                             <div className="flex items-center gap-3">
-                              {/* Checkbox */}
+                              {/* Schedule Checkbox */}
                               <input
                                 type="checkbox"
                                 className="checkbox checkbox-error border-black"
@@ -158,17 +340,15 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
                                 onChange={() =>
                                   handleScheduleCheckboxChange(schedule.id)
                                 }
-                                onClick={(e) => e.stopPropagation()} // Prevent unwanted collapse toggling
+                                onClick={(e) => e.stopPropagation()} // Prevent collapse toggle
                               />
-
-                              {/* From and To Time */}
+                              {/* Time Range */}
                               <div className="flex justify-between font-semibold text-black gap-5 w-[220px] border-l-2 border-gray-500 pl-5">
                                 <p>{originalTime}</p>
                                 <p>-</p>
                                 <p>{updatedTime}</p>
                               </div>
-
-                              {/* Schedule Information */}
+                              {/* Schedule Details */}
                               <div className="border-l-2 border-gray-500 pl-5">
                                 {schedule.title ? (
                                   <div className="text-xs text-gray-600 mt-1">
