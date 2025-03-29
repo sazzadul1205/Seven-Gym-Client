@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useParams } from "react-router";
 
 // Import Package
 import Swal from "sweetalert2";
@@ -11,10 +10,11 @@ import { ImCross } from "react-icons/im";
 
 // Import Utility
 import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
+import useAuth from "../../../../../../Hooks/useAuth";
 
 const AddNotesModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
-  const { email } = useParams();
+  const { user } = useAuth();
 
   // State management
   const [tags, setTags] = useState([]);
@@ -63,9 +63,9 @@ const AddNotesModal = ({ refetch }) => {
   const onSubmit = async (data) => {
     setLoading(true); // Set loading to true
 
-    const uniqueId = generateUniqueId(email);
+    const uniqueId = generateUniqueId(user?.email);
     const newNote = {
-      email,
+      email: user?.email,
       newNote: { id: uniqueId, ...data, tags },
     };
 
@@ -104,7 +104,7 @@ const AddNotesModal = ({ refetch }) => {
         <h3 className="font-bold text-lg">Add New Note</h3>
         <ImCross
           className="text-xl hover:text-[#F72C5B] cursor-pointer"
-          onClick={() => document.getElementById("Add_Notes_Modal")?.close()}
+          onClick={() => document.getElementById("Add_Note_Modal")?.close()}
         />
       </div>
 

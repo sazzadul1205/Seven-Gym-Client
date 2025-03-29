@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useParams } from "react-router";
 
 // Import Package
 import Swal from "sweetalert2";
@@ -11,6 +10,7 @@ import { ImCross } from "react-icons/im";
 
 // Import Utility
 import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
+import useAuth from "../../../../../../Hooks/useAuth";
 
 // Categories Options
 const predefinedCategories = [
@@ -38,7 +38,8 @@ const predefinedCategories = [
 
 const AddToDoModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
-  const { email } = useParams();
+  // const { email } = useParams();
+  const { user } = useAuth();
 
   // State management
   const [tags, setTags] = useState([]);
@@ -86,9 +87,9 @@ const AddToDoModal = ({ refetch }) => {
   const onSubmit = async (data) => {
     setLoading(true); // Start loading state
 
-    const uniqueId = generateUniqueId(email);
+    const uniqueId = generateUniqueId(user?.email);
     const newToDo = {
-      email,
+      email: user?.email,
       newTodo: { id: uniqueId, ...data, category, tags },
     };
 

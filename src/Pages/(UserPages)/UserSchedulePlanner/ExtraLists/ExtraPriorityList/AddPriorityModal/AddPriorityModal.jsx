@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-
 // Import Package
 import Swal from "sweetalert2";
 import PropTypes from "prop-types";
@@ -15,7 +14,6 @@ import useAuth from "../../../../../../Hooks/useAuth";
 
 const AddPriorityModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
-  // const { email } = useParams();
   const { user } = useAuth();
 
   // State management

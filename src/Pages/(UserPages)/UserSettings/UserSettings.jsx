@@ -14,11 +14,13 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
 
 // Import Tabs Component
-import USSchedule from "./USSchedule/USSchedule";
 import UserSettingsAward from "./UserSettingsAward/UserSettingsAward";
 import UserSettingsWorkout from "./UserSettingsWorkout/UserSettingsWorkout";
 import UserSettingsSchedule from "./UserSettingsSchedule/UserSettingsSchedule";
 import UserSettingsInformation from "./UserSettingsInformation/UserSettingsInformation";
+import UserSettingsTrainer from "./UserSettingsTrainer/UserSettingsTrainer";
+import UserSettingsClass from "./UserSettingsClass/UserSettingsClass";
+import UserSettingsTestimonials from "./UserSettingsTestimonials/UserSettingsTestimonials";
 
 const UserSettings = () => {
   const { user } = useAuth();
@@ -98,7 +100,7 @@ const UserSettings = () => {
       ),
     },
     {
-      id: "User_Workout_Schedule",
+      id: "User_Schedule_Settings",
       Icon: "https://i.ibb.co.com/C3WB5f3R/shedule.png",
       title: "User Schedule Settings",
       content: (
@@ -108,13 +110,34 @@ const UserSettings = () => {
         />
       ),
     },
-
     {
-      id: "Settings_Schedule",
-      Icon: "https://i.ibb.co.com/C3WB5f3R/shedule.png",
-      title: "Schedule Settings",
+      id: "User_Trainer_Settings",
+      Icon: "https://i.ibb.co.com/S7Q8NRzz/coach.png",
+      title: "User Trainer Settings",
       content: (
-        <USSchedule
+        <UserSettingsTrainer
+          userSchedule={userSchedule}
+          refetch={schedulesDataRefetch}
+        />
+      ),
+    },
+    {
+      id: "User_Class_Settings",
+      Icon: "https://i.ibb.co.com/hPg1wsX/group-class.png",
+      title: "User Class Settings",
+      content: (
+        <UserSettingsClass
+          userSchedule={userSchedule}
+          refetch={schedulesDataRefetch}
+        />
+      ),
+    },
+    {
+      id: "User_Testimonials_Settings",
+      Icon: "https://i.ibb.co.com/MkWZ1sPW/testimonial.png",
+      title: "User Testimonials Settings",
+      content: (
+        <UserSettingsTestimonials
           userSchedule={userSchedule}
           refetch={schedulesDataRefetch}
         />

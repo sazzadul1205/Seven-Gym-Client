@@ -1,11 +1,21 @@
 import { useState } from "react";
-import PropTypes from "prop-types";
-import { FaExclamationCircle, FaRegTrashAlt } from "react-icons/fa";
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
-import useAuth from "../../../../../Hooks/useAuth";
-import CommonButton from "../../../../../Shared/Buttons/CommonButton";
-import AddPriorityModal from "../../../UserSchedulePlanner/ExtraLists/ExtraPriorityList/AddPriorityModal/AddPriorityModal";
+
+// Import Package
 import Swal from "sweetalert2";
+import PropTypes from "prop-types";
+
+// import Icons
+import { FaExclamationCircle, FaRegTrashAlt } from "react-icons/fa";
+
+// Import Hooks
+import useAuth from "../../../../../Hooks/useAuth";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+
+// Import Button
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+
+// Import Modal
+import AddPriorityModal from "../../../UserSchedulePlanner/ExtraLists/ExtraPriorityList/AddPriorityModal/AddPriorityModal";
 
 const tagColors = [
   "bg-red-500",
@@ -34,6 +44,7 @@ const SchedulePrioritySettings = ({ UserPriorityData, refetch }) => {
     });
   };
 
+  // Delete Selected Priority
   const handleDeleteSelected = async () => {
     if (selectedPriorities.size === 0) return;
 
@@ -175,22 +186,26 @@ const SchedulePrioritySettings = ({ UserPriorityData, refetch }) => {
                   <p>{priority.content}</p>
 
                   {/* Tags Display */}
-                  {priority?.tags?.map((tag, index) => (
-                    <span
-                      key={index}
-                      className={`px-3 py-1 text-white font-semibold rounded-full text-sm ml-1 ${
-                        tagColors[index % tagColors.length]
-                      }`}
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                  <div className="py-2">
+                    {priority?.tags?.map((tag, index) => (
+                      <span
+                        key={index}
+                        className={`px-3 py-1 text-white font-semibold rounded-full text-sm ml-1 ${
+                          tagColors[index % tagColors.length]
+                        }`}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             );
           })
         ) : (
-          <p className="text-gray-500 text-center py-3">No priorities found.</p>
+          <p className="text-black font-semibold text-center py-3 bg-white">
+            No priorities found.
+          </p>
         )}
       </div>
 
