@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router";
+
 
 // Import Package
 import Swal from "sweetalert2";
@@ -9,12 +9,14 @@ import { useForm } from "react-hook-form";
 // Import Icons
 import { ImCross } from "react-icons/im";
 
-// Import Utility
+// Import Hooks
 import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
+import useAuth from "../../../../../../Hooks/useAuth";
 
 const AddPriorityModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
-  const { email } = useParams();
+  // const { email } = useParams();
+  const { user } = useAuth();
 
   // State management
   const [tags, setTags] = useState([]);
@@ -63,9 +65,9 @@ const AddPriorityModal = ({ refetch }) => {
   const onSubmit = async (data) => {
     setLoading(true); // Set loading to true
 
-    const uniqueId = generateUniqueId(email);
+    const uniqueId = generateUniqueId(user?.email);
     const newPriority = {
-      email,
+      email: user?.email,
       newPriority: { id: uniqueId, ...data, tags },
     };
 
