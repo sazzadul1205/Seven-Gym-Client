@@ -1,8 +1,13 @@
+// Import Package
+import PropTypes from "prop-types";
+
+// Import Icons
 import { GrSchedules } from "react-icons/gr";
+
+// Import Component
 import ScheduleSettings from "./ScheduleSettings/ScheduleSettings";
 
 const UserSettingsSchedule = ({ userSchedule, refetch }) => {
-
   const UserScheduleData = userSchedule?.schedule;
 
   return (
@@ -23,6 +28,27 @@ const UserSettingsSchedule = ({ userSchedule, refetch }) => {
       </div>
     </div>
   );
+};
+
+UserSettingsSchedule.propTypes = {
+  userSchedule: PropTypes.shape({
+    schedule: PropTypes.objectOf(
+      PropTypes.shape({
+        dayName: PropTypes.string.isRequired,
+        date: PropTypes.string.isRequired, // Format: "DD-MM-YYYY"
+        schedule: PropTypes.objectOf(
+          PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            title: PropTypes.string,
+            notes: PropTypes.string,
+            location: PropTypes.string,
+            status: PropTypes.string,
+          })
+        ).isRequired,
+      })
+    ),
+  }),
+  refetch: PropTypes.func.isRequired,
 };
 
 export default UserSettingsSchedule;

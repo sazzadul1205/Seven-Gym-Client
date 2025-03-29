@@ -1,12 +1,23 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
-import { FaRegClock, FaRegTrashAlt } from "react-icons/fa";
+
+// Import icons
 import { FiRefreshCcw } from "react-icons/fi";
-import { Tooltip } from "react-tooltip";
+import { FaRegClock, FaRegTrashAlt } from "react-icons/fa";
+
+// Import Packages
 import Swal from "sweetalert2";
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import PropTypes from "prop-types";
+import { Tooltip } from "react-tooltip";
+
+// Import Hooks
 import useAuth from "../../../../../Hooks/useAuth";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+
+// Import Button
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+
+// Import Modal
+import TodaysScheduleAddModal from "../../../UserSchedulePlanner/TodaysSchedule/TodaysScheduleAddModal/TodaysScheduleAddModal";
 
 // Function to format time strings
 const formatTime = (timeString) => {
@@ -45,12 +56,13 @@ const getDayStatus = (dayDate) => {
 };
 
 const ScheduleSettings = ({ UserScheduleData, refetch }) => {
-  const { user } = useAuth(); // Get user info
-  const axiosPublic = useAxiosPublic(); // Axios instance for API calls
+  const { user } = useAuth();
+  const axiosPublic = useAxiosPublic();
 
-  // State: selected schedule IDs and expanded days
-  const [selectedSchedules, setSelectedSchedules] = useState(new Set());
+  // State: expanded days, selected schedule IDs, and selectedID for modal
   const [expandedDays, setExpandedDays] = useState(new Set());
+  const [selectedSchedules, setSelectedSchedules] = useState(new Set());
+  const [selectedID, setSelectedID] = useState(null);
 
   // Toggle individual schedule checkbox selection
   const handleScheduleCheckboxChange = (scheduleId) => {
@@ -97,6 +109,17 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
     });
   };
 
+  // Handle All Schedule regeneration for available date
+  const handleGenerateAllPassedSchedules = async () => {
+    const passedDays = Object.values(UserScheduleData).filter(
+      ({ date }) => getDayStatus(date) === "passed"
+    );
+
+    for (const { dayName, schedule } of passedDays) {
+      await handleRegenerateClick(dayName, schedule);
+    }
+  };
+
   // Handle schedule regeneration for a day
   const handleRegenerateClick = async (dayName, scheduleData) => {
     // Calculate next occurrence of the day
@@ -110,13 +133,19 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
         "Friday",
         "Saturday",
       ];
+
       const today = new Date();
       const todayIndex = today.getDay();
       const targetIndex = daysOfWeek.indexOf(day);
+
+      // Calculate Days to Add
       let daysToAdd = (targetIndex - todayIndex + 7) % 7;
       if (daysToAdd === 0) daysToAdd = 7; // Move to next week if same day
+
       const nextDate = new Date();
       nextDate.setDate(today.getDate() + daysToAdd);
+
+      // Convert date to DD-MM-YYYY format
       const formattedDate = nextDate
         .toLocaleDateString("en-GB")
         .split("/")
@@ -129,13 +158,17 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
 
     // Get the next occurrence details
     const { nextDayName, nextDate } = getNextOccurrence(dayName);
-    const updatedScheduleID = `${nextDayName}-${nextDate}`; // New schedule ID
+
+    const updatedScheduleID = `${nextDayName}-${nextDate
+      .split(" ")
+      .reverse()
+      .join("-")}`;
 
     // Build a new empty schedule for the day
     const updatedScheduleData = {};
     Object.keys(scheduleData).forEach((time) => {
       updatedScheduleData[time] = {
-        id: `sche-${updatedScheduleID}-${time}`,
+        id: `schedule-${updatedScheduleID}-${time}`,
         title: "",
         notes: "",
         location: "",
@@ -143,11 +176,13 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
       };
     });
 
+    const formattedDate = nextDate.split(" ").join("-");
+
     // New regenerated schedule object
     const regeneratedSchedule = {
       id: updatedScheduleID,
       dayName: nextDayName,
-      date: nextDate,
+      date: formattedDate,
       schedule: updatedScheduleData,
     };
 
@@ -164,7 +199,8 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
         title: "Success!",
         text: "Schedule has been updated successfully.",
         icon: "success",
-        confirmButtonText: "OK",
+        showConfirmButton: false,
+        timer: 1500,
       });
       refetch(); // Refresh schedule data
     } catch (error) {
@@ -179,7 +215,49 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
     }
   };
 
-  console.log(selectedSchedules);
+  const handleDeleteSelected = async () => {
+    if (!user?.email || selectedSchedules.size === 0) return;
+
+    // Show confirmation alert
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to recover these schedules!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete them!",
+    });
+
+    if (!result.isConfirmed) return; // Stop if user cancels
+
+    try {
+      await axiosPublic.put("/Schedule/DeleteSchedules", {
+        email: user.email,
+        scheduleIDs: Array.from(selectedSchedules),
+      });
+
+      // Show success alert
+      Swal.fire({
+        title: "Deleted!",
+        text: "The selected schedules have been deleted.",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      setSelectedSchedules(new Set()); // Clear selection
+      refetch(); // Refresh schedule data
+    } catch (error) {
+      console.error("Error deleting schedules:", error);
+      // Show error alert
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to delete schedules. Please try again.",
+        icon: "error",
+      });
+    }
+  };
 
   return (
     <div>
@@ -196,14 +274,24 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
         {/* Button */}
         <div className="flex justify-between items-center pt-2">
           {/* Delete Button */}
-          <button className="flex items-center bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-600 rounded-lg text-xl font-semibold gap-3 px-8 py-3 cursor-pointer">
+          <button
+            disabled={selectedSchedules.size === 0}
+            onClick={handleDeleteSelected}
+            className={`flex items-center rounded-lg text-xl font-semibold gap-3 px-8 py-3 ${
+              selectedSchedules.size === 0
+                ? "bg-red-300 opacity-50 cursor-not-allowed"
+                : "bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-600 cursor-pointer"
+            }`}
+          >
             Delete <FaRegTrashAlt />
+            <span className="ml-2 text-white">({selectedSchedules.size})</span>
           </button>
 
           {/* Regenerate Button */}
           <div>
             <button
               className="flex items-center bg-linear-to-bl hover:bg-linear-to-tr from-blue-300 to-blue-600 rounded-lg text-xl font-bold gap-3 px-5 py-3 cursor-pointer"
+              onClick={handleGenerateAllPassedSchedules}
               data-tooltip-id="ReGenerateToolTip"
             >
               <FiRefreshCcw />
@@ -242,6 +330,7 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
             const dayData = UserScheduleData[day];
             const dayStatus = getDayStatus(dayData.date);
             const isExpanded = expandedDays.has(day);
+
             // Get all schedule IDs for the day and check if all are selected
             const dayScheduleIds = Object.keys(dayData.schedule).map(
               (time) => dayData.schedule[time].id
@@ -308,11 +397,11 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
 
                 {/* Collapse Content: Schedule Items */}
                 <div
-                  className={`grid transition-all duration-300 ease-in-out overflow-hidden ${
+                  className={`grid transition-all duration-300 ease-in-out overflow-hidden  ${
                     dayStatus === "passed"
                       ? "max-h-0 opacity-0" // Force closed if passed
                       : isExpanded
-                      ? "max-h-screen opacity-100"
+                      ? "min-h-screen  opacity-100"
                       : "max-h-0 opacity-0"
                   }`}
                 >
@@ -374,9 +463,26 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
                                     )}
                                   </div>
                                 ) : (
-                                  <p className="text-sm text-gray-500">
-                                    Nothing scheduled yet
-                                  </p>
+                                  <div className="flex justify-between items-center text-black text-sm">
+                                    <p className="mr-5">
+                                      Nothing scheduled yet
+                                    </p>
+                                    <CommonButton
+                                      text="Add Schedule"
+                                      py="py-2"
+                                      px="px-10"
+                                      bgColor="green"
+                                      clickEvent={() => {
+                                        setSelectedID(schedule.id);
+                                        // Open the dialog modal
+                                        document
+                                          .getElementById(
+                                            "Todays_Schedule_Add_Modal"
+                                          )
+                                          .showModal();
+                                      }}
+                                    />
+                                  </div>
                                 )}
                               </div>
                             </div>
@@ -391,8 +497,17 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
           })}
         </div>
       </div>
+
+      <dialog id="Todays_Schedule_Add_Modal" className="modal">
+        <TodaysScheduleAddModal selectedID={selectedID} refetch={refetch} />
+      </dialog>
     </div>
   );
+};
+
+ScheduleSettings.propTypes = {
+  UserScheduleData: PropTypes.object.isRequired,
+  refetch: PropTypes.func.isRequired,
 };
 
 export default ScheduleSettings;
