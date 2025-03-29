@@ -37,7 +37,7 @@ const ViewPlanModal = ({ eventDetails, refetch }) => {
     if (!user?.email || !scheduleID) return;
     try {
       // Send delete request to API
-      await axiosPublic.put("/Schedule/DeleteSchedules", {
+      await axiosPublic.put("/User_Schedule/DeleteSchedules", {
         email: user.email,
         scheduleIDs: [scheduleID],
       });

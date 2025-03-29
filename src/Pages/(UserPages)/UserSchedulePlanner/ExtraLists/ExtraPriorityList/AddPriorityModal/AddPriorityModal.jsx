@@ -70,7 +70,7 @@ const AddPriorityModal = ({ refetch }) => {
     };
 
     try {
-      await axiosPublic.put("/Schedule/AddPriority", newPriority);
+      await axiosPublic.put("/User_Schedule/AddPriority", newPriority);
 
       Swal.fire({
         icon: "success",

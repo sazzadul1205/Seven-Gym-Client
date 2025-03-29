@@ -94,7 +94,7 @@ const AddToDoModal = ({ refetch }) => {
     };
 
     try {
-      await axiosPublic.put("/Schedule/AddToDo", newToDo);
+      await axiosPublic.put("/User_Schedule/AddToDo", newToDo);
 
       Swal.fire({
         icon: "success",

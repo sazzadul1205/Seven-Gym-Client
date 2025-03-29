@@ -64,7 +64,7 @@ const ScheduleNoteSettings = ({ UserNoteData, refetch }) => {
       if (!email) return;
 
       // Send all selected IDs for deletion
-      await axiosPublic.delete("/Schedule/DeleteNote", {
+      await axiosPublic.delete("/User_Schedule/DeleteNote", {
         data: { email, noteIDs: Array.from(selectedNotes) },
       });
 

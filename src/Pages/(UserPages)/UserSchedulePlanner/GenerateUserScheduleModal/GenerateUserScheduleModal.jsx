@@ -107,7 +107,7 @@ const GenerateUserScheduleModal = ({ refetch }) => {
 
     // Post the schedule data to the backend
     try {
-      await axiosPublic.post("/Schedule", schedule);
+      await axiosPublic.post("/User_Schedule", schedule);
       refetch(); // Refresh schedule data
       Swal.fire({
         icon: "success",

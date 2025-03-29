@@ -26,7 +26,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     queryFn: () =>
       axiosPublic
         .get(
-          `Schedule/SchedulesById?email=${user?.email}&scheduleIDs=${selectedID}`
+          `/User_Schedule/SchedulesById?email=${user?.email}&scheduleIDs=${selectedID}`
         )
         .then((res) => res.data),
     enabled: !!selectedID, // Only run query when selectedID exists
@@ -146,7 +146,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     };
 
     try {
-      await axiosPublic.put("/Schedule/RegenerateNewDaySchedule", {
+      await axiosPublic.put("/User_Schedule/RegenerateNewDaySchedule", {
         email: user.email,
         dayName: nextDayName,
         scheduleData: regeneratedSchedule,

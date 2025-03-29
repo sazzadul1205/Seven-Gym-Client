@@ -23,6 +23,8 @@ const UserSchedulePlanner = () => {
   const axiosPublic = useAxiosPublic();
   const { email } = useParams();
   const { user } = useAuth();
+
+  // The References
   const unauthorizedModalRef = useRef(null);
   const generateModalRef = useRef(null);
 
@@ -40,7 +42,7 @@ const UserSchedulePlanner = () => {
     queryFn: async () => {
       if (!email) return []; // Prevent API call if email is missing
       try {
-        const response = await axiosPublic.get(`/Schedule?email=${email}`);
+        const response = await axiosPublic.get(`/User_Schedule?email=${email}`);
         return response.data;
       } catch (error) {
         if (error.response?.status === 404) return [];
@@ -129,7 +131,7 @@ const UserSchedulePlanner = () => {
       <div className="pb-5 relative">
         {/* Settings Part */}
         <div className="absolute top-2 right-2 p-3 rounded-full">
-          <Link to="/User/UserSettings?tab=Settings_Schedule">
+          <Link to="/User/UserSettings?tab=User_Schedule_Settings">
             <IoSettings className="text-red-500 hover:text-red-400 text-4xl transition-transform duration-500 hover:rotate-180" />
           </Link>
         </div>

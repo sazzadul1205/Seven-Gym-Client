@@ -70,7 +70,7 @@ const AddNotesModal = ({ refetch }) => {
     };
 
     try {
-      await axiosPublic.put("/Schedule/AddNotes", newNote);
+      await axiosPublic.put("/User_Schedule/AddNotes", newNote);
 
       Swal.fire({
         icon: "success",

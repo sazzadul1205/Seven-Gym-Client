@@ -96,7 +96,7 @@ const TodaysScheduleAddModal = ({ selectedID, refetch }) => {
     queryFn: () =>
       axiosPublic
         .get(
-          `/Schedule/SchedulesById?email=${
+          `/User_Schedule/SchedulesById?email=${
             user?.email
           }&scheduleIDs=${scheduleIDs.join("&scheduleIDs=")}`
         )
@@ -142,7 +142,7 @@ const TodaysScheduleAddModal = ({ selectedID, refetch }) => {
     };
 
     try {
-      await axiosPublic.put("/Schedule/AddSchedules", planData);
+      await axiosPublic.put("/User_Schedule/AddSchedules", planData);
       refetch();
       reset();
 

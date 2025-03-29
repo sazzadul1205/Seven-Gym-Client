@@ -66,7 +66,7 @@ const SchedulePrioritySettings = ({ UserPriorityData, refetch }) => {
       if (!email) return;
 
       // Send all selected IDs for deletion
-      await axiosPublic.delete("/Schedule/DeletePriority", {
+      await axiosPublic.delete("/User_Schedule/DeletePriority", {
         data: { email, priorityIDs: Array.from(selectedPriorities) },
       });
 

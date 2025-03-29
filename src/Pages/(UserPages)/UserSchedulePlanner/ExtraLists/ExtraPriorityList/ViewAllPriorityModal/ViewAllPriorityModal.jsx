@@ -59,7 +59,7 @@ const ViewAllPriorityModal = ({ refetch, priority }) => {
       const email = user?.email;
       if (!email) return;
 
-      await axiosPublic.delete("/Schedule/DeletePriority", {
+      await axiosPublic.delete("/User_Schedule/DeletePriority", {
         data: { email, priorityID: selectedPriority.id },
       });
 

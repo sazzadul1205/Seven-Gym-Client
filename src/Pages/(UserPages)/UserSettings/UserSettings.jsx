@@ -65,7 +65,7 @@ const UserSettings = () => {
   } = useQuery({
     queryKey: ["ScheduleData"],
     queryFn: () =>
-      axiosPublic.get(`/Schedule?email=${user?.email}`).then((res) => res.data),
+      axiosPublic.get(`/User_Schedule?email=${user?.email}`).then((res) => res.data),
   });
 
   const userSchedule = schedulesData?.[0] || null; // Ensure safe access

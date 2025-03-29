@@ -188,7 +188,7 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
 
     try {
       // API call to update the schedule on the server
-      await axiosPublic.put("/Schedule/RegenerateNewDaySchedule", {
+      await axiosPublic.put("/User_Schedule/RegenerateNewDaySchedule", {
         email: user.email,
         dayName: nextDayName,
         scheduleData: regeneratedSchedule,
@@ -232,7 +232,7 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
     if (!result.isConfirmed) return; // Stop if user cancels
 
     try {
-      await axiosPublic.put("/Schedule/DeleteSchedules", {
+      await axiosPublic.put("/User_Schedule/DeleteSchedules", {
         email: user.email,
         scheduleIDs: Array.from(selectedSchedules),
       });

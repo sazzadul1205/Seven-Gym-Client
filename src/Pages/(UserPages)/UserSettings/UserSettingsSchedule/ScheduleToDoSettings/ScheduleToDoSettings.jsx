@@ -70,7 +70,7 @@ const ScheduleToDoSettings = ({ UserToDoData, refetch }) => {
       if (!email) return;
 
       // Send all selected IDs for deletion
-      await axiosPublic.delete("/Schedule/DeleteToDo", {
+      await axiosPublic.delete("/User_Schedule/DeleteToDo", {
         data: { email, todoIDs: Array.from(selectedToDos) },
       });
 

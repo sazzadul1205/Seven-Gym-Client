@@ -59,7 +59,7 @@ const ViewAllNotesModal = ({ refetch, note }) => {
       const email = user?.email;
       if (!email) return;
 
-      await axiosPublic.delete("/Schedule/DeleteNote", {
+      await axiosPublic.delete("/User_Schedule/DeleteNote", {
         data: { email, noteID: selectedNote.id },
       });
 

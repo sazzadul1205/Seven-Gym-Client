@@ -50,7 +50,7 @@ const ViewToDoModal = ({ ToDo, refetch }) => {
     try {
       if (!user?.email) return;
 
-      await axiosPublic.delete("/Schedule/DeleteToDo", {
+      await axiosPublic.delete("/User_Schedule/DeleteToDo", {
         data: { email: user.email, todoID: ToDo.id },
       });
 
