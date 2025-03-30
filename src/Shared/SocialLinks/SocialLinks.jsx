@@ -98,7 +98,7 @@ const SocialLinks = () => {
       <div>
         <button
           onClick={handleGoogleLogin}
-          className="flex bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white rounded-xl w-full py-3 justify-center gap-5"
+          className="flex bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white rounded-xl w-full py-3 justify-center gap-5 cursor-pointer"
         >
           <FcGoogle className="text-xl" />
           <span className="font-semibold">Sign Up With Google</span>
@@ -109,7 +109,7 @@ const SocialLinks = () => {
       <div>
         <button
           onClick={handleFacebookLogin}
-          className="flex bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white rounded-xl w-full py-3 justify-center gap-5"
+          className="flex bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white rounded-xl w-full py-3 justify-center gap-5 cursor-pointer"
         >
           <FaFacebookSquare className="text-xl text-[#1877F2]" />
           <span className="font-semibold">Sign Up With Facebook</span>

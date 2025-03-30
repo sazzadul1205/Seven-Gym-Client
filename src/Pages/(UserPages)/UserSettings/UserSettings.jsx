@@ -15,11 +15,11 @@ import FetchingError from "../../../Shared/Component/FetchingError";
 
 // Import Tabs Component
 import UserSettingsAward from "./UserSettingsAward/UserSettingsAward";
+import UserSettingsClass from "./UserSettingsClass/UserSettingsClass";
 import UserSettingsWorkout from "./UserSettingsWorkout/UserSettingsWorkout";
+import UserSettingsTrainer from "./UserSettingsTrainer/UserSettingsTrainer";
 import UserSettingsSchedule from "./UserSettingsSchedule/UserSettingsSchedule";
 import UserSettingsInformation from "./UserSettingsInformation/UserSettingsInformation";
-import UserSettingsTrainer from "./UserSettingsTrainer/UserSettingsTrainer";
-import UserSettingsClass from "./UserSettingsClass/UserSettingsClass";
 import UserSettingsTestimonials from "./UserSettingsTestimonials/UserSettingsTestimonials";
 
 const UserSettings = () => {

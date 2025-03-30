@@ -30,6 +30,8 @@ const SignUpDetails = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  console.log(profileImage);
+
   // Query to check if the user already exists
   const {
     data: UserExists,
@@ -71,7 +73,9 @@ const SignUpDetails = () => {
 
   // Handle form submission
   const onSubmit = async (data) => {
-    setLoading(true); // Set loading to true when submission starts
+    // Set loading to true when submission starts
+    setLoading(true);
+
     let uploadedImageUrl = null;
 
     // Image upload logic
@@ -107,6 +111,7 @@ const SignUpDetails = () => {
       second: "2-digit",
       hour12: true,
     });
+    console.log(uploadedImageUrl);
 
     const formDataWithImage = {
       email: user.email,
@@ -244,7 +249,7 @@ const SignUpDetails = () => {
               className={`w-1/3 text-4xl font-bold rounded-xl py-3 ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white"
+                  : "bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white cursor-pointer"
               }`}
             >
               {loading ? "Submitting..." : "Create Account"}
@@ -257,14 +262,7 @@ const SignUpDetails = () => {
 };
 
 // Reusable Input Field Component
-const InputField = ({
-  label,
-  placeholder,
-  register,
-  errors,
-  name,
-  type,
-}) => (
+const InputField = ({ label, placeholder, register, errors, name, type }) => (
   <div>
     <label className="block text-gray-700 font-semibold text-xl pb-2">
       {label}
@@ -272,7 +270,7 @@ const InputField = ({
     <input
       type={type}
       placeholder={placeholder}
-      className="input w-full text-black bg-white rounded-2xl shadow-lg hover:shadow-xl focus:shadow-xl"
+      className="input w-full text-black bg-white rounded-lg shadow-lg hover:shadow-xl focus:shadow-xl"
       {...register(name, { required: `${label} is required` })}
     />
     {errors[name] && (
@@ -294,11 +292,11 @@ InputField.propTypes = {
 // Reusable Gender Select Field Component
 const GenderSelectField = ({ register, errors }) => (
   <div>
-    <label className="block text-gray-700 font-semibold text-xl pb-2">
+    <label className="block text-black font-semibold text-xl pb-2">
       Gender
     </label>
     <select
-      className="input w-full text-black bg-white rounded-2xl shadow-lg hover:shadow-xl focus:shadow-xl"
+      className="input w-full text-black bg-white rounded-lg shadow-lg hover:shadow-xl focus:shadow-xl"
       {...register("gender", { required: "Gender is required" })}
     >
       <option value="">Select</option>

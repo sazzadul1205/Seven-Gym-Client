@@ -1,6 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
+
+// Import Package
 import PropTypes from "prop-types";
 import Cropper from "react-easy-crop";
+
+// Import Icons
 import { FiCamera } from "react-icons/fi";
 
 const ImageCropper = ({ onImageCropped }) => {
@@ -148,13 +152,13 @@ const ImageCropper = ({ onImageCropped }) => {
                 {/* Buttons */}
                 <div className="flex space-x-2 gap-4">
                   <button
-                    className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-500 to-gray-300 text-white px-4 py-2 rounded-lg w-[100px]"
+                    className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-500 to-gray-300 text-white px-4 py-2 rounded-lg w-[100px] cursor-pointer"
                     onClick={() => setShowCropper(false)}
                   >
                     Cancel
                   </button>
                   <button
-                    className="bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white px-4 py-2 rounded-lg w-[100px]"
+                    className="bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white px-4 py-2 rounded-lg w-[100px] cursor-pointer"
                     onClick={getCroppedImage}
                   >
                     Save

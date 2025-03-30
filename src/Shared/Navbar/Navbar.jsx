@@ -23,13 +23,13 @@ import useAuth from "../../Hooks/useAuth";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 
 const Navbar = () => {
-  const axiosPublic = useAxiosPublic();
   const { user } = useAuth();
+  const axiosPublic = useAxiosPublic();
 
   // State variables
+  const [setIsDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
-  const [setIsDropdownOpen] = useState(false);
 
   // Refs for handling outside clicks
   const menuRef = useRef(null);

@@ -86,7 +86,7 @@ createRoot(document.getElementById("root")).render(
               <Route path="/About/AboutUs" element={<AboutUs />} />
               <Route path="/About/Feedback" element={<Feedback />} />
 
-              {/* User Pages Link */}
+              {/* User Pages Links */}
               <Route
                 path="/User/UserProfile/:email"
                 element={<UserProfile />}
@@ -104,6 +104,9 @@ createRoot(document.getElementById("root")).render(
                 path="/User/UserSchedule/:email"
                 element={<UserSchedulePlanner />}
               />
+
+            {/* Trainers Pages Link */}
+
             </Route>
           </Routes>
         </BrowserRouter>

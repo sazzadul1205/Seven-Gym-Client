@@ -58,8 +58,6 @@ const Login = () => {
           navigate(from, { replace: true });
           // Instead of reloading, update the user state if needed
         }
-
-        showAlert("success", "Welcome back!");
       } catch (error) {
         console.error("Login Error:", error);
         showAlert("error", error.message || "An error occurred during login.");
@@ -149,7 +147,7 @@ const Login = () => {
             className={`w-full text-4xl font-bold rounded-xl py-3 ${
               loading
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white"
+                : "bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a]/80 to-[#ff0040] text-white cursor-pointer"
             }`}
           >
             {loading ? (
@@ -167,7 +165,7 @@ const Login = () => {
             Don&apos;t have an Account? Please{" "}
             <Link
               to="/SignUp"
-              className="text-[#F72C5B] font-semibold hover:font-bold hover:underline"
+              className="text-[#F72C5B] font-bold hover:underline"
             >
               Sign Up
             </Link>
@@ -175,7 +173,9 @@ const Login = () => {
         </form>
 
         {/* Divider for social login options */}
-        <div className="divider divider-neutral text-black font-semibold">OR</div>
+        <div className="divider divider-neutral text-black font-semibold">
+          OR
+        </div>
 
         {/* Social login component */}
         <SocialLinks />

@@ -70,8 +70,22 @@ const NavbarEnd = ({ UsersData }) => {
       },
     ],
     Trainer: [
-      { name: "Trainer Dashboard", path: "/TrainerDashboard" },
-      { name: "Class Management", path: "/ClassManagement" },
+      {
+        name: "Trainer Dashboard",
+        path: `/Trainer/TrainerDashboard/${user?.email}`,
+      },
+      {
+        name: "Trainer Profile",
+        path: `/Trainer/TrainerProfile/${user?.email}`,
+      },
+      {
+        name: "Trainer Booking Management",
+        path: `/Trainer/TrainerBookingManagement/${user?.email}`,
+      },
+      {
+        name: "Trainer Class Management",
+        path: `/Trainer/TrainerClassManagement/${user?.email}`,
+      },
     ],
     ClassManager: [{ name: "Dashboard", path: "/ClassManagerDashboard" }],
     Moderator: [{ name: "Moderator Dashboard", path: "/ModeratorDashboard" }],

@@ -159,7 +159,7 @@ const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
       >
-        <p className="font-semibold text-lg py-3">My Fitness Goals</p>
+        <p className="font-semibold text-lg text-black py-3">My Fitness Goals</p>
         <div className="flex flex-wrap bg-white gap-2 py-4 px-2">
           {selectedGoals.map((goal) => {
             const bgColor = goalColors[goal] || "#F72C5B";

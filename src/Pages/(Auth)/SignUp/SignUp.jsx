@@ -39,14 +39,6 @@ const SignUp = () => {
       .then(() => {
         setLoading(false); // Stop loading
         navigate("/SignUp/Details"); // Redirect to details page after successful signup
-
-        // Show success alert
-        Swal.fire({
-          icon: "success",
-          title: "Success!",
-          text: "User created successfully.",
-          confirmButtonColor: "#F72C5B",
-        });
       })
       .catch((error) => {
         console.error("Error creating user:", error);
@@ -164,7 +156,7 @@ const SignUp = () => {
               className={`w-full text-4xl font-bold rounded-xl py-3 ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white"
+                  : "bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white cursor-pointer"
               }`}
             >
               {loading ? (
@@ -182,7 +174,7 @@ const SignUp = () => {
               Already have an Account?{" "}
               <Link
                 to={"/Login"}
-                className="text-[#F72C5B] font-semibold hover:font-bold hover:underline"
+                className="text-[#F72C5B] font-bold hover:underline"
               >
                 Login
               </Link>
