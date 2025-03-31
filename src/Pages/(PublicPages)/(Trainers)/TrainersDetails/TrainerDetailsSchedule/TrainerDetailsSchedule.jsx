@@ -229,7 +229,7 @@ TrainerDetailsSchedule.propTypes = {
     name: PropTypes.string.isRequired,
     perSession: PropTypes.number.isRequired,
     monthlyPackage: PropTypes.number.isRequired,
-  }).isRequired,
+  }),
   TrainerSchedule: PropTypes.shape({
     trainerSchedule: PropTypes.objectOf(
       PropTypes.objectOf(

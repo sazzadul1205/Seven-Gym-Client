@@ -41,11 +41,11 @@ const TrainersDetails = () => {
 
   // Fetch Trainer Schedule
   const {
-    data: Trainer_ScheduleData,
-    isLoading: isLoadingTrainerSchedule,
-    error: errorTrainerSchedule,
+    data: TrainerScheduleData,
+    isLoading: TrainerScheduleIsLoading,
+    error: TrainerScheduleError,
   } = useQuery({
-    queryKey: ["Trainer_ScheduleData", decodedName],
+    queryKey: ["TrainerScheduleData"],
     queryFn: () =>
       axiosPublic
         .get(`/Trainers_Schedule/ByTrainerName?trainerName=${decodedName}`)
@@ -53,22 +53,21 @@ const TrainersDetails = () => {
   });
 
   // Handle loading state
-  if (isLoadingTrainerDetails || isLoadingTrainerSchedule) {
+  if (isLoadingTrainerDetails || TrainerScheduleIsLoading) {
     return <Loading />;
   }
 
   // Handle errors for either API call
-  if (errorTrainerDetails || errorTrainerSchedule) {
+  if (errorTrainerDetails || TrainerScheduleError) {
     return <FetchingError />;
   }
 
   // Extract trainer details and schedule from API response
   const TrainerDetails = Trainer_DetailData?.[0];
 
-  
-  const TrainerSchedule = Trainer_ScheduleData?.[0];
-  console.log(TrainerSchedule);
-  
+  // Check if TrainerScheduleData is an array and has at least one element
+  const TrainerSchedule = TrainerScheduleData?.[0];
+
   return (
     <div
       className=" bg-fixed bg-cover bg-center bg-linear-to-b from-white/50 to-white/20"
