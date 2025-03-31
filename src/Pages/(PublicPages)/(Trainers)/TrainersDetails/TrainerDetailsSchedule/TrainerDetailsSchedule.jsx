@@ -246,8 +246,8 @@ TrainerDetailsSchedule.propTypes = {
             .isRequired,
         })
       )
-    ).isRequired,
-  }).isRequired,
+    ),
+  }),
 };
 
 export default TrainerDetailsSchedule;

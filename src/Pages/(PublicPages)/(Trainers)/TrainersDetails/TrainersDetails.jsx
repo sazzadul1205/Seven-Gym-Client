@@ -1,8 +1,10 @@
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 
+// Import Background Image
 import Trainer_Details_Page_Background from "../../../../assets/Trainers-Details-Background/Trainer_Details_Page_Background.jpg";
 
+// |Import Components
 import TrainersDetailsAbout from "./TrainersDetailsAbout/TrainersDetailsAbout";
 import TrainersDetailsHeader from "./TrainersDetailsHeader/TrainersDetailsHeader";
 import TrainerDetailsDetails from "./TrainerDetailsDetails/TrainerDetailsDetails";
@@ -10,6 +12,7 @@ import TrainerDetailsContact from "./TrainerDetailsContact/TrainerDetailsContact
 import TrainerDetailsSchedule from "./TrainerDetailsSchedule/TrainerDetailsSchedule";
 import TrainerDetailsTestimonials from "./TrainerDetailsTestimonials/TrainerDetailsTestimonials";
 
+// Import Hooks and Shared
 import Loading from "../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../Shared/Component/FetchingError";
@@ -20,6 +23,8 @@ const TrainersDetails = () => {
 
   // Decode the trainer's name from the URL
   const decodedName = decodeURIComponent(name);
+
+  console.log(decodedName);
 
   // Fetch Trainer Details
   const {
@@ -59,8 +64,11 @@ const TrainersDetails = () => {
 
   // Extract trainer details and schedule from API response
   const TrainerDetails = Trainer_DetailData?.[0];
-  const TrainerSchedule = Trainer_ScheduleData?.[0];
 
+  
+  const TrainerSchedule = Trainer_ScheduleData?.[0];
+  console.log(TrainerSchedule);
+  
   return (
     <div
       className=" bg-fixed bg-cover bg-center bg-linear-to-b from-white/50 to-white/20"

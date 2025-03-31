@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import PropTypes from "prop-types"; // Import PropTypes
 import {
   GoogleAuthProvider,
   FacebookAuthProvider,
@@ -12,103 +12,119 @@ import {
 } from "firebase/auth";
 import auth from "../Firebase/firebase.config";
 
-// Create AuthContext
-export const AuthContext = createContext(null);
+import { AuthContext } from "./AuthContext";
 
 // Initialize Google and Facebook Providers
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
 
-// AuthProvider component
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Ensure user is initialized to null
-  const [loading, setLoading] = useState(true); // Loading state for auth actions
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Create a new user
-  const createUser = async (email, password) => {
-    setLoading(true);
+  const createUser = useCallback(async (email, password) => {
     try {
-      return await createUserWithEmailAndPassword(auth, email, password);
+      setLoading(true);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      setUser(userCredential.user);
+      return userCredential;
     } catch (error) {
-      console.error("Error creating user:", error);
+      console.error("Create User Error:", error.message);
+      throw error;
+    } finally {
       setLoading(false);
-      throw error; // Rethrow the error for higher-level handling
     }
-  };
+  }, []);
 
   // Update User Info
-  const updateUser = async (displayName, photoURL) => {
-    setLoading(true);
+  const updateUser = useCallback(async (displayName, photoURL) => {
     try {
-      if (auth.currentUser) {
-        await updateProfile(auth.currentUser, { displayName, photoURL });
-        setLoading(false);
-      } else {
-        throw new Error("No current user found");
-      }
+      if (!auth.currentUser) throw new Error("No current user found");
+
+      await updateProfile(auth.currentUser, { displayName, photoURL });
+      setUser((prevUser) => ({ ...prevUser, displayName, photoURL }));
     } catch (error) {
-      console.error("Error updating user:", error);
-      setLoading(false);
-      throw error; // Rethrow the error for higher-level handling
+      console.error("Update User Error:", error.message);
+      throw error;
     }
-  };
+  }, []);
 
   // Sign in with email and password
-  const signIn = async (email, password) => {
-    setLoading(true);
+  const signIn = useCallback(async (email, password) => {
     try {
-      return await signInWithEmailAndPassword(auth, email, password);
+      setLoading(true);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      setUser(userCredential.user);
+      return userCredential;
     } catch (error) {
-      console.error("Error signing in:", error);
+      console.error("Sign In Error:", error.message);
+      throw error;
+    } finally {
       setLoading(false);
-      throw error; // Rethrow the error for higher-level handling
     }
-  };
+  }, []);
 
   // Sign out user
-  const logOut = async () => {
-    setLoading(true);
+  const logOut = useCallback(async () => {
     try {
+      setLoading(true);
       await signOut(auth);
-      setLoading(false);
+      setUser(null);
     } catch (error) {
-      console.error("Error logging out:", error);
+      console.error("Logout Error:", error.message);
+      throw error;
+    } finally {
       setLoading(false);
-      throw error; // Rethrow the error for higher-level handling
     }
-  };
+  }, []);
 
   // Sign in with Google
-  const signInWithGoogle = async () => {
-    setLoading(true);
+  const signInWithGoogle = useCallback(async () => {
     try {
-      return await signInWithPopup(auth, googleProvider);
+      setLoading(true);
+      const result = await signInWithPopup(auth, googleProvider);
+      setUser(result.user);
+      return result;
     } catch (error) {
-      console.error("Error signing in with Google:", error);
+      console.error("Google Sign-In Error:", error.message);
+      throw error;
+    } finally {
       setLoading(false);
-      throw error; // Rethrow the error for higher-level handling
     }
-  };
+  }, []);
 
   // Sign in with Facebook
-  const signInWithFacebook = async () => {
-    setLoading(true);
+  const signInWithFacebook = useCallback(async () => {
     try {
-      return await signInWithPopup(auth, facebookProvider);
+      setLoading(true);
+      const result = await signInWithPopup(auth, facebookProvider);
+      setUser(result.user);
+      return result;
     } catch (error) {
-      console.error("Error signing in with Facebook:", error);
+      console.error("Facebook Sign-In Error:", error.message);
+      throw error;
+    } finally {
       setLoading(false);
-      throw error; // Rethrow the error for higher-level handling
     }
-  };
+  }, []);
 
   // Listen for auth state changes
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setLoading(false); // Stop loading once user is set
+      setLoading(false);
     });
-    return () => unSubscribe(); // Cleanup subscription on unmount
+
+    return () => unSubscribe();
   }, []);
 
   // Provide auth info to the rest of the app
@@ -119,13 +135,18 @@ const AuthProvider = ({ children }) => {
     logOut,
     signIn,
     signInWithGoogle,
-    signInWithFacebook, // Added Facebook login to context
+    signInWithFacebook,
     updateUser,
   };
 
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
   );
+};
+
+// ✅ Add PropTypes for type checking
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default AuthProvider;

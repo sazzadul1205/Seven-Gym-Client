@@ -44,23 +44,44 @@ const Login = () => {
     async (data) => {
       setLoading(true);
       try {
+        // Attempt sign-in
         const res = await signIn(data.email, data.password);
-        const user = res.user;
+        const user = res?.user;
 
-        // Fetch user role from the database
-        const response = await axiosPublic.get(`/Users?email=${user.email}`);
-        const userData = response.data;
+        if (!user) {
+          showAlert("error", "No user found with this email.");
+          return;
+        }
 
-        // Redirect based on user role
-        if (userData.role === "Admin" || userData.role === "Manager") {
+        // Fetch user role **in parallel** to reduce load time
+        const response = axiosPublic.get(`/Users?email=${user.email}`);
+
+        // Wait for the response
+        const userData = await response;
+
+        if (!userData?.data?.role) {
+          showAlert("error", "User data not found. Please contact support.");
+          return;
+        }
+
+        // Navigate based on user role
+        if (
+          userData.data.role === "Admin" ||
+          userData.data.role === "Manager" ||
+          userData.data.role === "Trainer"
+        ) {
           navigate("/Dashboard", { replace: true });
         } else {
           navigate(from, { replace: true });
-          // Instead of reloading, update the user state if needed
         }
+
+        showAlert("success", "You have successfully logged in!");
       } catch (error) {
         console.error("Login Error:", error);
-        showAlert("error", error.message || "An error occurred during login.");
+        showAlert(
+          "error",
+          error.response?.data?.message || "Invalid email or password."
+        );
       } finally {
         setLoading(false);
       }

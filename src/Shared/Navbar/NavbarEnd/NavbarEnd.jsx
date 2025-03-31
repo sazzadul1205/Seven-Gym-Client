@@ -9,10 +9,12 @@ import useAuth from "../../../Hooks/useAuth";
 
 // Import Icons
 import { ImExit } from "react-icons/im";
-import { FaUser } from "react-icons/fa";
+import { FaBook, FaUser } from "react-icons/fa";
 import { GiUpgrade } from "react-icons/gi";
 import { AiTwotoneSchedule } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
+import { MdClass, MdDashboard } from "react-icons/md";
+import { RiProfileLine } from "react-icons/ri";
 
 const NavbarEnd = ({ UsersData }) => {
   // Fetch authentication state and logout function
@@ -73,18 +75,27 @@ const NavbarEnd = ({ UsersData }) => {
       {
         name: "Trainer Dashboard",
         path: `/Trainer/TrainerDashboard/${user?.email}`,
+        icon: <MdDashboard />,
       },
       {
         name: "Trainer Profile",
         path: `/Trainer/TrainerProfile/${user?.email}`,
+        icon: <RiProfileLine />,
       },
       {
         name: "Trainer Booking Management",
         path: `/Trainer/TrainerBookingManagement/${user?.email}`,
+        icon: <FaBook />,
       },
       {
-        name: "Trainer Class Management",
-        path: `/Trainer/TrainerClassManagement/${user?.email}`,
+        name: "Trainer Training Management",
+        path: `/Trainer/TrainerTrainingManagement/${user?.email}`,
+        icon: <MdClass />,
+      },
+      {
+        name: "Trainer Settings",
+        path: `/Trainer/TrainingSettings`,
+        icon: <MdClass />,
       },
     ],
     ClassManager: [{ name: "Dashboard", path: "/ClassManagerDashboard" }],

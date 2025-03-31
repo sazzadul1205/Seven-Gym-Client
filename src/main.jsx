@@ -42,6 +42,7 @@ import UserTierUpgrade from "./Pages/(UserPages)/UserTierUpgrade/UserTierUpgrade
 import TearUpgradePayment from "./Pages/(UserPages)/TierUpgradePayment/TierUpgradePayment.jsx";
 import UserSchedulePlanner from "./Pages/(UserPages)/UserSchedulePlanner/UserSchedulePlanner.jsx";
 import TestimonialsPage from "./Pages/(PublicPages)/(About)/TestimonialsPage/TestimonialsPage.jsx";
+import TrainerProfile from "./Pages/(TrainerPages)/TrainerProfile/TrainerProfile.jsx";
 
 const queryClient = new QueryClient();
 
@@ -105,8 +106,11 @@ createRoot(document.getElementById("root")).render(
                 element={<UserSchedulePlanner />}
               />
 
-            {/* Trainers Pages Link */}
-
+              {/* Trainer Pages Link */}
+              <Route
+                path="/Trainer/TrainerProfile/:email"
+                element={<TrainerProfile />}
+              />
             </Route>
           </Routes>
         </BrowserRouter>
