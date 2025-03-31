@@ -51,7 +51,7 @@ const TrainerProfileHeader = ({ TrainerDetails }) => {
   const { icon } = getGenderIcon(TrainerDetails?.gender);
 
   return (
-    <div className="relative bg-gradient-to-bl from-gray-400 to-gray-200 mx-auto text-center py-10">
+    <div className="relative mx-auto text-center py-10">
       {/* Settings Icon (Top Left) */}
       <div className="absolute top-2 right-2 bg-gray-400/50 p-3 rounded-full">
         <Link to="/Trainer/TrainerSettings?tab=User_Info_Settings">

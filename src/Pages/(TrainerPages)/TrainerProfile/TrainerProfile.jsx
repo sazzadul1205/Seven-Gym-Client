@@ -14,6 +14,7 @@ import TrainerDetailsDetails from "../../(PublicPages)/(Trainers)/TrainersDetail
 import TrainerDetailsSchedule from "../../(PublicPages)/(Trainers)/TrainersDetails/TrainerDetailsSchedule/TrainerDetailsSchedule";
 import TrainerDetailsTestimonials from "../../(PublicPages)/(Trainers)/TrainersDetails/TrainerDetailsTestimonials/TrainerDetailsTestimonials";
 import TrainerProfileHeader from "./TrainerProfileHeader/TrainerProfileHeader";
+import TrainerProfileAbout from "./TrainerProfileAbout/TrainerProfileAbout";
 
 const TrainerProfile = () => {
   const axiosPublic = useAxiosPublic();
@@ -21,21 +22,22 @@ const TrainerProfile = () => {
 
   // Fetch trainer data based on the logged-in user's email
   const {
-    data: MyTrainerData,
+    data: MyTrainerData = [],
     isLoading: MyTrainerDataLoading,
     error: MyTrainerDataError,
   } = useQuery({
     queryKey: ["MyTrainerData", user?.email],
     queryFn: () =>
       axiosPublic.get(`/Trainers?email=${user?.email}`).then((res) => res.data),
-    enabled: !!user?.email,
+    enabled: !!user?.email, // Runs only if email exists
   });
 
-  // Fetch trainer details
-  const TrainerProfileData = MyTrainerData?.[0];
+  // Extract trainer details
+  const TrainerProfileData = MyTrainerData?.[0] || null;
 
+  // Fetch trainer schedule data
   const {
-    data: TrainerScheduleData,
+    data: TrainerScheduleData = [],
     isLoading: TrainerScheduleIsLoading,
     error: TrainerScheduleError,
   } = useQuery({
@@ -48,46 +50,45 @@ const TrainerProfile = () => {
           )}`
         )
         .then((res) => res.data),
-    enabled: !!TrainerProfileData, // Ensure MyTrainerData exists before running
+    enabled: !!TrainerProfileData?.name, // Runs only if trainer's name exists
   });
 
-  // Fetch trainer schedule data
-  const TrainerProfileScheduleData = TrainerScheduleData?.[0];
+  // Extract schedule details
+  const TrainerProfileScheduleData = TrainerScheduleData?.[0] || null;
 
-  // Loading and Error handling
+  // Handle Loading and Errors
   if (MyTrainerDataLoading || TrainerScheduleIsLoading) return <Loading />;
-  if (MyTrainerDataError || TrainerScheduleError) return <FetchingError />;
+  if (MyTrainerDataError || TrainerScheduleError)
+    return <FetchingError error={MyTrainerDataError || TrainerScheduleError} />;
 
   return (
-    <div className=" bg-fixed bg-cover bg-center bg-white">
-      <div className="bg-linear-to-b from-white/20 to-white/10">
-        {/* Header Section */}
+    <div className="bg-fixed bg-cover bg-center">
+      {/* Header Section */}
+      <div className="bg-linear-to-b from-gray-200 to-gray-400">
         <TrainerProfileHeader TrainerDetails={TrainerProfileData || {}} />
+      </div>
 
-        {/* Content Section */}
-        <div className="bg-linear-to-t from-gray-500/50 to-gray-500/30 pb-5">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Trainer Bio and Experience */}
-            <TrainersDetailsAbout TrainerDetails={TrainerProfileData || {}} />
+      {/* Content Section */}
+      <div className="bg-linear-to-b from-gray-400 to-gray-200">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Trainer Bio and Experience */}
+          <TrainerProfileAbout TrainerDetails={TrainerProfileData || {}} />
 
-            {/* Trainer Contact Information */}
-            <TrainerDetailsContact TrainerDetails={TrainerProfileData || {}} />
-          </div>
-
-          {/* Trainer Pricing and Availability */}
-          <TrainerDetailsSchedule
-            TrainerDetails={TrainerProfileData || {}}
-            TrainerSchedule={TrainerProfileScheduleData || {}}
-          />
-
-          {/* Trainer Certifications & Details */}
-          <TrainerDetailsDetails TrainerDetails={TrainerProfileData || {}} />
-
-          {/* Trainer Testimonials */}
-          <TrainerDetailsTestimonials
-            TrainerDetails={TrainerProfileData || {}}
-          />
+          {/* Trainer Contact Information */}
+          <TrainerDetailsContact TrainerDetails={TrainerProfileData || {}} />
         </div>
+
+        {/* Trainer Pricing and Availability */}
+        <TrainerDetailsSchedule
+          TrainerDetails={TrainerProfileData || {}}
+          TrainerSchedule={TrainerProfileScheduleData || {}}
+        />
+
+        {/* Trainer Certifications & Details */}
+        <TrainerDetailsDetails TrainerDetails={TrainerProfileData || {}} />
+
+        {/* Trainer Testimonials */}
+        <TrainerDetailsTestimonials TrainerDetails={TrainerProfileData || {}} />
       </div>
     </div>
   );
