@@ -50,6 +50,9 @@ const TrainerProfileHeader = ({ TrainerDetails }) => {
   // Get gender details (icon + label)
   const { icon } = getGenderIcon(TrainerDetails?.gender);
 
+  // Check if TrainerDetails is available
+  if (!TrainerDetails) return null;
+
   return (
     <div className="relative mx-auto text-center py-10">
       {/* Settings Icon (Top Left) */}

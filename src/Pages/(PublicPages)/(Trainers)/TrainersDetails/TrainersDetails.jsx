@@ -24,8 +24,6 @@ const TrainersDetails = () => {
   // Decode the trainer's name from the URL
   const decodedName = decodeURIComponent(name);
 
-  console.log(decodedName);
-
   // Fetch Trainer Details
   const {
     data: Trainer_DetailData,

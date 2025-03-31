@@ -113,7 +113,6 @@ const TrainerDetailsContact = ({ TrainerDetails }) => {
       </h2>
 
       {/* Content */}
-
       <div className="space-y-6">
         {/* Contact Details */}
         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
@@ -160,14 +159,14 @@ const TrainerDetailsContact = ({ TrainerDetails }) => {
             <h3 className="text-xl font-semibold text-gray-700 text-center">
               Social Links
             </h3>
-            <div className="flex flex-wrap justify-center gap-4 mt-4">
+            <div className="flex flex-wrap justify-center gap-4 mt-4 border-t border-black pt-2">
               {socialLinks.map(({ name, url, icon, color }) => (
                 <button
                   key={name}
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`flex items-center justify-center bg-white hover:bg-gray-300 rounded-full shadow-md hover:shadow-lg p-4 transition-all duration-300 ${color}`}
+                  className={`flex items-center justify-center bg-white hover:bg-gray-300 rounded-full shadow-md hover:shadow-lg p-4 transition-all duration-300 ${color} cursor-pointer`}
                 >
                   <span className="text-3xl">{icon}</span>
                 </button>

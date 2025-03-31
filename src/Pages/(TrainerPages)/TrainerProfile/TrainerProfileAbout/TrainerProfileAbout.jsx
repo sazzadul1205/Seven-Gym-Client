@@ -7,6 +7,9 @@ import PropTypes from "prop-types";
 import { IoSettings } from "react-icons/io5";
 
 const TrainerProfileAbout = ({ TrainerDetails }) => {
+  // Check if TrainerDetails is available
+  if (!TrainerDetails) return null;
+
   return (
     <div className="relative bg-gradient-to-bl from-gray-200 to-gray-400 rounded-lg shadow-lg max-w-4xl mx-auto w-full space-y-6 p-6">
       {/* Settings Icon (Top Right) */}

@@ -8,13 +8,12 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
 
 // Import Components
-import TrainersDetailsAbout from "../../(PublicPages)/(Trainers)/TrainersDetails/TrainersDetailsAbout/TrainersDetailsAbout";
-import TrainerDetailsContact from "../../(PublicPages)/(Trainers)/TrainersDetails/TrainerDetailsContact/TrainerDetailsContact";
-import TrainerDetailsDetails from "../../(PublicPages)/(Trainers)/TrainersDetails/TrainerDetailsDetails/TrainerDetailsDetails";
-import TrainerDetailsSchedule from "../../(PublicPages)/(Trainers)/TrainersDetails/TrainerDetailsSchedule/TrainerDetailsSchedule";
-import TrainerDetailsTestimonials from "../../(PublicPages)/(Trainers)/TrainersDetails/TrainerDetailsTestimonials/TrainerDetailsTestimonials";
-import TrainerProfileHeader from "./TrainerProfileHeader/TrainerProfileHeader";
 import TrainerProfileAbout from "./TrainerProfileAbout/TrainerProfileAbout";
+import TrainerProfileHeader from "./TrainerProfileHeader/TrainerProfileHeader";
+import TrainerProfileContact from "./TrainerProfileContact/TrainerProfileContact";
+import TrainerProfileDetails from "./TrainerProfileDetails/TrainerProfileDetails";
+import TrainerProfileSchedule from "./TrainerProfileSchedule/TrainerProfileSchedule";
+import TrainerDetailsTestimonials from "../../(PublicPages)/(Trainers)/TrainersDetails/TrainerDetailsTestimonials/TrainerDetailsTestimonials";
 
 const TrainerProfile = () => {
   const axiosPublic = useAxiosPublic();
@@ -75,17 +74,17 @@ const TrainerProfile = () => {
           <TrainerProfileAbout TrainerDetails={TrainerProfileData || {}} />
 
           {/* Trainer Contact Information */}
-          <TrainerDetailsContact TrainerDetails={TrainerProfileData || {}} />
+          <TrainerProfileContact TrainerDetails={TrainerProfileData || {}} />
         </div>
 
         {/* Trainer Pricing and Availability */}
-        <TrainerDetailsSchedule
+        <TrainerProfileSchedule
           TrainerDetails={TrainerProfileData || {}}
           TrainerSchedule={TrainerProfileScheduleData || {}}
         />
 
         {/* Trainer Certifications & Details */}
-        <TrainerDetailsDetails TrainerDetails={TrainerProfileData || {}} />
+        <TrainerProfileDetails TrainerDetails={TrainerProfileData || {}} />
 
         {/* Trainer Testimonials */}
         <TrainerDetailsTestimonials TrainerDetails={TrainerProfileData || {}} />

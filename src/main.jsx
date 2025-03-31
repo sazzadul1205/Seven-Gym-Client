@@ -42,10 +42,14 @@ import UserTierUpgrade from "./Pages/(UserPages)/UserTierUpgrade/UserTierUpgrade
 import TearUpgradePayment from "./Pages/(UserPages)/TierUpgradePayment/TierUpgradePayment.jsx";
 import UserSchedulePlanner from "./Pages/(UserPages)/UserSchedulePlanner/UserSchedulePlanner.jsx";
 import TestimonialsPage from "./Pages/(PublicPages)/(About)/TestimonialsPage/TestimonialsPage.jsx";
+
+// Trainer Pages Import
 import TrainerProfile from "./Pages/(TrainerPages)/TrainerProfile/TrainerProfile.jsx";
 
+// React Query Client
 const queryClient = new QueryClient();
 
+// React DOM Render
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
@@ -57,7 +61,7 @@ createRoot(document.getElementById("root")).render(
 
             {/* Home Page Layout */}
             <Route element={<HomePageLayout />}>
-              {/* Auth Pages Link */}
+              {/* Auth Pages Links */}
               <Route path="/Login" element={<Login />} />
               <Route path="/SignUp" element={<SignUp />} />
               <Route path="/SignUp/Details" element={<SignUpDetails />} />
@@ -66,8 +70,9 @@ createRoot(document.getElementById("root")).render(
               <Route path="/" element={<Home />} />
             </Route>
 
-            {/* Public Page Layout */}
+            {/* Public Page Layouts */}
             <Route element={<PublicPageLayout />}>
+
               {/* Public Pages Link */}
               <Route path="/Gallery" element={<Gallery />} />
               <Route path="/Trainers" element={<Trainers />} />
@@ -106,7 +111,7 @@ createRoot(document.getElementById("root")).render(
                 element={<UserSchedulePlanner />}
               />
 
-              {/* Trainer Pages Link */}
+              {/* Trainer Pages Links */}
               <Route
                 path="/Trainer/TrainerProfile/:email"
                 element={<TrainerProfile />}
