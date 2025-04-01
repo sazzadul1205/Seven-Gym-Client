@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 // Import Package
+import Swal from "sweetalert2";
 import PropTypes from "prop-types";
 
 // Import Icons
@@ -11,19 +12,27 @@ import { IoMdInformationCircleOutline } from "react-icons/io";
 // import class Information Data
 import ClassInformation from "../../../../JSON/ClassInformation.json";
 
+// Import Hooks and Shared
+import useAuth from "../../../../Hooks/useAuth";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+
 const TrainerScheduleClassSelector = ({
   trainerClassTypes,
   availableClassTypes,
+  refetch,
 }) => {
+  const { user } = useAuth();
+  const axiosPublic = useAxiosPublic();
+
   // Local state tracks each class as an object with a status:
   // status: 'original' (from parent), 'added' (new), or 'removed' (deleted)
-  const [hasChanges, setHasChanges] = useState(false); 
+  const [hasChanges, setHasChanges] = useState(false);
   const [localClasses, setLocalClasses] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
   // Initialize localClasses from the parent prop on mount or when trainerClassTypes changes.
   useEffect(() => {
-    const initialClasses = trainerClassTypes.map((ct) => ({
+    const initialClasses = trainerClassTypes?.map((ct) => ({
       classType: ct,
       status: "original",
     }));
@@ -32,8 +41,8 @@ const TrainerScheduleClassSelector = ({
 
   // Track changes in localClasses to update hasChanges state
   useEffect(() => {
-    const changesDetected = localClasses.some(
-      (item) => item.status === "added" || item.status === "removed"
+    const changesDetected = localClasses?.some(
+      (item) => item?.status === "added" || item?.status === "removed"
     );
     setHasChanges(changesDetected);
   }, [localClasses]);
@@ -41,18 +50,18 @@ const TrainerScheduleClassSelector = ({
   // Compute class types that are available to add:
   const availableToAdd = availableClassTypes.filter(
     (ct) =>
-      !localClasses.find(
-        (item) => item.classType === ct && item.status !== "removed"
+      !localClasses?.find(
+        (item) => item?.classType === ct && item?.status !== "removed"
       )
   );
 
   // When adding a class, if it exists with a removed status, restore it.
   const addClassType = (classType) => {
-    const existing = localClasses.find((item) => item.classType === classType);
+    const existing = localClasses.find((item) => item?.classType === classType);
     if (existing && existing.status === "removed") {
       setLocalClasses((prev) =>
         prev.map((item) =>
-          item.classType === classType ? { ...item, status: "original" } : item
+          item?.classType === classType ? { ...item, status: "original" } : item
         )
       );
     } else {
@@ -66,11 +75,11 @@ const TrainerScheduleClassSelector = ({
     setLocalClasses((prev) =>
       prev
         .map((item) => {
-          if (item.classType === classType) {
-            if (item.status === "added") {
+          if (item?.classType === classType) {
+            if (item?.status === "added") {
               return null; // remove added classes outright
             }
-            if (item.status === "original") {
+            if (item?.status === "original") {
               return { ...item, status: "removed" };
             }
           }
@@ -84,7 +93,7 @@ const TrainerScheduleClassSelector = ({
   const toggleClass = (classType) => {
     setLocalClasses((prev) =>
       prev.map((item) =>
-        item.classType === classType && item.status === "removed"
+        item?.classType === classType && item?.status === "removed"
           ? { ...item, status: "original" }
           : item
       )
@@ -92,8 +101,54 @@ const TrainerScheduleClassSelector = ({
   };
 
   // Save changes: update the parent's state with the classes that are not removed,
-  const handleSave = () => {
-    console.log(localClasses);
+  const handleSave = async () => {
+    const updatedClassTypes = localClasses
+      .filter((item) => item.status !== "removed") // Keep only 'original' & 'added'
+      .map((item) => item.classType); // Extract only class names
+
+    if (!user?.email) {
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Email",
+        text: "User email is required to update class types.",
+      });
+      return;
+    }
+
+    try {
+      const response = await axiosPublic.put(
+        "/Trainers/UpdateTrainerClassTypes",
+        {
+          email: user?.email, // Using email as the identifier
+          classTypes: updatedClassTypes,
+        }
+      );
+
+      if (response.status === 200) {
+        Swal.fire({
+          icon: "success",
+          title: "Updated Successfully!",
+          text: "Trainer class types have been updated!",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+        refetch(); // Refetch the data to reflect changes
+        setHasChanges(false); // Reset change tracking
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Update Failed",
+          text: response.data.error || "Failed to update trainer class types.",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating trainer class types:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error Occurred",
+        text: "Something went wrong while updating class types.",
+      });
+    }
   };
 
   if (!trainerClassTypes && !availableClassTypes) return null; // Return null if no class types are provided
@@ -104,16 +159,16 @@ const TrainerScheduleClassSelector = ({
 
       {/* Class Types Display */}
       <div className="flex flex-wrap gap-3 bg-white p-4 rounded-lg shadow">
-        {localClasses.map((item, index) => {
+        {localClasses?.map((item, index) => {
           // Set display styles based on status
           let bgColor =
             "bg-linear-to-bl hover:bg-linear-to-tr from-blue-300 to-blue-600";
           let textDecoration = "";
-          if (item.status === "added") {
+          if (item?.status === "added") {
             bgColor =
               "bg-linear-to-bl hover:bg-linear-to-tr from-gray-300 to-gray-600";
           }
-          if (item.status === "removed") {
+          if (item?.status === "removed") {
             bgColor =
               "bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-600";
             textDecoration = "line-through";
@@ -122,18 +177,18 @@ const TrainerScheduleClassSelector = ({
             <span
               key={index}
               onClick={() =>
-                item.status === "removed"
-                  ? toggleClass(item.classType)
-                  : removeClassType(item.classType)
+                item?.status === "removed"
+                  ? toggleClass(item?.classType)
+                  : removeClassType(item?.classType)
               }
               className={`flex items-center px-4 py-2 text-white font-medium rounded-lg shadow-md cursor-pointer ${bgColor} ${textDecoration}`}
               title={
-                item.status === "removed"
+                item?.status === "removed"
                   ? "Click to restore"
                   : "Click to remove"
               }
             >
-              {item.classType} <ImCross className="ml-2" />
+              {item?.classType} <ImCross className="ml-2" />
             </span>
           );
         })}
@@ -233,13 +288,13 @@ const TrainerScheduleClassSelector = ({
               <tbody>
                 {ClassInformation.map((item, index) => (
                   <tr key={index} className="hover:bg-gray-100">
-                    <td className="px-4 py-2 border-b">{item.classType}</td>
-                    <td className="px-4 py-2 border-b">{item.description}</td>
+                    <td className="px-4 py-2 border-b">{item?.classType}</td>
+                    <td className="px-4 py-2 border-b">{item?.description}</td>
                     <td className="px-4 py-2 border-b">
-                      {item.participantLimit}
+                      {item?.participantLimit}
                     </td>
                     <td className="px-4 py-2 border-b">
-                      {item.priceRange || "Not available"}
+                      {item?.priceRange || "Not available"}
                     </td>
                   </tr>
                 ))}

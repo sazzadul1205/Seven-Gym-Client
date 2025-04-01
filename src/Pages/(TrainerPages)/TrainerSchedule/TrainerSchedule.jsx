@@ -26,17 +26,18 @@ const TrainerSchedule = () => {
 
   // Fetch trainer data
   const {
-    data: MyTrainerData = [],
-    isLoading: MyTrainerDataLoading,
-    error: MyTrainerDataError,
+    data: TrainerData = [],
+    isLoading: TrainerDataIsLoading,
+    error: TrainerDataError,
+    refetch: refetchTrainerData,
   } = useQuery({
-    queryKey: ["MyTrainerData", user?.email],
+    queryKey: ["TrainerData", user?.email],
     queryFn: () =>
       axiosPublic.get(`/Trainers?email=${user?.email}`).then((res) => res.data),
     enabled: !!user?.email,
   });
 
-  const TrainerProfileData = MyTrainerData?.[0] || null;
+  const TrainerProfileData = TrainerData?.[0] || null;
 
   // Fetch trainer Class preferences
   const TrainersClassType = TrainerProfileData?.preferences?.classTypes || null;
@@ -102,12 +103,12 @@ const TrainerSchedule = () => {
     setChangesMade(false);
   };
 
-  if (MyTrainerDataLoading || TrainerScheduleIsLoading || classTypesLoading)
+  if (TrainerDataIsLoading || TrainerScheduleIsLoading || classTypesLoading)
     return <Loading />;
-  if (MyTrainerDataError || TrainerScheduleError || classTypesError)
+  if (TrainerDataError || TrainerScheduleError || classTypesError)
     return (
       <FetchingError
-        error={MyTrainerDataError || TrainerScheduleError || classTypesError}
+        error={TrainerDataError || TrainerScheduleError || classTypesError}
       />
     );
 
@@ -122,6 +123,7 @@ const TrainerSchedule = () => {
         <TrainerScheduleClassSelector
           trainerClassTypes={TrainersClassType}
           availableClassTypes={availableClassTypes}
+          refetch={refetchTrainerData}
         />
 
         <div className="flex justify-end mb-4">
