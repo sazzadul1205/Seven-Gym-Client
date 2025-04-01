@@ -76,7 +76,9 @@ const TrainerSchedule = () => {
   const initialSchedule = TrainerProfileScheduleData?.trainerSchedule || {};
 
   useEffect(() => {
-    setTempSchedule(initialSchedule);
+    if (JSON.stringify(tempSchedule) !== JSON.stringify(initialSchedule)) {
+      setTempSchedule(initialSchedule);
+    }
   }, [TrainerScheduleData, TrainerProfileData]);
 
   const handleClear = (day, time) => {
@@ -126,26 +128,30 @@ const TrainerSchedule = () => {
           refetch={refetchTrainerData}
         />
 
-        <div className="flex justify-end mb-4">
-          <button
-            onClick={handleSave}
-            disabled={!changesMade}
-            className={`px-5 py-2 font-semibold rounded ${
-              changesMade
-                ? "bg-blue-500 text-white hover:bg-blue-700"
-                : "bg-gray-400 text-gray-200 cursor-not-allowed"
-            }`}
-          >
-            Save
-          </button>
-        </div>
+        <div className="bg-gray-100 border border-gray-300 p-2">
+          <div className="flex justify-between items-center text-black font-semibold text-lg">
+            <h3>Schedule Control</h3>
+            <button
+              onClick={handleSave}
+              disabled={!changesMade}
+              className={`px-5 py-2 font-semibold rounded ${
+                changesMade
+                  ? "bg-blue-500 text-white hover:bg-blue-700"
+                  : "bg-gray-400 text-gray-200 cursor-not-allowed"
+              }`}
+            >
+              Save Schedule
+            </button>
+          </div>
 
-        <TrainerScheduleDisplay
-          handleClear={handleClear}
-          tempSchedule={tempSchedule}
-          isValidClassType={isValidClassType}
-          formatTimeTo12Hour={formatTimeTo12Hour}
-        />
+          <TrainerScheduleDisplay
+            handleClear={handleClear}
+            tempSchedule={tempSchedule}
+            isValidClassType={isValidClassType}
+            TrainersClassType={TrainersClassType}
+            formatTimeTo12Hour={formatTimeTo12Hour}
+          />
+        </div>
       </div>
     </div>
   );

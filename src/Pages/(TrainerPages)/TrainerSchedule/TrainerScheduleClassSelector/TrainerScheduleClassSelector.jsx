@@ -286,6 +286,7 @@ const TrainerScheduleClassSelector = ({
                 </tr>
               </thead>
               <tbody>
+                {/* Map through ClassInformation data and display each item in a row */}
                 {ClassInformation.map((item, index) => (
                   <tr key={index} className="hover:bg-gray-100">
                     <td className="px-4 py-2 border-b">{item?.classType}</td>
@@ -307,9 +308,11 @@ const TrainerScheduleClassSelector = ({
   );
 };
 
+// PropTypes for type checking
 TrainerScheduleClassSelector.propTypes = {
   trainerClassTypes: PropTypes.arrayOf(PropTypes.string),
   availableClassTypes: PropTypes.arrayOf(PropTypes.string).isRequired,
+  refetch: PropTypes.func,
 };
 
 export default TrainerScheduleClassSelector;
