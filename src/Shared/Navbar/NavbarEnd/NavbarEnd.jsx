@@ -15,6 +15,7 @@ import { AiTwotoneSchedule } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
 import { MdClass, MdDashboard } from "react-icons/md";
 import { RiProfileLine } from "react-icons/ri";
+import { GrSchedules } from "react-icons/gr";
 
 const NavbarEnd = ({ UsersData }) => {
   // Fetch authentication state and logout function
@@ -81,6 +82,11 @@ const NavbarEnd = ({ UsersData }) => {
         name: "Trainer Profile",
         path: `/Trainer/TrainerProfile/${user?.email}`,
         icon: <RiProfileLine />,
+      },
+      {
+        name: "Trainer Schedule",
+        path: `/Trainer/TrainerSchedule/${user?.email}`,
+        icon: <GrSchedules />,
       },
       {
         name: "Trainer Booking Management",

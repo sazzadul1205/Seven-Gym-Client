@@ -45,6 +45,7 @@ import TestimonialsPage from "./Pages/(PublicPages)/(About)/TestimonialsPage/Tes
 
 // Trainer Pages Import
 import TrainerProfile from "./Pages/(TrainerPages)/TrainerProfile/TrainerProfile.jsx";
+import TrainerSchedule from "./Pages/(TrainerPages)/TrainerSchedule/TrainerSchedule.jsx";
 
 // React Query Client
 const queryClient = new QueryClient();
@@ -72,7 +73,6 @@ createRoot(document.getElementById("root")).render(
 
             {/* Public Page Layouts */}
             <Route element={<PublicPageLayout />}>
-
               {/* Public Pages Link */}
               <Route path="/Gallery" element={<Gallery />} />
               <Route path="/Trainers" element={<Trainers />} />
@@ -115,6 +115,10 @@ createRoot(document.getElementById("root")).render(
               <Route
                 path="/Trainer/TrainerProfile/:email"
                 element={<TrainerProfile />}
+              />
+              <Route
+                path="/Trainer/TrainerSchedule/:email"
+                element={<TrainerSchedule />}
               />
             </Route>
           </Routes>
