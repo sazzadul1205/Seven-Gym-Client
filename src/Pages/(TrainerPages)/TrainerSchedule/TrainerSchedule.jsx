@@ -1,17 +1,13 @@
-// Import Packages
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-
-// Import  Hooks
 import useAuth from "../../../Hooks/useAuth";
 import Loading from "../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
+import TrainerScheduleDisplay from "./TrainerScheduleDisplay/TrainerScheduleDisplay";
+import TrainerScheduleClassSelector from "./TrainerScheduleClassSelector/TrainerScheduleClassSelector";
 
-// Import Icons
-import { FaEdit, FaRegTrashAlt, FaRegUser } from "react-icons/fa";
-import { useState } from "react";
-
-// Helper function: Convert 24-hour time to 12-hour AM/PM format
+// Convert 24-hour time to 12-hour AM/PM format
 const formatTimeTo12Hour = (time) => {
   if (!time) return "";
   const [hour, minute] = time.split(":");
@@ -25,7 +21,10 @@ const TrainerSchedule = () => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
-  // Fetch trainer data based on logged-in user's email
+  const [tempSchedule, setTempSchedule] = useState({});
+  const [changesMade, setChangesMade] = useState(false);
+
+  // Fetch trainer data
   const {
     data: MyTrainerData = [],
     isLoading: MyTrainerDataLoading,
@@ -34,11 +33,13 @@ const TrainerSchedule = () => {
     queryKey: ["MyTrainerData", user?.email],
     queryFn: () =>
       axiosPublic.get(`/Trainers?email=${user?.email}`).then((res) => res.data),
-    enabled: !!user?.email, // Runs only if email exists
+    enabled: !!user?.email,
   });
 
-  // Extract trainer details
   const TrainerProfileData = MyTrainerData?.[0] || null;
+
+  // Fetch trainer Class preferences
+  const TrainersClassType = TrainerProfileData?.preferences?.classTypes || null;
 
   // Fetch trainer schedule data
   const {
@@ -55,12 +56,12 @@ const TrainerSchedule = () => {
           )}`
         )
         .then((res) => res.data),
-    enabled: !!TrainerProfileData?.name, // Runs only if trainer's name exists
+    enabled: !!TrainerProfileData?.name,
   });
 
-  // Fetch available class types from API
+  // Fetch available class types
   const {
-    data: classTypes = [],
+    data: availableClassTypes = [],
     isLoading: classTypesLoading,
     error: classTypesError,
   } = useQuery({
@@ -69,16 +70,38 @@ const TrainerSchedule = () => {
       axiosPublic.get(`/Trainers/classTypes`).then((res) => res.data),
   });
 
-  // Extract schedule details
+  // Extract schedule data
   const TrainerProfileScheduleData = TrainerScheduleData?.[0] || null;
-  const scheduleObj = TrainerProfileScheduleData?.trainerSchedule || {};
   const initialSchedule = TrainerProfileScheduleData?.trainerSchedule || {};
 
-  // State to manage temporary schedule changes
-  const [tempSchedule, setTempSchedule] = useState(initialSchedule);
-  const [changesMade, setChangesMade] = useState(false);
+  useEffect(() => {
+    setTempSchedule(initialSchedule);
+  }, [TrainerScheduleData, TrainerProfileData]);
 
-  // Handle Loading and Errors
+  const handleClear = (day, time) => {
+    setTempSchedule((prev) => {
+      const updated = { ...prev };
+      if (updated[day] && updated[day][time]) {
+        updated[day][time] = {
+          ...updated[day][time],
+          classType: "",
+          participantLimit: "",
+          classPrice: "",
+        };
+      }
+      return updated;
+    });
+    setChangesMade(true);
+  };
+
+  const isValidClassType = (classType) =>
+    availableClassTypes.includes(classType);
+
+  const handleSave = () => {
+    console.log("Saving changes:", tempSchedule);
+    setChangesMade(false);
+  };
+
   if (MyTrainerDataLoading || TrainerScheduleIsLoading || classTypesLoading)
     return <Loading />;
   if (MyTrainerDataError || TrainerScheduleError || classTypesError)
@@ -88,167 +111,39 @@ const TrainerSchedule = () => {
       />
     );
 
-  // Function to clear class data except time
-  const handleClear = (day, time) => {
-    setTempSchedule((prev) => {
-      const updated = {
-        ...prev,
-        [day]: {
-          ...prev[day],
-          [time]: {
-            ...prev[day][time],
-            classType: "",
-            participantLimit: "",
-            classPrice: "",
-          },
-        },
-      };
-      setChangesMade(true);
-      return updated;
-    });
-  };
-
-  console.log(classTypes);
-
   return (
     <div className="bg-gradient-to-b from-gray-50 to-gray-200 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
         <h2 className="text-center text-black font-semibold text-2xl">
           {TrainerProfileData?.name || "Trainer"}&apos;s Schedule Management
         </h2>
-
-        {/* Divider */}
         <div className="mx-auto w-1/2 h-1 bg-black my-2"></div>
 
-        <div className="bg-gray-100">
-          <p>Day Management</p>
+        <TrainerScheduleClassSelector
+          trainerClassTypes={TrainersClassType}
+          availableClassTypes={availableClassTypes}
+        />
+
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={handleSave}
+            disabled={!changesMade}
+            className={`px-5 py-2 font-semibold rounded ${
+              changesMade
+                ? "bg-blue-500 text-white hover:bg-blue-700"
+                : "bg-gray-400 text-gray-200 cursor-not-allowed"
+            }`}
+          >
+            Save
+          </button>
         </div>
 
-        {/* Schedule Display */}
-        <div className="mt-6 space-y-6">
-          {Object.entries(scheduleObj).map(([day, classesObj]) => {
-            const classes = Object.values(classesObj);
-            return (
-              <div
-                key={day}
-                className="bg-linear-to-bl from-gray-100 to-gray-300 p-4 rounded-lg shadow"
-              >
-                {/* Day Header */}
-                <h3 className="text-xl font-semibold text-black">{day}</h3>
-
-                {/* Mobile View */}
-                <div className="block sm:hidden">
-                  {classes.map((classDetails, index) => (
-                    <div
-                      key={`${day}-${index}`}
-                      className={`text-black text-center ${
-                        index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                      } mt-3 p-4 rounded border`}
-                    >
-                      <p className="font-semibold">
-                        {classDetails.start} - {classDetails.end}
-                      </p>
-                      <p>Class Type: {classDetails.classType}</p>
-                      <p>
-                        Participant Limit:{" "}
-                        {classDetails.participantLimit === "No limit" ||
-                        classDetails.participantLimit === "No Limit"
-                          ? "No Limit"
-                          : classDetails.participantLimit}
-                      </p>
-                      <p>
-                        Price:{" "}
-                        {typeof classDetails.classPrice === "string" &&
-                        classDetails.classPrice.toLowerCase() === "free"
-                          ? "Free"
-                          : `$${classDetails.classPrice}`}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Desktop View */}
-                <div className="hidden sm:block">
-                  <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black mt-4">
-                    <thead>
-                      <tr>
-                        <th className="px-4 py-2 border-b bg-gray-200">Time</th>
-                        <th className="px-4 py-2 border-b bg-gray-200">
-                          Class Type
-                        </th>
-                        <th className="px-4 py-2 border-b bg-gray-200">
-                          Participant Limit
-                        </th>
-                        <th className="px-4 py-2 border-b bg-gray-200">
-                          Price
-                        </th>
-                        <th className="px-4 py-2 border-b bg-gray-200">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      {Object.entries(classesObj).map(
-                        ([time, classDetails]) => (
-                          <tr
-                            key={`${day}-${time}`}
-                            className="border-b bg-gray-50"
-                          >
-                            <td className="flex px-4 py-3">
-                              <span className="w-20">
-                                {formatTimeTo12Hour(classDetails.start)}
-                              </span>
-                              <span className="px-5">-</span>
-                              <span className="w-20">
-                                {" "}
-                                {formatTimeTo12Hour(classDetails.end)}
-                              </span>
-                            </td>
-                            <td className="px-4 py-2">
-                              {classDetails.classType}
-                            </td>
-                            <td className="px-4 py-2">
-                              {classDetails.participantLimit === "No limit" ||
-                              classDetails.participantLimit === "No Limit" ? (
-                                "No Limit"
-                              ) : (
-                                <div className="flex items-center gap-5">
-                                  <span>{classDetails.participantLimit}</span>
-                                  <FaRegUser />
-                                </div>
-                              )}
-                            </td>
-                            <td className="px-4 py-2">
-                              {typeof classDetails.classPrice === "string" &&
-                              classDetails.classPrice.toLowerCase() === "free"
-                                ? "Free"
-                                : `$${classDetails.classPrice}`}
-                            </td>
-                            <td className="flex px-4 py-2 gap-2">
-                              {/* Clear Button */}
-                              <button
-                                className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-600 text-white rounded-full p-2 cursor-pointer"
-                                onClick={() => handleClear(day, time)}
-                              >
-                                <FaRegTrashAlt />
-                              </button>
-                              {/* Edit Button */}
-                              <button className="bg-linear-to-bl hover:bg-linear-to-tr from-yellow-300 to-yellow-600 text-white rounded-full p-2 cursor-pointer">
-                                <FaEdit />
-                              </button>
-                            </td>
-                          </tr>
-                        )
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <TrainerScheduleDisplay
+          handleClear={handleClear}
+          tempSchedule={tempSchedule}
+          isValidClassType={isValidClassType}
+          formatTimeTo12Hour={formatTimeTo12Hour}
+        />
       </div>
     </div>
   );

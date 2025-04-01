@@ -1,0 +1,74 @@
+[
+  {
+    "classType": "Open Gym Class",
+    "description": "A class where you can use the gym equipment freely.",
+    "participantLimit": 30,
+    "priceRange": "Free"
+  },
+  {
+    "classType": "Private Sessions",
+    "description": "Personalized one-on-one training sessions.",
+    "participantLimit": 1,
+    "priceRange": "Paid, $50 - $100 per session"
+  },
+  {
+    "classType": "Partner Workout",
+    "description": "Workouts designed to be done with a partner.",
+    "participantLimit": 2,
+    "priceRange": "Paid, $30 - $60 per session"
+  },
+  {
+    "classType": "Online Class",
+    "description": "Workouts you can do from the comfort of your home.",
+    "participantLimit": 50,
+    "priceRange": "Free"
+  },
+  {
+    "classType": "Group Class",
+    "description": "A standard group workout session.",
+    "participantLimit": 20,
+    "priceRange": "Paid, $20 - $40 per class"
+  },
+  {
+    "classType": "Outdoor Class",
+    "description": "Classes held outdoors for a change of scenery.",
+    "participantLimit": 15,
+    "priceRange": "Paid, $25 - $45 per class"
+  },
+  {
+    "classType": "Drop-In Class",
+    "description": "A class where you can join without a prior reservation.",
+    "participantLimit": 25,
+    "priceRange": "Paid, $15 - $30 per class"
+  },
+  {
+    "classType": "Group Classes",
+    "description": "A variety of fitness classes for different levels.",
+    "participantLimit": 25,
+    "priceRange": "Paid, $25 - $50 per class"
+  },
+  {
+    "classType": "Workshops",
+    "description": "Specialized training and learning sessions.",
+    "participantLimit": 10,
+    "priceRange": "Paid, $40 - $80 per workshop"
+  },
+  {
+    "classType": "Private Training",
+    "description": "One-on-one training with a personalized program.",
+    "participantLimit": 1,
+    "priceRange": "Paid, $60 - $120 per session"
+  },
+  {
+    "classType": "Semi-Private Training",
+    "description": "Training with a small group of 2-4 participants.",
+    "participantLimit": 4,
+    "priceRange": "Paid, $40 - $80 per session"
+  },
+  {
+    "classType": "Private Session",
+    "description": "Tailored individual training sessions.",
+    "participantLimit": 1,
+    "priceRange": "Paid, $50 - $100 per session"
+  }
+]
