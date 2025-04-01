@@ -7,6 +7,7 @@ import PropTypes from "prop-types";
 import { IoMdFemale, IoMdMale } from "react-icons/io";
 import { MdOutlinePeopleAlt } from "react-icons/md";
 import { IoSettings } from "react-icons/io5";
+import { Tooltip } from "react-tooltip";
 
 // Function to get tier badge styles dynamically
 const getTierBadge = (tier) => {
@@ -56,11 +57,19 @@ const TrainerProfileHeader = ({ TrainerDetails }) => {
   return (
     <div className="relative mx-auto text-center py-10">
       {/* Settings Icon (Top Left) */}
-      <div className="absolute top-2 right-2 bg-gray-400/50 p-3 rounded-full">
+      <div
+        className="absolute top-2 right-2 bg-gray-400/50 p-3 rounded-full"
+        data-tooltip-id="Trainer_Profile_Settings_Tooltip"
+      >
         <Link to="/Trainer/TrainerSettings?tab=User_Info_Settings">
           <IoSettings className="text-red-500 text-4xl transition-transform duration-500 hover:rotate-180 hover:text-red-400" />
         </Link>
       </div>
+      <Tooltip
+        id="Trainer_Profile_Settings_Tooltip"
+        place="top"
+        content="Trainer Profile Settings"
+      />
 
       {/* Trainer Profile Image */}
       <img

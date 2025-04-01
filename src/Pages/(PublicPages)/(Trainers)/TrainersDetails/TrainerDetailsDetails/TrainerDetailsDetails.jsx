@@ -11,37 +11,47 @@ const TrainerDetailsDetails = ({ TrainerDetails }) => {
   return (
     <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5 pt-3">
       {/* Trainer Certifications Section */}
-      <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full space-y-6">
-        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-black pb-2">
+      <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-100 to-gray-300 rounded-lg shadow-lg mx-auto w-full p-6 cursor-pointer">
+        {/* Header */}
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-gray-400 pb-2">
           <FaCertificate className="mr-3 text-2xl text-blue-600" />
           Certifications
         </h2>
-        <ul className="list-disc pl-6 space-y-2 text-black">
-          {TrainerDetails.certifications?.length ? (
-            TrainerDetails.certifications.map((cert, index) => (
+
+        {/* Certifications List */}
+        <ul className="list-decimal text-black space-y-2 pl-6">
+          {TrainerDetails?.certifications?.length ? (
+            TrainerDetails?.certifications.map((cert, index) => (
               <li key={index} className="text-lg">
                 {cert}
               </li>
             ))
           ) : (
-            <li className="text-lg text-gray-500">No certifications listed.</li>
+            <li className="text-lg text-gray-500">No equipment listed.</li>
           )}
         </ul>
       </div>
 
       {/* Trainer Awards Section */}
-      <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full space-y-6">
-        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-black pb-2">
+      <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-100 to-gray-300 rounded-lg shadow-lg mx-auto w-full p-6 cursor-pointer">
+        {/* Header */}
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-gray-400 pb-2">
           <FaAward className="mr-3 text-2xl text-yellow-500" />
           Awards
         </h2>
-        <div className="space-y-4">
-          {TrainerDetails.awards?.length ? (
-            TrainerDetails.awards.map((award, index) => (
+
+        {/* Awards List */}
+        <div className="px-1">
+          {TrainerDetails?.awards?.length ? (
+            TrainerDetails?.awards.map((award, index) => (
+              // Display each award with title, year, and organization
               <div key={index} className="mb-2">
-                <h3 className="font-semibold text-xl">{award.title}</h3>
-                <p className="text-gray-600 text-lg">
-                  {award.year} - {award.organization}
+                <h3 className="font-semibold text-xl text-black">
+                  {award.title}
+                </h3>
+                <p className="text-gray-800 text-lg">
+                  <span className="font-bold">{award.year}</span> -{" "}
+                  {award.organization}
                 </p>
               </div>
             ))
@@ -52,18 +62,23 @@ const TrainerDetailsDetails = ({ TrainerDetails }) => {
       </div>
 
       {/* Trainer Preferences Section */}
-      <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full space-y-6">
-        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-black pb-2">
+      <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-100 to-gray-300 rounded-lg shadow-lg mx-auto w-full p-6 cursor-pointer">
+        {/* Header */}
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-gray-400 pb-2">
           <FaRegCalendarAlt className="mr-3 text-2xl text-green-500" />
           Training Preferences
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        {/* Preferences List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-1">
           {/* Focus Areas */}
-          <div className="mb-6">
-            <h3 className="font-semibold text-xl mb-2">Focus Areas</h3>
+          <div>
+            <h3 className="font-semibold text-xl text-black border-b-2 border-gray-600 pb-2">
+              Focus Areas
+            </h3>
             <ul className="list-disc pl-6 space-y-2 text-black">
-              {TrainerDetails.preferences?.focusAreas?.length ? (
-                TrainerDetails.preferences.focusAreas.map((focus, index) => (
+              {TrainerDetails?.preferences?.focusAreas?.length ? (
+                TrainerDetails?.preferences.focusAreas.map((focus, index) => (
                   <li key={index} className="text-lg">
                     {focus}
                   </li>
@@ -78,10 +93,12 @@ const TrainerDetailsDetails = ({ TrainerDetails }) => {
 
           {/* Class Types */}
           <div>
-            <h3 className="font-semibold text-xl mb-2">Class Types</h3>
+            <h3 className="font-semibold text-xl text-black border-b-2 border-gray-600 pb-2">
+              Class Types
+            </h3>
             <ul className="list-disc pl-6 space-y-2 text-black">
-              {TrainerDetails.preferences?.classTypes?.length ? (
-                TrainerDetails.preferences.classTypes.map((type, index) => (
+              {TrainerDetails?.preferences?.classTypes?.length ? (
+                TrainerDetails?.preferences.classTypes.map((type, index) => (
                   <li key={index} className="text-lg">
                     {type}
                   </li>
@@ -97,14 +114,17 @@ const TrainerDetailsDetails = ({ TrainerDetails }) => {
       </div>
 
       {/* Additional Services Section */}
-      <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full space-y-6">
-        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-black pb-2">
+      <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-100 to-gray-300 rounded-lg shadow-lg mx-auto w-full p-6 cursor-pointer">
+        {/* Header */}
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-gray-400 pb-2">
           <FaTools className="mr-3 text-2xl text-purple-600" />
           Additional Services
         </h2>
-        <ul className="list-disc pl-6 space-y-2 text-black">
-          {TrainerDetails.additionalServices?.length ? (
-            TrainerDetails.additionalServices.map((service, index) => (
+
+        {/* Services List */}
+        <ul className="list-decimal text-black space-y-2 pl-6">
+          {TrainerDetails?.additionalServices?.length ? (
+            TrainerDetails?.additionalServices.map((service, index) => (
               <li key={index} className="text-lg">
                 {service}
               </li>
@@ -118,14 +138,17 @@ const TrainerDetailsDetails = ({ TrainerDetails }) => {
       </div>
 
       {/* Equipment Used Section */}
-      <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full space-y-6">
-        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-black pb-2">
+      <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-100 to-gray-300 rounded-lg shadow-lg mx-auto w-full p-6 cursor-pointer">
+        {/* Header */}
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-gray-400 pb-2">
           <FaTools className="mr-3 text-2xl text-orange-500" />
           Equipment Used
         </h2>
-        <ul className="list-disc pl-6 space-y-2 text-black">
-          {TrainerDetails.equipmentUsed?.length ? (
-            TrainerDetails.equipmentUsed.map((equipment, index) => (
+
+        {/* Equipment List */}
+        <ul className="list-decimal text-black space-y-2 pl-6">
+          {TrainerDetails?.equipmentUsed?.length ? (
+            TrainerDetails?.equipmentUsed.map((equipment, index) => (
               <li key={index} className="text-lg">
                 {equipment}
               </li>
@@ -137,19 +160,24 @@ const TrainerDetailsDetails = ({ TrainerDetails }) => {
       </div>
 
       {/* Partnerships Section */}
-      <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-200 to-gray-400 p-6 rounded-lg shadow-lg max-w-4xl mx-auto w-full space-y-6">
-        <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-black pb-2">
+      <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-100 to-gray-300 rounded-lg shadow-lg mx-auto w-full p-6 cursor-pointer">
+        {/* Header */}
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800 flex items-center border-b-2 border-gray-400 pb-2">
           <FaHandshake className="mr-3 text-2xl text-teal-600" />
           Partnerships
         </h2>
+
+        {/* Partnerships List */}
         <div className="space-y-4">
-          {TrainerDetails.partnerships?.length ? (
-            TrainerDetails.partnerships.map((partner, index) => (
+          {TrainerDetails?.partnerships?.length ? (
+            TrainerDetails?.partnerships.map((partner, index) => (
               <div key={index}>
-                <h3 className="font-semibold text-lg">{partner.partnerName}</h3>
+                <h3 className="font-semibold text-xl text-black">
+                  {partner.partnerName}
+                </h3>
                 <a
                   href={partner.website}
-                  className="text-blue-500 underline text-lg"
+                  className="text-blue-500 hover:underline text-lg font-semibold pl-2"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

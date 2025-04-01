@@ -68,7 +68,7 @@ const TrainerProfile = () => {
       </div>
 
       {/* Content Section */}
-      <div className="bg-linear-to-b from-gray-400 to-gray-200">
+      <div className="bg-linear-to-b from-gray-400 to-gray-200 pb-5">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Trainer Bio and Experience */}
           <TrainerProfileAbout TrainerDetails={TrainerProfileData || {}} />

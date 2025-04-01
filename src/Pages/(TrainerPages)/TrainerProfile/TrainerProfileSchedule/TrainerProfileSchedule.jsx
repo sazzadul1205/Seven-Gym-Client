@@ -1,7 +1,12 @@
 import { Link } from "react-router";
+
+// Import Packages
 import PropTypes from "prop-types";
+
+// import Icons
 import { FaRegUser } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
+import { Tooltip } from "react-tooltip";
 
 const TrainerProfileSchedule = ({ TrainerDetails, TrainerSchedule }) => {
   // Return null if TrainerDetails or TrainerSchedule are missing
@@ -91,11 +96,19 @@ const TrainerProfileSchedule = ({ TrainerDetails, TrainerSchedule }) => {
   return (
     <div className="relative max-w-7xl mx-auto bg-linear-to-bl from-gray-200 to-gray-400 px-2 lg:px-6 py-6 mt-8 lg:rounded-2xl shadow-lg">
       {/* Settings Icon for Trainer Profile Settings */}
-      <div className="absolute top-2 right-2 p-2">
+      <div
+        className="absolute top-2 right-2 p-2"
+        data-tooltip-id="Trainer_Profile_Settings_Schedule_Tooltip"
+      >
         <Link to="/Trainer/TrainerSettings?tab=User_Info_Settings">
           <IoSettings className="text-red-500 text-4xl transition-transform duration-500 hover:rotate-180 hover:text-red-400" />
         </Link>
       </div>
+      <Tooltip
+        id="Trainer_Profile_Settings_Schedule_Tooltip"
+        place="top"
+        content="Trainer Profile Schedule Settings"
+      />
 
       {/* Trainer Schedule Header */}
       <h2 className="text-2xl text-black font-semibold pb-3 border-b-2 border-black">
