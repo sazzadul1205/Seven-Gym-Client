@@ -7,16 +7,6 @@ import FetchingError from "../../../Shared/Component/FetchingError";
 import TrainerScheduleDisplay from "./TrainerScheduleDisplay/TrainerScheduleDisplay";
 import TrainerScheduleClassSelector from "./TrainerScheduleClassSelector/TrainerScheduleClassSelector";
 
-// Convert 24-hour time to 12-hour AM/PM format
-const formatTimeTo12Hour = (time) => {
-  if (!time) return "";
-  const [hour, minute] = time.split(":");
-  const h = parseInt(hour, 10);
-  const amPm = h >= 12 ? "PM" : "AM";
-  const formattedHour = h % 12 === 0 ? 12 : h % 12;
-  return `${formattedHour}:${minute} ${amPm}`;
-};
-
 const TrainerSchedule = () => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
@@ -100,6 +90,19 @@ const TrainerSchedule = () => {
   const isValidClassType = (classType) =>
     availableClassTypes.includes(classType);
 
+  // Inside TrainerSchedule component...
+  const handleUpdate = (updatedClass) => {
+    setTempSchedule((prev) => {
+      const newSchedule = { ...prev };
+      const { day, time } = updatedClass;
+      newSchedule[day] = { ...newSchedule[day] };
+      // Mark the updated slot with "edited: true"
+      newSchedule[day][time] = { ...updatedClass, edited: true };
+      return newSchedule;
+    });
+    setChangesMade(true);
+  };
+
   const handleSave = () => {
     console.log("Saving changes:", tempSchedule);
     setChangesMade(false);
@@ -123,9 +126,9 @@ const TrainerSchedule = () => {
         <div className="mx-auto w-1/2 h-1 bg-black my-2"></div>
 
         <TrainerScheduleClassSelector
+          refetch={refetchTrainerData}
           trainerClassTypes={TrainersClassType}
           availableClassTypes={availableClassTypes}
-          refetch={refetchTrainerData}
         />
 
         <div className="bg-gray-100 border border-gray-300 p-2">
@@ -147,9 +150,9 @@ const TrainerSchedule = () => {
           <TrainerScheduleDisplay
             handleClear={handleClear}
             tempSchedule={tempSchedule}
+            handleUpdate={handleUpdate}
             isValidClassType={isValidClassType}
             TrainersClassType={TrainersClassType}
-            formatTimeTo12Hour={formatTimeTo12Hour}
           />
         </div>
       </div>

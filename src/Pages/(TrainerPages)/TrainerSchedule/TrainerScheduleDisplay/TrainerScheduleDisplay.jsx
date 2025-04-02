@@ -1,25 +1,29 @@
 import { useState } from "react";
-
-// Import Packages
 import PropTypes from "prop-types";
-
-// import Icons
 import {
   FaEdit,
   FaRegEnvelope,
   FaRegTrashAlt,
   FaRegUser,
 } from "react-icons/fa";
-
-// import Modal
 import TrainerScheduleEditModal from "./TrainerScheduleEditModal/TrainerScheduleEditModal";
+
+// Convert 24-hour time to 12-hour AM/PM format
+const formatTimeTo12Hour = (time) => {
+  if (!time) return "";
+  const [hour, minute] = time.split(":");
+  const h = parseInt(hour, 10);
+  const amPm = h >= 12 ? "PM" : "AM";
+  const formattedHour = h % 12 === 0 ? 12 : h % 12;
+  return `${formattedHour}:${minute} ${amPm}`;
+};
 
 const TrainerScheduleDisplay = ({
   handleClear,
   tempSchedule,
   isValidClassType,
   TrainersClassType,
-  formatTimeTo12Hour,
+  handleUpdate, // new prop
 }) => {
   const [selectedClass, setSelectedClass] = useState(null);
 
@@ -56,7 +60,12 @@ const TrainerScheduleDisplay = ({
 
                 <tbody>
                   {Object.entries(classesObj).map(([time, classDetails]) => (
-                    <tr key={`${day}-${time}`} className="border-b bg-gray-50">
+                    <tr
+                      key={`${day}-${time}`}
+                      className={`border-b ${
+                        classDetails.edited ? "bg-yellow-100" : "bg-gray-50"
+                      }`}
+                    >
                       <td className="flex px-4 py-3">
                         <span className="w-20">
                           {formatTimeTo12Hour(classDetails.start)}
@@ -120,19 +129,19 @@ const TrainerScheduleDisplay = ({
           tempSchedule={tempSchedule}
           selectedClass={selectedClass}
           TrainersClassType={TrainersClassType}
+          handleUpdate={handleUpdate} // pass the update handler
         />
       </dialog>
     </div>
   );
 };
 
-// PropTypes for TrainerScheduleDisplay component
 TrainerScheduleDisplay.propTypes = {
   handleClear: PropTypes.func.isRequired,
   tempSchedule: PropTypes.object.isRequired,
   isValidClassType: PropTypes.func.isRequired,
   TrainersClassType: PropTypes.array,
-  formatTimeTo12Hour: PropTypes.func.isRequired,
+  handleUpdate: PropTypes.func.isRequired,
 };
 
 export default TrainerScheduleDisplay;
