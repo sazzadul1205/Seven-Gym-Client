@@ -111,30 +111,34 @@ const TrainerSettingsLayout = () => {
   // Extract trainer profile data
   const TrainerProfileData = TrainerData?.[0] || null;
 
-  console.log(TrainerProfileData);
+  // Fetch trainer schedule data
+  const {
+    data: TrainerScheduleData = [],
+    isLoading: TrainerScheduleIsLoading,
+    error: TrainerScheduleError,
+  } = useQuery({
+    queryKey: ["TrainerScheduleData", TrainerProfileData?.name],
+    queryFn: () =>
+      axiosPublic
+        .get(
+          `/Trainers_Schedule/ByTrainerName?trainerName=${encodeURIComponent(
+            TrainerProfileData?.name
+          )}`
+        )
+        .then((res) => res.data),
+    enabled: !!TrainerProfileData?.name,
+  });
 
-  // Tab data
-  const tabs = [
-    {
-      id: "Trainer_Dashboard",
-      Icon: "https://i.ibb.co.com/LhBG5FfY/dashboard.png",
-      title: "Trainer Dashboard",
-      content: <TrainerDashboard />,
-    },
-    {
-      id: "Trainer_Profile",
-      Icon: "https://i.ibb.co.com/0yHdfd7c/User-Settings.png",
-      title: "Trainer Profile",
-      content: <TrainerProfile />,
-    },
-    {
-      id: "Trainer_Schedule",
-      Icon: "https://i.ibb.co.com/xSjNG396/calendar.png",
-      title: "Trainer Schedule",
-      content: <TrainerSchedule />,
-    },
-    // Add more tabs as needed
-  ];
+  // Fetch available class types
+  const {
+    data: ClassTypesData = [],
+    isLoading: ClassTypesDataIsLoading,
+    error: ClassTypesDataError,
+  } = useQuery({
+    queryKey: ["TrainerClassTypes"],
+    queryFn: () =>
+      axiosPublic.get(`/Trainers/classTypes`).then((res) => res.data),
+  });
 
   // Get gender details (icon + label)
   const { icon } = getGenderIcon(TrainerProfileData?.gender);
@@ -161,17 +165,58 @@ const TrainerSettingsLayout = () => {
     }
   };
 
+  // Tabs List
+  const tabs = [
+    {
+      id: "Trainer_Dashboard",
+      Icon: "https://i.ibb.co.com/LhBG5FfY/dashboard.png",
+      title: "Trainer Dashboard",
+      content: <TrainerDashboard />,
+    },
+    {
+      id: "Trainer_Profile",
+      Icon: "https://i.ibb.co.com/0yHdfd7c/User-Settings.png",
+      title: "Trainer Profile",
+      content: (
+        <TrainerProfile
+          TrainerData={TrainerData}
+          refetch={refetchTrainerData}
+          TrainerScheduleData={TrainerScheduleData}
+        />
+      ),
+    },
+    {
+      id: "Trainer_Schedule",
+      Icon: "https://i.ibb.co.com/xSjNG396/calendar.png",
+      title: "Trainer Schedule",
+      content: (
+        <TrainerSchedule
+          TrainerData={TrainerData}
+          ClassTypesData={ClassTypesData}
+          TrainerScheduleData={TrainerScheduleData}
+        />
+      ),
+    },
+    // Add more tabs as needed
+  ];
+
   // Loading state
-  if (TrainerDataIsLoading) return <Loading />;
+  if (
+    TrainerDataIsLoading ||
+    TrainerScheduleIsLoading ||
+    ClassTypesDataIsLoading
+  )
+    return <Loading />;
 
   // Error state
-  if (TrainerDataError) return <FetchingError />;
+  if (TrainerDataError || TrainerScheduleError || ClassTypesDataError)
+    return <FetchingError />;
 
   return (
     <div className="min-h-screen bg-white ">
       {/* Header Section */}
       <div className="mx-auto flex flex-col md:flex-row justify-between gap-6 py-2 bg-gray-300 text-black px-5">
-        {/* Left section: Trainer image and basic info */}
+        {/* Trainer image and basic info */}
         <div className="flex items-center space-x-4">
           {/* Trainer Profile Picture */}
           <img
@@ -192,8 +237,9 @@ const TrainerSettingsLayout = () => {
             </p>
           </div>
         </div>
+
+        {/* Badge Display */}
         <div>
-          {/* Badge Display */}
           <p
             className={`${getTierBadge(
               TrainerProfileData?.tier
@@ -210,8 +256,8 @@ const TrainerSettingsLayout = () => {
           bgColor="red"
           py="py-1"
           px="px-10"
-          icon={<FaPowerOff />} // Icon is always present
-          isLoading={isLoggingOut} // Enables the loading state
+          icon={<FaPowerOff />}
+          isLoading={isLoggingOut}
           loadingText="Logging Out..."
         />
       </div>
@@ -220,9 +266,12 @@ const TrainerSettingsLayout = () => {
       <div className="flex min-h-screen mx-auto bg-linear-to-b from-gray-100 to-gray-500 border-t border-gray-500">
         {/* Tab Names */}
         <div className="w-1/5 bg-gray-200 text-black border-r border-gray-500">
-          <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2 ">
+          {/* Top part */}
+          <h3 className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2">
             Trainer Settings Options
-          </p>
+          </h3>
+
+          {/* Tab's */}
           <div className="space-y-2">
             {tabs.map((tab) => (
               <p

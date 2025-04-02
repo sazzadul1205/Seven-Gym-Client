@@ -1,11 +1,5 @@
-// Import Packages
-import { useQuery } from "@tanstack/react-query";
-
-// Import Hooks and Shared
-import useAuth from "../../../Hooks/useAuth";
-import Loading from "../../../Shared/Loading/Loading";
-import useAxiosPublic from "../../../Hooks/useAxiosPublic";
-import FetchingError from "../../../Shared/Component/FetchingError";
+// Import Package
+import PropTypes from "prop-types";
 
 // Import Components
 import TrainerProfileAbout from "./TrainerProfileAbout/TrainerProfileAbout";
@@ -15,50 +9,12 @@ import TrainerProfileDetails from "./TrainerProfileDetails/TrainerProfileDetails
 import TrainerProfileSchedule from "./TrainerProfileSchedule/TrainerProfileSchedule";
 import TrainerDetailsTestimonials from "../../(PublicPages)/(Trainers)/TrainersDetails/TrainerDetailsTestimonials/TrainerDetailsTestimonials";
 
-const TrainerProfile = () => {
-  const axiosPublic = useAxiosPublic();
-  const { user } = useAuth();
-
-  // Fetch trainer data based on the logged-in user's email
-  const {
-    data: MyTrainerData = [],
-    isLoading: MyTrainerDataLoading,
-    error: MyTrainerDataError,
-  } = useQuery({
-    queryKey: ["MyTrainerData", user?.email],
-    queryFn: () =>
-      axiosPublic.get(`/Trainers?email=${user?.email}`).then((res) => res.data),
-    enabled: !!user?.email, // Runs only if email exists
-  });
-
+const TrainerProfile = ({ TrainerScheduleData, TrainerData, refetch }) => {
   // Extract trainer details
-  const TrainerProfileData = MyTrainerData?.[0] || null;
-
-  // Fetch trainer schedule data
-  const {
-    data: TrainerScheduleData = [],
-    isLoading: TrainerScheduleIsLoading,
-    error: TrainerScheduleError,
-  } = useQuery({
-    queryKey: ["TrainerScheduleData", TrainerProfileData?.name],
-    queryFn: () =>
-      axiosPublic
-        .get(
-          `/Trainers_Schedule/ByTrainerName?trainerName=${encodeURIComponent(
-            TrainerProfileData?.name
-          )}`
-        )
-        .then((res) => res.data),
-    enabled: !!TrainerProfileData?.name, // Runs only if trainer's name exists
-  });
+  const TrainerProfileData = TrainerData?.[0] || null;
 
   // Extract schedule details
   const TrainerProfileScheduleData = TrainerScheduleData?.[0] || null;
-
-  // Handle Loading and Errors
-  if (MyTrainerDataLoading || TrainerScheduleIsLoading) return <Loading />;
-  if (MyTrainerDataError || TrainerScheduleError)
-    return <FetchingError error={MyTrainerDataError || TrainerScheduleError} />;
 
   return (
     <div className="bg-fixed bg-cover bg-center">
@@ -91,6 +47,12 @@ const TrainerProfile = () => {
       </div>
     </div>
   );
+};
+
+// Prop Type
+TrainerProfile.propTypes = {
+  TrainerScheduleData: PropTypes.array,
+  TrainerData: PropTypes.array,
 };
 
 export default TrainerProfile;
