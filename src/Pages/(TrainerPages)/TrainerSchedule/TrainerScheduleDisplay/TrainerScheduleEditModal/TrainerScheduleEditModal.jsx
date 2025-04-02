@@ -1,8 +1,14 @@
-/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
+
+// Import Packages
+import PropTypes from "prop-types";
 import { useForm } from "react-hook-form";
+
+// Import Icons
 import { ImCross } from "react-icons/im";
 import { IoMdInformationCircleOutline } from "react-icons/io";
+
+// import JSON data
 import ClassInformation from "../../../../../JSON/ClassInformation.json";
 
 // Convert 24-hour time to 12-hour AM/PM format
@@ -123,9 +129,9 @@ const TrainerScheduleEditModal = ({
             {/* Class Information : Time */}
             <div className="flex items-center">
               <p className="pr-3 font-semibold">Class Time:</p>
-              <p className="w-16">{formatTimeTo12Hour(selectedClass.start)}</p>
+              <p className="w-20">{formatTimeTo12Hour(selectedClass.start)}</p>
               <p className="w-4">-</p>
-              <p className="w-16">{formatTimeTo12Hour(selectedClass.end)}</p>
+              <p className="w-20">{formatTimeTo12Hour(selectedClass.end)}</p>
             </div>
           </div>
         </div>
@@ -205,6 +211,7 @@ const TrainerScheduleEditModal = ({
                 </label>
               </div>
 
+              {/* Texts */}
               <p className="text-xs text-gray-500">
                 Set a price per session (if not free)
               </p>
@@ -226,6 +233,8 @@ const TrainerScheduleEditModal = ({
                   disabled={isFree}
                 />
               </div>
+
+              {/* Error Message for Price Input */}
               {errors.classPrice && !isFree && (
                 <p className="text-red-500 text-sm">
                   {errors.classPrice.message}
@@ -236,6 +245,7 @@ const TrainerScheduleEditModal = ({
 
           {/* Toggle Class Information Section */}
           <div className="flex justify-between items-center">
+            {/* Class Information Toggle Button */}
             <div className="flex items-center gap-2 cursor-pointer">
               <p className="font-semibold">Class Information Details</p>
               <IoMdInformationCircleOutline
@@ -244,6 +254,7 @@ const TrainerScheduleEditModal = ({
               />
             </div>
 
+            {/* Sav Button */}
             <button
               type="submit"
               className="bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-600 text-white px-4 py-2 rounded-lg cursor-pointer"
@@ -297,6 +308,13 @@ const TrainerScheduleEditModal = ({
       </div>
     </div>
   );
+};
+
+// PropTypes for type checking
+TrainerScheduleEditModal.propTypes = {
+  selectedClass: PropTypes.object,
+  TrainersClassType: PropTypes.array,
+  handleUpdate: PropTypes.func.isRequired,
 };
 
 export default TrainerScheduleEditModal;
