@@ -1,13 +1,14 @@
-import { Link } from "react-router";
-
 // Import Packages
 import PropTypes from "prop-types";
 
 // Import Icons
-import { IoMdFemale, IoMdMale } from "react-icons/io";
-import { MdOutlinePeopleAlt } from "react-icons/md";
-import { IoSettings } from "react-icons/io5";
 import { Tooltip } from "react-tooltip";
+import { IoSettings } from "react-icons/io5";
+import { MdOutlinePeopleAlt } from "react-icons/md";
+import { IoMdFemale, IoMdMale } from "react-icons/io";
+
+// Import Modal
+import TrainerProfileHeaderUpdateModal from "./TrainerProfileHeaderUpdateModal.jsx/TrainerProfileHeaderUpdateModal";
 
 // Function to get tier badge styles dynamically
 const getTierBadge = (tier) => {
@@ -47,7 +48,7 @@ const getGenderIcon = (gender) => {
   );
 };
 
-const TrainerProfileHeader = ({ TrainerDetails }) => {
+const TrainerProfileHeader = ({ TrainerDetails, refetch }) => {
   // Get gender details (icon + label)
   const { icon } = getGenderIcon(TrainerDetails?.gender);
 
@@ -55,53 +56,66 @@ const TrainerProfileHeader = ({ TrainerDetails }) => {
   if (!TrainerDetails) return null;
 
   return (
-    <div className="relative mx-auto text-center py-10">
-      {/* Settings Icon (Top Left) */}
-      <div
-        className="absolute top-2 right-2 bg-gray-400/50 p-3 rounded-full"
-        data-tooltip-id="Trainer_Profile_Settings_Tooltip"
-      >
-        <Link to="/Trainer/TrainerSettings?tab=User_Info_Settings">
-          <IoSettings className="text-red-500 text-4xl transition-transform duration-500 hover:rotate-180 hover:text-red-400" />
-        </Link>
-      </div>
-      <Tooltip
-        id="Trainer_Profile_Settings_Tooltip"
-        place="top"
-        content="Trainer Profile Settings"
-      />
-
-      {/* Trainer Profile Image */}
-      <img
-        src={TrainerDetails?.imageUrl || "/default-profile.png"}
-        alt={TrainerDetails?.name || "Trainer"}
-        className="w-32 h-32 rounded-full mx-auto mb-2"
-        loading="lazy"
-      />
-
-      {/* Trainer Name & Gender */}
-      <div className="flex justify-center items-center gap-3">
-        <p className="text-4xl font-bold text-white">
-          {TrainerDetails?.name || "Unknown Trainer"}
-        </p>
-        <span>{icon}</span>
-      </div>
-
-      {/* Trainer Specialization */}
-      <p className="text-xl text-black font-semibold italic">
-        {TrainerDetails?.specialization || "Specialization Not Available"}
-      </p>
-
-      {/* Tier Badge */}
-      {TrainerDetails?.tier && (
-        <span
-          className={`inline-block px-6 py-1 mt-2 rounded-full text-sm font-semibold ${getTierBadge(
-            TrainerDetails?.tier
-          )}`}
+    <div>
+      <div className="relative mx-auto text-center py-10">
+        {/* Settings Icon (Top Left) */}
+        <div
+          className="absolute top-2 right-2 bg-gray-400/50 p-3 rounded-full cursor-pointer "
+          data-tooltip-id="Trainer_Profile_Settings_Header_Tooltip"
+          onClick={() =>
+            document
+              .getElementById("Trainer_Profile_Header_Update_Modal")
+              .showModal()
+          }
         >
-          {TrainerDetails?.tier} Tier
-        </span>
-      )}
+          <IoSettings className="text-red-500 text-4xl transition-transform duration-500 hover:rotate-180 hover:text-red-400" />
+        </div>
+        <Tooltip
+          id="Trainer_Profile_Settings_Header_Tooltip"
+          place="top"
+          content="Trainer Name Settings"
+        />
+
+        {/* Trainer Profile Image */}
+        <img
+          src={TrainerDetails?.imageUrl || "/default-profile.png"}
+          alt={TrainerDetails?.name || "Trainer"}
+          className="w-32 h-32 rounded-full mx-auto mb-2"
+          loading="lazy"
+        />
+
+        {/* Trainer Name & Gender */}
+        <div className="flex justify-center items-center gap-3">
+          <p className="text-4xl font-bold text-white">
+            {TrainerDetails?.name || "Unknown Trainer"}
+          </p>
+          <span>{icon}</span>
+        </div>
+
+        {/* Trainer Specialization */}
+        <p className="text-xl text-black font-semibold italic">
+          {TrainerDetails?.specialization || "Specialization Not Available"}
+        </p>
+
+        {/* Tier Badge */}
+        {TrainerDetails?.tier && (
+          <span
+            className={`inline-block px-6 py-1 mt-2 rounded-full text-sm font-semibold ${getTierBadge(
+              TrainerDetails?.tier
+            )}`}
+          >
+            {TrainerDetails?.tier} Tier
+          </span>
+        )}
+      </div>
+
+      {/* Update Image, Name, Specialization  Modal */}
+      <dialog id="Trainer_Profile_Header_Update_Modal" className="modal">
+        <TrainerProfileHeaderUpdateModal
+          TrainerDetails={TrainerDetails}
+          refetch={refetch}
+        />
+      </dialog>
     </div>
   );
 };
@@ -115,6 +129,7 @@ TrainerProfileHeader.propTypes = {
     tier: PropTypes.string,
     imageUrl: PropTypes.string,
   }),
+  refetch: PropTypes.func.isRequired,
 };
 
 export default TrainerProfileHeader;

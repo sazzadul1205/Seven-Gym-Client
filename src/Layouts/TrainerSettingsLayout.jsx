@@ -116,6 +116,7 @@ const TrainerSettingsLayout = () => {
     data: TrainerScheduleData = [],
     isLoading: TrainerScheduleIsLoading,
     error: TrainerScheduleError,
+    refetch: refetchTrainerScheduleData,
   } = useQuery({
     queryKey: ["TrainerScheduleData", TrainerProfileData?.name],
     queryFn: () =>
@@ -128,6 +129,12 @@ const TrainerSettingsLayout = () => {
         .then((res) => res.data),
     enabled: !!TrainerProfileData?.name,
   });
+
+  // Unified refetch function
+  const refetchAll = async () => {
+    await refetchTrainerData();
+    await refetchTrainerScheduleData();
+  };
 
   // Fetch available class types
   const {
@@ -180,7 +187,7 @@ const TrainerSettingsLayout = () => {
       content: (
         <TrainerProfile
           TrainerData={TrainerData}
-          refetch={refetchTrainerData}
+          refetch={refetchAll}
           TrainerScheduleData={TrainerScheduleData}
         />
       ),
@@ -240,13 +247,15 @@ const TrainerSettingsLayout = () => {
 
         {/* Badge Display */}
         <div>
-          <p
-            className={`${getTierBadge(
-              TrainerProfileData?.tier
-            )} cursor-pointer`}
-          >
-            {TrainerProfileData?.tier || "Unknown Tier"}
-          </p>
+          {TrainerProfileData?.tier && (
+            <span
+              className={`inline-block px-6 py-1 mt-2 rounded-full text-sm font-semibold cursor-pointer ${getTierBadge(
+                TrainerProfileData?.tier
+              )}`}
+            >
+              {TrainerProfileData?.tier} Tier
+            </span>
+          )}
         </div>
 
         {/* Log out button */}

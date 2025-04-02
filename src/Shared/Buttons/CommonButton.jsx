@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 
 const CommonButton = ({
   clickEvent,
+  type = "submit", // Default type now set to "submit"
   textColor = "text-white",
   bgColor = "blue", // Default single color input
   bgFromColor, // Optional (if user wants to override)
@@ -20,6 +21,7 @@ const CommonButton = ({
 
   return (
     <button
+      type={type}
       className={`flex items-center justify-center font-semibold ${px} ${py} rounded-lg cursor-pointer transition-all duration-300 
         ${textColor} 
         bg-gradient-to-bl from-${fromColor} to-${toColor} 
@@ -44,6 +46,7 @@ const CommonButton = ({
 // PropTypes for type validation
 CommonButton.propTypes = {
   clickEvent: PropTypes.func,
+  type: PropTypes.string, // Button type prop
   textColor: PropTypes.string,
   bgColor: PropTypes.string, // Single color input
   bgFromColor: PropTypes.string, // Optional override

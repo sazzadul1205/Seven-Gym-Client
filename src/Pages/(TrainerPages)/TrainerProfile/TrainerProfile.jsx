@@ -20,14 +20,20 @@ const TrainerProfile = ({ TrainerScheduleData, TrainerData, refetch }) => {
     <div className="bg-fixed bg-cover bg-center">
       {/* Header Section */}
       <div className="bg-linear-to-b from-gray-200 to-gray-400">
-        <TrainerProfileHeader TrainerDetails={TrainerProfileData || {}} />
+        <TrainerProfileHeader
+          TrainerDetails={TrainerProfileData || {}}
+          refetch={refetch}
+        />
       </div>
 
       {/* Content Section */}
       <div className="bg-linear-to-b from-gray-400 to-gray-200 pb-5">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Trainer Bio and Experience */}
-          <TrainerProfileAbout TrainerDetails={TrainerProfileData || {}} />
+          <TrainerProfileAbout
+            TrainerDetails={TrainerProfileData || {}}
+            refetch={refetch}
+          />
 
           {/* Trainer Contact Information */}
           <TrainerProfileContact TrainerDetails={TrainerProfileData || {}} />
@@ -51,8 +57,27 @@ const TrainerProfile = ({ TrainerScheduleData, TrainerData, refetch }) => {
 
 // Prop Type
 TrainerProfile.propTypes = {
-  TrainerScheduleData: PropTypes.array,
-  TrainerData: PropTypes.array,
+  TrainerScheduleData: PropTypes.arrayOf(
+    PropTypes.shape({
+      // Define properties based on the structure of each schedule item
+      day: PropTypes.string,
+      time: PropTypes.string,
+      sessionType: PropTypes.string,
+      availability: PropTypes.string,
+      // Add more properties if needed
+    })
+  ),
+  TrainerData: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      gender: PropTypes.string,
+      specialization: PropTypes.string,
+      tier: PropTypes.string,
+      imageUrl: PropTypes.string,
+      // Add other relevant fields for TrainerData
+    })
+  ),
+  refetch: PropTypes.func.isRequired,
 };
 
 export default TrainerProfile;
