@@ -36,6 +36,8 @@ const Login = () => {
       icon: type,
       title: type === "success" ? "Login Successful" : "Login Failed",
       text: message,
+      showConfirmButton: false,
+      timer: 1500,
     });
   };
 
@@ -67,10 +69,11 @@ const Login = () => {
         // Navigate based on user role
         if (
           userData.data.role === "Admin" ||
-          userData.data.role === "Manager" ||
-          userData.data.role === "Trainer"
+          userData.data.role === "Manager"
         ) {
           navigate("/Dashboard", { replace: true });
+        } else if (userData.data.role === "Trainer") {
+          navigate("/Trainer", { replace: true });
         } else {
           navigate(from, { replace: true });
         }

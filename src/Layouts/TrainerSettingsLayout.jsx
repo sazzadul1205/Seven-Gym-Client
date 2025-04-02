@@ -1,20 +1,85 @@
+import { useNavigate, useLocation } from "react-router";
 import { useState, useEffect } from "react";
 
 // Import Packages
-import { useNavigate, useLocation } from "react-router";
+import Swal from "sweetalert2";
+import { useQuery } from "@tanstack/react-query";
 
-// Import Icons
-import { IoMdArrowRoundBack } from "react-icons/io";
-import TrainerDashboard from "../Pages/(TrainerPages)/TrainerDashboard/TrainerDashboard";
+// Import Tabs
 import TrainerProfile from "../Pages/(TrainerPages)/TrainerProfile/TrainerProfile";
 import TrainerSchedule from "../Pages/(TrainerPages)/TrainerSchedule/TrainerSchedule";
+import TrainerDashboard from "../Pages/(TrainerPages)/TrainerDashboard/TrainerDashboard";
+
+// Import Icons
+import { FaPowerOff } from "react-icons/fa";
+import { MdOutlinePeopleAlt } from "react-icons/md";
+import { IoMdFemale, IoMdMale } from "react-icons/io";
 
 // Import Hooks
+import useAuth from "../Hooks/useAuth";
+import Loading from "../Shared/Loading/Loading";
+import useAxiosPublic from "../Hooks/useAxiosPublic";
+import FetchingError from "../Shared/Component/FetchingError";
+
+// Import Button
+import CommonButton from "../Shared/Buttons/CommonButton";
+
+// Function to determine gender icon & label
+const getGenderIcon = (gender) => {
+  const genderData = {
+    Male: {
+      icon: <IoMdMale className="text-blue-500 font-bold" />,
+      label: "Male",
+    },
+    Female: {
+      icon: <IoMdFemale className="text-pink-500 font-bold" />,
+      label: "Female",
+    },
+    Other: {
+      icon: <MdOutlinePeopleAlt className="text-gray-500 font-bold" />,
+      label: "Other",
+    },
+  };
+
+  return (
+    genderData[gender] || {
+      icon: <MdOutlinePeopleAlt className="text-gray-500 text-2xl" />,
+      label: "Not specified",
+    }
+  );
+};
+
+// Function to determine tier badge styles
+const getTierBadge = (tier) => {
+  const tierStyles = {
+    Bronze:
+      "bg-gradient-to-bl hover:bg-gradient-to-tr from-orange-300 to-orange-500 ring-2 ring-orange-700",
+    Silver:
+      "bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-300 to-gray-500 ring-2 ring-gray-700",
+    Gold: "bg-gradient-to-bl hover:bg-gradient-to-tr from-yellow-300 to-yellow-500 ring-2 ring-yellow-700",
+    Diamond:
+      "bg-gradient-to-bl hover:bg-gradient-to-tr from-blue-300 to-blue-500 ring-2 ring-blue-700",
+    Platinum:
+      "bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-500 to-gray-700 ring-2 ring-gray-900",
+  };
+
+  return `px-14 py-2 mt-2 rounded-full text-sm font-semibold shadow-lg  ${
+    tierStyles[tier] ||
+    "bg-gradient-to-bl hover:bg-gradient-to-tr from-green-300 to-green-500"
+  }`;
+};
 
 const TrainerSettingsLayout = () => {
-  // Hooks
+  const { user, logOut } = useAuth();
+  const axiosPublic = useAxiosPublic();
+
+  // Use Cases Call
   const navigate = useNavigate();
   const location = useLocation();
+
+  // State Management
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   // Extract tab parameter from URL
   const searchParams = new URLSearchParams(location.search);
   const initialTab = searchParams.get("tab") || "User_Info_Settings";
@@ -29,6 +94,24 @@ const TrainerSettingsLayout = () => {
     navigate({ search: params.toString() }, { replace: true });
     window.scrollTo(0, 0); // Scroll to top
   }, [activeTab, navigate]);
+
+  // Fetch trainer data
+  const {
+    data: TrainerData = [],
+    isLoading: TrainerDataIsLoading,
+    error: TrainerDataError,
+    refetch: refetchTrainerData,
+  } = useQuery({
+    queryKey: ["TrainerData", user?.email],
+    queryFn: () =>
+      axiosPublic.get(`/Trainers?email=${user?.email}`).then((res) => res.data),
+    enabled: !!user?.email,
+  });
+
+  // Extract trainer profile data
+  const TrainerProfileData = TrainerData?.[0] || null;
+
+  console.log(TrainerProfileData);
 
   // Tab data
   const tabs = [
@@ -53,20 +136,84 @@ const TrainerSettingsLayout = () => {
     // Add more tabs as needed
   ];
 
+  // Get gender details (icon + label)
+  const { icon } = getGenderIcon(TrainerProfileData?.gender);
+
+  // Logout function
+  const handleSignOut = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logOut();
+      navigate("/"); // Redirects to the home page
+      setTimeout(() => {
+        window.location.reload(); // Force reload
+      }, 100); // Short delay to ensure navigation happens first
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Logout Failed",
+        text: `Error logging out: ${error.message}`,
+        confirmButtonColor: "#d33",
+        timer: 3000,
+      });
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  // Loading state
+  if (TrainerDataIsLoading) return <Loading />;
+
+  // Error state
+  if (TrainerDataError) return <FetchingError />;
+
   return (
     <div className="min-h-screen bg-white ">
       {/* Header Section */}
-      <div className="mx-auto flex flex-col md:flex-row justify-between gap-6 py-2 bg-gray-400 px-5">
-        {/* Back Button */}
-        <button
-          className="flex items-center gap-3 text-xl px-5 py-2 bg-gray-500 hover:bg-gray-500/80 rounded-lg cursor-pointer"
-          onClick={() => navigate(-1)}
-        >
-          <IoMdArrowRoundBack />
-          Back
-        </button>
+      <div className="mx-auto flex flex-col md:flex-row justify-between gap-6 py-2 bg-gray-300 text-black px-5">
+        {/* Left section: Trainer image and basic info */}
+        <div className="flex items-center space-x-4">
+          {/* Trainer Profile Picture */}
+          <img
+            src={TrainerProfileData?.imageUrl}
+            alt="Trainer Profile"
+            className="w-10 h-10 rounded-full border border-gray-300"
+          />
+          {/* Trainer Name and Specialization */}
+          <div>
+            <div className="flex justify-center items-center gap-3">
+              <h3 className="text-lg font-bold text-gray-700">
+                {TrainerProfileData?.name}
+              </h3>
+              <span className="text-xl font-bold">{icon}</span>
+            </div>
+            <p className="text-sm text-gray-600">
+              {TrainerProfileData?.specialization}
+            </p>
+          </div>
+        </div>
+        <div>
+          {/* Badge Display */}
+          <p
+            className={`${getTierBadge(
+              TrainerProfileData?.tier
+            )} cursor-pointer`}
+          >
+            {TrainerProfileData?.tier || "Unknown Tier"}
+          </p>
+        </div>
 
-        <h3></h3>
+        {/* Log out button */}
+        <CommonButton
+          text={isLoggingOut ? "Logging Out..." : "Log Out"}
+          clickEvent={handleSignOut}
+          bgColor="red"
+          py="py-1"
+          px="px-10"
+          icon={<FaPowerOff />} // Icon is always present
+          isLoading={isLoggingOut} // Enables the loading state
+          loadingText="Logging Out..."
+        />
       </div>
 
       {/* Tabs Sections */}

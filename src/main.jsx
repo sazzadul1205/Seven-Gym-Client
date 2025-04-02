@@ -44,7 +44,6 @@ import UserSchedulePlanner from "./Pages/(UserPages)/UserSchedulePlanner/UserSch
 import TestimonialsPage from "./Pages/(PublicPages)/(About)/TestimonialsPage/TestimonialsPage.jsx";
 
 // Trainer Pages Import
-import TrainerProfile from "./Pages/(TrainerPages)/TrainerProfile/TrainerProfile.jsx";
 import TrainerSchedule from "./Pages/(TrainerPages)/TrainerSchedule/TrainerSchedule.jsx";
 import TrainerSettingsLayout from "./Layouts/TrainerSettingsLayout.jsx";
 
