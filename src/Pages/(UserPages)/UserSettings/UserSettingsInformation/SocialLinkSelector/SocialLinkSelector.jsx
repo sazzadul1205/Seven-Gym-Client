@@ -163,7 +163,7 @@ const SocialLinkSelector = ({ UsersData, socialLinks, setSocialLinks }) => {
 
       {/* Active Social Links: Platforms that have been added */}
       {activePlatforms.length > 0 && (
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           {activePlatforms.map((platform) => (
             <div key={platform.key} className="flex items-center gap-2">
               {/* Icons */}

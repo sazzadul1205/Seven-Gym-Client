@@ -28,6 +28,15 @@ const AvatarSelector = ({
   // State to toggle cropper modal visibility
   const [showCropper, setShowCropper] = useState(false);
 
+  // Reset all state to initial values when modal is closed
+  const resetState = () => {
+    setImageSrc(null);
+    setCropArea(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setRotation(0);
+  };
+
   // Handle the image file selection
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -47,7 +56,7 @@ const AvatarSelector = ({
     }
   };
 
-  // Callback on process compleat
+  // Callback on process complete
   const onCropComplete = useCallback((_, croppedAreaPixels) => {
     setCropArea(croppedAreaPixels);
   }, []);
@@ -124,8 +133,8 @@ const AvatarSelector = ({
     <div>
       {/* Avatar Display Section */}
       <div className="pt-5">
-        {/* Display three avatar styles */}
-        <div className="flex items-end gap-5">
+        {/* Display avatars in a flex container with responsive behavior */}
+        <div className="flex flex-col sm:flex-row sm:gap-5 items-center sm:items-end sm:justify-start  gap-4">
           {/* First Avatar (Largest) */}
           <div className="w-32 h-32 rounded-lg shadow-lg overflow-hidden cursor-pointer">
             <img
@@ -154,32 +163,47 @@ const AvatarSelector = ({
           </div>
 
           {/* Button to open the image upload modal */}
+          <div className="flex md:hidden lg:flex">
+            <CommonButton
+              clickEvent={() =>
+                document.getElementById("User_Image_Modal").showModal()
+              }
+              text="Select Avatar Image"
+              bgColor="blue"
+              className="mt-4 sm:mt-0"
+            />
+          </div>
+        </div>
+
+        <div className="hidden md:flex lg:hidden pt-4">
           <CommonButton
             clickEvent={() =>
               document.getElementById("User_Image_Modal").showModal()
             }
             text="Select Avatar Image"
             bgColor="blue"
+            className="mt-4 sm:mt-0"
           />
         </div>
       </div>
 
       {/* Modal for Image Upload */}
       <dialog id="User_Image_Modal" className="modal">
-        <div className="modal-box p-0 bg-gradient-to-b from-white to-gray-300 text-black min-w-3xl min-h-[400px]">
+        <div className="modal-box p-0 bg-gradient-to-b from-white to-gray-300 text-black min-w-full sm:min-w-3xl min-h-[400px]">
           {/* Modal Header */}
           <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
             <h3 className="font-bold text-lg">User Image</h3>
             <ImCross
               className="text-xl hover:text-[#F72C5B] cursor-pointer"
-              onClick={() =>
-                document.getElementById("User_Image_Modal")?.close()
-              }
+              onClick={() => {
+                document.getElementById("User_Image_Modal")?.close();
+                resetState(); // Reset everything when modal is closed
+              }}
             />
           </div>
 
           {/* Image Preview & Upload */}
-          <div className="w-[250px] h-[250px] rounded-full mx-auto border-2 border-dashed border-gray-500 flex items-center justify-center relative overflow-hidden hover:scale-105">
+          <div className="w-[200px] sm:w-[250px] h-[200px] sm:h-[250px] rounded-full mx-auto border-2 border-dashed border-gray-500 flex items-center justify-center relative overflow-hidden hover:scale-105 transition-all duration-300">
             {/* Show image preview if available */}
             {imageSrc && !showCropper ? (
               <img
@@ -206,9 +230,9 @@ const AvatarSelector = ({
 
       {/* Cropper Modal */}
       <dialog id="User_Image_Cropper_Modal" className="modal">
-        <div className="modal-box bg-gradient-to-b from-white to-gray-300 text-black min-w-3xl p-3">
+        <div className="modal-box bg-gradient-to-b from-white to-gray-300 text-black min-w-full sm:min-w-3xl p-3">
           {/* Cropper container */}
-          <div className="relative h-96">
+          <div className="relative h-96 w-full mx-auto">
             <Cropper
               image={imageSrc}
               crop={crop}
@@ -223,9 +247,9 @@ const AvatarSelector = ({
           </div>
 
           {/* Cropper Controls */}
-          <div className="flex justify-between items-center mt-4 space-x-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center mt-4 space-y-4 sm:space-y-0 sm:space-x-4 gap-4 w-full">
             {/* Zoom control slider */}
-            <div>
+            <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-2">
               <label className="text-gray-700">Zoom:</label>
               <input
                 type="range"
@@ -234,12 +258,12 @@ const AvatarSelector = ({
                 step="0.1"
                 value={zoom}
                 onChange={(e) => setZoom(Number(e.target.value))}
-                className="ml-2"
+                className="ml-2 w-full sm:w-auto"
               />
             </div>
 
             {/* Cancel and Save buttons */}
-            <div className="flex space-x-2 gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               {/* Cancel: closes crop modal and reopens upload modal */}
               <CommonButton
                 text="Cancel"
@@ -248,6 +272,7 @@ const AvatarSelector = ({
                   setShowCropper(false);
                   document.getElementById("User_Image_Cropper_Modal").close();
                   document.getElementById("User_Image_Modal").showModal();
+                  resetState(); // Reset everything when cancelled
                 }}
               />
               {/* Save: crops the image and closes all modals */}

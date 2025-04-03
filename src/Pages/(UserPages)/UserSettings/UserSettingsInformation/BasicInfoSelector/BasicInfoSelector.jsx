@@ -23,9 +23,9 @@ const BasicInfoSelector = ({
       {/* Divider */}
       <div className="bg-white p-[2px] w-1/2 mb-4"></div>
 
-      <div className="flex gap-4 text-black">
+      <div className="flex flex-col md:flex-row gap-4 text-black">
         {/* Avatar Section */}
-        <div className="w-1/2 bg-gray-300 rounded-xl border border-gray-100 px-2">
+        <div className="w-full md:w-1/2 bg-gray-300 rounded-xl border border-gray-100 px-2 py-3">
           <AvatarSelector
             profileImage={profileImage}
             setProfileImage={setProfileImage}
@@ -34,9 +34,9 @@ const BasicInfoSelector = ({
         </div>
 
         {/* Additional User Information Form */}
-        <div className="w-1/2 bg-gray-300 rounded-xl border border-gray-100 px-2 py-2">
+        <div className="w-full md:w-1/2 bg-gray-300 rounded-xl border border-gray-100 px-2 py-2">
           {/* Full Name Input */}
-          <div>
+          <div className="w-full">
             <label className="block font-bold ml-1 mb-2 text-black">
               Full Name
             </label>
@@ -44,13 +44,13 @@ const BasicInfoSelector = ({
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="input input-bordered rounded-lg bg-white border-gray-600 w-[600px]"
+              className="input input-bordered rounded-lg bg-white border-gray-600 "
             />
           </div>
 
-          <div className="flex pt-5 gap-4">
+          <div className="flex flex-col md:flex-row pt-5 gap-4">
             {/* Phone Input */}
-            <div>
+            <div className="w-full">
               <label className="block font-bold ml-1 mb-2 text-black">
                 Phone
               </label>
@@ -63,7 +63,7 @@ const BasicInfoSelector = ({
             </div>
 
             {/* Date of Birth Input */}
-            <div>
+            <div className="w-full">
               <label className="block font-bold ml-1 mb-2 text-black">
                 Date of Birth
               </label>

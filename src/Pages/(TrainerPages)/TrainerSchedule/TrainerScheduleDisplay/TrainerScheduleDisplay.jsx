@@ -93,15 +93,15 @@ const TrainerScheduleDisplay = ({
                       {/* Class Type */}
                       <td className="px-4 py-2">{classDetails.classType}</td>
 
-                      {/* Participant Limit */}
+                      {/* Participant Limit */} 
                       <td className="px-4 py-2">
                         {classDetails.participantLimit === "No limit" ||
                         classDetails.participantLimit === "No Limit" ? (
                           "No Limit"
                         ) : (
-                          <div className="flex items-center gap-5">
-                            <span>{classDetails.participantLimit}</span>
+                          <div className="flex items-center gap-5 justify-between w-[60px]">
                             <FaRegUser />
+                            <p> {classDetails.participantLimit}</p>
                           </div>
                         )}
                       </td>
@@ -111,7 +111,7 @@ const TrainerScheduleDisplay = ({
                         {typeof classDetails.classPrice === "string" &&
                         classDetails.classPrice.toLowerCase() === "free"
                           ? "Free"
-                          : `$${classDetails.classPrice}`}
+                          : `$ ${classDetails.classPrice}`}
                       </td>
 
                       {/* Action Buttons */}

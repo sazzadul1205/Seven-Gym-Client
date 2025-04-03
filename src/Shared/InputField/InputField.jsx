@@ -55,7 +55,7 @@ const InputField = ({
 // PropTypes validation
 InputField.propTypes = {
   label: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
+  id: PropTypes.string,
   type: PropTypes.oneOf([
     "text",
     "email",
@@ -65,9 +65,10 @@ InputField.propTypes = {
     "datetime-local",
     "textarea",
     "select",
-  ]).isRequired,
+    "tel",
+  ]),
   placeholder: PropTypes.string,
-  register: PropTypes.func.isRequired,
+  register: PropTypes.func,
   errors: PropTypes.object,
   validation: PropTypes.object,
   options: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),

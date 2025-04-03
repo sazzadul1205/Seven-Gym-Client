@@ -1,6 +1,12 @@
 import { useState } from "react";
+
+// Import Packages
 import PropTypes from "prop-types";
+
+// Import Icons
 import { ImCross } from "react-icons/im";
+
+// Import Button
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
 const BannerSelector = ({
@@ -62,7 +68,7 @@ const BannerSelector = ({
 
       {/* Banner (Click to Change) */}
       <div
-        className="relative group w-full h-[400px] rounded-lg shadow-lg overflow-hidden cursor-pointer hover:border-dashed hover:border-black hover:border-2 my-2"
+        className="relative group w-full h-[300px] md:h-[400px] rounded-lg shadow-lg overflow-hidden cursor-pointer hover:border-dashed hover:border-black hover:border-2 my-2"
         onClick={() =>
           document.getElementById("Background_Image_Modal")?.showModal()
         }
@@ -79,7 +85,7 @@ const BannerSelector = ({
 
       {/* Background Image Modal */}
       <dialog id="Background_Image_Modal" className="modal">
-        <div className="modal-box p-0 bg-gradient-to-b from-white to-gray-300 text-black min-w-6xl">
+        <div className="modal-box p-0 bg-gradient-to-b from-white to-gray-300 text-black min-w-full md:min-w-[600px]">
           {/* Modal Header */}
           <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
             <h3 className="font-bold text-lg">Background Image Modal</h3>
@@ -93,7 +99,7 @@ const BannerSelector = ({
 
           {/* Drag-and-Drop Area */}
           <div
-            className={`border-2 border-dashed p-4 mx-5 rounded-lg h-[300px] flex flex-col items-center justify-center mt-4 transition-all duration-300 ${
+            className={`border-2 border-dashed p-4 mx-5 rounded-lg h-[300px] md:h-[350px] flex flex-col items-center justify-center mt-4 transition-all duration-300 ${
               isDragging ? "border-blue-500 bg-blue-100" : "border-gray-500"
             }`}
             onDragOver={handleDragOver}
@@ -104,11 +110,11 @@ const BannerSelector = ({
               <img
                 src={previewImage}
                 alt="Preview"
-                className="w-full h-[300px] mx-auto rounded-lg"
+                className="w-full h-[300px] mx-auto rounded-lg md:h-[350px]"
               />
             ) : (
               <>
-                <p className="text-gray-500 py-2">
+                <p className="text-gray-500 py-2 text-center">
                   Drag and drop an image here or click below to select one.
                 </p>
                 <input

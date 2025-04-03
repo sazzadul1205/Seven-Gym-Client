@@ -1,12 +1,8 @@
-import { Link } from "react-router";
-
 // Import Packages
 import PropTypes from "prop-types";
 
 // import Icons
 import { FaRegUser } from "react-icons/fa";
-import { IoSettings } from "react-icons/io5";
-import { Tooltip } from "react-tooltip";
 
 const TrainerProfileSchedule = ({ TrainerDetails, TrainerSchedule }) => {
   // Return null if TrainerDetails or TrainerSchedule are missing
@@ -15,101 +11,18 @@ const TrainerProfileSchedule = ({ TrainerDetails, TrainerSchedule }) => {
   // Use a fallback for trainerSchedule object
   const scheduleObj = TrainerSchedule.trainerSchedule || {};
 
-  // Function to generate a button based on class type and booking conditions
-  const getClassButton = (classType, start, day, participant) => {
-    // Check if the session is already booked
-    const isBooked =
-      participant?.length === 1 &&
-      ![
-        "Group Classes",
-        "Online Class",
-        "Private Session",
-        "Outdoor Class",
-        "Partner Workout",
-      ].includes(classType);
-
-    if (isBooked) {
-      return (
-        <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full mx-auto">
-          Booked
-        </button>
-      );
-    }
-
-    // Define class types that are bookable or free
-    const classLinks = {
-      bookable: [
-        "Group Classes",
-        "Online Class",
-        "Outdoor Class",
-        "Partner Workout",
-        "Private Session",
-        "Private Training",
-        "Semi-Private Training",
-        "Workshops",
-        "Group Class",
-      ],
-      free: ["Drop-In Class", "Open Gym Class"],
-    };
-
-    // Render "Book Session" button for bookable classes
-    if (classLinks.bookable.includes(classType)) {
-      return (
-        <Link
-          to={`/Trainers/Bookings/${TrainerDetails?.name}?classType=${classType}&day=${day}&timeStart=${start}`}
-        >
-          <button className="w-[240px] font-semibold text-white text-xl bg-linear-to-bl hover:bg-linear-to-tr from-[#d1234f] to-[#fc003f] border border-red-500 rounded-2xl shadow-lg hover:shadow-2xl py-2">
-            Book Session
-          </button>
-        </Link>
-      );
-    }
-
-    // Render "Free Class" button for free classes
-    if (classLinks.free.includes(classType)) {
-      return (
-        <button className="w-[240px] font-semibold text-black text-xl bg-gray-300 border border-gray-500 rounded-2xl shadow-lg py-2 cursor-not-allowed">
-          Free Class
-        </button>
-      );
-    }
-
-    // Render "On a Break" button if the trainer is on a break
-    if (classType === "Break") {
-      return (
-        <button className="w-[240px] font-semibold text-white text-xl bg-gray-300 border border-gray-500 rounded-2xl shadow-lg py-2 cursor-not-allowed">
-          On a Break
-        </button>
-      );
-    }
-
-    // Default button to visit class details
-    return (
-      <Link to={`/Classes/${classType.split(" ").slice(0, -1).join(" ")}`}>
-        <button className="w-[240px] font-semibold text-black text-xl bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-500 border border-green-600 rounded-2xl shadow-lg hover:shadow-2xl py-2">
-          Visit Class
-        </button>
-      </Link>
-    );
+  // Convert 24-hour time to 12-hour AM/PM format
+  const formatTimeTo12Hour = (time) => {
+    if (!time) return "";
+    const [hour, minute] = time.split(":");
+    const h = parseInt(hour, 10);
+    const amPm = h >= 12 ? "PM" : "AM";
+    const formattedHour = h % 12 === 0 ? 12 : h % 12;
+    return `${formattedHour}:${minute} ${amPm}`;
   };
 
   return (
     <div className="relative max-w-7xl mx-auto bg-linear-to-bl from-gray-200 to-gray-400 px-2 lg:px-6 py-6 mt-8 lg:rounded-2xl shadow-lg">
-      {/* Settings Icon for Trainer Profile Settings */}
-      <div
-        className="absolute top-2 right-2 p-2"
-        data-tooltip-id="Trainer_Profile_Settings_Schedule_Tooltip"
-      >
-        <Link to="/Trainer/TrainerSettings?tab=User_Info_Settings">
-          <IoSettings className="text-red-500 text-4xl transition-transform duration-500 hover:rotate-180 hover:text-red-400" />
-        </Link>
-      </div>
-      <Tooltip
-        id="Trainer_Profile_Settings_Schedule_Tooltip"
-        place="top"
-        content="Trainer Profile Schedule Settings"
-      />
-
       {/* Trainer Schedule Header */}
       <h2 className="text-2xl text-black font-semibold pb-3 border-b-2 border-black">
         {TrainerDetails?.name || "Unknown Trainer"} Weekly Schedule
@@ -137,10 +50,19 @@ const TrainerProfileSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                       } mb-4 p-4 border-b`}
                     >
                       <div className="flex flex-col space-y-2">
+                        {/* Time Range */}
                         <div className="font-semibold">
-                          {classDetails.start} - {classDetails.end}
+                          <span className="w-20">
+                            {formatTimeTo12Hour(classDetails.start)}
+                          </span>
+                          <span className="px-5">-</span>
+                          <span className="w-20">
+                            {formatTimeTo12Hour(classDetails.end)}
+                          </span>
                         </div>
+                        {/* Class Type */}
                         <div>Class Type: {classDetails.classType}</div>
+                        {/* Participant Limit */}
                         <div>
                           Participant Limit:{" "}
                           {classDetails.participantLimit === "No limit" ||
@@ -148,20 +70,13 @@ const TrainerProfileSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                             ? "No Limit"
                             : classDetails.participantLimit}
                         </div>
+                        {/* Price */}
                         <div>
                           Price:{" "}
                           {typeof classDetails.classPrice === "string" &&
                           classDetails.classPrice.toLowerCase() === "free"
                             ? "Free"
                             : `$${classDetails.classPrice}`}
-                        </div>
-                        <div className="flex justify-center ">
-                          {getClassButton(
-                            classDetails.classType,
-                            classDetails.start,
-                            day,
-                            classDetails.participant
-                          )}
                         </div>
                       </div>
                     </div>
@@ -183,9 +98,6 @@ const TrainerProfileSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                         <th className="px-4 py-2 border-b bg-gray-100">
                           Price
                         </th>
-                        <th className="px-4 py-2 border-b bg-gray-100 text-center">
-                          Action
-                        </th>
                       </tr>
                     </thead>
                     {/* Table Body with Class Details */}
@@ -198,36 +110,41 @@ const TrainerProfileSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                             index % 2 === 0 ? "bg-gray-50" : "bg-white"
                           } border-b`}
                         >
-                          <td className="px-4 py-2">
-                            {classDetails.start} - {classDetails.end}
+                          {/* Time Range */}
+                          <td className="flex px-4 py-3">
+                            <span className="w-20">
+                              {formatTimeTo12Hour(classDetails.start)}
+                            </span>
+                            <span className="px-5">-</span>
+                            <span className="w-20">
+                              {formatTimeTo12Hour(classDetails.end)}
+                            </span>
                           </td>
+
+                          {/* Class Type */}
                           <td className="px-4 py-2">
                             {classDetails.classType}
                           </td>
+
+                          {/* Participant Limit */}
                           <td className="px-4 py-2">
                             {classDetails.participantLimit === "No limit" ||
                             classDetails.participantLimit === "No Limit" ? (
                               "No Limit"
                             ) : (
-                              <div className="flex items-center gap-5">
-                                {classDetails.participantLimit}
+                              <div className="flex items-center gap-5 justify-between w-[60px]">
                                 <FaRegUser />
+                                <p> {classDetails.participantLimit}</p>
                               </div>
                             )}
                           </td>
+
+                          {/* Price */}
                           <td className="px-4 py-2">
                             {typeof classDetails.classPrice === "string" &&
                             classDetails.classPrice.toLowerCase() === "free"
                               ? "Free"
-                              : `$${classDetails.classPrice}`}
-                          </td>
-                          <td className="px-4 py-2 text-center">
-                            {getClassButton(
-                              classDetails.classType,
-                              classDetails.start,
-                              day,
-                              classDetails.participant
-                            )}
+                              : `$ ${classDetails.classPrice}`}
                           </td>
                         </tr>
                       ))}

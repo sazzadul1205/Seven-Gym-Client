@@ -23,9 +23,9 @@ const DetailsInfoSelector = ({
       {/* Divider */}
       <div className="bg-white p-[2px] w-1/2 mb-4"></div>
 
-      <div className="flex gap-4 text-black">
+      <div className="flex flex-col sm:flex-row gap-4 text-black">
         {/* Bio Section */}
-        <div className="w-1/2 bg-gray-300 rounded-xl border border-gray-100 px-2">
+        <div className="w-full sm:w-1/2 bg-gray-300 rounded-xl border border-gray-100 px-2">
           <h3 className="p-3 font-semibold text-lg">My Bio</h3>
           {/* Textarea to display and update user description */}
           <textarea
@@ -37,7 +37,7 @@ const DetailsInfoSelector = ({
         </div>
 
         {/* Fitness Goals Section */}
-        <div className="w-1/2 bg-gray-300 rounded-xl border border-gray-100 px-2">
+        <div className="w-full sm:w-1/2 bg-gray-300 rounded-xl border border-gray-100 px-2">
           <FitnessGoalsSelector
             selectedGoals={selectedGoals}
             setSelectedGoals={setSelectedGoals}
