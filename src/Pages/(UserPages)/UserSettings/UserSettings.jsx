@@ -30,6 +30,7 @@ const UserSettings = () => {
   // Hooks
   const navigate = useNavigate();
   const location = useLocation();
+
   // Extract tab parameter from URL
   const searchParams = new URLSearchParams(location.search);
   const initialTab = searchParams.get("tab") || "User_Info_Settings";
@@ -240,7 +241,7 @@ const UserSettings = () => {
             User Settings Options
           </p>
 
-          {/* Tabs */}
+          {/* Tab's */}
           <div className="space-y-2">
             {tabs.map((tab) => (
               <p

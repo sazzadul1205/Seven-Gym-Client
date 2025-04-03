@@ -23,6 +23,7 @@ import FetchingError from "../Shared/Component/FetchingError";
 
 // Import Button
 import CommonButton from "../Shared/Buttons/CommonButton";
+import { RiArchiveDrawerFill } from "react-icons/ri";
 
 // Function to determine gender icon & label
 const getGenderIcon = (gender) => {
@@ -224,6 +225,7 @@ const TrainerSettingsLayout = () => {
       {/* Header Section */}
       <div className="mx-auto flex flex-col md:flex-row justify-between gap-6 py-2 bg-gray-300 text-black px-5">
         {/* Trainer image and basic info */}
+
         <div className="flex items-center space-x-4">
           {/* Trainer Profile Picture */}
           <img
@@ -231,8 +233,9 @@ const TrainerSettingsLayout = () => {
             alt="Trainer Profile"
             className="w-10 h-10 rounded-full border border-gray-300"
           />
+
           {/* Trainer Name and Specialization */}
-          <div>
+          <div className="py-1">
             <div className="flex justify-center items-center gap-3">
               <h3 className="text-lg font-bold text-gray-700">
                 {TrainerProfileData?.name}
@@ -271,14 +274,75 @@ const TrainerSettingsLayout = () => {
         />
       </div>
 
+      {/* Floating Drawer Button for Mobile */}
+      <label
+        htmlFor="trainer-settings-drawer"
+        className="fixed lg:hidden top-20 left-5 p-3 bg-blue-500 text-white rounded-full shadow-md cursor-pointer z-50 "
+      >
+        <RiArchiveDrawerFill size={24} />
+      </label>
+
+      {/* Drawer for Mobile & Tablet View */}
+      <div className="drawer z-50 lg:hidden">
+        <input
+          id="trainer-settings-drawer"
+          type="checkbox"
+          className="drawer-toggle"
+        />
+        <div className="drawer-content">
+          {/* Hidden drawer button, but still accessible */}
+          <label
+            htmlFor="trainer-settings-drawer"
+            className="btn btn-primary drawer-button hidden"
+          >
+            Open drawer
+          </label>
+        </div>
+
+        <div className="drawer-side">
+          <label
+            htmlFor="trainer-settings-drawer"
+            aria-label="close sidebar"
+            className="drawer-overlay"
+          ></label>
+          <div className="menu bg-gray-300 text-black border-r border-gray-500 min-h-full w-2/3 md:w-80 p-0">
+            {/* Title */}
+            <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-6">
+              Trainer Settings Options
+            </p>
+
+            <div className="space-y-2">
+              {tabs.map((tab) => (
+                <div
+                  key={tab.id}
+                  className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold cursor-pointer ${
+                    activeTab === tab.id
+                      ? "bg-blue-500 text-white border border-gray-500"
+                      : "hover:bg-blue-300 border border-gray-500"
+                  }`}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    document.getElementById(
+                      "trainer-settings-drawer"
+                    ).checked = false; // Close the drawer
+                  }}
+                >
+                  <img src={tab.Icon} alt="Tab Icon" className="w-5" />
+                  {tab.title}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Tabs Sections */}
-      <div className="flex min-h-screen mx-auto bg-linear-to-b from-gray-100 to-gray-500 border-t border-gray-500">
-        {/* Tab Names */}
-        <div className="w-1/5 bg-gray-200 text-black border-r border-gray-500">
-          {/* Top part */}
-          <h3 className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2">
+      <div className="flex min-h-screen mx-auto bg-gray-100 border-t border-gray-500">
+        <div className="hidden lg:block w-1/5 bg-gray-200 text-black border-r border-gray-500">
+          {/* Title */}
+          <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2">
             Trainer Settings Options
-          </h3>
+          </p>
 
           {/* Tab's */}
           <div className="space-y-2">
@@ -300,7 +364,7 @@ const TrainerSettingsLayout = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="w-4/5">
+        <div className="w-full">
           {tabs.map(
             (tab) =>
               activeTab === tab.id && <div key={tab.id}>{tab.content}</div>
