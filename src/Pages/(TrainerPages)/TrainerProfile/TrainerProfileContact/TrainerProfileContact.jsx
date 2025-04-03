@@ -1,7 +1,6 @@
-import { Link } from "react-router";
-
 // Import Packages
 import PropTypes from "prop-types";
+import { Tooltip } from "react-tooltip";
 
 // Import Icons
 import {
@@ -22,9 +21,11 @@ import {
   FaTiktok,
 } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
-import { Tooltip } from "react-tooltip";
 
-const TrainerProfileContact = ({ TrainerDetails }) => {
+// Import Modal
+import TrainerProfileContactUpdateModal from "./TrainerProfileContactUpdateModal/TrainerProfileContactUpdateModal";
+
+const TrainerProfileContact = ({ TrainerDetails, refetch }) => {
   // Check if TrainerDetails is available
   if (!TrainerDetails) return null;
 
@@ -110,10 +111,13 @@ const TrainerProfileContact = ({ TrainerDetails }) => {
       <div
         className="absolute top-2 right-2 p-2"
         data-tooltip-id="Trainer_Profile_Settings_Contact_Tooltip"
+        onClick={() =>
+          document
+            .getElementById("Trainer_Profile_Contact_Update_Modal")
+            .showModal()
+        }
       >
-        <Link to="/Trainer/TrainerSettings?tab=User_Info_Settings">
-          <IoSettings className="text-red-500 text-4xl transition-transform duration-500 hover:rotate-180 hover:text-red-400" />
-        </Link>
+        <IoSettings className="text-red-500 text-4xl transition-transform duration-500 hover:rotate-180 hover:text-red-400 cursor-pointer" />
       </div>
       <Tooltip
         id="Trainer_Profile_Settings_Contact_Tooltip"
@@ -172,10 +176,10 @@ const TrainerProfileContact = ({ TrainerDetails }) => {
         {/* Social Links Section */}
         {socialLinks.length > 0 && (
           <div>
-            <h3 className="text-xl font-semibold text-gray-700 text-center">
+            <h3 className="text-xl font-semibold text-gray-700 text-center py-2">
               Social Links
             </h3>
-            <div className="flex flex-wrap justify-center gap-4 mt-4 border-t border-black pt-2">
+            <div className="flex flex-wrap justify-center  border-t border-black pt-4 gap-4">
               {socialLinks.map(({ name, url, icon, color }) => (
                 <button
                   key={name}
@@ -191,6 +195,14 @@ const TrainerProfileContact = ({ TrainerDetails }) => {
           </div>
         )}
       </div>
+
+      {/* Update phone, email, website and Social Links  Modal */}
+      <dialog id="Trainer_Profile_Contact_Update_Modal" className="modal">
+        <TrainerProfileContactUpdateModal
+          TrainerDetails={TrainerDetails}
+          refetch={refetch}
+        />
+      </dialog>
     </div>
   );
 };
@@ -216,6 +228,7 @@ TrainerProfileContact.propTypes = {
       tiktok: PropTypes.string,
     }),
   }),
+  refetch: PropTypes.func.isRequired,
 };
 
 export default TrainerProfileContact;

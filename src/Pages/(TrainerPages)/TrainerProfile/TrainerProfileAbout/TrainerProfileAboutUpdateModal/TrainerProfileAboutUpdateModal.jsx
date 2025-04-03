@@ -1,15 +1,21 @@
-import { useForm } from "react-hook-form";
-import PropTypes from "prop-types";
+import { useState } from "react";
+
+// Import Icons
 import { ImCross } from "react-icons/im";
+
+// Import Packages
+import Swal from "sweetalert2";
+import PropTypes from "prop-types";
+import { useForm } from "react-hook-form";
 
 // Import Button
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
 // input Input Field
 import InputField from "../../../../../Shared/InputField/InputField";
+
+// Import Hooks
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
-import Swal from "sweetalert2";
-import { useState } from "react";
 
 const TrainerProfileAboutUpdateModal = ({ TrainerDetails, refetch }) => {
   const axiosPublic = useAxiosPublic();

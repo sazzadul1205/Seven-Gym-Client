@@ -36,7 +36,10 @@ const TrainerProfile = ({ TrainerScheduleData, TrainerData, refetch }) => {
           />
 
           {/* Trainer Contact Information */}
-          <TrainerProfileContact TrainerDetails={TrainerProfileData || {}} />
+          <TrainerProfileContact
+            TrainerDetails={TrainerProfileData || {}}
+            refetch={refetch}
+          />
         </div>
 
         {/* Trainer Pricing and Availability */}
