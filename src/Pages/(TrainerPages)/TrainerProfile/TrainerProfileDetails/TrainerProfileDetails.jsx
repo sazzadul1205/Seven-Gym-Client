@@ -1,5 +1,3 @@
-import { Link } from "react-router";
-
 // Import Package
 import PropTypes from "prop-types";
 
@@ -13,8 +11,9 @@ import {
 } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
 import { Tooltip } from "react-tooltip";
+import TrainerProfileDetailsUpdateModal from "./TrainerProfileDetailsUpdateModal/TrainerProfileDetailsUpdateModal";
 
-const TrainerProfileDetails = ({ TrainerDetails }) => {
+const TrainerProfileDetails = ({ TrainerDetails, refetch }) => {
   // Check if TrainerDetails is available
   if (!TrainerDetails) return null;
 
@@ -221,10 +220,12 @@ const TrainerProfileDetails = ({ TrainerDetails }) => {
         </div>
       </div>
 
-      <dialog
-        id="Trainer_Profile_Details_Update_Modal"
-        className="modal"
-      ></dialog>
+      <dialog id="Trainer_Profile_Details_Update_Modal" className="modal">
+        <TrainerProfileDetailsUpdateModal
+          TrainerDetails={TrainerDetails}
+          refetch={refetch}
+        />
+      </dialog>
     </div>
   );
 };
@@ -253,6 +254,7 @@ TrainerProfileDetails.propTypes = {
       })
     ),
   }).isRequired,
+  refetch: PropTypes.func.isRequired,
 };
 
 export default TrainerProfileDetails;
