@@ -1,33 +1,95 @@
-import { useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { FaPlus, FaTrash } from "react-icons/fa";
+// Import Package
+import { useForm } from "react-hook-form";
+import PropTypes from "prop-types";
+
+// Import Icons
 import { ImCross } from "react-icons/im";
+
+// import Button
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
+// Import Input Field
+import DynamicFieldArrayInputList from "../../../../../Shared/DynamicFieldArrayInputList/DynamicFieldArrayInputList";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import { useState } from "react";
+import Swal from "sweetalert2";
+
 const TrainerProfileDetailsUpdateModal = ({ TrainerDetails, refetch }) => {
-  const { register, control, handleSubmit } = useForm({
+  const axiosPublic = useAxiosPublic();
+
+  // Submission loading state
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Form Control
+  const { control, handleSubmit } = useForm({
     defaultValues: {
-      certifications: TrainerDetails.certifications,
-      focusAreas: TrainerDetails.preferences.focusAreas,
+      certifications: TrainerDetails?.certifications,
+      focusAreas: TrainerDetails?.preferences?.focusAreas,
+      classTypes: TrainerDetails?.preferences?.classTypes,
+      additionalServices: TrainerDetails?.additionalServices,
+      equipmentUsed: TrainerDetails?.equipmentUsed,
+      languagesSpoken: TrainerDetails?.languagesSpoken,
+      awards: TrainerDetails?.awards,
+      partnerships: TrainerDetails?.partnerships,
     },
   });
 
-  const { fields
-    , append
-    , remove
-    
-   } = useFieldArray({
-    control,
-    name: "certifications",
-  });
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "certifications",
-  });
-
   // Handle form submission
-  const onSubmit = (data) => {
-    console.log("Submitted Certifications:", data.certifications);
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+
+    // Format the data as required
+    const formattedData = {
+      certifications: data.certifications,
+      awards: data.awards.map((award) => ({
+        title: award.title,
+        year: award.year,
+        organization: award.organization,
+      })),
+      preferences: {
+        focusAreas: data.focusAreas,
+        classTypes: TrainerDetails?.preferences?.classTypes,
+      },
+      languagesSpoken: data.languagesSpoken,
+      additionalServices: data.additionalServices,
+      equipmentUsed: data.equipmentUsed,
+      partnerships: data.partnerships.map((partnership) => ({
+        partnerName: partnership.partnerName,
+        website: partnership.website,
+      })),
+    };
+
+    try {
+      // Post the formatted data to your server
+      await axiosPublic.put(
+        `/Trainers/UpdateTrainerDetailsInfo/${TrainerDetails._id}`,
+        formattedData
+      );
+
+      // On success, show a success alert
+      Swal.fire({
+        title: "Success",
+        text: "Trainer profile updated successfully.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+
+      // Optionally trigger a refetch or additional actions here
+      refetch();
+      document.getElementById("Trainer_Profile_Details_Update_Modal")?.close();
+    } catch (error) {
+      // On error, show an error alert with a meaningful message
+      Swal.fire({
+        title: "Error",
+        text:
+          error.response?.data?.error ||
+          "An error occurred while updating the trainer profile.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -46,75 +108,67 @@ const TrainerProfileDetailsUpdateModal = ({ TrainerDetails, refetch }) => {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
-        {/* Certifications */}
-        <div className="border-b-2 border-gray-400 pb-3">
-          <label className="block font-bold ml-1 mb-2">Certifications</label>
+        <DynamicFieldArrayInputList
+          control={control}
+          name="certifications"
+          label="Certifications"
+          placeholder="Enter certification"
+          fields={["name"]}
+        />
 
-          <div className="space-y-2  ">
-            {fields.map((field, index) => (
-              <div key={field.id} className="flex items-center">
-                <input
-                  {...register(`certifications.${index}`)}
-                  className="input input-bordered w-full bg-white border-gray-600"
-                  placeholder="Enter certification"
-                />
-                <button
-                  type="button"
-                  onClick={() => remove(index)}
-                  className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-600 text-white p-3 cursor-pointer"
-                >
-                  <FaTrash />
-                </button>
-              </div>
-            ))}
+        {/* Awards */}
+        <DynamicFieldArrayInputList
+          control={control}
+          name="awards"
+          label="Awards"
+          placeholder="Enter award title"
+          fields={["title", "organization", "year"]}
+        />
 
-            {/* Add New Certification Buttons */}
-            <div className="flex justify-end">
-              <CommonButton
-                clickEvent={() => append("")}
-                text="Add New Certification"
-                py="py-2"
-                bgColor="green"
-                icon={<FaPlus />}
-              />
-            </div>
-          </div>
-        </div>
+        {/* Partnerships */}
+        <DynamicFieldArrayInputList
+          control={control}
+          name="partnerships"
+          label="Partnerships"
+          placeholder="Enter partner name"
+          fields={["partnerName", "website"]}
+        />
 
         {/* Focus Areas */}
-        <div className="border-b-2 border-gray-400 pb-3">
-          <label className="block font-bold ml-1 mb-2">Focus Areas</label>
+        <DynamicFieldArrayInputList
+          control={control}
+          name="focusAreas"
+          label="Focus Areas"
+          placeholder="Enter focus area"
+          fields={["name"]}
+        />
 
-          <div className="space-y-2  ">
-            {fields.map((field, index) => (
-              <div key={field.id} className="flex items-center">
-                <input
-                  {...register(`focusAreas.${index}`)}
-                  className="input input-bordered w-full bg-white border-gray-600"
-                  placeholder="Enter certification"
-                />
-                <button
-                  type="button"
-                  onClick={() => remove(index)}
-                  className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-600 text-white p-3 cursor-pointer"
-                >
-                  <FaTrash />
-                </button>
-              </div>
-            ))}
+        {/* Additional Services */}
+        <DynamicFieldArrayInputList
+          control={control}
+          name="additionalServices"
+          label="Additional Services"
+          placeholder="Enter service"
+          fields={["name"]}
+        />
 
-            {/* Add New Certification Buttons */}
-            <div className="flex justify-end">
-              <CommonButton
-                clickEvent={() => append("")}
-                text="Add New Certification"
-                py="py-2"
-                bgColor="green"
-                icon={<FaPlus />}
-              />
-            </div>
-          </div>
-        </div>
+        {/* Equipment Used */}
+        <DynamicFieldArrayInputList
+          control={control}
+          name="equipmentUsed"
+          label="Equipment Used"
+          placeholder="Enter equipment"
+          fields={["name"]}
+        />
+
+        {/* Languages Spoken */}
+        <DynamicFieldArrayInputList
+          control={control}
+          name="languagesSpoken"
+          label="Languages Spoken"
+          placeholder="Enter language"
+          fields={["name"]}
+        />
 
         {/* Submit Button */}
         <div className="mt-6 flex justify-end">
@@ -122,7 +176,7 @@ const TrainerProfileDetailsUpdateModal = ({ TrainerDetails, refetch }) => {
             onClick={handleSubmit(onSubmit)} // Use onClick here directly
             text="Save Changes"
             bgColor="green"
-            // isLoading={isSubmitting}
+            isLoading={isSubmitting}
             loadingText="Saving..."
           />
         </div>
@@ -131,70 +185,33 @@ const TrainerProfileDetailsUpdateModal = ({ TrainerDetails, refetch }) => {
   );
 };
 
+// Prop Validation
+TrainerProfileDetailsUpdateModal.propTypes = {
+  TrainerDetails: PropTypes.shape({
+    _id: PropTypes.string,
+    certifications: PropTypes.arrayOf(PropTypes.string),
+    preferences: PropTypes.shape({
+      focusAreas: PropTypes.arrayOf(PropTypes.string),
+      classTypes: PropTypes.arrayOf(PropTypes.string),
+    }),
+    additionalServices: PropTypes.arrayOf(PropTypes.string),
+    equipmentUsed: PropTypes.arrayOf(PropTypes.string),
+    languagesSpoken: PropTypes.arrayOf(PropTypes.string),
+    awards: PropTypes.arrayOf(
+      PropTypes.shape({
+        title: PropTypes.string,
+        organization: PropTypes.string,
+        year: PropTypes.number,
+      })
+    ),
+    partnerships: PropTypes.arrayOf(
+      PropTypes.shape({
+        partnerName: PropTypes.string,
+        website: PropTypes.string,
+      })
+    ),
+  }),
+  refetch: PropTypes.func.isRequired,
+};
+
 export default TrainerProfileDetailsUpdateModal;
-
-// const Data = [
-// "certifications": [
-//     "Certified Dance Instructor",
-//     "Hip Hop Dance Certification",
-//     "Ballroom Dance Certified",
-//     "CPR & First Aid Certified",
-//     "Certified Zumba Instructor"
-//   ],
-//       "awards": [
-//         {
-//           "title": "National Dance Championship Winner",
-//           "year": 2015,
-//           "organization": "National Dance Federation"
-//         },
-//         {
-//           "title": "Best Dance Performance Award",
-//           "year": 2018,
-//           "organization": "California Dance Academy"
-//         }
-//       ],
-
-// "preferences": {
-//     "focusAreas": [
-//       "Hip Hop",
-//       "Contemporary",
-//       "Ballroom",
-//       "Choreography",
-//       "Rhythm and Coordination",
-//       "Dance Flexibility"
-//     ],
-//     "classTypes": [
-//       "Private Training",
-//       "Group Classes"
-//     ]
-//   },
-
-// "additionalServices": [
-//     "Choreography for events",
-//     "Dance fitness classes",
-//     "Private lessons for competitions"
-//   ],
-
-// "equipmentUsed": [
-//     "Dance Floors",
-//     "Mirrored Walls",
-//     "Barres",
-//     "Dance Mats",
-//     "Stretch Bands"
-//   ],
-// "partnerships": [
-//     {
-//       "partnerName": "Global Dance Academy",
-//       "website": "https://globaldanceacademy.com"
-//     },
-//     {
-//       "partnerName": "Elite Dance Studios",
-//       "website": "https://elitedancestudios.com"
-//     }
-//   ],
-//  "languagesSpoken": [
-//     "English",
-//     "Spanish",
-//     "French"
-//   ],
-// ]
