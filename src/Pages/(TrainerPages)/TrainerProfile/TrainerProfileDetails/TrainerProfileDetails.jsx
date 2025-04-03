@@ -236,8 +236,8 @@ TrainerProfileDetails.propTypes = {
     certifications: PropTypes.arrayOf(PropTypes.string),
     awards: PropTypes.arrayOf(
       PropTypes.shape({
-        title: PropTypes.string.isRequired,
-        year: PropTypes.number.isRequired,
+        title: PropTypes.string,
+        year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Accepts both string and number
         organization: PropTypes.string.isRequired,
       })
     ),

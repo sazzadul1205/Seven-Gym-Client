@@ -200,8 +200,8 @@ TrainerProfileDetailsUpdateModal.propTypes = {
     awards: PropTypes.arrayOf(
       PropTypes.shape({
         title: PropTypes.string,
-        organization: PropTypes.string,
-        year: PropTypes.number,
+        year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Accepts both string and number
+        organization: PropTypes.string.isRequired,
       })
     ),
     partnerships: PropTypes.arrayOf(

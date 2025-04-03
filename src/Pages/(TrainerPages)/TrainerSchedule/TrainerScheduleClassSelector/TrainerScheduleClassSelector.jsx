@@ -155,10 +155,11 @@ const TrainerScheduleClassSelector = ({
 
   return (
     <div className="bg-gray-100 text-black p-4 rounded-lg shadow">
+      {/* Title */}
       <h3 className="font-semibold text-lg mb-2">My Picked Classes:</h3>
 
       {/* Class Types Display */}
-      <div className="flex flex-wrap gap-3 bg-white p-4 rounded-lg shadow">
+      <div className="flex flex-col md:flex-row md:flex-wrap gap-3 bg-white p-4 rounded-lg shadow">
         {localClasses?.map((item, index) => {
           // Set display styles based on status
           let bgColor =
@@ -181,7 +182,7 @@ const TrainerScheduleClassSelector = ({
                   ? toggleClass(item?.classType)
                   : removeClassType(item?.classType)
               }
-              className={`flex items-center px-4 py-2 text-white font-medium rounded-lg shadow-md cursor-pointer ${bgColor} ${textDecoration}`}
+              className={`flex justify-between items-center px-4 py-2 text-white font-medium rounded-lg shadow-md cursor-pointer ${bgColor} ${textDecoration}`}
               title={
                 item?.status === "removed"
                   ? "Click to restore"
@@ -225,7 +226,7 @@ const TrainerScheduleClassSelector = ({
       </div>
 
       {/* Buttons */}
-      <div className="mt-4 flex justify-between items-center">
+      <div className="mt-4 flex flex-col md:flex-row justify-between items-center gap-3">
         {/* Class Information Name and Button */}
         <div className="flex items-center gap-2">
           <p className="font-semibold">Class Information Details</p>

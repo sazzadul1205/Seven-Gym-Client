@@ -42,12 +42,12 @@ const TrainerScheduleEditModal = ({
       participantLimit: selectedClass?.participantLimit || 1,
       priceType:
         typeof selectedClass?.classPrice === "string" &&
-        selectedClass.classPrice.toLowerCase() === "free"
+        selectedClass?.classPrice?.toLowerCase() === "free"
           ? "free"
           : "paid",
       classPrice:
         typeof selectedClass?.classPrice === "string" &&
-        selectedClass.classPrice.toLowerCase() === "free"
+        selectedClass?.classPrice?.toLowerCase() === "free"
           ? ""
           : selectedClass?.classPrice ?? "",
     },
@@ -119,19 +119,19 @@ const TrainerScheduleEditModal = ({
         {/* Class Information Display */}
         <div>
           <label className="block font-bold ml-1 mb-2">Class Information</label>
-          <div className="flex items-center bg-white border border-gray-600 p-3 gap-4 mb-4 rounded-lg">
+          <div className="flex flex-col md:flex-row items-center justify-between bg-white border border-gray-600 py-3 px-2 md:px-5 mb-4 gap-3 rounded-lg">
             {/* Class Information : Day */}
             <div className="flex items-center">
               <p className="pr-3 font-semibold">Class Day:</p>
-              <p>{selectedClass.day}</p>
+              <p>{selectedClass?.day}</p>
             </div>
 
             {/* Class Information : Time */}
-            <div className="flex items-center">
+            <div className="flex items-center text-black">
               <p className="pr-3 font-semibold">Class Time:</p>
-              <p className="w-20">{formatTimeTo12Hour(selectedClass.start)}</p>
+              <p>{formatTimeTo12Hour(selectedClass?.start)}</p>
               <p className="w-4">-</p>
-              <p className="w-20">{formatTimeTo12Hour(selectedClass.end)}</p>
+              <p>{formatTimeTo12Hour(selectedClass?.end)}</p>
             </div>
           </div>
         </div>
@@ -244,12 +244,12 @@ const TrainerScheduleEditModal = ({
           </div>
 
           {/* Toggle Class Information Section */}
-          <div className="flex justify-between items-center">
+          <div className="mt-4 flex flex-col md:flex-row justify-between items-center gap-3">
             {/* Class Information Toggle Button */}
-            <div className="flex items-center gap-2 cursor-pointer">
+            <div className="flex items-center gap-2">
               <p className="font-semibold">Class Information Details</p>
               <IoMdInformationCircleOutline
-                className="text-yellow-500 hover:text-yellow-700 text-2xl cursor-pointer transition-transform transform hover:scale-110"
+                className="text-yellow-500 hover:text-yellow-700 text-2xl cursor-pointer"
                 onClick={() => setShowClassInfo(!showClassInfo)}
               />
             </div>
@@ -266,7 +266,7 @@ const TrainerScheduleEditModal = ({
 
         {/* Class Information Section */}
         {showClassInfo && (
-          <div className="p-4 transition-opacity duration-300 ease-in-out">
+          <div className="p-2 md:p-4 transition-opacity duration-300 ease-in-out">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {filteredClasses.map((item, index) => {
                 // Extract minimum price from "Paid, $50 - $100 per session"

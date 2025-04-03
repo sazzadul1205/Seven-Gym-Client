@@ -131,6 +131,9 @@ const TrainerSettingsLayout = () => {
     enabled: !!TrainerProfileData?.name,
   });
 
+  // Extract schedule data
+  const TrainerProfileScheduleData = TrainerScheduleData?.[0] || null;
+
   // Unified refetch function
   const refetchAll = async () => {
     await refetchTrainerData();
@@ -187,8 +190,8 @@ const TrainerSettingsLayout = () => {
       title: "Trainer Profile",
       content: (
         <TrainerProfile
-          TrainerData={TrainerData}
           refetch={refetchAll}
+          TrainerData={TrainerData}
           TrainerScheduleData={TrainerScheduleData}
         />
       ),
@@ -199,9 +202,10 @@ const TrainerSettingsLayout = () => {
       title: "Trainer Schedule",
       content: (
         <TrainerSchedule
-          TrainerData={TrainerData}
-          ClassTypesData={ClassTypesData}
-          TrainerScheduleData={TrainerScheduleData}
+          refetch={refetchAll}
+          TrainerProfileData={TrainerProfileData}
+          AvailableClassTypesData={ClassTypesData}
+          TrainerProfileScheduleData={TrainerProfileScheduleData}
         />
       ),
     },

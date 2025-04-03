@@ -1,6 +1,4 @@
 import { useState } from "react";
-
-// Import Package
 import PropTypes from "prop-types";
 
 // Import Icons
@@ -31,10 +29,9 @@ const TrainerScheduleDisplay = ({
   TrainersClassType,
   handleUpdate,
 }) => {
-  // State to manage selected class for editing
   const [selectedClass, setSelectedClass] = useState(null);
 
-  // Function to handle the edit action
+  // Handle Edit
   const handleEdit = (day, time) => {
     setSelectedClass({ day, time, ...tempSchedule[day][time] });
     document.getElementById("Trainer_Schedule_Edit_Modal").showModal();
@@ -42,20 +39,18 @@ const TrainerScheduleDisplay = ({
 
   return (
     <div className="mt-6 space-y-6">
-      {/* Iterate over each day of the schedule */}
       {Object.entries(tempSchedule).map(([day, classesObj]) => {
         return (
           <div
             key={day}
-            className="bg-linear-to-bl from-gray-100 to-gray-300 p-4 rounded-lg shadow"
+            className="bg-gradient-to-bl from-gray-100 to-gray-300 p-4 rounded-lg shadow"
           >
-            {/* Display the day of the week */}
             <h3 className="text-xl font-semibold text-black">{day}</h3>
 
-            {/* Display List */}
+            {/* Desktop View */}
             <div className="hidden sm:block">
-              {/* Display Title */}
               <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black mt-4">
+                {/* Table Header */}
                 <thead>
                   <tr>
                     <th className="px-4 py-2 border-b bg-gray-200">Time</th>
@@ -70,96 +65,192 @@ const TrainerScheduleDisplay = ({
                   </tr>
                 </thead>
 
-                {/* Display ContentS */}
+                {/* Table Content */}
                 <tbody>
-                  {Object.entries(classesObj).map(([time, classDetails]) => (
-                    <tr
-                      key={`${day}-${time}`}
-                      className={`border-b ${
-                        classDetails.edited ? "bg-yellow-100" : "bg-gray-50"
-                      }`}
-                    >
-                      {/* Time Range */}
-                      <td className="flex px-4 py-3">
-                        <span className="w-20">
-                          {formatTimeTo12Hour(classDetails.start)}
-                        </span>
+                  {Object.entries(classesObj).map(([time, classDetails]) => {
+                    // Participant Limit Fix
+                    const participantLimit = classDetails.participantLimit
+                      ? String(classDetails.participantLimit).toLowerCase()
+                      : "no limit";
+
+                    // Class Price
+                    const classPrice = classDetails.classPrice
+                      ? String(classDetails.classPrice).toLowerCase()
+                      : "free";
+
+                    return (
+                      <tr
+                        key={`${day}-${time}`}
+                        className={`border-b ${
+                          classDetails.edited ? "bg-yellow-100" : "bg-gray-50"
+                        }`}
+                      >
+                        {/* Time */}
+                        <td className="flex px-4 py-3">
+                          <span className="w-16 md:w-20 text-center">
+                            {formatTimeTo12Hour(classDetails.start)}
+                          </span>
+                          <span className="px-1 lg:px-5">-</span>
+                          <span className="w-16 md:w-20 text-center">
+                            {formatTimeTo12Hour(classDetails.end)}
+                          </span>
+                        </td>
+
+                        {/* Class Type */}
+                        <td className="px-4 py-2">{classDetails.classType}</td>
+
+                        {/* Participant */}
+                        <td className="px-4 py-2">
+                          {participantLimit === "no limit" ? (
+                            "No Limit"
+                          ) : (
+                            <div className="flex text-center items-center gap-5">
+                              <span className="w-5">
+                                {classDetails.participantLimit}
+                              </span>
+                              <FaRegUser />
+                            </div>
+                          )}
+                        </td>
+
+                        {/* Price */}
+                        <td className="px-4 py-2">
+                          {classPrice === "free"
+                            ? "Free"
+                            : `$${classDetails.classPrice}`}
+                        </td>
+
+                        {/* Buttons */}
+                        <td className="flex px-4 py-2 gap-2">
+                          {classDetails.classType === "" ? (
+                            <button
+                              className="bg-yellow-500 hover:bg-yellow-700 text-white rounded-full p-2 cursor-pointer"
+                              onClick={() => handleEdit(day, time)}
+                            >
+                              <FaEdit />
+                            </button>
+                          ) : isValidClassType(classDetails.classType) ? (
+                            <>
+                              <button
+                                className="bg-red-500 hover:bg-red-700 text-white rounded-full p-2 cursor-pointer"
+                                onClick={() => handleClear(day, time)}
+                              >
+                                <FaRegTrashAlt />
+                              </button>
+                              <button
+                                className="bg-yellow-500 hover:bg-yellow-700 text-white rounded-full p-2 cursor-pointer"
+                                onClick={() => handleEdit(day, time)}
+                              >
+                                <FaEdit />
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              className="bg-green-500 hover:bg-green-700 text-white rounded-full p-2 cursor-pointer"
+                              onClick={() => handleEdit(day, time)}
+                            >
+                              <FaRegEnvelope />
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile View */}
+            <div className="block sm:hidden mt-4">
+              {Object.entries(classesObj).map(([time, classDetails]) => {
+                const participantLimit = classDetails.participantLimit
+                  ? String(classDetails.participantLimit).toLowerCase()
+                  : "no limit";
+
+                const classPrice = classDetails.classPrice
+                  ? String(classDetails.classPrice).toLowerCase()
+                  : "free";
+
+                return (
+                  <div
+                    key={`${day}-${time}`}
+                    className={`text-black text-center p-4 border border-gray-500 mb-1 ${
+                      classDetails.edited ? "bg-yellow-100" : "bg-gray-50"
+                    }`}
+                  >
+                    <div className="flex flex-col space-y-2">
+                      {/* Time */}
+                      <div className="font-semibold">
+                        <span>{formatTimeTo12Hour(classDetails?.start)}</span>
                         <span className="px-5">-</span>
-                        <span className="w-20">
-                          {formatTimeTo12Hour(classDetails.end)}
-                        </span>
-                      </td>
+                        <span>{formatTimeTo12Hour(classDetails?.end)}</span>
+                      </div>
 
                       {/* Class Type */}
-                      <td className="px-4 py-2">{classDetails.classType}</td>
+                      <div className="flex justify-between items-center pt-2">
+                        <p className="font-bold">Class Type:</p>{" "}
+                        {classDetails?.classType}
+                      </div>
 
-                      {/* Participant Limit */} 
-                      <td className="px-4 py-2">
-                        {classDetails.participantLimit === "No limit" ||
-                        classDetails.participantLimit === "No Limit" ? (
-                          "No Limit"
-                        ) : (
-                          <div className="flex items-center gap-5 justify-between w-[60px]">
-                            <FaRegUser />
-                            <p> {classDetails.participantLimit}</p>
-                          </div>
-                        )}
-                      </td>
+                      {/* Participant */}
+                      <div className="flex justify-between items-center">
+                        <p className="font-bold">Participant Limit:</p>{" "}
+                        {participantLimit === "no limit"
+                          ? "No Limit"
+                          : classDetails?.participantLimit}
+                      </div>
 
                       {/* Price */}
-                      <td className="px-4 py-2">
-                        {typeof classDetails.classPrice === "string" &&
-                        classDetails.classPrice.toLowerCase() === "free"
+                      <div className="flex justify-between items-center">
+                        <p className="font-bold">Price:</p>{" "}
+                        {classPrice === "free"
                           ? "Free"
-                          : `$ ${classDetails.classPrice}`}
-                      </td>
+                          : `$${classDetails?.classPrice}`}
+                      </div>
 
-                      {/* Action Buttons */}
-                      <td className="flex px-4 py-2 gap-2">
-                        {/* If classType is cleared (empty), show edit button */}
+                      {/* Buttons */}
+                      <div className="flex justify-center gap-2 mt-2">
                         {classDetails.classType === "" ? (
                           <button
-                            className="bg-linear-to-bl hover:bg-linear-to-tr from-yellow-300 to-yellow-600 text-white rounded-full p-2 cursor-pointer"
+                            className="bg-yellow-500 text-white rounded-full p-2"
                             onClick={() => handleEdit(day, time)}
                           >
                             <FaEdit />
                           </button>
                         ) : isValidClassType(classDetails.classType) ? (
-                          // If valid class type, show clear and edit buttons
                           <>
                             <button
-                              className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-600 text-white rounded-full p-2 cursor-pointer"
+                              className="bg-red-500 text-white rounded-full p-2"
                               onClick={() => handleClear(day, time)}
                             >
                               <FaRegTrashAlt />
                             </button>
                             <button
-                              className="bg-linear-to-bl hover:bg-linear-to-tr from-yellow-300 to-yellow-600 text-white rounded-full p-2 cursor-pointer"
+                              className="bg-yellow-500 text-white rounded-full p-2"
                               onClick={() => handleEdit(day, time)}
                             >
                               <FaEdit />
                             </button>
                           </>
                         ) : (
-                          // If non-empty but invalid, show envelope icon
                           <button
-                            className="bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-600 text-white rounded-full p-2 cursor-pointer"
+                            className="bg-green-500 text-white rounded-full p-2"
                             onClick={() => handleEdit(day, time)}
                           >
                             <FaRegEnvelope />
                           </button>
                         )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         );
       })}
 
-      {/* Edit modal for class details */}
+      {/* Edit modal */}
       <dialog id="Trainer_Schedule_Edit_Modal" className="modal">
         <TrainerScheduleEditModal
           tempSchedule={tempSchedule}
@@ -172,7 +263,7 @@ const TrainerScheduleDisplay = ({
   );
 };
 
-// Prop types for TrainerScheduleDisplay component
+// Prop types
 TrainerScheduleDisplay.propTypes = {
   handleClear: PropTypes.func.isRequired,
   tempSchedule: PropTypes.object.isRequired,

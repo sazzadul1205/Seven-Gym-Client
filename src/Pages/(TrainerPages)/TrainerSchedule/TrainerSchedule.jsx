@@ -2,13 +2,10 @@ import { useEffect, useState } from "react";
 
 // Import Package
 import Swal from "sweetalert2";
-import { useQuery } from "@tanstack/react-query";
+import PropTypes from "prop-types"; // Import PropTypes
 
 // Import hooks
-import useAuth from "../../../Hooks/useAuth";
-import Loading from "../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
-import FetchingError from "../../../Shared/Component/FetchingError";
 
 // Import Components
 import TrainerScheduleDisplay from "./TrainerScheduleDisplay/TrainerScheduleDisplay";
@@ -29,64 +26,20 @@ const removeEditedFlags = (schedule) => {
   return cleaned;
 };
 
-const TrainerSchedule = () => {
-  const { user } = useAuth();
+const TrainerSchedule = ({
+  refetch,
+  TrainerProfileData,
+  AvailableClassTypesData,
+  TrainerProfileScheduleData,
+}) => {
   const axiosPublic = useAxiosPublic();
 
   // State to manage the temporary schedule and changes made before saving
   const [tempSchedule, setTempSchedule] = useState({});
   const [changesMade, setChangesMade] = useState(false);
 
-  // Fetch trainer data
-  const {
-    data: TrainerData = [],
-    isLoading: TrainerDataIsLoading,
-    error: TrainerDataError,
-    refetch: refetchTrainerData,
-  } = useQuery({
-    queryKey: ["TrainerData", user?.email],
-    queryFn: () =>
-      axiosPublic.get(`/Trainers?email=${user?.email}`).then((res) => res.data),
-    enabled: !!user?.email,
-  });
-
-  // Extract trainer profile data
-  const TrainerProfileData = TrainerData?.[0] || null;
-
   // Fetch trainer Class preferences
   const TrainersClassType = TrainerProfileData?.preferences?.classTypes || null;
-
-  // Fetch trainer schedule data
-  const {
-    data: TrainerScheduleData = [],
-    isLoading: TrainerScheduleIsLoading,
-    error: TrainerScheduleError,
-  } = useQuery({
-    queryKey: ["TrainerScheduleData", TrainerProfileData?.name],
-    queryFn: () =>
-      axiosPublic
-        .get(
-          `/Trainers_Schedule/ByTrainerName?trainerName=${encodeURIComponent(
-            TrainerProfileData?.name
-          )}`
-        )
-        .then((res) => res.data),
-    enabled: !!TrainerProfileData?.name,
-  });
-
-  // Fetch available class types
-  const {
-    data: availableClassTypes = [],
-    isLoading: classTypesLoading,
-    error: classTypesError,
-  } = useQuery({
-    queryKey: ["TrainerClassTypes"],
-    queryFn: () =>
-      axiosPublic.get(`/Trainers/classTypes`).then((res) => res.data),
-  });
-
-  // Extract schedule data
-  const TrainerProfileScheduleData = TrainerScheduleData?.[0] || null;
 
   // Initialize tempSchedule with the trainer's schedule data (without "edited" flags)
   const initialSchedule = TrainerProfileScheduleData?.trainerSchedule || {};
@@ -99,7 +52,7 @@ const TrainerSchedule = () => {
       setTempSchedule(cleanedSchedule);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [TrainerScheduleData, TrainerProfileData]);
+  }, [TrainerProfileScheduleData, TrainerProfileData]);
 
   // Function to handle clearing a class slot
   const handleClear = (day, time) => {
@@ -120,7 +73,7 @@ const TrainerSchedule = () => {
 
   // Function to check if a class type is valid
   const isValidClassType = (classType) =>
-    availableClassTypes.includes(classType);
+    AvailableClassTypesData?.includes(classType);
 
   // Function to handle updating a class slot from the modal
   const handleUpdate = (updatedClass) => {
@@ -170,37 +123,21 @@ const TrainerSchedule = () => {
     }
   };
 
-  // Loading state
-  if (TrainerDataIsLoading || TrainerScheduleIsLoading || classTypesLoading)
-    return <Loading />;
-
-  // Error state
-  if (TrainerDataError || TrainerScheduleError || classTypesError)
-    return <FetchingError />;
-
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-gray-200 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Title */}
-        <h2 className="text-center text-black font-semibold text-2xl">
-          {TrainerProfileData?.name || "Trainer"}&apos;s Schedule Management
-        </h2>
-
-        {/* Divider */}
-        <div className="mx-auto w-1/2 h-1 bg-black my-2"></div>
-
+    <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
+      <div className="mx-auto px-1 md:px-4 py-8">
         {/* Trainer Schedule Class Selector Component */}
         <TrainerScheduleClassSelector
-          refetch={refetchTrainerData}
+          refetch={refetch}
           trainerClassTypes={TrainersClassType}
-          availableClassTypes={availableClassTypes}
+          availableClassTypes={AvailableClassTypesData}
         />
 
         {/* Trainer Schedule Display Component */}
-        <div className="bg-gray-100 border border-gray-300 p-2">
-          <div className="flex justify-between items-center text-black font-semibold text-lg">
+        <div className="bg-gray-100 border border-gray-300 p-1 mt-1">
+          <div className="mt-4 flex flex-col md:flex-row justify-between items-center gap-3 px-5">
             {/* Text */}
-            <h3>Schedule Control</h3>
+            <h3 className="font-semibold text-lg text-black">Schedule Control</h3>
 
             {/* Save Button */}
             <button
@@ -230,4 +167,30 @@ const TrainerSchedule = () => {
   );
 };
 
+// Define PropTypes for TrainerSchedule
+TrainerSchedule.propTypes = {
+  refetch: PropTypes.func.isRequired,
+  TrainerProfileData: PropTypes.shape({
+    name: PropTypes.string,
+    preferences: PropTypes.shape({
+      classTypes: PropTypes.arrayOf(PropTypes.string),
+    }),
+  }),
+  AvailableClassTypesData: PropTypes.arrayOf(PropTypes.string),
+  TrainerProfileScheduleData: PropTypes.shape({
+    trainerSchedule: PropTypes.objectOf(
+      PropTypes.objectOf(
+        PropTypes.shape({
+          classType: PropTypes.string,
+          participantLimit: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+          ]),
+          classPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+          edited: PropTypes.bool, // Optional flag for tracking changes
+        })
+      )
+    ),
+  }),
+};
 export default TrainerSchedule;
