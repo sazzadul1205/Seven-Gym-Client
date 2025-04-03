@@ -12,6 +12,8 @@ import { ImCross } from "react-icons/im";
 // Import Hooks
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../../Hooks/useAuth";
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+import InputField from "../../../../../Shared/InputField/InputField";
 
 const TodaysScheduleAddModal = ({ selectedID, refetch }) => {
   const { user } = useAuth();
@@ -103,15 +105,6 @@ const TodaysScheduleAddModal = ({ selectedID, refetch }) => {
         .then((res) => res.data),
     enabled: scheduleIDs.length > 0,
   });
-
-  // Check if all selected times are available
-  const allAvailable =
-    scheduleIDs.length > 0 &&
-    scheduleIDs.every((scheduleID) =>
-      IndividualPlansIdsData?.every(
-        (item) => item.id !== scheduleID || !item.title
-      )
-    );
 
   // On form submission
   const onSubmit = async (data) => {
@@ -209,39 +202,34 @@ const TodaysScheduleAddModal = ({ selectedID, refetch }) => {
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-5">
         {/* Title */}
-        <div>
-          <label className="block font-bold ml-1 mb-2">Title :</label>
-          <input
-            type="text"
-            {...register("title", { required: "Title is required" })}
-            className="input input-bordered w-full rounded-lg bg-white border-gray-600"
-          />
-          {errors.title && (
-            <p className="text-red-500 text-sm">{errors.title.message}</p>
-          )}
-        </div>
+        <InputField
+          label="Title"
+          id="title"
+          type="text"
+          register={register}
+          errors={errors}
+          placeholder="Enter the title"
+        />
 
         {/* Notes */}
-        <div>
-          <label className="block font-bold ml-1 mb-2">Notes</label>
-          <textarea
-            {...register("notes")}
-            className="textarea textarea-bordered w-full rounded-lg bg-white border-gray-600"
-          />
-        </div>
+        <InputField
+          label="Notes"
+          id="notes"
+          type="textarea"
+          register={register}
+          errors={errors}
+          placeholder="Enter any additional notes"
+        />
 
         {/* Location */}
-        <div>
-          <label className="block font-bold ml-1 mb-2">Location</label>
-          <input
-            type="text"
-            {...register("location", { required: "Location is required" })}
-            className="input input-bordered w-full rounded-lg bg-white border-gray-600"
-          />
-          {errors.location && (
-            <p className="text-red-500 text-sm">{errors.location.message}</p>
-          )}
-        </div>
+        <InputField
+          label="Location"
+          id="location"
+          type="text"
+          register={register}
+          errors={errors}
+          placeholder="Enter the location"
+        />
 
         {/* Multi-Hour Checkbox */}
         <div className="flex items-center gap-2">
@@ -300,7 +288,7 @@ const TodaysScheduleAddModal = ({ selectedID, refetch }) => {
             <div className="p-3 bg-gray-100 rounded-lg">
               <h4 className="font-bold mb-2">Selected Times:</h4>
               <div className="flex flex-wrap gap-2">
-                {selectedTimes.map((time, index) => {
+                {selectedTimes.map((time) => {
                   const scheduleID = `${baseID}-${time}`;
                   const isFull = IndividualPlansIdsData?.some(
                     (item) => item.id === scheduleID && item.title
@@ -308,22 +296,19 @@ const TodaysScheduleAddModal = ({ selectedID, refetch }) => {
 
                   // Convert 24-hour time to 12-hour AM/PM format
                   const [hour, minute] = time.split(":");
-                  let hourNum = parseInt(hour, 10);
-                  const period = hourNum >= 12 ? "PM" : "AM";
-                  if (hourNum > 12) hourNum -= 12;
-                  if (hourNum === 0) hourNum = 12;
+                  let hourValue = parseInt(hour);
+                  const suffix = hourValue >= 12 ? "PM" : "AM";
+                  if (hourValue > 12) hourValue -= 12;
 
                   return (
-                    <span
-                      key={index}
-                      className={`px-3 py-1 rounded-md text-sm font-semibold ${
-                        isFull
-                          ? "bg-red-300 text-red-800"
-                          : "bg-green-300 text-green-800"
-                      }`}
+                    <div
+                      key={time}
+                      className={`${
+                        isFull ? "bg-red-400" : "bg-green-300"
+                      } rounded-md font-semibold py-2 px-5`}
                     >
-                      {`${hourNum}:${minute} ${period}`}
-                    </span>
+                      {hourValue}:{minute} {suffix}
+                    </div>
                   );
                 })}
               </div>
@@ -331,28 +316,21 @@ const TodaysScheduleAddModal = ({ selectedID, refetch }) => {
           </div>
         )}
 
-        {/* Submit Button - Disabled if any schedule ID is full */}
-        <div className="modal-action">
-          <button
-            type="submit"
-            className={`font-semibold rounded-lg px-10 py-3 transition-all duration-300 ${
-              isSubmitting
-                ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                : allAvailable
-                ? "bg-linear-to-br from-green-400 to-green-600 hover:bg-linear-to-tl text-gray-100 cursor-pointer"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
-            disabled={!allAvailable || isSubmitting}
-          >
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </button>
+        {/* Submit Button */}
+        <div className="mt-6 flex justify-end">
+          <CommonButton
+            clickEvent={handleSubmit(onSubmit)}
+            text="Save Changes"
+            bgColor="green"
+            isLoading={isSubmitting}
+            loadingText="Saving..."
+          />
         </div>
       </form>
     </div>
   );
 };
 
-// PropTypes Validation
 TodaysScheduleAddModal.propTypes = {
   selectedID: PropTypes.string,
   refetch: PropTypes.func.isRequired,

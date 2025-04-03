@@ -11,6 +11,8 @@ import { ImCross } from "react-icons/im";
 // Import Utility
 import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../../../Hooks/useAuth";
+import InputField from "../../../../../../Shared/InputField/InputField";
+import CommonButton from "../../../../../../Shared/Buttons/CommonButton";
 
 // Categories Options
 const predefinedCategories = [
@@ -247,13 +249,13 @@ const AddToDoModal = ({ refetch }) => {
 
         {/* Submit Button */}
         <div className="mt-6 flex justify-end">
-          <button
-            type="submit"
-            className="font-semibold bg-linear-to-br hover:bg-linear-to-tl from-green-300 to-green-600 rounded-xl shadow-xl text-white px-10 py-3 cursor-pointer"
-            disabled={loading}
-          >
-            {loading ? "Adding..." : "Add To-Do"}
-          </button>
+          <CommonButton
+            clickEvent={handleSubmit(onSubmit)}
+            text="Save Changes"
+            bgColor="green"
+            isLoading={loading}
+            loadingText="Saving..."
+          />
         </div>
       </form>
     </div>
@@ -266,76 +268,3 @@ AddToDoModal.propTypes = {
 };
 
 export default AddToDoModal;
-
-// Reusable input field component
-const InputField = ({
-  label,
-  id,
-  type,
-  placeholder,
-  register,
-  errors,
-  options = [], // default to empty array
-}) => (
-  <div>
-    <label htmlFor={id} className="block font-bold ml-1 mb-2">
-      {label}
-    </label>
-    {type === "textarea" ? (
-      <textarea
-        {...register(id)}
-        id={id}
-        className="textarea textarea-bordered w-full rounded-lg bg-white border-gray-600"
-        placeholder={placeholder}
-      />
-    ) : type === "select" ? (
-      <select
-        {...register(id)}
-        id={id}
-        className="select select-bordered w-full rounded-lg bg-white border-gray-600"
-      >
-        {Array.isArray(options) ? (
-          options.map((option, index) => (
-            <option key={index} value={option}>
-              {option}
-            </option>
-          ))
-        ) : (
-          <option>No options available</option>
-        )}
-      </select>
-    ) : (
-      <input
-        {...register(id)}
-        type={type}
-        id={id}
-        className="input input-bordered w-full rounded-lg bg-white border-gray-600"
-        placeholder={placeholder}
-      />
-    )}
-    {errors[id] && (
-      <p className="text-red-500 text-sm">{errors[id]?.message}</p>
-    )}
-  </div>
-);
-
-// PropTypes validation
-InputField.propTypes = {
-  label: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
-  type: PropTypes.oneOf([
-    "text",
-    "email",
-    "password",
-    "number",
-    "date",
-    "datetime-local",
-    "textarea",
-    "select",
-  ]).isRequired,
-  placeholder: PropTypes.string,
-  register: PropTypes.func.isRequired,
-  errors: PropTypes.object,
-  validation: PropTypes.object,
-  options: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
-};

@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import { useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import Swal from "sweetalert2";
@@ -10,12 +9,14 @@ import { ImCross } from "react-icons/im";
 // Import Utility
 import useAuth from "../../../../../Hooks/useAuth";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import InputField from "../../../../../Shared/InputField/InputField";
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
 const AddWorkoutModal = ({ refetch }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
-  // Loading Sate
+  // Loading State
   const [loading, setLoading] = useState(false);
 
   // React Hook Form configuration
@@ -110,7 +111,7 @@ const AddWorkoutModal = ({ refetch }) => {
   };
 
   return (
-    <div className="modal-box min-w-[1000px] bg-gray-100 p-0 rounded-xl">
+    <div className="modal-box w-full max-w-4xl bg-gray-100 p-0 rounded-xl">
       {/* Modal Header */}
       <div className="flex justify-between items-center border-b border-black text-black pb-2 p-5">
         <h3 className="font-bold text-lg">Add Workout</h3>
@@ -122,188 +123,105 @@ const AddWorkoutModal = ({ refetch }) => {
 
       {/* Form Section */}
       <form onSubmit={handleSubmit(onSubmit)} className="text-black py-4 px-5">
-        <div className="flex justify-between gap-5">
-          {/* Left Column for Inputs */}
-          <div className="space-y-4">
-            {/* Input for Workout Name */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">
-                Workout Name
-              </label>
-              <input
-                type="text"
-                {...register("name", { required: "Workout name is required" })}
-                className="input input-bordered rounded-2xl bg-white border-gray-600 w-[460px]"
-                placeholder="Enter workout name"
-              />
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.name.message}
-                </p>
-              )}
-            </div>
-
-            {/* Duration Input */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Duration</label>
-              <div className="flex">
-                {/* Number Input */}
-                <input
-                  type="number"
-                  {...register("durationValue", {
-                    required: "Duration is required",
-                  })}
-                  className="input input-bordered bg-white border-gray-600 w-2/3"
-                  placeholder="Enter value"
-                />
-                {/* Time Selector */}
-                <select
-                  {...register("durationUnit", {
-                    required: "Unit is required",
-                  })}
-                  className="select select-bordered bg-white border-gray-600 w-1/3"
-                >
-                  <option value="minute">Minute</option>
-                  <option value="hour">Hour</option>
-                </select>
-              </div>
-              {errors.durationValue && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.durationValue.message}
-                </p>
-              )}
-              {errors.durationUnit && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.durationUnit.message}
-                </p>
-              )}
-            </div>
-
-            {/* Input for Time */}
-            <div className="mb-4 ">
-              <label className="block text-sm font-medium mb-1">Time</label>
-              <input
-                type="time"
-                {...register("time", { required: "Time is required" })}
-                className="input input-bordered rounded-2xl border-gray-600 w-[460px] bg-white text-black"
-              />
-
-              {errors.time && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.time.message}
-                </p>
-              )}
-            </div>
-
-            {/* Input for Calories Burned */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">
-                Calories Burned
-              </label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <InputField
+            label="Workout Name"
+            id="name"
+            type="text"
+            register={register}
+            errors={errors}
+            placeholder="Enter workout name"
+          />
+          <InputField
+            label="Location"
+            id="location"
+            type="text"
+            register={register}
+            errors={errors}
+            placeholder="e.g., Central Park"
+          />
+          <InputField
+            label="Type"
+            id="type"
+            type="text"
+            register={register}
+            errors={errors}
+            placeholder="e.g., Cardio"
+          />
+          <InputField
+            label="Intensity"
+            id="intensity"
+            type="select"
+            register={register}
+            errors={errors}
+            options={["Low", "Moderate", "High"]}
+          />
+          <div>
+            <label className="block text-sm font-medium mb-1">Duration</label>
+            <div className="flex gap-2">
               <input
                 type="number"
-                {...register("calories", {
-                  required: "Calories burned is required",
+                {...register("durationValue", {
+                  required: "Duration is required",
                 })}
-                className="input input-bordered  bg-white border-gray-600 w-[460px]"
-                placeholder="e.g., 400"
+                className="input input-bordered bg-white border-gray-600 w-2/3"
+                placeholder="Enter value number"
               />
-              {errors.calories && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.calories.message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Right Column for Inputs */}
-          <div>
-            {/* Input for Location */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Location</label>
-              <input
-                type="text"
-                {...register("location", { required: "Location is required" })}
-                className="input input-bordered rounded-2xl bg-white border-gray-600 w-[460px]"
-                placeholder="e.g., Central Park"
-              />
-              {errors.location && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.location.message}
-                </p>
-              )}
-            </div>
-
-            {/* Input for Type */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Type</label>
-              <input
-                type="text"
-                {...register("type", { required: "Type is required" })}
-                className="input input-bordered rounded-2xl bg-white border-gray-600 w-[460px]"
-                placeholder="e.g., Cardio"
-              />
-              {errors.type && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.type.message}
-                </p>
-              )}
-            </div>
-
-            {/* Dropdown for Intensity */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">
-                Intensity
-              </label>
               <select
-                {...register("intensity", {
-                  required: "Intensity is required",
-                })}
-                className="select select-bordered border-gray-600 w-[460px] bg-white text-black"
+                {...register("durationUnit", { required: "Unit is required" })}
+                className="select select-bordered bg-white border-gray-600 w-1/3"
               >
-                <option value="">Select Intensity</option>
-                <option value="Low">Low</option>
-                <option value="Moderate">Moderate</option>
-                <option value="High">High</option>
+                <option value="minute">Minute</option>
+                <option value="hour">Hour</option>
               </select>
-              {errors.intensity && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.intensity.message}
-                </p>
-              )}
             </div>
-
-            {/* Textarea for Notes */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Notes</label>
-              <textarea
-                {...register("notes")}
-                className="textarea textarea-bordered rounded-2xl bg-white border-gray-600 w-[460px]"
-                placeholder="Optional notes about the workout"
-              ></textarea>
-            </div>
+            {errors.durationValue && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.durationValue.message}
+              </p>
+            )}
+            {errors.durationUnit && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.durationUnit.message}
+              </p>
+            )}
           </div>
+          <InputField
+            label="Start Time"
+            id="time"
+            type="time"
+            register={register}
+            errors={errors}
+          />
+          <InputField
+            label="Calories Burned"
+            id="calories"
+            type="number"
+            register={register}
+            errors={errors}
+            placeholder="e.g., 400"
+          />
+          <InputField
+            label="Notes"
+            id="notes"
+            type="textarea"
+            register={register}
+            errors={errors}
+            placeholder="Optional notes about the workout"
+          />
         </div>
 
         {/* Action Buttons */}
-        <div className="modal-action">
-          <button
+        <div className="modal-action flex justify-end">
+          <CommonButton
             type="submit"
-            className={`py-3 mt-3 px-10 cursor-pointer text-white ${
-              loading
-                ? "bg-gray-400"
-                : "bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-600"
-            } font-semibold rounded-xl`}
-            disabled={loading}
-          >
-            {loading ? (
-              <div className="flex gap-3">
-                <span className="loading loading-spinner loading-sm"></span>
-              </div>
-            ) : (
-              "Add Workout"
-            )}
-          </button>
+            text="Add Workout"
+            isLoading={loading}
+            loadingText="Adding..."
+            bgColor="green"
+            bgFromColor="green-300"
+            bgToColor="green-600"
+          />
         </div>
       </form>
     </div>

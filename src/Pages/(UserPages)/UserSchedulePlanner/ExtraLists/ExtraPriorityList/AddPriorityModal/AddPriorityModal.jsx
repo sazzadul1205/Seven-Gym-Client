@@ -9,8 +9,14 @@ import { useForm } from "react-hook-form";
 import { ImCross } from "react-icons/im";
 
 // Import Hooks
-import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../../../Hooks/useAuth";
+import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
+
+// Import Input  Field
+import InputField from "../../../../../../Shared/InputField/InputField";
+
+// import Common Button
+import CommonButton from "../../../../../../Shared/Buttons/CommonButton";
 
 const AddPriorityModal = ({ refetch }) => {
   const axiosPublic = useAxiosPublic();
@@ -18,7 +24,9 @@ const AddPriorityModal = ({ refetch }) => {
 
   // State management
   const [tags, setTags] = useState([]);
-  const [loading, setLoading] = useState(false);
+
+  // Submission loading state
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // UseForm Utility
   const {
@@ -61,7 +69,7 @@ const AddPriorityModal = ({ refetch }) => {
   };
 
   const onSubmit = async (data) => {
-    setLoading(true); // Set loading to true
+    setIsSubmitting(true); // Set loading to true
 
     const uniqueId = generateUniqueId(user?.email);
     const newPriority = {
@@ -93,7 +101,7 @@ const AddPriorityModal = ({ refetch }) => {
         text: "Something went wrong! Please try again.",
       });
     } finally {
-      setLoading(false); // Reset loading state
+      setIsSubmitting(false); // Reset loading state
     }
   };
 
@@ -207,13 +215,13 @@ const AddPriorityModal = ({ refetch }) => {
 
         {/* Submit Button */}
         <div className="mt-6 flex justify-end">
-          <button
-            type="submit"
-            className="font-semibold bg-linear-to-br hover:bg-linear-to-tl from-green-300 to-green-600 rounded-xl shadow-xl text-white px-10 py-3 cursor-pointer"
-            disabled={loading}
-          >
-            {loading ? "Adding..." : "Add Priority"}
-          </button>
+          <CommonButton
+            clickEvent={handleSubmit(onSubmit)}
+            text="Save Changes"
+            bgColor="green"
+            isLoading={isSubmitting}
+            loadingText="Saving..."
+          />
         </div>
       </form>
     </div>
@@ -226,79 +234,3 @@ AddPriorityModal.propTypes = {
 };
 
 export default AddPriorityModal;
-
-// Reusable input field component
-const InputField = ({
-  label,
-  id,
-  type,
-  placeholder,
-  register,
-  errors,
-  validation = {},
-  options = [],
-}) => (
-  <div>
-    <label htmlFor={id} className="block font-bold ml-1 mb-2">
-      {label}
-    </label>
-
-    {type === "textarea" ? (
-      <textarea
-        className="textarea textarea-bordered w-full rounded-lg bg-white border-gray-600"
-        {...register(id, validation)}
-        placeholder={placeholder}
-        id={id}
-      />
-    ) : type === "select" ? (
-      <select
-        className="select select-bordered w-full rounded-lg bg-white border-gray-600"
-        {...register(id, validation)}
-        id={id}
-      >
-        {Array.isArray(options) ? (
-          options.map((option, index) => (
-            <option key={index} value={option}>
-              {option}
-            </option>
-          ))
-        ) : (
-          <option value="">Invalid options</option>
-        )}
-      </select>
-    ) : (
-      <input
-        className="input input-bordered w-full rounded-lg bg-white border-gray-600"
-        {...register(id, validation)}
-        placeholder={placeholder}
-        type={type}
-        id={id}
-      />
-    )}
-
-    {errors[id] && (
-      <p className="text-red-500 text-sm">{errors[id]?.message}</p>
-    )}
-  </div>
-);
-
-// PropTypes validation
-InputField.propTypes = {
-  label: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
-  type: PropTypes.oneOf([
-    "text",
-    "email",
-    "password",
-    "number",
-    "date",
-    "datetime-local",
-    "textarea",
-    "select",
-  ]).isRequired,
-  placeholder: PropTypes.string,
-  register: PropTypes.func.isRequired,
-  errors: PropTypes.object,
-  validation: PropTypes.object,
-  options: PropTypes.arrayOf(PropTypes.string),
-};

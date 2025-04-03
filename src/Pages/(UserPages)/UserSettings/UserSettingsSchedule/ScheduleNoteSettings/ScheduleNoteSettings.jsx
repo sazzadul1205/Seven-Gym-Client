@@ -150,7 +150,7 @@ const ScheduleNoteSettings = ({ UserNoteData, refetch }) => {
                 {/* Notes Details */}
                 <div className="flex-1 border-l border-gray-400 space-y-2 pl-5">
                   {/* Title & Importance */}
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-col md:flex-row gap-4">
                     <p className="font-medium text-black">{Notes.title}</p>
 
                     {/* High Importance Indicator */}
@@ -181,7 +181,7 @@ const ScheduleNoteSettings = ({ UserNoteData, refetch }) => {
                   <p>{Notes.content}</p>
 
                   {/* Tags Display */}
-                  <div className="py-2">
+                  <div className="flex flex-wrap py-0 md:py-2 space-y-2">
                     {Notes?.tags?.map((tag, index) => (
                       <span
                         key={index}

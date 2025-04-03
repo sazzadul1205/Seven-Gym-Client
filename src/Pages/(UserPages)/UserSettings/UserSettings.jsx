@@ -57,7 +57,6 @@ const UserSettings = () => {
       axiosPublic.get(`/Users?email=${user?.email}`).then((res) => res.data),
   });
 
-  // Fetching Schedule Data
   const {
     data: schedulesData = [],
     isLoading: scheduleDataIsLoading,
@@ -65,10 +64,19 @@ const UserSettings = () => {
     refetch: schedulesDataRefetch,
   } = useQuery({
     queryKey: ["ScheduleData"],
-    queryFn: () =>
-      axiosPublic
-        .get(`/User_Schedule?email=${user?.email}`)
-        .then((res) => res.data),
+    queryFn: async () => {
+      try {
+        const response = await axiosPublic.get(
+          `/User_Schedule?email=${user?.email}`
+        );
+        return response.data; // Return data if the request succeeds
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          return []; // Return an empty array if the data is not found
+        }
+        throw error; // Throw other errors (like network issues)
+      }
+    },
   });
 
   // Ensure safe access
@@ -161,7 +169,7 @@ const UserSettings = () => {
   return (
     <div className="min-h-screen bg-white ">
       {/* Header Section */}
-      <div className="mx-auto flex flex-col md:flex-row justify-between gap-6 py-2 bg-gray-400 px-5">
+      <div className="mx-auto flex justify-between gap-6 py-2 bg-gray-400 px-5">
         {/* Back Button */}
         <button
           className="flex items-center gap-3 text-xl px-5 py-2 bg-gray-500 hover:bg-gray-500/80 rounded-lg cursor-pointer"

@@ -155,7 +155,7 @@ const SchedulePrioritySettings = ({ UserPriorityData, refetch }) => {
                 {/* Priority Details */}
                 <div className="flex-1 border-l border-gray-400 space-y-2 pl-5">
                   {/* Title & Importance */}
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-col md:flex-row gap-4">
                     <p className="font-medium text-black">{priority.title}</p>
 
                     {/* High Importance Indicator */}
@@ -186,7 +186,7 @@ const SchedulePrioritySettings = ({ UserPriorityData, refetch }) => {
                   <p>{priority.content}</p>
 
                   {/* Tags Display */}
-                  <div className="py-2">
+                  <div className="flex flex-wrap py-0 md:py-2 space-y-2">
                     {priority?.tags?.map((tag, index) => (
                       <span
                         key={index}
@@ -217,7 +217,7 @@ const SchedulePrioritySettings = ({ UserPriorityData, refetch }) => {
   );
 };
 
-// 🔹 PropTypes Definition
+// PropTypes Definition
 SchedulePrioritySettings.propTypes = {
   UserPriorityData: PropTypes.arrayOf(
     PropTypes.shape({

@@ -317,7 +317,7 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
       </div>
 
       {/* Week Schedule Accordion */}
-      <div className="bg-gray-400/50 p-3 mt-4">
+      <div className="bg-gray-400/50 p-3 mt-4 overflow-x-auto">
         {/* Title */}
         <h3 className="text-black font-semibold text-lg pb-3">
           Schedule for this Week
@@ -346,32 +346,36 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
               >
                 {/* Day Header */}
                 <div
-                  className="font-semibold text-black flex items-center gap-3 p-3 cursor-pointer"
+                  className="font-semibold text-black flex flex-col md:flex-row items-center gap-3 p-3 cursor-pointer"
                   onClick={() => toggleCollapse(day, dayStatus)}
                 >
-                  {/* Day Checkbox: disabled & grayed if the day has passed */}
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-error border-black"
-                    checked={allSelected}
-                    onChange={handleDayCheckboxChange(dayData)}
-                    onClick={(e) => e.stopPropagation()} // Prevent collapse toggle
-                    disabled={dayStatus === "passed"}
-                  />
-                  {/* Day Information */}
-                  <div
-                    className={`flex items-center gap-5 border-l-2 pl-2 ${
-                      dayStatus === "passed"
-                        ? "border-gray-400 text-gray-400"
-                        : "border-black text-black"
-                    }`}
-                  >
-                    <p className="w-[80px]">{dayData.dayName}</p>
-                    <p>[ {dayData.date} ]</p>
+                  {/* Checkbox, passed and day part */}
+                  <div className="flex items-center gap-5">
+                    {/* Day Checkbox: disabled & grayed if the day has passed */}
+                    <input
+                      type="checkbox"
+                      className="checkbox checkbox-error border-black"
+                      checked={allSelected}
+                      onChange={handleDayCheckboxChange(dayData)}
+                      onClick={(e) => e.stopPropagation()} // Prevent collapse toggle
+                      disabled={dayStatus === "passed"}
+                    />
+                    {/* Day Information */}
+                    <div
+                      className={`flex items-center gap-5 border-l-2 pl-2 ${
+                        dayStatus === "passed"
+                          ? "border-gray-400 text-gray-400"
+                          : "border-black text-black"
+                      }`}
+                    >
+                      <p className="w-[80px]">{dayData.dayName}</p>
+                      <p>[ {dayData.date} ]</p>
+                    </div>
                   </div>
+
                   {/* Regenerate option for passed day */}
                   {dayStatus === "passed" && (
-                    <div className="flex items-center gap-4 ml-7">
+                    <div className="flex flex-col md:flex-row items-center gap-4 ml-0 md:ml-7">
                       <p className="text-red-500 font-semibold">
                         Day has passed. Generate new day.
                       </p>
@@ -406,7 +410,7 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
                   }`}
                 >
                   <div className="p-3">
-                    <div className="space-y-4">
+                    <div className=" space-y-4">
                       {Object.keys(dayData.schedule).map((time) => {
                         const schedule = dayData.schedule[time];
                         const { originalTime, updatedTime } = formatTime(time);
@@ -420,27 +424,29 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
                                 : "bg-white"
                             }`}
                           >
-                            <div className="flex items-center gap-3">
+                            <div className="flex flex-col md:flex-row items-center gap-3">
                               {/* Schedule Checkbox */}
-                              <input
-                                type="checkbox"
-                                className="checkbox checkbox-error border-black"
-                                checked={selectedSchedules.has(schedule.id)}
-                                onChange={() =>
-                                  handleScheduleCheckboxChange(schedule.id)
-                                }
-                                onClick={(e) => e.stopPropagation()} // Prevent collapse toggle
-                              />
-                              {/* Time Range */}
-                              <div className="flex justify-between font-semibold text-black gap-5 w-[220px] border-l-2 border-gray-500 pl-5">
-                                <p>{originalTime}</p>
-                                <p>-</p>
-                                <p>{updatedTime}</p>
+                              <div className="flex items-center gap-3">
+                                <input
+                                  type="checkbox"
+                                  className="checkbox checkbox-error border-black"
+                                  checked={selectedSchedules.has(schedule.id)}
+                                  onChange={() =>
+                                    handleScheduleCheckboxChange(schedule.id)
+                                  }
+                                  onClick={(e) => e.stopPropagation()} // Prevent collapse toggle
+                                />
+                                {/* Time Range */}
+                                <div className="flex justify-between font-semibold text-black gap-5 w-[220px] border-l-2 border-gray-500 pl-5">
+                                  <p>{originalTime}</p>
+                                  <p>-</p>
+                                  <p>{updatedTime}</p>
+                                </div>
                               </div>
                               {/* Schedule Details */}
-                              <div className="border-l-2 border-gray-500 pl-5">
+                              <div className="md:border-l-2 border-gray-500 pl-5">
                                 {schedule.title ? (
-                                  <div className="text-xs text-gray-600 mt-1">
+                                  <div className="text-lg text-gray-600">
                                     <p>
                                       <strong>Title:</strong> {schedule.title}
                                     </p>
@@ -463,8 +469,8 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
                                     )}
                                   </div>
                                 ) : (
-                                  <div className="flex justify-between items-center text-black text-sm">
-                                    <p className="mr-5">
+                                  <div className="flex flex-col md:flex-row justify-between items-center text-black text-lg font-semibold gap-3">
+                                    <p className="mr-5 text-center">
                                       Nothing scheduled yet
                                     </p>
                                     <CommonButton

@@ -158,15 +158,16 @@ const ScheduleToDoSettings = ({ UserToDoData, refetch }) => {
                 </div>
 
                 {/* To-Do Details */}
-                <div className="flex-1 border-l border-gray-400 pl-5">
-                  {/* Task Title */}
-                  <div className="flex gap-5">
-                    <h3 className="text-lg font-semibold text-gray-800">
+                <div className="flex-1 border-l border-gray-400 pl-4 md:pl-5">
+                  {/* Task Title & Priority */}
+                  <div className="flex flex-col md:flex-row gap-4">  
+                    <h3 className="text-lg font-semibold text-gray-800 break-words sm:break-normal">
                       {todo.task}
                     </h3>
 
+                    {/* Priority Badge */}
                     <div
-                      className={`flex items-center gap-2 font-semibold px-5 text-white rounded-xl ${
+                      className={`flex items-center justify-center px-4 py-1 text-white font-semibold rounded-xl text-sm sm:text-base ${
                         todo.priority === "High"
                           ? "bg-red-500"
                           : todo.priority === "Medium"
@@ -178,27 +179,38 @@ const ScheduleToDoSettings = ({ UserToDoData, refetch }) => {
                     </div>
                   </div>
 
-                  {/* Due Date */}
-                  <p className="text-sm flex justify-between w-1/4">
-                    <strong>Due Date:</strong>{" "}
-                    {new Date(todo.dueDate).toLocaleDateString("en-GB")}
-                  </p>
-
-                  {/* Estimated Time */}
-                  <p className="text-sm flex justify-between w-1/4">
-                    <strong>Estimated Time:</strong> {todo.estimatedTime}
-                  </p>
-
-                  {/* Category */}
-                  <p className="text-sm flex justify-between w-1/4">
-                    <strong>Category:</strong> {todo.category}
-                  </p>
+                  {/* Due Date, Estimated Time, Category */}
+                  <div className="block gap-2 sm:gap-4 mt-2">
+                    {/* Due Date */}
+                    <p className="flex items-center pb-1">
+                      <strong className="pr-5 md:0 md:w-[150px]">
+                        Due Date:
+                      </strong>
+                      {new Date(todo.dueDate).toLocaleDateString("en-GB")}
+                    </p>
+                    {/* Category */}
+                    <p className="flex items-center pb-1">
+                      <strong className="pr-5 md:0 md:w-[150px]">
+                        Category:
+                      </strong>{" "}
+                      {todo.category}
+                    </p>
+                    {/* Estimated Time */}
+                    <p className="flex items-center pb-1">
+                      <strong className="pr-5 md:0 md:w-[150px]">
+                        Estimated Time:
+                      </strong>{" "}
+                      {todo.estimatedTime}
+                    </p>
+                  </div>
 
                   {/* Description */}
-                  <p className="py-2">{todo.description}</p>
+                  <p className="py-2 text-sm md:text-base">
+                    {todo.description}
+                  </p>
 
                   {/* Tags Display */}
-                  <div className="py-2">
+                  <div className="flex flex-wrap py-0 md:py-2 space-y-2">
                     {todo?.tags?.map((tag, index) => (
                       <span
                         key={index}
