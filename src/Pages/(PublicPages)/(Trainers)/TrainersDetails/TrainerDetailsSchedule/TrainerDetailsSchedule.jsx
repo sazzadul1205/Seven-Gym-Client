@@ -1,23 +1,32 @@
 import { Link } from "react-router";
 import PropTypes from "prop-types";
 import { FaRegUser } from "react-icons/fa";
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+
+// Convert 24-hour time to 12-hour AM/PM format
+const formatTimeTo12Hour = (time) => {
+  if (!time) return "";
+  const [hour, minute] = time.split(":");
+  const h = parseInt(hour, 10);
+  const amPm = h >= 12 ? "PM" : "AM";
+  const formattedHour = h % 12 === 0 ? 12 : h % 12;
+  return `${formattedHour}:${minute} ${amPm}`;
+};
 
 const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
-  if (!TrainerDetails || !TrainerSchedule || !TrainerSchedule.trainerSchedule) {
-    return (
-      <p className="text-red-500 text-center">
-        Pricing or schedule details unavailable.
-      </p>
-    );
-  }
-
   // Use the trainerSchedule property
   const schedule = TrainerSchedule.trainerSchedule;
 
   // Button renderer for each class slot
-  const getClassButton = (classType, start, day, participant) => {
+  const getClassButton = (
+    day,
+    start,
+    classType,
+    participant,
+    participantLimit
+  ) => {
     const isBooked =
-      participant?.length === 1 &&
+      participant?.length >= participantLimit &&
       ![
         "Group Classes",
         "Online Class",
@@ -26,70 +35,107 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
         "Partner Workout",
       ].includes(classType);
 
-    if (isBooked) {
-      return (
-        <button className="border border-gray-400 text-black font-semibold px-3 py-2 rounded-2xl cursor-not-allowed w-full mx-auto">
-          Booked
-        </button>
-      );
-    }
-
-    const classLinks = {
-      bookable: [
-        "Group Classes",
-        "Online Class",
-        "Outdoor Class",
-        "Partner Workout",
-        "Private Session",
-        "Private Training",
-        "Semi-Private Training",
-        "Workshops",
-        "Group Class",
-      ],
-      free: ["Drop-In Class", "Open Gym Class"],
-    };
-
-    if (classLinks.bookable.includes(classType)) {
-      return (
-        <Link
-          to={`/Trainers/Bookings/${TrainerDetails.name}?classType=${classType}&day=${day}&timeStart=${start}`}
-        >
-          <button className="w-[240px] font-semibold text-white text-xl bg-linear-to-bl hover:bg-linear-to-tr from-[#d1234f] to-[#fc003f] border border-red-500 rounded-2xl shadow-lg hover:shadow-2xl py-2">
-            Book Session
-          </button>
-        </Link>
-      );
-    }
-
-    if (classLinks.free.includes(classType)) {
-      return (
-        <button className="w-[240px] font-semibold text-black text-xl bg-gray-300 border border-gray-500 rounded-2xl shadow-lg py-2 cursor-not-allowed">
-          Free Class
-        </button>
-      );
-    }
+    const classLinks = [
+      "Private Training",
+      "Group Classes",
+      "Online Class",
+      "Drop-In Class",
+      "Group Class",
+      "Private Session",
+      "Open Gym Class",
+      "Semi-Private Training",
+      "Workshops",
+      "Outdoor Class",
+      "Private Sessions",
+      "Partner Workout",
+    ];
 
     if (classType === "Break") {
       return (
-        <button className="w-[240px] font-semibold text-white text-xl bg-gray-300 border border-gray-500 rounded-2xl shadow-lg py-2 cursor-not-allowed">
-          On a Break
-        </button>
+        <div className="flex justify-center items-center">
+          <CommonButton
+            text="In Break"
+            bgFromColor="gray-400"
+            bgToColor="gray-400"
+            borderRadius="rounded-xl"
+            disabled={true}
+            px="px-0"
+            py="py-2"
+            width="[250px]"
+            cursorStyle="cursor-not-allowed"
+          />
+        </div>
+      );
+    }
+
+    if (isBooked) {
+      return (
+        <div className="flex justify-center items-center">
+          <CommonButton
+            text="Fully Booked"
+            bgFromColor="gray-400"
+            bgToColor="gray-400"
+            borderRadius="rounded-xl"
+            disabled={true}
+            px="px-0"
+            py="py-2"
+            width="[250px]"
+            cursorStyle="cursor-not-allowed"
+          />
+        </div>
+      );
+    }
+
+    if (classLinks.includes(classType)) {
+      return (
+        <div className="flex justify-center items-center">
+          <Link
+            to={`/Trainers/Bookings/${TrainerDetails?.name}?classType=${classType}&day=${day}&timeStart=${start}`}
+          >
+            <CommonButton
+              text="Book Session"
+              bgFromColor="[#c23e5f]"
+              bgToColor="[#ff0040] "
+              bgColor="green"
+              borderRadius="rounded-xl"
+              px="px-0"
+              py="py-2"
+              width="[250px]"
+            />
+          </Link>
+        </div>
       );
     }
 
     return (
-      <Link to={`/Classes/${classType.split(" ").slice(0, -1).join(" ")}`}>
-        <button className="w-[240px] font-semibold text-black text-xl bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-500 border border-green-600 rounded-2xl shadow-lg hover:shadow-2xl py-2">
-          Visit Class
-        </button>
-      </Link>
+      <div className="flex justify-center items-center">
+        <Link to={`/Classes/${classType.split(" ").slice(0, -1).join(" ")}`}>
+          <CommonButton
+            text="Visit Class"
+            bgColor="green"
+            borderRadius="rounded-xl"
+            px="px-0"
+            py="py-2"
+            width="[250px]"
+          />
+        </Link>
+      </div>
     );
   };
+
+  // If Data Unavailable use this
+  if (!TrainerDetails || !TrainerSchedule || !TrainerSchedule.trainerSchedule) {
+    return (
+      <p className="text-red-500 text-center">
+        Pricing or schedule details unavailable.
+      </p>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto bg-linear-to-bl from-gray-200 to-gray-400 px-2 lg:px-6 py-6 mt-8 lg:rounded-2xl shadow-lg">
       {/* Weekly Schedule Section */}
-      <div className="">
+      <div>
         <h2 className="text-2xl text-black font-semibold pb-3 border-b-2 border-black">
           {TrainerDetails.name || "Unknown Trainer"} Weekly Schedule
         </h2>
@@ -137,10 +183,11 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                           </div>
                           <div className="flex justify-center ">
                             {getClassButton(
-                              classDetails.classType,
-                              classDetails.start,
                               day,
-                              classDetails.participant
+                              classDetails?.start,
+                              classDetails?.classType,
+                              classDetails?.participant,
+                              classDetails?.participantLimit
                             )}
                           </div>
                         </div>
@@ -178,19 +225,32 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                               index % 2 === 0 ? "bg-gray-50" : "bg-white"
                             } border-b`}
                           >
-                            <td className="px-4 py-2">
-                              {classDetails.start} - {classDetails.end}
+                            {/* Time */}
+                            <td className="flex px-4 py-3">
+                              <span className="w-16 md:w-20 text-center">
+                                {formatTimeTo12Hour(classDetails.start)}
+                              </span>
+                              <span className="px-1 lg:px-5">-</span>
+                              <span className="w-16 md:w-20 text-center">
+                                {formatTimeTo12Hour(classDetails.end)}
+                              </span>
                             </td>
+
+                            {/* Class Type */}
                             <td className="px-4 py-2">
                               {classDetails.classType}
                             </td>
+
+                            {/* Participant */}
                             <td className="px-4 py-2">
                               {classDetails.participantLimit === "No limit" ||
                               classDetails.participantLimit === "No Limit" ? (
                                 "No Limit"
                               ) : (
-                                <div className="flex items-center gap-5">
-                                  {classDetails.participantLimit}
+                                <div className="flex text-center items-center gap-5">
+                                  <span className="w-5">
+                                    {classDetails.participantLimit}
+                                  </span>
                                   <FaRegUser />
                                 </div>
                               )}
@@ -199,14 +259,15 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                               {typeof classDetails.classPrice === "string" &&
                               classDetails.classPrice.toLowerCase() === "free"
                                 ? "Free"
-                                : `$${classDetails.classPrice}`}
+                                : `$ ${classDetails.classPrice}`}
                             </td>
                             <td className="px-4 py-2 text-center">
                               {getClassButton(
-                                classDetails.classType,
-                                classDetails.start,
                                 day,
-                                classDetails.participant
+                                classDetails?.start,
+                                classDetails?.classType,
+                                classDetails?.participant,
+                                classDetails?.participantLimit
                               )}
                             </td>
                           </tr>

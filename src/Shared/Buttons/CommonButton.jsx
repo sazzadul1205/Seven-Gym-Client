@@ -2,18 +2,21 @@ import PropTypes from "prop-types";
 
 const CommonButton = ({
   clickEvent,
-  type = "submit", // Default type now set to "submit"
+  type = "submit", // Default type
   textColor = "text-white",
-  bgColor = "blue", // Default single color input
-  bgFromColor, // Optional (if user wants to override)
-  bgToColor, // Optional (if user wants to override)
-  text = "Click Me",
-  px = "px-5", // Default horizontal padding
-  py = "py-3", // Default vertical padding
-  icon, // Optional icon prop
-  iconSize = "text-lg", // Default icon size
-  isLoading = false, // New: Support for loading state
-  loadingText = "Processing...", // New: Custom loading text
+  bgColor = "blue", // Default color
+  bgFromColor, // Optional override
+  bgToColor, // Optional override
+  text = "",
+  px = "px-5", // Horizontal padding
+  py = "py-3", // Vertical padding
+  icon, // Optional icon
+  iconSize = "text-lg", // Icon size
+  isLoading = false, // Loading state
+  loadingText = "Processing...", // Custom loading text
+  borderRadius = "rounded-lg", // Border radius
+  width = "auto", // Custom width
+  cursorStyle = "cursor-pointer", // Default cursor
 }) => {
   // Automatically generate gradient colors if only `bgColor` is provided
   const fromColor = bgFromColor || `${bgColor}-300`;
@@ -22,7 +25,7 @@ const CommonButton = ({
   return (
     <button
       type={type}
-      className={`flex items-center justify-center font-semibold ${px} ${py} rounded-lg cursor-pointer transition-all duration-300 
+      className={`flex w-${width} items-center justify-center font-semibold ${px} ${py} ${borderRadius} ${cursorStyle} transition-all duration-300 
         ${textColor} 
         bg-gradient-to-bl from-${fromColor} to-${toColor} 
         hover:bg-gradient-to-tr disabled:opacity-50 disabled:cursor-not-allowed`}
@@ -35,8 +38,10 @@ const CommonButton = ({
         </span>
       ) : (
         <>
-          {icon && <span className={`mr-2 ${iconSize}`}>{icon}</span>}
-          {text}
+          {icon && (
+            <span className={`${text ? "mr-2" : ""} ${iconSize}`}>{icon}</span>
+          )}
+          {text && <span>{text}</span>} {/* Conditionally render text */}
         </>
       )}
     </button>
@@ -46,18 +51,21 @@ const CommonButton = ({
 // PropTypes for type validation
 CommonButton.propTypes = {
   clickEvent: PropTypes.func,
-  type: PropTypes.string, // Button type prop
+  type: PropTypes.string,
   textColor: PropTypes.string,
-  bgColor: PropTypes.string, // Single color input
-  bgFromColor: PropTypes.string, // Optional override
-  bgToColor: PropTypes.string, // Optional override
+  bgColor: PropTypes.string,
+  bgFromColor: PropTypes.string,
+  bgToColor: PropTypes.string,
   text: PropTypes.string,
-  px: PropTypes.string, // Horizontal padding
-  py: PropTypes.string, // Vertical padding
-  icon: PropTypes.node, // Icon component or element
-  iconSize: PropTypes.string, // Custom size for the icon
-  isLoading: PropTypes.bool, // New: Show loading state
-  loadingText: PropTypes.string, // New: Custom loading text
+  px: PropTypes.string,
+  py: PropTypes.string,
+  icon: PropTypes.node,
+  iconSize: PropTypes.string,
+  isLoading: PropTypes.bool,
+  loadingText: PropTypes.string,
+  borderRadius: PropTypes.string,
+  width: PropTypes.string,
+  cursorStyle: PropTypes.string, // New: Custom cursor style
 };
 
 export default CommonButton;

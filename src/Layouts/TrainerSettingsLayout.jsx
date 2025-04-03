@@ -227,20 +227,19 @@ const TrainerSettingsLayout = () => {
   return (
     <div className="min-h-screen bg-white ">
       {/* Header Section */}
-      <div className="mx-auto flex flex-col md:flex-row justify-between gap-6 py-2 bg-gray-300 text-black px-5">
+      <div className="mx-auto flex flex-row justify-between gap-6 py-2 bg-gray-300 text-black px-1 md:px-5">
         {/* Trainer image and basic info */}
-
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 w-3/4 md:w-auto">
           {/* Trainer Profile Picture */}
           <img
             src={TrainerProfileData?.imageUrl}
             alt="Trainer Profile"
-            className="w-10 h-10 rounded-full border border-gray-300"
+            className="w-12 h-12 rounded-full border border-gray-300"
           />
 
           {/* Trainer Name and Specialization */}
-          <div className="py-1">
-            <div className="flex justify-center items-center gap-3">
+          <div className="py-1 w-full">
+            <div className="flex justify-start items-center gap-3">
               <h3 className="text-lg font-bold text-gray-700">
                 {TrainerProfileData?.name}
               </h3>
@@ -253,7 +252,7 @@ const TrainerSettingsLayout = () => {
         </div>
 
         {/* Badge Display */}
-        <div>
+        <div className="hidden md:flex items-center">
           {TrainerProfileData?.tier && (
             <span
               className={`inline-block px-6 py-1 mt-2 rounded-full text-sm font-semibold cursor-pointer ${getTierBadge(
@@ -266,24 +265,41 @@ const TrainerSettingsLayout = () => {
         </div>
 
         {/* Log out button */}
-        <CommonButton
-          text={isLoggingOut ? "Logging Out..." : "Log Out"}
-          clickEvent={handleSignOut}
-          bgColor="red"
-          py="py-1"
-          px="px-10"
-          icon={<FaPowerOff />}
-          isLoading={isLoggingOut}
-          loadingText="Logging Out..."
-        />
+        <div className="hidden md:flex w-full md:w-auto my-auto justify-end">
+          <CommonButton
+            text={isLoggingOut ? "Logging Out..." : "Log Out"}
+            clickEvent={handleSignOut}
+            bgColor="red"
+            py="py-3"
+            px="px-10"
+            icon={<FaPowerOff />}
+            isLoading={isLoggingOut}
+            loadingText="Logging Out..."
+          />
+        </div>
+
+        {/* Log out button */}
+        <div className="flex md:hidden w-1/4 md:w-auto my-auto justify-end">
+          <CommonButton
+            clickEvent={handleSignOut}
+            bgColor="red"
+            py="py-3"
+            px="px-2"
+            icon={<FaPowerOff />}
+            isLoading={isLoggingOut}
+            loadingText="Logging Out..."
+          />
+        </div>
       </div>
 
       {/* Floating Drawer Button for Mobile */}
       <label
         htmlFor="trainer-settings-drawer"
-        className="fixed lg:hidden top-20 left-5 p-3 bg-blue-500 text-white rounded-full shadow-md cursor-pointer z-50 "
+        className="fixed lg:hidden top-20 left-0 bg-gray-500/70 shadow-md cursor-pointer z-50 p-2 "
       >
-        <RiArchiveDrawerFill size={24} />
+        <p className="bg-linear-to-bl from-blue-300 to-blue-600 p-4 rounded-full">
+          <RiArchiveDrawerFill size={24} />
+        </p>
       </label>
 
       {/* Drawer for Mobile & Tablet View */}
@@ -309,9 +325,9 @@ const TrainerSettingsLayout = () => {
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
-          <div className="menu bg-gray-300 text-black border-r border-gray-500 min-h-full w-2/3 md:w-80 p-0">
+          <div className="menu bg-gray-300 text-black border-r border-gray-500 min-h-full w-3/4 md:w-80 p-0">
             {/* Title */}
-            <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-6">
+            <p className="text-xl font-semibold italic bg-gray-400 text-white px-1 lg:px-5 py-6">
               Trainer Settings Options
             </p>
 
