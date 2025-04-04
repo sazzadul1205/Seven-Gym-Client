@@ -95,7 +95,7 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
             <CommonButton
               text="Book Session"
               bgFromColor="[#c23e5f]"
-              bgToColor="[#ff0040] "
+              bgToColor="[#ff0040]"
               bgColor="green"
               borderRadius="rounded-xl"
               px="px-0"

@@ -1,4 +1,5 @@
 import { FaRegUser } from "react-icons/fa";
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
 const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
   const { trainerName, day, time, session } = SelectedSessionData;
@@ -23,8 +24,8 @@ const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
     ? String(session?.classPrice).toLowerCase()
     : "free";
   return (
-    <div className="bg-gradient-to-tl from-gray-500/80 to-gray-500/50 p-8 flex items-center justify-center">
-      <div className="max-w-4xl w-full bg-black/20 rounded-4xl shadow-lg p-6">
+    <div className="bg-gradient-to-tl from-gray-500/80 to-gray-500/50 p-8 flex items-center justify-center gap-2">
+      <div className="max-w-4xl w-full bg-black/20 rounded-4xl shadow-lg p-6 ">
         {/* Title */}
         <h2 className="text-3xl font-bold text-white mb-6 text-center">
           Selected Session Details
@@ -108,6 +109,17 @@ const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Buttons */}
+      <div className="flex flex-col gap-2">
+        <CommonButton text="Go To Billing" bgColor="green" />
+        <CommonButton
+          text={`Same Classes: ${session?.classType}`}
+          bgColor="indigo"
+        />
+
+        <CommonButton text={`Same Day: ${day}`} bgColor="purple" />
       </div>
     </div>
   );

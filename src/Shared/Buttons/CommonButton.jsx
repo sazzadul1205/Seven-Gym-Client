@@ -18,16 +18,31 @@ const CommonButton = ({
   width = "auto", // Custom width
   cursorStyle = "cursor-pointer", // Default cursor
 }) => {
-  // Automatically generate gradient colors if only `bgColor` is provided
-  const fromColor = bgFromColor || `${bgColor}-300`;
-  const toColor = bgToColor || `${bgColor}-600`;
+  const colorMap = {
+    indigo: {
+      from: "from-indigo-300",
+      to: "to-indigo-600",
+    },
+    purple: {
+      from: "from-purple-300",
+      to: "to-purple-600",
+    },
+    // add other colors as needed
+  };
+
+  const fromColor = bgFromColor
+    ? `from-[${bgFromColor}]`
+    : colorMap[bgColor]?.from || `from-${bgColor}-300`;
+  const toColor = bgToColor
+    ? `to-[${bgToColor}]`
+    : colorMap[bgColor]?.to || `to-${bgColor}-600`;
 
   return (
     <button
       type={type}
       className={`flex w-${width} items-center justify-center font-semibold ${px} ${py} ${borderRadius} ${cursorStyle} transition-all duration-300 
         ${textColor} 
-        bg-gradient-to-bl from-${fromColor} to-${toColor} 
+        bg-gradient-to-bl ${fromColor} ${toColor}
         hover:bg-gradient-to-tr disabled:opacity-50 disabled:cursor-not-allowed`}
       onClick={clickEvent}
       disabled={isLoading} // Disable button while loading
