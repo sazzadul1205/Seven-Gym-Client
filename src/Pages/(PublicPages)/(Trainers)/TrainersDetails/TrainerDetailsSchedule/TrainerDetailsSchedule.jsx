@@ -90,7 +90,7 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
       return (
         <div className="flex justify-center items-center">
           <Link
-            to={`/Trainers/Bookings/${TrainerDetails?.name}?classType=${classType}&day=${day}&timeStart=${start}`}
+            to={`/Trainers/Booking/${TrainerDetails?.name}?classType=${classType}&day=${day}&timeStart=${start}`}
           >
             <CommonButton
               text="Book Session"
@@ -124,7 +124,7 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
   };
 
   // If Data Unavailable use this
-  if (!TrainerDetails || !TrainerSchedule || !TrainerSchedule.trainerSchedule) {
+  if (!TrainerDetails || !TrainerSchedule) {
     return (
       <p className="text-red-500 text-center">
         Pricing or schedule details unavailable.
@@ -134,28 +134,135 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
 
   return (
     <div className="max-w-7xl mx-auto bg-linear-to-bl from-gray-200 to-gray-400 px-2 lg:px-6 py-6 mt-8 lg:rounded-2xl shadow-lg">
-      {/* Weekly Schedule Section */}
-      <div>
-        <h2 className="text-2xl text-black font-semibold pb-3 border-b-2 border-black">
-          {TrainerDetails.name || "Unknown Trainer"} Weekly Schedule
-        </h2>
-        <div className="accordion flex flex-col pt-5">
-          {Object.entries(schedule).map(([day, classesObj]) => {
-            // Convert the day's classes object into an array
-            const classes = Object.values(classesObj);
-            return (
-              <div
-                key={day}
-                className="mb-6 collapse collapse-arrow bg-gray-200"
-              >
-                <input type="radio" name="schedule-accordion" />
-                <p className="collapse-title text-xl text-black font-medium">
-                  {day}
-                </p>
-                <div className="collapse-content">
-                  {/* Mobile View */}
-                  <div className="block sm:hidden">
-                    {classes.map((classDetails, index) => (
+      {/* Schedule Title */}
+      <h2 className="text-xl md:text-2xl text-center md:text-left text-black font-semibold pb-3 border-b-2 border-black">
+        {TrainerDetails.name || "Unknown Trainer"}&apos;s Weekly Schedule
+      </h2>
+
+      {/* Schedule Data */}
+      <div className="accordion flex flex-col pt-5">
+        {Object.entries(schedule).map(([day, classesObj]) => {
+          return (
+            <div key={day} className="mb-6 collapse collapse-arrow bg-gray-200">
+              <input type="radio" name="schedule-accordion" />
+              {/* Day Title */}
+              <h3 className="collapse-title text-xl font-semibold text-black">
+                {day}
+              </h3>
+
+              {/* Content Accordion Collapse */}
+              <div className="collapse-content">
+                {/* Desktop View */}
+                <div className="hidden sm:block">
+                  <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black mt-4">
+                    {/* Table Header */}
+                    <thead>
+                      <tr>
+                        <th className="px-4 py-2 border-b bg-gray-200">Time</th>
+                        <th className="px-4 py-2 border-b bg-gray-200">
+                          Class Type
+                        </th>
+                        <th className="px-4 py-2 border-b bg-gray-200">
+                          Participant Limit
+                        </th>
+                        <th className="px-4 py-2 border-b bg-gray-200">
+                          Price
+                        </th>
+                        <th className="px-4 py-2 border-b bg-gray-200 text-center">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+
+                    {/* Table Content */}
+                    <tbody>
+                      {Object.entries(classesObj).map(
+                        ([index, classDetails]) => {
+                          // Participant Limit Fix
+                          const participantLimit = classDetails.participantLimit
+                            ? String(
+                                classDetails.participantLimit
+                              ).toLowerCase()
+                            : "no limit";
+
+                          // Class Price
+                          const classPrice = classDetails.classPrice
+                            ? String(classDetails.classPrice).toLowerCase()
+                            : "free";
+
+                          return (
+                            <tr
+                              key={`${day}-${index}`}
+                              className={`${
+                                index % 2 === 0 ? "bg-gray-200" : "bg-white"
+                              } border-b`}
+                            >
+                              {/* Time */}
+                              <td className="flex px-4 py-3">
+                                <span className="w-16 md:w-20 text-center">
+                                  {formatTimeTo12Hour(classDetails.start)}
+                                </span>
+                                <span className="px-1 lg:px-5">-</span>
+                                <span className="w-16 md:w-20 text-center">
+                                  {formatTimeTo12Hour(classDetails.end)}
+                                </span>
+                              </td>
+
+                              {/* Class Type */}
+                              <td className="px-4 py-2">
+                                {classDetails.classType}
+                              </td>
+
+                              {/* Participant */}
+                              <td className="px-4 py-2">
+                                {participantLimit === "no limit" ? (
+                                  "No Limit"
+                                ) : (
+                                  <div className="flex text-center items-center gap-5">
+                                    <span className="w-5">
+                                      {classDetails.participantLimit}
+                                    </span>
+                                    <FaRegUser />
+                                  </div>
+                                )}
+                              </td>
+
+                              {/* Price */}
+                              <td className="px-4 py-2">
+                                {classPrice === "free"
+                                  ? "Free"
+                                  : `$ ${classDetails.classPrice}`}
+                              </td>
+
+                              {/* Buttons */}
+                              <td className="flex justify-center items-center px-4 py-2 gap-2">
+                                {getClassButton(
+                                  day,
+                                  classDetails?.start,
+                                  classDetails?.classType,
+                                  classDetails?.participant,
+                                  classDetails?.participantLimit
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        }
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile View */}
+                <div className="block sm:hidden">
+                  {Object.entries(classesObj).map(([index, classDetails]) => {
+                    const participantLimit = classDetails.participantLimit
+                      ? String(classDetails.participantLimit).toLowerCase()
+                      : "no limit";
+
+                    const classPrice = classDetails.classPrice
+                      ? String(classDetails.classPrice).toLowerCase()
+                      : "free";
+                    return (
                       <div
                         key={`${day}-${index}`}
                         className={`text-black text-center ${
@@ -163,24 +270,38 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                         } mb-4 p-4 border-b`}
                       >
                         <div className="flex flex-col space-y-2">
+                          {/* Time */}
                           <div className="font-semibold">
-                            {classDetails.start} - {classDetails.end}
+                            <span>
+                              {formatTimeTo12Hour(classDetails?.start)}
+                            </span>
+                            <span className="px-5">-</span>
+                            <span>{formatTimeTo12Hour(classDetails?.end)}</span>
                           </div>
-                          <div>Class Type: {classDetails.classType}</div>
-                          <div>
-                            Participant Limit:{" "}
-                            {classDetails.participantLimit === "No limit" ||
-                            classDetails.participantLimit === "No Limit"
+
+                          {/* Class Type */}
+                          <div className="flex justify-between items-center pt-2">
+                            <p className="font-bold">Class Type:</p>{" "}
+                            {classDetails?.classType}
+                          </div>
+
+                          {/* Participant */}
+                          <div className="flex justify-between items-center">
+                            <p className="font-bold">Participant Limit:</p>{" "}
+                            {participantLimit === "no limit"
                               ? "No Limit"
-                              : classDetails.participantLimit}
+                              : classDetails?.participantLimit}
                           </div>
-                          <div>
-                            Price:{" "}
-                            {typeof classDetails.classPrice === "string" &&
-                            classDetails.classPrice.toLowerCase() === "free"
+
+                          {/* Price */}
+                          <div className="flex justify-between items-center">
+                            <p className="font-bold">Price:</p>{" "}
+                            {classPrice === "free"
                               ? "Free"
-                              : `$${classDetails.classPrice}`}
+                              : `$${classDetails?.classPrice}`}
                           </div>
+
+                          {/* Buttons */}
                           <div className="flex justify-center ">
                             {getClassButton(
                               day,
@@ -192,94 +313,13 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                           </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-
-                  {/* Desktop View */}
-                  <div className="hidden sm:block">
-                    <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black">
-                      <thead>
-                        <tr>
-                          <th className="px-4 py-2 border-b bg-gray-100">
-                            Time
-                          </th>
-                          <th className="px-4 py-2 border-b bg-gray-100">
-                            Class Type
-                          </th>
-                          <th className="px-4 py-2 border-b bg-gray-100">
-                            Participant Limit
-                          </th>
-                          <th className="px-4 py-2 border-b bg-gray-100">
-                            Price
-                          </th>
-                          <th className="px-4 py-2 border-b bg-gray-100 text-center">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {classes.map((classDetails, index) => (
-                          <tr
-                            key={`${day}-${index}`}
-                            className={`${
-                              index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                            } border-b`}
-                          >
-                            {/* Time */}
-                            <td className="flex px-4 py-3">
-                              <span className="w-16 md:w-20 text-center">
-                                {formatTimeTo12Hour(classDetails.start)}
-                              </span>
-                              <span className="px-1 lg:px-5">-</span>
-                              <span className="w-16 md:w-20 text-center">
-                                {formatTimeTo12Hour(classDetails.end)}
-                              </span>
-                            </td>
-
-                            {/* Class Type */}
-                            <td className="px-4 py-2">
-                              {classDetails.classType}
-                            </td>
-
-                            {/* Participant */}
-                            <td className="px-4 py-2">
-                              {classDetails.participantLimit === "No limit" ||
-                              classDetails.participantLimit === "No Limit" ? (
-                                "No Limit"
-                              ) : (
-                                <div className="flex text-center items-center gap-5">
-                                  <span className="w-5">
-                                    {classDetails.participantLimit}
-                                  </span>
-                                  <FaRegUser />
-                                </div>
-                              )}
-                            </td>
-                            <td className="px-4 py-2">
-                              {typeof classDetails.classPrice === "string" &&
-                              classDetails.classPrice.toLowerCase() === "free"
-                                ? "Free"
-                                : `$ ${classDetails.classPrice}`}
-                            </td>
-                            <td className="px-4 py-2 text-center">
-                              {getClassButton(
-                                day,
-                                classDetails?.start,
-                                classDetails?.classType,
-                                classDetails?.participant,
-                                classDetails?.participantLimit
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                    );
+                  })}
                 </div>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

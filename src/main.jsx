@@ -78,7 +78,7 @@ createRoot(document.getElementById("root")).render(
               <Route path="/Trainers" element={<Trainers />} />
               <Route path="/Trainers/:name" element={<TrainersDetails />} />
               <Route
-                path="/Trainers/Bookings/:name"
+                path="/Trainers/Booking/:name"
                 element={<TrainersBookings />}
               />
               <Route path="/Classes" element={<Classes />} />

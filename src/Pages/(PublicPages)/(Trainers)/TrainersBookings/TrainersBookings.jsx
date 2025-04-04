@@ -8,7 +8,10 @@ import SameClassTypeWeekClass from "./SameClassTypeWeekClass/SameClassTypeWeekCl
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../Hooks/useAuth";
 import Loading from "../../../../Shared/Loading/Loading";
+import FetchingError from "../../../../Shared/Component/FetchingError";
 
+// Fetch Trainer Background Image
+import Trainer_Details_Page_Background from "../../../../assets/Trainers-Details-Background/Trainer_Details_Page_Background.jpg";
 
 const TrainersBookings = () => {
   const axiosPublic = useAxiosPublic();
@@ -71,7 +74,7 @@ const TrainersBookings = () => {
     queryKey: ["TrainerDetailData"],
     queryFn: () =>
       axiosPublic
-        .get(`/Trainers/searchByNames?names=${name}`)
+        .get(`/Trainers/SearchTrainersByNames?names=${name}`)
         .then((res) => res.data),
   });
 
@@ -93,58 +96,50 @@ const TrainersBookings = () => {
     TrainerDetailDataError ||
     SameClassTypeDataError
   ) {
-    console.error(
-      "Error fetching data:",
-      SameTimeData || UsersData || TrainerDetailData || SameClassTypeData
-    );
-    return (
-      <div className="h-screen flex flex-col justify-center items-center bg-linear-to-br from-blue-300 to-white">
-        <p className="text-3xl text-red-500 font-bold mb-8">
-          Failed to load trainer details.
-        </p>
-        <button
-          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400"
-          onClick={() => window.location.reload()}
-        >
-          Reload
-        </button>
-      </div>
-    );
+    return <FetchingError />;
   }
 
+  console.log("SameTimeData :", SameTimeData);
+  console.log("SameClassTypeData :", SameClassTypeData);
+  console.log("UsersData :", UsersData);
+  console.log("trainer :", trainer);
 
   return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <div className="bg-[#F72C5B] py-11 text-center text-white"></div>
-
+    <div
+      className=" bg-fixed bg-cover bg-center bg-linear-to-b from-white/50 to-white/20"
+      style={{
+        backgroundImage: `url(${Trainer_Details_Page_Background})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       {/* Trainer Details */}
       <TrainerBookingDetails trainer={trainer} />
 
       {/* Booked Table */}
-      <BookedTable
+      {/* <BookedTable
         setListedSessions={setListedSessions}
         listedSessions={listedSessions}
         SameTimeData={SameTimeData}
         Day={Day}
         trainer={trainer}
-      />
+      /> */}
 
       {/* Classes The Same Day */}
-      <SameTimeWeekClass
+      {/* <SameTimeWeekClass
         SameTimeData={SameTimeData}
         Day={Day}
         listedSessions={listedSessions}
         setListedSessions={setListedSessions}
-      />
+      /> */}
 
       {/* Classes The Same Day */}
-      <SameClassTypeWeekClass
+      {/* <SameClassTypeWeekClass
         SameClassTypeData={SameClassTypeData}
         Day={Day}
         listedSessions={listedSessions}
         setListedSessions={setListedSessions}
-      />
+      /> */}
     </div>
   );
 };
