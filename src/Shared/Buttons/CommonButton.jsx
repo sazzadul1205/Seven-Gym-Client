@@ -19,6 +19,10 @@ const CommonButton = ({
   cursorStyle = "cursor-pointer", // Default cursor
 }) => {
   const colorMap = {
+    OriginalRed: {
+      from: "from-[#c23e5f]",
+      to: "to-[#ff0040]",
+    },
     indigo: {
       from: "from-indigo-300",
       to: "to-indigo-600",
@@ -33,6 +37,7 @@ const CommonButton = ({
   const fromColor = bgFromColor
     ? `from-[${bgFromColor}]`
     : colorMap[bgColor]?.from || `from-${bgColor}-300`;
+
   const toColor = bgToColor
     ? `to-[${bgToColor}]`
     : colorMap[bgColor]?.to || `to-${bgColor}-600`;

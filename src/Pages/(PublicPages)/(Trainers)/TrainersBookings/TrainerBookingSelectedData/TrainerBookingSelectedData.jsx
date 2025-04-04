@@ -1,4 +1,10 @@
+// Import Packages
+import PropTypes from "prop-types";
+
+// import Icons
 import { FaRegUser } from "react-icons/fa";
+
+// Import Buttons
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
 const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
@@ -23,8 +29,10 @@ const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
   const classPrice = session?.classPrice
     ? String(session?.classPrice).toLowerCase()
     : "free";
+
   return (
     <div className="bg-gradient-to-tl from-gray-500/80 to-gray-500/50 p-8 flex items-center justify-center gap-2">
+      {/* Selected Session Data */}
       <div className="max-w-4xl w-full bg-black/20 rounded-4xl shadow-lg p-6 ">
         {/* Title */}
         <h2 className="text-3xl font-bold text-white mb-6 text-center">
@@ -123,6 +131,26 @@ const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
       </div>
     </div>
   );
+};
+
+// PropTypes
+
+TrainerBookingSelectedData.propTypes = {
+  SelectedSessionData: PropTypes.shape({
+    trainerName: PropTypes.string.isRequired,
+    day: PropTypes.string.isRequired,
+    time: PropTypes.string.isRequired,
+    session: PropTypes.shape({
+      classType: PropTypes.string,
+      participantLimit: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
+      ]),
+      classPrice: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      start: PropTypes.string,
+      end: PropTypes.string,
+    }).isRequired,
+  }).isRequired,
 };
 
 export default TrainerBookingSelectedData;
