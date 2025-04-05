@@ -5,12 +5,12 @@ import { useLocation, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 
 // Import Hooks
-import useAuth from "../../../../Hooks/useAuth";
 import Loading from "../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../Shared/Component/FetchingError";
 
 // Import Components
+import AllSessions from "./AllSessions/AllSessions";
 import BookedSessionTable from "./BookedSessionTable/BookedSessionTable";
 import SameTimeWeekSession from "./SameTimeWeekSession/SameTimeWeekSession";
 import TrainerBookingTrainer from "./TrainerBookingTrainer/TrainerBookingTrainer";
@@ -19,13 +19,11 @@ import TrainerBookingSelectedData from "./TrainerBookingSelectedData/TrainerBook
 
 // Background
 import Trainer_Details_Page_Background from "../../../../assets/Trainers-Details-Background/Trainer_Details_Page_Background.jpg";
-import AllSessions from "./AllSessions/AllSessions";
 
 const TrainersBookings = () => {
   const axiosPublic = useAxiosPublic();
   const location = useLocation();
   const { name } = useParams();
-  const { user } = useAuth();
 
   // State for listed sessions
   const [listedSessions, setListedSessions] = useState([]);
@@ -179,6 +177,7 @@ const TrainersBookings = () => {
 
       {/* Uncomment as needed */}
       <BookedSessionTable
+        name={name}
         listedSessions={listedSessions}
         setListedSessions={setListedSessions}
       />
@@ -197,7 +196,7 @@ const TrainersBookings = () => {
         SameTimeData={SameTimeData}
         listedSessions={listedSessions}
         setListedSessions={setListedSessions}
-      />
+      />  
 
       {/* Trainer Schedule */}
       <AllSessions

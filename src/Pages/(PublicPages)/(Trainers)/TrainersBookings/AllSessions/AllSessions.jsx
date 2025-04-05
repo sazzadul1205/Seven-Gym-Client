@@ -62,7 +62,10 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
   };
 
   return (
-    <div className="bg-gradient-to-t from-gray-500/80 to-gray-500/50 py-5">
+    <div
+      className="bg-gradient-to-t from-gray-500/80 to-gray-500/50 py-5"
+      id="all-schedule-section"
+    >
       <div className="max-w-7xl mx-auto py-5 px-4 bg-white/80 rounded-xl">
         {/* Header */}
         <div className="flex justify-between items-center py-1">
@@ -97,7 +100,8 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
               {/* Collapse Content */}
               <div className="collapse-content">
                 {/* Desktop View */}
-                <div className="hidden sm:block">
+                <div className="hidden md:flex">
+                  {/* Table for Desktop View */}
                   <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black">
                     {/* Table Headers */}
                     <thead>
@@ -250,6 +254,117 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
                       )}
                     </tbody>
                   </table>
+                </div>
+
+                {/* Mobile View */}
+                <div className="flex md:hidden text-black flex-col space-y-4 mb-6">
+                  {Object.values(classesObj).map((classDetails, index) => {
+                    // Check if classDetails is an object and has the required properties
+                    const isListed = isSessionListed(classDetails?.id);
+
+                    // Check if Allowed Class Types include classType
+                    const isAllowedType = AllowedClassTypes.includes(
+                      classDetails?.classType
+                    );
+
+                    // Check if classPrice is a number or string
+                    const classPrice = classDetails.classPrice
+                      ? String(classDetails.classPrice).toLowerCase()
+                      : "free";
+
+                    return (
+                      <div
+                        key={`mobile-${classDetails.id}-${index}`}
+                        className={`${
+                          isAllowedType
+                            ? isListed
+                              ? "bg-gray-400"
+                              : "bg-gray-50 hover:bg-gray-200"
+                            : "bg-red-200"
+                        } p-3 `}
+                      >
+                        <div className="flex flex-col space-y-2">
+                          {/* Day */}
+                          <div className="mx-auto text-lg font-semibold">
+                            [ {day} ]
+                          </div>
+
+                          {/* Time */}
+                          <div className="font-semibold mx-auto">
+                            <div className="flex items-center justify-between gap-2">
+                              <p>{formatTimeTo12Hour(classDetails.start)}</p>
+                              <span>-</span>
+                              <p>{formatTimeTo12Hour(classDetails.end)}</p>
+                            </div>
+                          </div>
+
+                          {/* Divider */}
+                          <div className="p-[1px] bg-gray-300"></div>
+
+                          {/* Class Type */}
+                          <div className="flex justify-between items-center pt-2">
+                            <p className="font-bold">Class Type:</p>
+                            {classDetails.classType || "N/A"}
+                          </div>
+
+                          {/* Participant Limit */}
+                          <div className="flex justify-between items-center">
+                            <p className="font-bold">Participant Limit:</p>
+                            {classDetails.participantLimit
+                              ? classDetails.participantLimit
+                              : "No Limit"}
+                          </div>
+
+                          {/* Price */}
+                          <div className="flex justify-between items-center">
+                            <p className="font-bold">Price:</p>
+                            {classPrice === "free"
+                              ? "Free"
+                              : `$${classDetails.classPrice}`}
+                          </div>
+
+                          {/* Action Button */}
+                          <div className="flex justify-center mt-3">
+                            {/* Buttons for adding session */}
+                            {isAllowedType ? (
+                              // If the session is allowed, show the appropriate button
+                              isListed ? (
+                                <CommonButton
+                                  icon={<MdLibraryAdd />}
+                                  iconSize="text-lg"
+                                  bgColor="gray"
+                                  width="full"
+                                  py="py-2"
+                                  disabled={true}
+                                />
+                              ) : (
+                                <CommonButton
+                                  icon={<MdLibraryAdd />}
+                                  iconSize="text-lg"
+                                  bgColor="green"
+                                  width="full"
+                                  py="py-2"
+                                  clickEvent={() =>
+                                    handleAddSession(classDetails)
+                                  }
+                                />
+                              )
+                            ) : (
+                              // If the session is not allowed, show a disabled button or nothing
+                              <CommonButton
+                                icon={<MdLibraryAdd />}
+                                iconSize="text-lg"
+                                bgColor="gray"
+                                width="full"
+                                py="py-2"
+                                disabled={true}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>

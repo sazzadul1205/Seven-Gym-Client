@@ -59,9 +59,9 @@ const TrainerBookingTrainer = ({ trainer }) => {
 
   return (
     <div className="bg-gradient-to-t from-gray-500/80 to-gray-500/50 py-5">
-      <div className="max-w-7xl mx-auto flex justify-between items-center py-10 px-4 bg-black/20 rounded-4xl">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center py-10 px-4 bg-black/20 rounded-4xl">
         {/* Left Section : Trainer image and basic info */}
-        <div className="w-1/4 items-center space-x-4 mx-auto my-auto">
+        <div className="w-full md:w-1/4 items-center space-x-4 mx-auto my-auto">
           {/* Trainer Profile Picture */}
           <img
             src={trainer?.imageUrl}
@@ -94,7 +94,7 @@ const TrainerBookingTrainer = ({ trainer }) => {
         </div>
 
         {/* Right Section */}
-        <div className="w-3/4 space-y-4">
+        <div className="w-full md:w-3/4 space-y-4">
           {/* About Part */}
           <div className="items-center gap-2 text-gray-200">
             <p className="text-gray-200 font-semibold text-xl py-2">
@@ -177,19 +177,25 @@ const TrainerBookingTrainer = ({ trainer }) => {
           </div>
 
           {/* Contact */}
-          <div className="flex items-center gap-2 text-gray-200">
+          <div className="flex flex-col md:flex-row items-center gap-2 text-gray-200">
             <p className="text-gray-200 font-semibold text-lg py-1">Contact:</p>
+
+            {/* Email */}
             {trainer?.contact?.email ? (
               <a
                 href={`mailto:${trainer.contact.email}`}
-                className="text-white hover:underline"
+                className="text-white hover:underline break-all md:mr-4"
               >
                 {trainer.contact.email}
               </a>
             ) : (
               "N/A"
             )}
-            {trainer?.contact?.phone ? `| ${trainer.contact.phone}` : ""}
+
+            {/* Phone */}
+            {trainer?.contact?.phone && (
+              <span className="text-gray-200 break-all">{`| ${trainer.contact.phone}`}</span>
+            )}
           </div>
         </div>
       </div>
