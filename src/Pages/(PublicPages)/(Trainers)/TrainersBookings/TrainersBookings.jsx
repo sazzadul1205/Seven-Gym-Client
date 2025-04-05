@@ -11,14 +11,15 @@ import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../Shared/Component/FetchingError";
 
 // Import Components
-import BookedTable from "./BookedTable/BookedTable";
-import SameTimeWeekClass from "./SameTimeWeekClass/SameTimeWeekClass";
+import BookedSessionTable from "./BookedSessionTable/BookedSessionTable";
+import SameTimeWeekSession from "./SameTimeWeekSession/SameTimeWeekSession";
 import TrainerBookingTrainer from "./TrainerBookingTrainer/TrainerBookingTrainer";
-import SameClassTypeWeekClass from "./SameClassTypeWeekClass/SameClassTypeWeekClass";
+import SameClassTypeWeekSession from "./SameClassTypeWeekSession/SameClassTypeWeekSession";
 import TrainerBookingSelectedData from "./TrainerBookingSelectedData/TrainerBookingSelectedData";
 
 // Background
 import Trainer_Details_Page_Background from "../../../../assets/Trainers-Details-Background/Trainer_Details_Page_Background.jpg";
+import AllSessions from "./AllSessions/AllSessions";
 
 const TrainersBookings = () => {
   const axiosPublic = useAxiosPublic();
@@ -68,7 +69,7 @@ const TrainersBookings = () => {
   });
 
   // Check if TrainerScheduleData is an array and has at least one element
-  const TrainerSchedule = TrainerScheduleData?.[0];
+  const AllSessionData = TrainerScheduleData?.[0];
 
   // Fetch Selected Session Data
   const {
@@ -132,7 +133,7 @@ const TrainersBookings = () => {
 
   //  Set listedSessions from selected session
   useEffect(() => {
-    console.log("SelectedSessionData:", SelectedSessionData);
+    // console.log("SelectedSessionData:", SelectedSessionData);
     if (SelectedSessionData?.session) {
       setListedSessions([SelectedSessionData.session]);
     }
@@ -161,8 +162,6 @@ const TrainersBookings = () => {
   )
     return <FetchingError />;
 
-  console.log(TrainerSchedule);
-
   return (
     <div
       className="bg-fixed bg-cover bg-center"
@@ -179,21 +178,30 @@ const TrainersBookings = () => {
       <TrainerBookingTrainer trainer={trainer} />
 
       {/* Uncomment as needed */}
-      <BookedTable
+      <BookedSessionTable
         listedSessions={listedSessions}
         setListedSessions={setListedSessions}
       />
 
       {/* Same Class Type Week Class */}
-      <SameClassTypeWeekClass
+      <SameClassTypeWeekSession
+        ClassType={ClassType}
         listedSessions={listedSessions}
         SameClassTypeData={SameClassTypeData}
         setListedSessions={setListedSessions}
       />
 
       {/* Same Time Week Class */}
-      <SameTimeWeekClass
+      <SameTimeWeekSession
+        Day={Day}
         SameTimeData={SameTimeData}
+        listedSessions={listedSessions}
+        setListedSessions={setListedSessions}
+      />
+
+      {/* Trainer Schedule */}
+      <AllSessions
+        AllSessionData={AllSessionData}
         listedSessions={listedSessions}
         setListedSessions={setListedSessions}
       />

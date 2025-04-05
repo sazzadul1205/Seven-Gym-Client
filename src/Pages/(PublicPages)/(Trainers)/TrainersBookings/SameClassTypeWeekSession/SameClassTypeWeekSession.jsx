@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 // Import Icons
 import { FaRegUser } from "react-icons/fa";
 import { MdLibraryAdd } from "react-icons/md";
+import { BiArrowToTop } from "react-icons/bi";
 
 // Import Button
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
@@ -18,9 +19,10 @@ const formatTimeTo12Hour = (time) => {
   return `${formattedHour}:${minute} ${amPm}`;
 };
 
-const SameTimeWeekClass = ({
-  SameTimeData,
+const SameClassTypeWeekSession = ({
+  ClassType,
   listedSessions,
+  SameClassTypeData,
   setListedSessions,
 }) => {
   // Handle adding a session to the listed sessions
@@ -44,20 +46,33 @@ const SameTimeWeekClass = ({
   const isSessionListed = (id) => {
     return listedSessions.some((session) => session.id === id);
   };
+
   return (
-    <div className="bg-gradient-to-b from-gray-500/80 to-gray-500/50 py-5">
+    <div className="bg-gradient-to-t from-gray-500/80 to-gray-500/50 py-5">
       <div className="max-w-7xl mx-auto items-center py-5 px-4 bg-white/80 rounded-xl">
-        {/* Title */}
-        <h2 className="flex items-center text-xl font-bold text-black pb-2 gap-2">
-          Same Time Schedule for This Week
-        </h2>
+        {/* Title and To top Button */}
+        <div className="flex justify-between items-center py-1">
+          <h2 className="text-lg font-semibold text-black">
+            Same Class Type Schedule&apos;s for This Week{" "}
+            <span className="font-bold text-red-500">[ {ClassType} ]</span>
+          </h2>
+
+          <div className="flex items-center text-lg font-semibold text-black gap-2">
+            <button
+              className="bg-blue-500 hover:bg-blue-600 rounded-full p-2 cursor-pointer"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
+              <BiArrowToTop className="text-white" />
+            </button>
+          </div>
+        </div>
 
         {/* Divider */}
         <div className="p-[1px] bg-black"></div>
 
         {/* Original Schedule Section */}
         <div className="pt-1 text-black">
-          {SameTimeData.length > 0 ? (
+          {SameClassTypeData.length > 0 ? (
             <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black">
               {/* Table Header */}
               <thead>
@@ -79,7 +94,7 @@ const SameTimeWeekClass = ({
 
               {/* Table Content */}
               <tbody>
-                {SameTimeData.map((classDetails, index) => {
+                {SameClassTypeData.map((classDetails, index) => {
                   // Check if classPrice is a number or string
                   const classPrice = classDetails.classPrice
                     ? String(classDetails.classPrice).toLowerCase()
@@ -94,7 +109,7 @@ const SameTimeWeekClass = ({
                   const currentDay = classDetails.day;
 
                   // Check if the next class is on a different day
-                  const nextDay = SameTimeData[index + 1]?.day;
+                  const nextDay = SameClassTypeData[index + 1]?.day;
 
                   // Determine if the current class is the last of the day
                   const isLastOfDay = currentDay !== nextDay;
@@ -195,8 +210,8 @@ const SameTimeWeekClass = ({
 };
 
 // Prop Type Validation
-SameTimeWeekClass.propTypes = {
-  SameTimeData: PropTypes.arrayOf(
+SameClassTypeWeekSession.propTypes = {
+  SameClassTypeData: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
       day: PropTypes.string,
@@ -227,6 +242,7 @@ SameTimeWeekClass.propTypes = {
     })
   ).isRequired,
   setListedSessions: PropTypes.func.isRequired,
+  ClassType: PropTypes.string.isRequired,
 };
 
-export default SameTimeWeekClass;
+export default SameClassTypeWeekSession;
