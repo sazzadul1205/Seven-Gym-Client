@@ -26,9 +26,9 @@ const TrainersDetails = () => {
 
   // Fetch Trainer Details
   const {
-    data: Trainer_DetailData,
-    isLoading: isLoadingTrainerDetails,
-    error: errorTrainerDetails,
+    data: TrainerDetailData,
+    isLoading: TrainerDetailIsLoading,
+    error: TrainerDetailError,
   } = useQuery({
     queryKey: ["Trainer_DetailData", decodedName],
     queryFn: () =>
@@ -51,17 +51,17 @@ const TrainersDetails = () => {
   });
 
   // Handle loading state
-  if (isLoadingTrainerDetails || TrainerScheduleIsLoading) {
+  if (TrainerDetailIsLoading || TrainerScheduleIsLoading) {
     return <Loading />;
   }
 
   // Handle errors for either API call
-  if (errorTrainerDetails || TrainerScheduleError) {
+  if (TrainerDetailError || TrainerScheduleError) {
     return <FetchingError />;
   }
 
   // Extract trainer details and schedule from API response
-  const TrainerDetails = Trainer_DetailData?.[0];
+  const TrainerDetails = TrainerDetailData?.[0];
 
   // Check if TrainerScheduleData is an array and has at least one element
   const TrainerSchedule = TrainerScheduleData?.[0];

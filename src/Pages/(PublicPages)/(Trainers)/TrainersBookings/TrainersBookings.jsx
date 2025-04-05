@@ -41,6 +41,7 @@ const TrainersBookings = () => {
   // Extracting classType from URL parameters
   const ClassType = searchParams.get("classType");
 
+  // Fetch Trainer Detail Data
   const {
     data: TrainerDetailData,
     isLoading: TrainerDetailDataLoading,
@@ -52,6 +53,22 @@ const TrainersBookings = () => {
         .get(`/Trainers/SearchTrainersByNames?names=${name}`)
         .then((res) => res.data),
   });
+
+  // Fetch Trainer Schedule
+  const {
+    data: TrainerScheduleData,
+    isLoading: TrainerScheduleIsLoading,
+    error: TrainerScheduleError,
+  } = useQuery({
+    queryKey: ["TrainerScheduleData", name],
+    queryFn: () =>
+      axiosPublic
+        .get(`/Trainers_Schedule/ByTrainerName?trainerName=${name}`)
+        .then((res) => res.data),
+  });
+
+  // Check if TrainerScheduleData is an array and has at least one element
+  const TrainerSchedule = TrainerScheduleData?.[0];
 
   // Fetch Selected Session Data
   const {
@@ -128,6 +145,7 @@ const TrainersBookings = () => {
 
   if (
     SameTimeDataIsLoading ||
+    TrainerScheduleIsLoading ||
     TrainerDetailDataLoading ||
     SameClassTypeDataIsLoading ||
     SelectedSessionDataIsLoading
@@ -136,13 +154,14 @@ const TrainersBookings = () => {
 
   if (
     SameTimeDataError ||
+    TrainerScheduleError ||
     TrainerDetailDataError ||
     SameClassTypeDataError ||
     SelectedSessionDataError
   )
     return <FetchingError />;
 
-  console.log(SameTimeData);
+  console.log(TrainerSchedule);
 
   return (
     <div
