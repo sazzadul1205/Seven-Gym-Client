@@ -11,10 +11,10 @@ import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../Shared/Component/FetchingError";
 
 // Import Components
-import SameTimeWeekClass from "./SameTimeWeekClass/SameTimeWeekClass";
 import BookedTable from "./BookedTable/BookedTable";
-import SameClassTypeWeekClass from "./SameClassTypeWeekClass/SameClassTypeWeekClass";
+import SameTimeWeekClass from "./SameTimeWeekClass/SameTimeWeekClass";
 import TrainerBookingTrainer from "./TrainerBookingTrainer/TrainerBookingTrainer";
+import SameClassTypeWeekClass from "./SameClassTypeWeekClass/SameClassTypeWeekClass";
 import TrainerBookingSelectedData from "./TrainerBookingSelectedData/TrainerBookingSelectedData";
 
 // Background
@@ -92,15 +92,21 @@ const TrainersBookings = () => {
         .then((res) => res.data),
   });
 
+  // Fetch Same Time Data
   const {
     data: SameTimeData,
     isLoading: SameTimeDataIsLoading,
     error: SameTimeDataError,
   } = useQuery({
-    queryKey: ["SameTimeData"],
+    queryKey: ["SameTimeData", name, TimeStart],
     queryFn: () =>
       axiosPublic
-        .get(`/Trainers_Schedule/${name}/time/${TimeStart}`)
+        .get(`/Trainers_Schedule/SameStartSession`, {
+          params: {
+            trainerName: name,
+            start: TimeStart,
+          },
+        })
         .then((res) => res.data),
   });
 
@@ -136,6 +142,8 @@ const TrainersBookings = () => {
   )
     return <FetchingError />;
 
+  console.log(SameTimeData);
+
   return (
     <div
       className="bg-fixed bg-cover bg-center"
@@ -153,11 +161,8 @@ const TrainersBookings = () => {
 
       {/* Uncomment as needed */}
       <BookedTable
-        setListedSessions={setListedSessions}
         listedSessions={listedSessions}
-        SameTimeData={SameTimeData}
-        Day={Day}
-        trainer={trainer}
+        setListedSessions={setListedSessions}
       />
 
       {/* Same Class Type Week Class */}
@@ -167,12 +172,12 @@ const TrainersBookings = () => {
         setListedSessions={setListedSessions}
       />
 
-      {/* <SameTimeWeekClass
+      {/* Same Time Week Class */}
+      <SameTimeWeekClass
         SameTimeData={SameTimeData}
-        Day={Day}
         listedSessions={listedSessions}
         setListedSessions={setListedSessions}
-      /> */}
+      />
     </div>
   );
 };

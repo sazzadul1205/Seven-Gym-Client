@@ -119,14 +119,16 @@ const BookedTable = ({ listedSessions }) => {
                       </td>
 
                       {/* Time */}
-                      <td className=" px-4 py-2">
-                        <span className="w-16 md:w-20 text-center">
-                          {formatTimeTo12Hour(classDetails.start)}
-                        </span>
-                        <span className="px-1 lg:px-5">-</span>
-                        <span className="w-16 md:w-20 text-center">
-                          {formatTimeTo12Hour(classDetails.end)}
-                        </span>
+                      <td className="px-4 py-2 text-center align-middle">
+                        <div className="flex items-center justify-center gap-2">
+                          <p className="w-16 md:w-20">
+                            {formatTimeTo12Hour(classDetails.start)}
+                          </p>
+                          <span>-</span>
+                          <p className="w-16 md:w-20">
+                            {formatTimeTo12Hour(classDetails.end)}
+                          </p>
+                        </div>
                       </td>
 
                       {/* Price */}

@@ -108,7 +108,7 @@ const SameClassTypeWeekClass = ({
                       key={`listed-${classDetails.id}-${index}`}
                       className={`${
                         isListed
-                          ? "bg-gray-400 cursor-not-allowed"
+                          ? "bg-gray-400"
                           : "bg-gray-50 hover:bg-gray-200"
                       } ${isLastOfDay ? "border-b-2 border-gray-200" : ""}`}
                     >
@@ -196,7 +196,6 @@ const SameClassTypeWeekClass = ({
 };
 
 // Prop Type Validation
-
 SameClassTypeWeekClass.propTypes = {
   SameClassTypeData: PropTypes.arrayOf(
     PropTypes.shape({
