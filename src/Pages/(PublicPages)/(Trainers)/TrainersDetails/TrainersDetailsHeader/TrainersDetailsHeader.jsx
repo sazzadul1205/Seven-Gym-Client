@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
-import { IoMdFemale, IoMdMale } from "react-icons/io";
+import { IoMdArrowRoundBack, IoMdFemale, IoMdMale } from "react-icons/io";
 import { MdOutlinePeopleAlt } from "react-icons/md";
+import { useNavigate } from "react-router";
 
 // Function to get tier badge styles dynamically
 const getTierBadge = (tier) => {
@@ -43,6 +44,8 @@ const getGenderIcon = (gender) => {
 };
 
 const TrainersDetailsHeader = ({ TrainerDetails }) => {
+  const navigate = useNavigate();
+
   // Get gender details (icon + label)
   const { icon } = getGenderIcon(TrainerDetails?.gender);
 
@@ -50,7 +53,16 @@ const TrainersDetailsHeader = ({ TrainerDetails }) => {
   if (!TrainerDetails) return null;
 
   return (
-    <div className="bg-linear-to-b from-gray-500/80 to-gray-500/50 mx-auto justify-between text-center py-10">
+    <div className="relative bg-linear-to-b from-gray-500/80 to-gray-500/50 mx-auto justify-between text-center py-10">
+      {/* Section-Scoped Floating Back Button */}
+      <button
+        className="absolute top-5 left-5 flex items-center gap-2 text-lg px-10 py-2 bg-white hover:bg-gray-100/90 text-black rounded-lg cursor-pointer"
+        onClick={() => navigate(-1)}
+      >
+        <IoMdArrowRoundBack className="text-xl" />
+        Back
+      </button>
+
       {/* Trainer Profile Image */}
       <img
         src={TrainerDetails?.imageUrl || "/default-profile.png"}

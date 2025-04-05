@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useState, useMemo } from "react";
 
 // Import Packages
@@ -27,6 +27,7 @@ const formatTimeTo12Hour = (time) => {
 
 const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
   const axiosPublic = useAxiosPublic();
+  const navigate = useNavigate();
   const { name } = useParams();
   const { user } = useAuth();
 
@@ -150,6 +151,7 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
 
         // Optionally reset the list or state
         setListedSessions([]);
+        navigate(-1);
       } else {
         throw new Error("Server did not return a valid response.");
       }
@@ -305,7 +307,7 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
                   ({ classType, classPrice, count, adjustedSubtotal }) => (
                     <li
                       key={`${classType}-${classPrice}`}
-                      className="flex flex-col sm:flex-row justify-between bg-gray-300 hover:bg-gray-400 py-3 px-5 text-lg font-semibold rounded-lg"
+                      className="flex flex-col sm:flex-row justify-between bg-gray-300 hover:bg-gray-400 py-3 px-5 font-semibold rounded-lg"
                     >
                       {/* Class Type and Price Details */}
                       <span className="mb-2 sm:mb-0">

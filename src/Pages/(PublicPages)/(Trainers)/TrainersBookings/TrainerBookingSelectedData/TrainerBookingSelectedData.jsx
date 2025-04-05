@@ -6,8 +6,13 @@ import { FaRegUser } from "react-icons/fa";
 
 // Import Buttons
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { useNavigate } from "react-router";
 
 const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
+  const navigate = useNavigate();
+
+  // UnPack the Selected Session Data
   const { trainerName, day, time, session } = SelectedSessionData;
 
   // Convert 24-hour time to 12-hour AM/PM format
@@ -31,7 +36,15 @@ const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
     : "free";
 
   return (
-    <div className="bg-gradient-to-b from-gray-500/80 to-gray-500/50">
+    <div className="relative bg-gradient-to-b from-gray-500/80 to-gray-500/50">
+      {/* Section-Scoped Floating Back Button */}
+      <button
+        className="absolute top-5 left-5 flex items-center gap-2 text-lg px-10 py-2 bg-white hover:bg-gray-100/90 text-black rounded-lg cursor-pointer"
+        onClick={() => navigate(-1)}
+      >
+        <IoMdArrowRoundBack className="text-xl" />
+        Back
+      </button>
       <div className="mx-auto max-w-7xl py-5 flex flex-col md:flex-row items-center justify-center gap-2">
         {/* Selected Session Data */}
         <div className="max-w-4xl w-full bg-black/20 rounded-4xl shadow-lg p-6">

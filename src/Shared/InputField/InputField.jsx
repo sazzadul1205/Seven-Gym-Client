@@ -66,6 +66,7 @@ InputField.propTypes = {
     "textarea",
     "select",
     "tel",
+    "time", // Add "time" here
   ]),
   placeholder: PropTypes.string,
   register: PropTypes.func,

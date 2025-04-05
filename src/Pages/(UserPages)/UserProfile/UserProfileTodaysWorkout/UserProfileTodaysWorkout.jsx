@@ -74,8 +74,6 @@ const UserProfileTodaysWorkout = ({ recentWorkouts, refetch }) => {
     document.getElementById("Todays_Workout_Details_Modal").close();
   };
 
-  console.log(todaysWorkouts);
-
   return (
     <div className="bg-linear-to-bl from-gray-200 to-gray-400 p-5 shadow-xl rounded-xl">
       {/* Header Section */}
