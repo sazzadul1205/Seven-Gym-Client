@@ -9,7 +9,7 @@ import useAuth from "../../../Hooks/useAuth";
 
 // Import Icons
 import { ImExit } from "react-icons/im";
-import { FaBook, FaUser } from "react-icons/fa";
+import { FaBook, FaStopwatch, FaUser } from "react-icons/fa";
 import { GiUpgrade } from "react-icons/gi";
 import { AiTwotoneSchedule } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -70,6 +70,11 @@ const NavbarEnd = ({ UsersData }) => {
         name: "Settings",
         path: "/User/UserSettings",
         icon: <IoSettingsOutline />,
+      },
+      {
+        name: "My Trainer Management",
+        path: "/User/UserTrainerManagement",
+        icon: <FaStopwatch />,
       },
     ],
     Trainer: [

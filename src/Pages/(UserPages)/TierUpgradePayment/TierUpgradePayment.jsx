@@ -19,6 +19,8 @@ import FetchingError from "../../../Shared/Component/FetchingError";
 
 // Import Background Image
 import GalleryBackground from "../../../assets/Home-Background/Home-Background.jpeg";
+
+// Tier Related Component
 import TierUpgradePaymentBox from "./TierUpgradePaymentBox/TierUpgradePaymentBox";
 import TierUpgradePaymentBronze from "./TierUpgradePaymentBox/TierUpgradePaymentBronze/TierUpgradePaymentBronze";
 

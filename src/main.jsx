@@ -46,6 +46,7 @@ import TestimonialsPage from "./Pages/(PublicPages)/(About)/TestimonialsPage/Tes
 // Trainer Pages Import
 import TrainerSchedule from "./Pages/(TrainerPages)/TrainerSchedule/TrainerSchedule.jsx";
 import TrainerSettingsLayout from "./Layouts/TrainerSettingsLayout.jsx";
+import UserTrainerManagement from "./Pages/(UserPages)/UserTrainerManagement/UserTrainerManagement.jsx";
 
 // React Query Client
 const queryClient = new QueryClient();
@@ -109,6 +110,10 @@ createRoot(document.getElementById("root")).render(
               <Route
                 path="/User/UserSchedule/:email"
                 element={<UserSchedulePlanner />}
+              />
+              <Route
+                path="/User/UserTrainerManagement"
+                element={<UserTrainerManagement />}
               />
             </Route>
 

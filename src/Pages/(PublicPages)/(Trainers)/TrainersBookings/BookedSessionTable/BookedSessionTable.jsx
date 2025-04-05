@@ -115,29 +115,28 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
 
     setLoading(true);
 
-    // Prepare payload
+    // Prepare formatted date
     const now = new Date();
     const pad = (n) => n.toString().padStart(2, "0");
     const formattedDate =
       `${pad(now.getDate())}-${pad(now.getMonth() + 1)}-${now.getFullYear()}T` +
       `${pad(now.getHours())}:${pad(now.getMinutes())}`;
 
+    // Collect all session IDs
     const sessionIds = listedSessions.map((s) => s.id);
-    const totalPrice =
-      listedSessions.reduce((sum, s) => sum + Number(s.classPrice || 0), 0) *
-      duration;
 
+    // Prepare payload
     const payload = {
       bookedAt: formattedDate,
       sessions: sessionIds,
       bookerEmail: user?.email,
       trainer: name,
-      totalPrice,
+      totalPrice: adjustedGrandTotal.toFixed(2),
       durationWeeks: duration,
     };
 
     try {
-      // POST request to backend
+      // Replace with actual request when ready
       const res = await axiosPublic.post("/Trainers_Booking_Request", payload);
 
       if (res.data?.requestId) {
@@ -149,7 +148,6 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
           showConfirmButton: false,
         });
 
-        // Optionally reset the list or state
         setListedSessions([]);
         navigate(-1);
       } else {
