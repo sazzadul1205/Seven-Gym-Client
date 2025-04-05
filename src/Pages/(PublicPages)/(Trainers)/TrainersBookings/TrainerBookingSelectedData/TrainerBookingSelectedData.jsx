@@ -31,7 +31,7 @@ const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
     : "free";
 
   return (
-    <div className="bg-gradient-to-tl from-gray-500/80 to-gray-500/50 p-8 flex items-center justify-center gap-2">
+    <div className="bg-gradient-to-b from-gray-500/80 to-gray-500/50 py-5 flex items-center justify-center gap-2">
       {/* Selected Session Data */}
       <div className="max-w-4xl w-full bg-black/20 rounded-4xl shadow-lg p-6 ">
         {/* Title */}

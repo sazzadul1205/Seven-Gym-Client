@@ -17,6 +17,7 @@ const CommonButton = ({
   borderRadius = "rounded-lg", // Border radius
   width = "auto", // Custom width
   cursorStyle = "cursor-pointer", // Default cursor
+  disabled = false, // Disabled state
 }) => {
   const colorMap = {
     OriginalRed: {
@@ -42,6 +43,8 @@ const CommonButton = ({
     ? `to-[${bgToColor}]`
     : colorMap[bgColor]?.to || `to-${bgColor}-600`;
 
+  const isButtonDisabled = isLoading || disabled; // Disable button if loading or disabled
+
   return (
     <button
       type={type}
@@ -50,7 +53,7 @@ const CommonButton = ({
         bg-gradient-to-bl ${fromColor} ${toColor}
         hover:bg-gradient-to-tr disabled:opacity-50 disabled:cursor-not-allowed`}
       onClick={clickEvent}
-      disabled={isLoading} // Disable button while loading
+      disabled={isButtonDisabled} // Disable button while loading
     >
       {isLoading ? (
         <span className="flex items-center">
@@ -86,6 +89,7 @@ CommonButton.propTypes = {
   borderRadius: PropTypes.string,
   width: PropTypes.string,
   cursorStyle: PropTypes.string, // New: Custom cursor style
+  disabled: PropTypes.bool, // New: Custom cursor style
 };
 
 export default CommonButton;

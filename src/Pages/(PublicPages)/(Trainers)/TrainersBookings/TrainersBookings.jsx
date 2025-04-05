@@ -15,10 +15,10 @@ import SameTimeWeekClass from "./SameTimeWeekClass/SameTimeWeekClass";
 import BookedTable from "./BookedTable/BookedTable";
 import SameClassTypeWeekClass from "./SameClassTypeWeekClass/SameClassTypeWeekClass";
 import TrainerBookingTrainer from "./TrainerBookingTrainer/TrainerBookingTrainer";
+import TrainerBookingSelectedData from "./TrainerBookingSelectedData/TrainerBookingSelectedData";
 
 // Background
 import Trainer_Details_Page_Background from "../../../../assets/Trainers-Details-Background/Trainer_Details_Page_Background.jpg";
-import TrainerBookingSelectedData from "./TrainerBookingSelectedData/TrainerBookingSelectedData";
 
 const TrainersBookings = () => {
   const axiosPublic = useAxiosPublic();
@@ -26,22 +26,20 @@ const TrainersBookings = () => {
   const { name } = useParams();
   const { user } = useAuth();
 
+  // State for listed sessions
   const [listedSessions, setListedSessions] = useState([]);
 
+  // State for selected session data
   const searchParams = new URLSearchParams(location.search);
-  const Day = searchParams.get("day");
-  const TimeStart = searchParams.get("timeStart");
-  const ClassType = searchParams.get("classType");
 
-  const {
-    data: UsersData,
-    isLoading: UsersDataLoading,
-    error: UsersDataError,
-  } = useQuery({
-    queryKey: ["UsersData"],
-    queryFn: () =>
-      axiosPublic.get(`/Users?email=${user.email}`).then((res) => res.data),
-  });
+  // Extracting day from URL parameters
+  const Day = searchParams.get("day");
+
+  // Extracting timeStart from URL parameters
+  const TimeStart = searchParams.get("timeStart");
+
+  // Extracting classType from URL parameters
+  const ClassType = searchParams.get("classType");
 
   const {
     data: TrainerDetailData,
@@ -55,6 +53,7 @@ const TrainersBookings = () => {
         .then((res) => res.data),
   });
 
+  // Fetch Selected Session Data
   const {
     data: SelectedSessionData,
     isLoading: SelectedSessionDataIsLoading,
@@ -71,6 +70,26 @@ const TrainersBookings = () => {
           },
         })
         .then((res) => res.data),
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+  });
+
+  // Fetch Same Class Type Data
+  const {
+    data: SameClassTypeData,
+    isLoading: SameClassTypeDataIsLoading,
+    error: SameClassTypeDataError,
+  } = useQuery({
+    queryKey: ["SameClassTypeData", name, ClassType],
+    queryFn: () =>
+      axiosPublic
+        .get("/Trainers_Schedule/SameClassTypeSession", {
+          params: {
+            trainerName: name,
+            classType: ClassType,
+          },
+        })
+        .then((res) => res.data),
   });
 
   const {
@@ -81,39 +100,28 @@ const TrainersBookings = () => {
     queryKey: ["SameTimeData"],
     queryFn: () =>
       axiosPublic
-        .get(`Trainers_Schedule/${name}/time/${TimeStart}`)
+        .get(`/Trainers_Schedule/${name}/time/${TimeStart}`)
         .then((res) => res.data),
   });
 
-  const {
-    data: SameClassTypeData,
-    isLoading: SameClassTypeDataIsLoading,
-    error: SameClassTypeDataError,
-  } = useQuery({
-    queryKey: ["SameClassTypeData"],
-    queryFn: () =>
-      axiosPublic
-        .get(`Trainers_Schedule/${name}/classType/${ClassType}`)
-        .then((res) => res.data),
-  });
-
+  // Log TrainerDetailData
   const trainer = TrainerDetailData?.[0];
 
-  // ✅ Set listedSessions from selected session
+  //  Set listedSessions from selected session
   useEffect(() => {
+    console.log("SelectedSessionData:", SelectedSessionData);
     if (SelectedSessionData?.session) {
       setListedSessions([SelectedSessionData.session]);
     }
   }, [SelectedSessionData]);
 
-  // ✅ Log when listedSessions updates
+  // Log when listedSessions updates
   useEffect(() => {
-    console.log("Updated listedSessions:", listedSessions);
+    // console.log("Updated listedSessions:", listedSessions);
   }, [listedSessions]);
 
   if (
     SameTimeDataIsLoading ||
-    UsersDataLoading ||
     TrainerDetailDataLoading ||
     SameClassTypeDataIsLoading ||
     SelectedSessionDataIsLoading
@@ -122,7 +130,6 @@ const TrainersBookings = () => {
 
   if (
     SameTimeDataError ||
-    UsersDataError ||
     TrainerDetailDataError ||
     SameClassTypeDataError ||
     SelectedSessionDataError
@@ -153,15 +160,15 @@ const TrainersBookings = () => {
         trainer={trainer}
       />
 
+      {/* Same Class Type Week Class */}
+      <SameClassTypeWeekClass
+        listedSessions={listedSessions}
+        SameClassTypeData={SameClassTypeData}
+        setListedSessions={setListedSessions}
+      />
+
       {/* <SameTimeWeekClass
         SameTimeData={SameTimeData}
-        Day={Day}
-        listedSessions={listedSessions}
-        setListedSessions={setListedSessions}
-      /> */}
-
-      {/* <SameClassTypeWeekClass
-        SameClassTypeData={SameClassTypeData}
         Day={Day}
         listedSessions={listedSessions}
         setListedSessions={setListedSessions}

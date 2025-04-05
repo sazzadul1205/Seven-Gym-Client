@@ -137,7 +137,9 @@ const TrainerSchedule = ({
         <div className="bg-gray-100 border border-gray-300 p-1 mt-1">
           <div className="mt-4 flex flex-col md:flex-row justify-between items-center gap-3 px-5">
             {/* Text */}
-            <h3 className="font-semibold text-lg text-black">Schedule Control</h3>
+            <h3 className="font-semibold text-lg text-black">
+              Schedule Control
+            </h3>
 
             {/* Save Button */}
             <button
@@ -169,7 +171,7 @@ const TrainerSchedule = ({
 
 // Define PropTypes for TrainerSchedule
 TrainerSchedule.propTypes = {
-  refetch: PropTypes.func.isRequired,
+  refetch: PropTypes.func,
   TrainerProfileData: PropTypes.shape({
     name: PropTypes.string,
     preferences: PropTypes.shape({

@@ -68,7 +68,7 @@ const BookedTable = ({ listedSessions }) => {
   };
 
   return (
-    <div className="bg-linear-to-tl from-gray-500/80 to-gray-500/50 py-5">
+    <div className="bg-gradient-to-b from-gray-500/80 to-gray-500/50 py-5">
       <div className="max-w-7xl mx-auto items-center py-5 px-4 bg-white/80 rounded-xl">
         {/* Title */}
         <h2 className="flex items-center text-xl font-bold text-black pb-2 gap-2">
@@ -76,6 +76,7 @@ const BookedTable = ({ listedSessions }) => {
           Bookings List
         </h2>
 
+        {/* Divider */}
         <div className="p-[1px] bg-black"></div>
 
         {/* Original Schedule Section */}
