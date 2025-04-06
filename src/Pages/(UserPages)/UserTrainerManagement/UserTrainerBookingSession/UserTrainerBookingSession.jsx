@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 
+// Import Package
+import Swal from "sweetalert2";
+import PropTypes from "prop-types";
+
 // Import icons
 import { FaInfo, FaRegTrashAlt } from "react-icons/fa";
 
-// Import Packages
-import PropTypes from "prop-types";
+// Import Modal
 import UserTrainerBookingInfoModal from "./UserTrainerBookingInfoModal/UserTrainerBookingInfoModal";
+
+// import Hooks
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 // Format: "06-04-2025T11:12"
 const parseCustomDate = (input) => {
@@ -52,7 +58,9 @@ const getRemainingTime = (input, now) => {
   return `${days}d ${hours}h ${minutes}m left`;
 };
 
-const UserTrainerBookingSession = ({ TrainersBookingRequestData }) => {
+const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
+  const axiosPublic = useAxiosPublic();
+
   const [now, setNow] = useState(new Date());
 
   // Initializes a state variable for the selected booking.
@@ -66,6 +74,45 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData }) => {
 
     return () => clearInterval(interval);
   }, []);
+
+  const handleDeleteBooking = async (bookingId) => {
+    const confirmResult = await Swal.fire({
+      title: "Are you sure?",
+      text: "This will cancel the booking permanently.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, cancel it!",
+    });
+
+    if (confirmResult.isConfirmed) {
+      try {
+        const response = await axiosPublic.delete(
+          `/Trainers_Booking_Request/${bookingId}`
+        );
+
+        if (response.data?.message) {
+          Swal.fire({
+            icon: "success",
+            title: "Canceled!",
+            text: "Booking Canceled Successfully.",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+
+          refetch();
+          // Optional: refresh or update local state
+        }
+      } catch {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong! Please try again.",
+        });
+      }
+    }
+  };
 
   // Return Null if data is none
   if (!TrainersBookingRequestData) return null;
@@ -158,6 +205,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData }) => {
                         <button
                           data-tip="Cancel Booking"
                           className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                          onClick={() => handleDeleteBooking(booking?._id)}
                         >
                           <FaRegTrashAlt className="text-red-500" />
                         </button>
@@ -235,6 +283,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData }) => {
                   <button
                     data-tip="Cancel Booking"
                     className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                    onClick={() => handleDeleteBooking(booking._id)}
                   >
                     <FaRegTrashAlt className="text-red-500" />
                   </button>
@@ -253,7 +302,6 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData }) => {
   );
 };
 
-// Prop Type Validation
 UserTrainerBookingSession.propTypes = {
   TrainersBookingRequestData: PropTypes.arrayOf(
     PropTypes.shape({
@@ -263,8 +311,12 @@ UserTrainerBookingSession.propTypes = {
       totalPrice: PropTypes.string,
       durationWeeks: PropTypes.number.isRequired,
       status: PropTypes.string.isRequired,
+      sessions: PropTypes.arrayOf(PropTypes.string),
+      bookerEmail: PropTypes.string,
     })
   ),
+  refetch: PropTypes.func,
+  setBookings: PropTypes.func,
 };
 
 export default UserTrainerBookingSession;

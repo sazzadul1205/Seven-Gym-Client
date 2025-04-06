@@ -47,11 +47,12 @@ const UserTrainerManagement = () => {
   // State to track the active tab
   const [activeTab, setActiveTab] = useState("tooltip-active");
 
-  // Fetch user data
+  // Fetch all Trainer Booking Request
   const {
     data: TrainersBookingRequestData,
     isLoading: TrainersBookingRequestIsLoading,
     error: TrainersBookingRequestError,
+    refetch: TrainersBookingRequestDataRefetch,
   } = useQuery({
     enabled: !!user?.email,
     queryKey: ["UsersData", user?.email],
@@ -61,8 +62,13 @@ const UserTrainerManagement = () => {
         .then((res) => res.data),
   });
 
+  // Load State
   if (TrainersBookingRequestIsLoading) return <Loading />;
+
+  // Error State
   if (TrainersBookingRequestError) return <FetchingError />;
+
+  // If Data is not available
   if (!TrainersBookingRequestData || TrainersBookingRequestData.length === 0)
     return null;
 
@@ -94,6 +100,7 @@ const UserTrainerManagement = () => {
             {activeTab === "tooltip-booking" && (
               <UserTrainerBookingSession
                 TrainersBookingRequestData={TrainersBookingRequestData || {}}
+                refetch={TrainersBookingRequestDataRefetch}
               />
             )}
             {activeTab === "tooltip-history" && <UserTrainerSessionHistory />}
