@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
 import { Link, useParams } from "react-router";
+import { useState, useEffect, useRef } from "react";
 
 // Import Package
+import { IoSettings } from "react-icons/io5";
 import { useQuery } from "@tanstack/react-query";
 
 // Import Utility
@@ -11,13 +12,14 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
 
 // Import Component
-import TodaysSchedule from "./TodaysSchedule/TodaysSchedule";
 import ExtraList from "./ExtraLists/ExtraLists";
+import TodaysSchedule from "./TodaysSchedule/TodaysSchedule";
 
 // Import Example JSON
 import ExampleSchedule from "../../../JSON/ExampleSchedule.json";
+
+// Import Modal
 import GenerateUserScheduleModal from "./GenerateUserScheduleModal/GenerateUserScheduleModal";
-import { IoSettings } from "react-icons/io5";
 
 const UserSchedulePlanner = () => {
   const axiosPublic = useAxiosPublic();

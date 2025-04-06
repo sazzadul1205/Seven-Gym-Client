@@ -133,6 +133,7 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
       trainer: name,
       totalPrice: adjustedGrandTotal.toFixed(2),
       durationWeeks: duration,
+      status: "Pending",
     };
 
     try {

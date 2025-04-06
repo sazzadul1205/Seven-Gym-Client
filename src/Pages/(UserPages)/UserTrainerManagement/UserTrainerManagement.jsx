@@ -3,6 +3,7 @@ import { useState } from "react";
 // Import Packages
 import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
+import { useQuery } from "@tanstack/react-query";
 
 // Import Background
 import UserTrainerManagementBackground from "../../../assets/User-Trainer-Management-Background/UserTrainerManagementBackground.jpg";
@@ -12,30 +13,58 @@ import UserTrainerActiveSession from "./UserTrainerActiveSession/UserTrainerActi
 import UserTrainerBookingSession from "./UserTrainerBookingSession/UserTrainerBookingSession";
 import UserTrainerSessionHistory from "./UserTrainerSessionHistory/UserTrainerSessionHistory";
 
+// Import Hooks
+import useAuth from "../../../Hooks/useAuth";
+import Loading from "../../../Shared/Loading/Loading";
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
+import FetchingError from "../../../Shared/Component/FetchingError";
+
 const icons = [
   {
     src: "https://i.ibb.co/gF6qkSKF/Active-Trainer.png",
     alt: "Active Sessions",
     id: "tooltip-active",
-    label: "Active Session's", // Tooltip text
+    label: "Active Session's",
   },
   {
     src: "https://i.ibb.co/LdVXnyDK/Trainer-Booking.png",
     alt: "Booking Request",
     id: "tooltip-booking",
-    label: "Booking Session's", // Tooltip text
+    label: "Booking Session's",
   },
   {
     src: "https://i.ibb.co/SXM5XxWG/Trainer-History.png",
     alt: "History",
     id: "tooltip-history",
-    label: "Session's History", // Tooltip text
+    label: "Session's History",
   },
 ];
 
 const UserTrainerManagement = () => {
+  const { user } = useAuth();
+  const axiosPublic = useAxiosPublic();
+
   // State to track the active tab
   const [activeTab, setActiveTab] = useState("tooltip-active");
+
+  // Fetch user data
+  const {
+    data: TrainersBookingRequestData,
+    isLoading: TrainersBookingRequestIsLoading,
+    error: TrainersBookingRequestError,
+  } = useQuery({
+    enabled: !!user?.email,
+    queryKey: ["UsersData", user?.email],
+    queryFn: () =>
+      axiosPublic
+        .get(`/Trainers_Booking_Request/Booker/${user.email}`)
+        .then((res) => res.data),
+  });
+
+  if (TrainersBookingRequestIsLoading) return <Loading />;
+  if (TrainersBookingRequestError) return <FetchingError />;
+  if (!TrainersBookingRequestData || TrainersBookingRequestData.length === 0)
+    return null;
 
   return (
     <div
@@ -60,9 +89,13 @@ const UserTrainerManagement = () => {
           </div>
 
           {/* Main content */}
-          <div className="flex-1 text-black bg-[#f6eee3] border-[10px] border-[#A1662F] min-h-screen p-8">
+          <div className="flex-1 text-black bg-[#f6eee3] border-[10px] border-[#A1662F] min-h-screen">
             {activeTab === "tooltip-active" && <UserTrainerActiveSession />}
-            {activeTab === "tooltip-booking" && <UserTrainerBookingSession />}
+            {activeTab === "tooltip-booking" && (
+              <UserTrainerBookingSession
+                TrainersBookingRequestData={TrainersBookingRequestData || {}}
+              />
+            )}
             {activeTab === "tooltip-history" && <UserTrainerSessionHistory />}
           </div>
         </div>
