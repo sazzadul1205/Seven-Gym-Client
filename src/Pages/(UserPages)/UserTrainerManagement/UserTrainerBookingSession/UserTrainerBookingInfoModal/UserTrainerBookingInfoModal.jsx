@@ -111,6 +111,8 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
 
   // Unpack trainer data
   const SelectedTrainerData = TrainerData?.[0] || {};
+
+  // Get the gender icon
   const { icon } = getGenderIcon(SelectedTrainerData?.gender);
 
   // Use selectedBooking.sessions directly
@@ -139,10 +141,8 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
   // Error Management
   if (TrainerDataError || ScheduleByIDDataError) return <FetchingError />;
 
-  console.log(selectedBooking);
-
   return (
-    <div className="modal-box min-w-5xl p-0 bg-gradient-to-b from-white to-gray-100 text-black">
+    <div className="modal-box max-w-5xl w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black">
       {/* Header */}
       <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
         <h3 className="font-bold text-lg">Booked Sessions Details</h3>
@@ -154,88 +154,98 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
         />
       </div>
 
-      {/* Main Content */}
-      <div className="flex items-center justify-between gap-5 px-6 py-4">
-        {/* Trainers Data */}
-        <div className="w-1/2 flex justify-center items-center gap-5">
-          {/* Profile Image */}
-          <img
-            src={SelectedTrainerData?.imageUrl || "/default-profile.png"}
-            alt={SelectedTrainerData?.name || "Trainer"}
-            className="w-32 h-32 rounded-full shadow-md object-cover"
-            loading="lazy"
-          />
+      {/* Scrollable Body */}
+      <div className="overflow-auto px-4 py-6 sm:px-6 md:px-8">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          {/* Trainer Info */}
+          <div className="w-full lg:w-1/2 flex flex-col sm:flex-row items-center sm:items-start justify-center gap-4 sm:gap-6">
+            {/* Image */}
+            <img
+              src={SelectedTrainerData?.imageUrl || "/default-profile.png"}
+              alt={SelectedTrainerData?.name || "Trainer"}
+              className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full shadow-md object-cover"
+              loading="lazy"
+            />
 
-          {/* Name, Specialization, Badge */}
-          <div className="space-y-2">
-            {/* Name and Gender */}
-            <div className="flex items-center justify-center gap-3">
-              <p className="text-2xl font-bold">
-                {SelectedTrainerData?.name || "Unknown Trainer"}
+            {/* Trainer Content */}
+            <div className="text-center sm:text-left space-y-1">
+              {/* Name */}
+              <div className="flex items-center justify-center sm:justify-start gap-2">
+                <p className="text-xl sm:text-2xl font-bold">
+                  {SelectedTrainerData?.name || "Unknown Trainer"}
+                </p>
+                {icon}
+              </div>
+
+              {/* Specialization */}
+              <p className="text-xs sm:text-sm md:text-base italic text-gray-600">
+                {SelectedTrainerData?.specialization ||
+                  "Specialization Not Available"}
               </p>
-              {icon}
+
+              {/* Tier Badge */}
+              {SelectedTrainerData?.tier && (
+                <span
+                  className={`inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-semibold ${getTierBadge(
+                    SelectedTrainerData?.tier
+                  )}`}
+                >
+                  {SelectedTrainerData?.tier} Tier
+                </span>
+              )}
             </div>
-
-            {/* Specialization */}
-            <p className="text-lg font-medium italic">
-              {SelectedTrainerData?.specialization ||
-                "Specialization Not Available"}
-            </p>
-
-            {/* Tier Badge */}
-            {SelectedTrainerData?.tier && (
-              <span
-                className={`inline-block px-6 py-1 rounded-full text-sm font-semibold ${getTierBadge(
-                  SelectedTrainerData?.tier
-                )}`}
-              >
-                {SelectedTrainerData?.tier} Tier
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Details Information */}
-        <div className="w-1/2 p-5 space-y-2 border-l-2 border-black">
-          {/* Duration Weeks */}
-          <div className="flex justify-between gap-5">
-            <strong>Duration (Weeks):</strong>{" "}
-            {selectedBooking?.durationWeeks === 1
-              ? "1 Week"
-              : `${selectedBooking?.durationWeeks} Weeks`}
           </div>
 
-          {/* Total Price */}
-          <div className="flex justify-between gap-5">
-            <strong>Total Price:</strong>
-            {selectedBooking?.totalPrice === "free"
-              ? "Free"
-              : `$ ${selectedBooking?.totalPrice}`}
-          </div>
+          {/* Booking Details */}
+          <div className="w-full lg:w-1/2 mt-6 lg:mt-0 p-4 sm:p-6 border-t sm:border-t-0 sm:border-l-2 border-gray-300">
+            <div className="space-y-4 text-sm sm:text-base">
+              <div className="flex justify-between">
+                <strong>Duration (Weeks):</strong>
+                <span>
+                  {selectedBooking?.durationWeeks === 1
+                    ? "1 Week"
+                    : `${selectedBooking?.durationWeeks} Weeks`}
+                </span>
+              </div>
 
-          {/* Status */}
-          <div className="flex justify-between gap-5">
-            <strong>Status:</strong>
-            {selectedBooking?.status}
-          </div>
+              <div className="flex justify-between">
+                <strong>Total Price:</strong>
+                <span>
+                  {selectedBooking?.totalPrice === "free"
+                    ? "Free"
+                    : `$${selectedBooking?.totalPrice}`}
+                </span>
+              </div>
 
-          {/* Booked At */}
-          <div className="flex justify-between gap-5">
-            <strong>Booked At:</strong>
-            {selectedBooking?.bookedAt
-              ? formatDate(fixDateFormat(selectedBooking?.bookedAt))
-              : "N/A"}
+              <div className="flex justify-between">
+                <strong>Status:</strong>
+                <span>{selectedBooking?.status || "N/A"}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <strong>Booked At:</strong>
+                <span>
+                  {selectedBooking?.bookedAt
+                    ? formatDate(fixDateFormat(selectedBooking?.bookedAt))
+                    : "N/A"}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Sessions Table */}
       <div className="p-3">
+        {/* Title */}
         <h3 className="text-lg font-semibold py-2">Session Bookings</h3>
+
+        {/* Schedule By Id  */}
         {ScheduleByIDData?.length > 0 ? (
           <>
             {/* Desktop View */}
             <div className="hidden md:flex">
+              {/* Schedule By ID  */}
               <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black mb-6">
                 {/* Table Header */}
                 <thead>
@@ -247,7 +257,9 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
                     <th className="px-4 py-2 border-b bg-gray-300">
                       Class Type
                     </th>
-                    <th className="px-4 py-2 border-b bg-gray-300">Time</th>
+                    <th className="px-4 py-2 border-b bg-gray-300 text-center">
+                      Time
+                    </th>
                     <th className="px-4 py-2 border-b bg-gray-300">Price</th>
                   </tr>
                 </thead>
@@ -255,7 +267,10 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
                 {/* Table Content */}
                 <tbody>
                   {ScheduleByIDData?.map((s, idx) => (
-                    <tr key={`${s.id}-${idx}`} className="bg-gray-50">
+                    <tr
+                      key={`${s.id}-${idx}`}
+                      className="bg-gray-50 hover:bg-gray-200 border border-gray-300 cursor-pointer"
+                    >
                       {/* Day */}
                       <td className="px-4 py-2">{s.day}</td>
 
@@ -279,7 +294,11 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
                       </td>
 
                       {/* Price */}
-                      <td className="px-4 py-2">{`$ ${s.classPrice}`}</td>
+                      <td className="px-4 py-2">
+                        {s.classPrice === "free" || s.classPrice === "Free"
+                          ? "Free"
+                          : `$ ${s.classPrice}`}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -287,29 +306,179 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
             </div>
 
             {/* Mobile View */}
-            <div className="flex md:hidden flex-col space-y-4 mb-6">
+            <div className="flex md:hidden flex-col mb-6">
               {ScheduleByIDData.map((s, idx) => (
                 <div
                   key={`${s.id}-${idx}`}
                   className={`text-black text-center ${
                     idx % 2 === 0 ? "bg-gray-100" : "bg-white"
-                  } rounded-xl p-5 shadow-md`}
+                  } md:rounded-xl p-5 shadow-md border-2 border-gray-300`}
                 >
-                  <h4 className="text-xl font-semibold">{s.classType}</h4>
-                  <p>{formatDate(s.day)}</p>
+                  {/* Day */}
+                  <h4>{s.day}</h4>
+
+                  {/* Class Type */}
+                  <p className="text-xl font-semibold">{s.classType}</p>
+
+                  {/* Time */}
                   <div className="flex justify-center gap-2">
                     <p>{formatTimeTo12Hour(s.start)}</p>
                     <span>-</span>
                     <p>{formatTimeTo12Hour(s.end)}</p>
                   </div>
-                  <p className="font-bold text-lg">{`$${s.classPrice}`}</p>
+
+                  {/* Price */}
+                  <p className="font-bold text-lg">
+                    {" "}
+                    {s.classPrice === "free" || s.classPrice === "Free"
+                      ? "Free"
+                      : `$ ${s.classPrice}`}
+                  </p>
                 </div>
               ))}
             </div>
           </>
         ) : (
+          // If No Session Available
           <p className="text-center text-xl">No sessions available</p>
         )}
+      </div>
+
+      {/* Activity Table */}
+      <div className="p-3">
+        {/* Title */}
+        <h3 className="text-lg font-semibold py-2">Weekly Activity Schedule</h3>
+
+        {/* Activity Content : Desktop */}
+        <div className="hidden md:flex  overflow-x-auto">
+          {/* Activity Table */}
+          <table className="table-auto border-collapse w-full text-sm text-center text-black shadow-md">
+            {/* Table Header */}
+            <thead>
+              <tr className="bg-gray-400 text-white">
+                {[
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                  "Sunday",
+                ].map((day) => (
+                  <th key={day} className="px-4 py-2 border">
+                    {day}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            {/* Table Content */}
+            <tbody>
+              <tr>
+                {[
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                  "Sunday",
+                ].map((day) => {
+                  const sessions =
+                    ScheduleByIDData?.filter((s) => s.day === day) || []; // Ensure it's always an array
+
+                  return (
+                    <td key={day} className="min-w-[120px] align-top">
+                      {sessions.length > 0 ? (
+                        sessions.map((s, idx) => (
+                          <div
+                            key={idx}
+                            className="p-2 bg-linear-to-br hover:bg-linear-to-tr from-green-100 to-green-300 text-xs border border-gray-400"
+                          >
+                            {/* classType */}
+                            <p className="font-semibold">{s.classType}</p>
+
+                            {/* Time */}
+                            <p>
+                              {formatTimeTo12Hour(s.start)} -{" "}
+                              {formatTimeTo12Hour(s.end)}
+                            </p>
+
+                            {/* Paid */}
+                            <p className="italic text-bold font-semibold">
+                              {s.classPrice === "free" ||
+                              s.classPrice === "Free"
+                                ? "Free"
+                                : `$ ${s.classPrice}`}
+                            </p>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="p-2 bg-linear-to-br hover:bg-linear-to-tr from-red-100 to-red-300 text-xs border border-gray-400 py-6 cursor-pointer ">
+                          <p className="text-red-500 font-bold italic">
+                            No sessions
+                          </p>
+                        </div>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Activity Content : Mobile */}
+        <div className="flex md:hidden space-y-4">
+          <div className="w-full">
+            {[
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday",
+            ].map((day) => {
+              const sessions =
+                ScheduleByIDData?.filter((s) => s.day === day) || []; // Ensure it's always an array
+
+              return (
+                <div key={day} className="border-b pb-4">
+                  <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                    {day}
+                  </h3>
+
+                  {sessions.length > 0 ? (
+                    sessions.map((s, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-gradient-to-br from-green-100 to-green-300 p-3 mb-2 border border-gray-400"
+                      >
+                        <p className="font-semibold">{s.classType}</p>
+                        <p>
+                          {formatTimeTo12Hour(s.start)} -{" "}
+                          {formatTimeTo12Hour(s.end)}
+                        </p>
+                        <p className="italic font-semibold">
+                          {s.classPrice === "free" || s.classPrice === "Free"
+                            ? "Free"
+                            : `$ ${s.classPrice}`}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="bg-gradient-to-br from-red-100 to-red-300 p-3 mb-2 border border-gray-400">
+                      <p className="text-red-500 font-bold italic">
+                        No sessions
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

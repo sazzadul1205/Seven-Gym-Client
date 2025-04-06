@@ -72,9 +72,9 @@ const UserTrainerManagement = () => {
       style={{ backgroundImage: `url(${UserTrainerManagementBackground})` }}
     >
       <div className="bg-gradient-to-b from-gray-500/50 to-gray-800/50 min-h-screen">
-        <div className="mx-auto max-w-7xl flex">
+        <div className="flex flex-col md:flex-row  mx-auto max-w-7xl ">
           {/* Sidebar with icons */}
-          <div className="flex flex-col items-center space-y-2 pt-2 bg-white/40">
+          <div className="flex flex-row md:flex-col items-center space-x-1 md:pt-2 bg-white/40">
             {icons.map(({ src, alt, id, label }) => (
               <TooltipIcon
                 key={id}
