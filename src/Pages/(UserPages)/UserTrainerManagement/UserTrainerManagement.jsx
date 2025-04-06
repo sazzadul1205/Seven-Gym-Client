@@ -10,8 +10,8 @@ import UserTrainerManagementBackground from "../../../assets/User-Trainer-Manage
 
 // Import Tab Content
 import UserTrainerActiveSession from "./UserTrainerActiveSession/UserTrainerActiveSession";
-import UserTrainerBookingSession from "./UserTrainerBookingSession/UserTrainerBookingSession";
 import UserTrainerSessionHistory from "./UserTrainerSessionHistory/UserTrainerSessionHistory";
+import UserTrainerBookingSession from "./UserTrainerBookingSession/UserTrainerBookingSession";
 
 // Import Hooks
 import useAuth from "../../../Hooks/useAuth";

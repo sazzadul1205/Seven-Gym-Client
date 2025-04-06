@@ -160,6 +160,8 @@ const TrainersBookings = () => {
   )
     return <FetchingError />;
 
+  console.log(listedSessions);
+
   return (
     <div
       className="bg-fixed bg-cover bg-center"
@@ -196,7 +198,7 @@ const TrainersBookings = () => {
         SameTimeData={SameTimeData}
         listedSessions={listedSessions}
         setListedSessions={setListedSessions}
-      />  
+      />
 
       {/* Trainer Schedule */}
       <AllSessions

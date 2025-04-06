@@ -5,6 +5,7 @@ import { FaInfo, FaRegTrashAlt } from "react-icons/fa";
 
 // Import Packages
 import PropTypes from "prop-types";
+import UserTrainerBookingInfoModal from "./UserTrainerBookingInfoModal/UserTrainerBookingInfoModal";
 
 // Format: "06-04-2025T11:12"
 const parseCustomDate = (input) => {
@@ -16,6 +17,7 @@ const parseCustomDate = (input) => {
   return new Date(`${year}-${month}-${day}T${hour}:${minute}`);
 };
 
+//  Formats the input date string into a custom date format.
 const formatDate = (input) => {
   const dateObj = parseCustomDate(input);
   if (!dateObj) return "";
@@ -32,6 +34,7 @@ const formatDate = (input) => {
   return dateObj.toLocaleString("en-US", options);
 };
 
+// Calculates the remaining time between the input date and the current date.
 const getRemainingTime = (input, now) => {
   const startDate = parseCustomDate(input);
   if (!startDate) return "Invalid date";
@@ -52,6 +55,10 @@ const getRemainingTime = (input, now) => {
 const UserTrainerBookingSession = ({ TrainersBookingRequestData }) => {
   const [now, setNow] = useState(new Date());
 
+  // Initializes a state variable for the selected booking.
+  const [selectedBooking, setSelectedBooking] = useState(null);
+
+  //  useEffect hook that updates the current time every 60 seconds.
   useEffect(() => {
     const interval = setInterval(() => {
       setNow(new Date());
@@ -60,20 +67,27 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData }) => {
     return () => clearInterval(interval);
   }, []);
 
+  // Return Null if data is none
   if (!TrainersBookingRequestData) return null;
 
   return (
     <div>
+      {/* Header */}
       <div className="text-center py-1">
-        <h3 className="text-center text-lg font-semibold">Booked Sessions</h3>
+        {/* Title */}
+        <h3 className="text-center text-xl font-semibold">Booked Sessions</h3>
+
+        {/* Warnings */}
         <p className="text-sm text-red-600 italic">
           Note: Booking requests will automatically expire and be removed after
           one week from the time of booking.
         </p>
       </div>
 
+      {/* Divider */}
       <div className="mx-auto bg-black w-1/3 p-[1px]" />
 
+      {/* Booking Table */}
       <div className="py-4">
         {TrainersBookingRequestData.length > 0 ? (
           <table className="min-w-full table-auto bg-white border-collapse">
@@ -116,18 +130,21 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData }) => {
 
                   {/* Table : Buttons */}
                   <td className="flex px-4 py-2 gap-2">
+                    {/* Information Button */}
                     <button
                       data-tip="View Details"
                       className="border-2 border-green-500 bg-green-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                      onClick={() =>
+                      onClick={() => {
+                        setSelectedBooking(booking);
                         document
                           .getElementById("User_Trainer_Booking_Info_Modal")
-                          .showModal()
-                      }
+                          .showModal();
+                      }}
                     >
                       <FaInfo className="text-green-500" />
                     </button>
 
+                    {/* Delete Button */}
                     <button
                       data-tip="Cancel Booking"
                       className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
@@ -146,18 +163,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData }) => {
 
       {/* User Trainer Booking Info Modal */}
       <dialog id="User_Trainer_Booking_Info_Modal" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Hello!</h3>
-          <p className="py-4">
-            Press ESC key or click the button below to close
-          </p>
-          <div className="modal-action">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button className="btn">Close</button>
-            </form>
-          </div>
-        </div>
+        <UserTrainerBookingInfoModal selectedBooking={selectedBooking} />
       </dialog>
     </div>
   );
