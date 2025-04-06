@@ -276,7 +276,7 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
                     {/* Price */}
                     <div className="flex justify-between items-center">
                       <p className="font-bold">Price:</p>
-                      {s.classPrice === "free" ? "Free" : `$${s.classPrice}`}
+                      {s.classPrice === "free" ? "Free" : `$ ${s.classPrice}`}
                     </div>
 
                     {/* Button */}
