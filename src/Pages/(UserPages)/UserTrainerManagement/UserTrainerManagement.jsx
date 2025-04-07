@@ -48,12 +48,12 @@ const UserTrainerManagement = () => {
   // State to track the active tab
   const [activeTab, setActiveTab] = useState("tooltip-active");
 
-  // Fetch all Trainer Booking Request
+  // Fetch all Trainer Booking Request Request
   const {
     data: TrainersBookingRequestData = [],
     isLoading: TrainersBookingRequestIsLoading,
     error: TrainersBookingRequestError,
-    refetch: TrainersBookingRequestDataRefetch,
+    refetch: TrainersBookingRequestRefetch,
   } = useQuery({
     enabled: !!user?.email,
     queryKey: ["TrainersBookingRequestData", user?.email],
@@ -73,11 +73,44 @@ const UserTrainerManagement = () => {
     },
   });
 
+  // Fetch all Trainer Booking History Request
+  const {
+    data: TrainersBookingHistoryData = [],
+    isLoading: TrainersBookingHistoryIsLoading,
+    error: TrainersBookingHistoryError,
+    refetch: TrainersBookingHistoryRefetch,
+  } = useQuery({
+    enabled: !!user?.email,
+    queryKey: ["TrainersBookingHistoryData", user?.email],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainer_Booking_History?email=${user.email}`
+        );
+        return res.data;
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          // No bookings found — not a real error
+          return [];
+        }
+        throw err; // Re-throw other errors (e.g., 500, 401, etc.)
+      }
+    },
+  });
+
+  // Refetch Everything
+  const refetch = () => {
+    TrainersBookingRequestRefetch?.();
+    TrainersBookingHistoryRefetch?.();
+  };
+
   // Load State
-  if (TrainersBookingRequestIsLoading) return <Loading />;
+  if (TrainersBookingRequestIsLoading || TrainersBookingHistoryIsLoading)
+    return <Loading />;
 
   // Error State
-  if (TrainersBookingRequestError) return <FetchingError />;
+  if (TrainersBookingRequestError || TrainersBookingHistoryError)
+    return <FetchingError />;
 
   // If Data is not available
   if (!TrainersBookingRequestData || TrainersBookingRequestData.length === 0)
@@ -111,10 +144,14 @@ const UserTrainerManagement = () => {
             {activeTab === "tooltip-booking" && (
               <UserTrainerBookingSession
                 TrainersBookingRequestData={TrainersBookingRequestData || {}}
-                refetch={TrainersBookingRequestDataRefetch}
+                refetch={refetch}
               />
             )}
-            {activeTab === "tooltip-history" && <UserTrainerSessionHistory />}
+            {activeTab === "tooltip-history" && (
+              <UserTrainerSessionHistory
+                TrainersBookingHistoryData={TrainersBookingHistoryData || {}}
+              />
+            )}
           </div>
         </div>
       </div>

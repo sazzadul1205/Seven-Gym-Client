@@ -10,10 +10,10 @@ import { FaArrowUp, FaInfo, FaRegTrashAlt } from "react-icons/fa";
 
 // Import Modal
 import UserTrainerBookingInfoModal from "./UserTrainerBookingInfoModal/UserTrainerBookingInfoModal";
+import UserTrainerBookingAcceptModal from "./UserTrainerBookingAcceptModal/UserTrainerBookingAcceptModal";
 
 // import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-import UserTrainerBookingAcceptModal from "./UserTrainerBookingAcceptModal/UserTrainerBookingAcceptModal";
 
 // Format: "06-04-2025T11:12"
 const parseCustomDate = (input) => {
