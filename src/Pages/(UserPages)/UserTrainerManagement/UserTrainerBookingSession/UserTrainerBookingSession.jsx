@@ -281,7 +281,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                         {/* Tooltips */}
                         <Tooltip
                           anchorSelect={`#go-btn-${booking._id}`}
-                          content="Go to My Session"
+                          content="Register Session"
                         />
                         <Tooltip
                           anchorSelect={`#cancel-btn-${booking._id}`}

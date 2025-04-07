@@ -56,7 +56,7 @@ const UserTrainerManagement = () => {
     refetch: TrainersBookingRequestDataRefetch,
   } = useQuery({
     enabled: !!user?.email,
-    queryKey: ["UsersData", user?.email],
+    queryKey: ["TrainersBookingRequestData", user?.email],
     queryFn: async () => {
       try {
         const res = await axiosPublic.get(
