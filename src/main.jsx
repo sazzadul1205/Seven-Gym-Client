@@ -44,7 +44,6 @@ import UserSchedulePlanner from "./Pages/(UserPages)/UserSchedulePlanner/UserSch
 import TestimonialsPage from "./Pages/(PublicPages)/(About)/TestimonialsPage/TestimonialsPage.jsx";
 
 // Trainer Pages Import
-import TrainerSchedule from "./Pages/(TrainerPages)/TrainerSchedule/TrainerSchedule.jsx";
 import TrainerSettingsLayout from "./Layouts/TrainerSettingsLayout.jsx";
 import UserTrainerManagement from "./Pages/(UserPages)/UserTrainerManagement/UserTrainerManagement.jsx";
 
@@ -118,9 +117,7 @@ createRoot(document.getElementById("root")).render(
             </Route>
 
             {/* Trainer Page Links */}
-            <Route element={<TrainerSettingsLayout />}>
-              <Route path="/Trainer" element={<TrainerSchedule />} />
-            </Route>
+            <Route path="/Trainer" element={<TrainerSettingsLayout />} />
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>

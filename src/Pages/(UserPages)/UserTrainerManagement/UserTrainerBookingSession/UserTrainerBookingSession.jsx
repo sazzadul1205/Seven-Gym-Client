@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 // Import Package
 import Swal from "sweetalert2";
 import PropTypes from "prop-types";
+import { Tooltip } from "react-tooltip";
 
 // Import icons
-import { FaInfo, FaRegTrashAlt } from "react-icons/fa";
+import { FaArrowUp, FaInfo, FaRegTrashAlt } from "react-icons/fa";
 
 // Import Modal
 import UserTrainerBookingInfoModal from "./UserTrainerBookingInfoModal/UserTrainerBookingInfoModal";
@@ -61,20 +62,22 @@ const getRemainingTime = (input, now) => {
 const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
   const axiosPublic = useAxiosPublic();
 
+  // Now State
   const [now, setNow] = useState(new Date());
 
   // Initializes a state variable for the selected booking.
   const [selectedBooking, setSelectedBooking] = useState(null);
 
-  //  useEffect hook that updates the current time every 60 seconds.
+  // useEffect hook that updates the current time every 60 seconds.
   useEffect(() => {
     const interval = setInterval(() => {
       setNow(new Date());
-    }, 60000); // Update every 1 minute
+    }, 60000);
 
     return () => clearInterval(interval);
   }, []);
 
+  // Handle Delete Bookings
   const handleDeleteBooking = async (bookingId) => {
     const confirmResult = await Swal.fire({
       title: "Are you sure?",
@@ -86,6 +89,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
       confirmButtonText: "Yes, cancel it!",
     });
 
+    // If Result Yes
     if (confirmResult.isConfirmed) {
       try {
         const response = await axiosPublic.delete(
@@ -102,7 +106,6 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
           });
 
           refetch();
-          // Optional: refresh or update local state
         }
       } catch {
         Swal.fire({
@@ -116,6 +119,20 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
 
   // Return Null if data is none
   if (!TrainersBookingRequestData) return null;
+
+  // Function to determine background color based on status
+  const getStatusBackgroundColor = (status) => {
+    switch (status) {
+      case "Accepted":
+        return "bg-linear-to-bl from-green-400 to-green-200";
+      case "Rejected":
+        return "bg-linear-to-bl from-red-400 to-red-200";
+      case "Expired":
+        return "bg-linear-to-bl from-gray-400 to-gray-200";
+      default:
+        return "bg-white"; // Default background (for Pending)
+    }
+  };
 
   return (
     <div>
@@ -149,7 +166,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                     <th className="px-4 py-2 text-left">Total Price</th>
                     <th className="px-4 py-2 text-left">Duration</th>
                     <th className="px-4 py-2 text-left">Status</th>
-                    <th className="px-4 py-2 text-left">Expires In</th>
+                    <th className="px-4 py-2 text-center">Expires In</th>
                     <th className="px-4 py-2 text-left">Action</th>
                   </tr>
                 </thead>
@@ -159,56 +176,125 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                   {TrainersBookingRequestData.map((booking) => (
                     <tr
                       key={booking._id}
-                      className="border-b hover:bg-gray-100"
+                      className={`border-b hover:bg-gray-100 ${getStatusBackgroundColor(
+                        booking.status
+                      )}`}
                     >
                       {/* Table : Trainer */}
                       <td className="px-4 py-2">{booking.trainer}</td>
-
                       {/* Table : Booked At */}
                       <td className="px-4 py-2">
                         {formatDate(booking.bookedAt)}
                       </td>
-
                       {/* Table : Total Price */}
                       <td className="px-4 py-2">$ {booking.totalPrice}</td>
-
                       {/* Table : Duration Weeks */}
                       <td className="px-4 py-2">
                         {booking.durationWeeks} Weeks
                       </td>
-
                       {/* Table : Status */}
                       <td className="px-4 py-2">{booking.status}</td>
-
                       {/* Table : Remaining Time */}
-                      <td className="px-4 py-2 font-semibold text-sm">
-                        {getRemainingTime(booking.bookedAt, now)}
+                      <td className="px-4 py-2 font-semibold text-sm text-center">
+                        {
+                          booking.status === "Pending"
+                            ? getRemainingTime(booking.bookedAt, now) // Show remaining time if Pending
+                            : "-- / --" // Show Expired if not Pending
+                        }
                       </td>
 
                       {/* Table : Buttons */}
                       <td className="flex px-4 py-2 gap-2">
-                        {/* Information Button */}
-                        <button
-                          data-tip="View Details"
-                          className="border-2 border-green-500 bg-green-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                          onClick={() => {
-                            setSelectedBooking(booking);
-                            document
-                              .getElementById("User_Trainer_Booking_Info_Modal")
-                              .showModal();
-                          }}
-                        >
-                          <FaInfo className="text-green-500" />
-                        </button>
+                        {/* Conditional Buttons */}
+                        {booking.status === "Accepted" && (
+                          // "Go" Button for Accepted Status
+                          <button
+                            id={`go-btn-${booking._id}`} // Unique ID for each button
+                            className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                            onClick={() => {
+                              // Handle Go action here
+                            }}
+                          >
+                            <FaArrowUp className="text-blue-500" />{" "}
+                            {/* Go Icon */}
+                          </button>
+                        )}
 
-                        {/* Delete Button */}
-                        <button
-                          data-tip="Cancel Booking"
-                          className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                          onClick={() => handleDeleteBooking(booking?._id)}
-                        >
-                          <FaRegTrashAlt className="text-red-500" />
-                        </button>
+                        {booking.status === "Expired" && (
+                          // Only Delete Button for Expired Status
+                          <button
+                            id={`delete-btn-${booking._id}`} // Unique ID for each button
+                            className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                            onClick={() => handleDeleteBooking(booking?._id)}
+                          >
+                            <FaRegTrashAlt className="text-red-500" />{" "}
+                            {/* Delete Icon */}
+                          </button>
+                        )}
+
+                        {booking.status === "Rejected" && (
+                          // Only Delete Button for Rejected Status
+                          <button
+                            id={`delete-btn-${booking._id}`} // Unique ID for each button
+                            className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                            onClick={() => handleDeleteBooking(booking?._id)}
+                          >
+                            <FaRegTrashAlt className="text-red-500" />{" "}
+                            {/* Delete Icon */}
+                          </button>
+                        )}
+
+                        {booking.status !== "Expired" &&
+                          booking.status !== "Accepted" &&
+                          booking.status !== "Rejected" && (
+                            // Original Buttons for other statuses
+                            <>
+                              <button
+                                id={`view-details-btn-${booking._id}`} // Unique ID for each button
+                                className="border-2 border-green-500 bg-green-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                                onClick={() => {
+                                  setSelectedBooking(booking);
+                                  document
+                                    .getElementById(
+                                      "User_Trainer_Booking_Info_Modal"
+                                    )
+                                    .showModal();
+                                }}
+                              >
+                                <FaInfo className="text-green-500" />{" "}
+                                {/* Info Icon */}
+                              </button>
+
+                              <button
+                                id={`cancel-btn-${booking._id}`} // Unique ID for each button
+                                className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                                onClick={() =>
+                                  handleDeleteBooking(booking?._id)
+                                }
+                              >
+                                <FaRegTrashAlt className="text-red-500" />{" "}
+                                {/* Delete Icon */}
+                              </button>
+                            </>
+                          )}
+
+                        {/* Tooltips */}
+                        <Tooltip
+                          anchorSelect={`#go-btn-${booking._id}`}
+                          content="Go to My Session"
+                        />
+                        <Tooltip
+                          anchorSelect={`#cancel-btn-${booking._id}`}
+                          content="Cancel Booking"
+                        />
+                        <Tooltip
+                          anchorSelect={`#view-details-btn-${booking._id}`}
+                          content="View Detailed Booking Data"
+                        />
+                        <Tooltip
+                          anchorSelect={`#delete-btn-${booking._id}`}
+                          content="Delete Booking"
+                        />
                       </td>
                     </tr>
                   ))}
@@ -222,12 +308,12 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
 
         {/* Mobile View */}
         <div className="flex md:hidden flex-col space-y-4 mb-6">
-          {TrainersBookingRequestData.map((booking, idx) => (
+          {TrainersBookingRequestData.map((booking) => (
             <div
               key={booking._id}
-              className={`text-black text-center ${
-                idx % 2 === 0 ? "bg-gray-50" : "bg-white"
-              } mb-4 p-4 border-b`}
+              className={`text-black text-center ${getStatusBackgroundColor(
+                booking.status
+              )} mb-4 p-4 border-b`}
             >
               <div className="flex flex-col space-y-2">
                 {/* Trainer */}
@@ -260,33 +346,98 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                 {/* Remaining Time */}
                 <div className="flex justify-between items-center font-semibold text-sm">
                   <p className="font-bold">Expires In:</p>
-                  <span>{getRemainingTime(booking.bookedAt, now)}</span>
+                  <span>
+                    {
+                      booking.status === "Pending"
+                        ? getRemainingTime(booking.bookedAt, now) // Show remaining time if Pending
+                        : "-- / --" // Show Expired if not Pending
+                    }
+                  </span>
                 </div>
 
                 {/* Buttons */}
                 <div className="flex justify-between gap-4 pt-4">
-                  {/* Information Button */}
-                  <button
-                    data-tip="View Details"
-                    className="border-2 border-green-500 bg-green-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                    onClick={() => {
-                      setSelectedBooking(booking);
-                      document
-                        .getElementById("User_Trainer_Booking_Info_Modal")
-                        .showModal();
-                    }}
-                  >
-                    <FaInfo className="text-green-500" />
-                  </button>
+                  {/* Conditional Buttons */}
+                  {booking.status === "Accepted" && (
+                    // "Go" Button for Accepted Status
+                    <button
+                      id={`go-btn-${booking._id}`} // Unique ID for each button
+                      className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                      onClick={() => {
+                        // Handle Go action here
+                      }}
+                    >
+                      <FaArrowUp className="text-blue-500" /> {/* Go Icon */}
+                    </button>
+                  )}
 
-                  {/* Delete Button */}
-                  <button
-                    data-tip="Cancel Booking"
-                    className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                    onClick={() => handleDeleteBooking(booking._id)}
-                  >
-                    <FaRegTrashAlt className="text-red-500" />
-                  </button>
+                  {booking.status === "Expired" && (
+                    // Only Delete Button for Expired Status
+                    <button
+                      id={`cancel-btn-${booking._id}`} // Unique ID for each button
+                      className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                      onClick={() => handleDeleteBooking(booking?._id)}
+                    >
+                      <FaRegTrashAlt className="text-red-500" />{" "}
+                      {/* Delete Icon */}
+                    </button>
+                  )}
+
+                  {booking.status === "Rejected" && (
+                    // Only Delete Button for Rejected Status
+                    <button
+                      id={`cancel-btn-${booking._id}`} // Unique ID for each button
+                      className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                      onClick={() => handleDeleteBooking(booking?._id)}
+                    >
+                      <FaRegTrashAlt className="text-red-500" />{" "}
+                      {/* Delete Icon */}
+                    </button>
+                  )}
+
+                  {booking.status !== "Expired" &&
+                    booking.status !== "Accepted" &&
+                    booking.status !== "Rejected" && (
+                      // Original Buttons for other statuses
+                      <>
+                        <button
+                          id={`view-details-btn-${booking._id}`} // Unique ID for each button
+                          className="border-2 border-green-500 bg-green-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                          onClick={() => {
+                            setSelectedBooking(booking);
+                            document
+                              .getElementById("User_Trainer_Booking_Info_Modal")
+                              .showModal();
+                          }}
+                        >
+                          <FaInfo className="text-green-500" />{" "}
+                          {/* Info Icon */}
+                        </button>
+
+                        <button
+                          id={`cancel-btn-${booking._id}`} // Unique ID for each button
+                          className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                          onClick={() => handleDeleteBooking(booking?._id)}
+                        >
+                          <FaRegTrashAlt className="text-red-500" />{" "}
+                          {/* Delete Icon */}
+                        </button>
+                      </>
+                    )}
+
+                  {/* Tooltips */}
+                  <Tooltip
+                    anchorSelect={`#go-btn-${booking._id}`}
+                    content="Go to My Session"
+                  />
+                  <Tooltip
+                    anchorSelect={`#cancel-btn-${booking._id}`}
+                    content="Cancel Booking"
+                  />
+                  <Tooltip
+                    anchorSelect={`#view-details-btn-${booking._id}`}
+                    content="View Detailed Booking Data"
+                  />
                 </div>
               </div>
             </div>

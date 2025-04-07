@@ -19,6 +19,7 @@ import Loading from "../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
 
+// Tab Icons 
 const icons = [
   {
     src: "https://i.ibb.co/gF6qkSKF/Active-Trainer.png",
@@ -123,6 +124,7 @@ const UserTrainerManagement = () => {
 
 export default UserTrainerManagement;
 
+// Tool Tips for Icons
 const TooltipIcon = ({ src, alt, id, label, onClick, isActive }) => (
   <>
     <div
@@ -146,6 +148,7 @@ const TooltipIcon = ({ src, alt, id, label, onClick, isActive }) => (
   </>
 );
 
+// Prop Type Validation for TooltipIcon
 TooltipIcon.propTypes = {
   src: PropTypes.string.isRequired,
   alt: PropTypes.string.isRequired,
