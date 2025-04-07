@@ -19,7 +19,7 @@ import Loading from "../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
 
-// Tab Icons 
+// Tab Icons
 const icons = [
   {
     src: "https://i.ibb.co/gF6qkSKF/Active-Trainer.png",

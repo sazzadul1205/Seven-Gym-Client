@@ -78,36 +78,80 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
   }, []);
 
   // Handle Delete Bookings
-  const handleDeleteBooking = async (bookingId) => {
+  const handleDeleteBooking = async (booking) => {
+    if (!booking) return;
+
+    // eslint-disable-next-line no-unused-vars
+    const { _id, ...rest } = booking;
+
+    let updatedBooking = { ...rest };
+
+    if (booking.status === "Pending") {
+      const now = new Date();
+      const pad = (n) => n.toString().padStart(2, "0");
+
+      const deletedAt = `${pad(now.getDate())}-${pad(
+        now.getMonth() + 1
+      )}-${now.getFullYear()}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+      updatedBooking = {
+        ...rest,
+        status: "Deleted",
+        deletedAt,
+      };
+    }
+
+    // Step 1: Confirm Deletion (Conditional message based on status)
+    const confirmMessage =
+      booking.status === "Pending"
+        ? "This will cancel the booking permanently."
+        : "This will delete the booking permanently.";
+
     const confirmResult = await Swal.fire({
       title: "Are you sure?",
-      text: "This will cancel the booking permanently.",
+      text: confirmMessage,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, cancel it!",
+      confirmButtonText:
+        booking.status === "Pending" ? "Yes, cancel it!" : "Yes, delete it!",
     });
 
-    // If Result Yes
+    // If result is confirmed, start both processes
     if (confirmResult.isConfirmed) {
       try {
-        const response = await axiosPublic.delete(
-          `/Trainers_Booking_Request/${bookingId}`
+        // Step 2: Post to Trainer_Booking_History (without showing the success alert)
+        await axiosPublic.post("/Trainer_Booking_History", updatedBooking);
+
+        // Step 3: Proceed with Deletion
+        const deleteResponse = await axiosPublic.delete(
+          `/Trainers_Booking_Request/${booking._id}`
         );
 
-        if (response.data?.message) {
+        if (deleteResponse.data?.message) {
           Swal.fire({
             icon: "success",
-            title: "Canceled!",
-            text: "Booking Canceled Successfully.",
+            title: booking.status === "Pending" ? "Canceled!" : "Deleted!",
+            text:
+              booking.status === "Pending"
+                ? "Booking canceled successfully."
+                : "Booking deleted successfully.",
             timer: 1500,
             showConfirmButton: false,
           });
 
+          // Step 4: Refresh or perform any necessary actions after deletion
           refetch();
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong while deleting the booking.",
+          });
         }
-      } catch {
+      } catch (error) {
+        console.error("Error in process:", error);
         Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -116,9 +160,6 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
       }
     }
   };
-
-  // Return Null if data is none
-  if (!TrainersBookingRequestData) return null;
 
   // Function to determine background color based on status
   const getStatusBackgroundColor = (status) => {
@@ -133,6 +174,9 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
         return "bg-white"; // Default background (for Pending)
     }
   };
+
+  // Return Null if data is none
+  if (!TrainersBookingRequestData) return null;
 
   return (
     <div>
@@ -151,7 +195,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
       {/* Divider */}
       <div className="mx-auto bg-black w-1/3 p-[1px]" />
 
-      {/* Booking Table */}
+      {/* Bookings List */}
       <div className="py-4">
         {/* Desktop View */}
         <div className="hidden md:block">
@@ -225,7 +269,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                           <button
                             id={`delete-btn-${booking._id}`} // Unique ID for each button
                             className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                            onClick={() => handleDeleteBooking(booking?._id)}
+                            onClick={() => handleDeleteBooking(booking)}
                           >
                             <FaRegTrashAlt className="text-red-500" />{" "}
                             {/* Delete Icon */}
@@ -237,7 +281,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                           <button
                             id={`delete-btn-${booking._id}`} // Unique ID for each button
                             className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                            onClick={() => handleDeleteBooking(booking?._id)}
+                            onClick={() => handleDeleteBooking(booking)}
                           >
                             <FaRegTrashAlt className="text-red-500" />{" "}
                             {/* Delete Icon */}
@@ -268,9 +312,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                               <button
                                 id={`cancel-btn-${booking._id}`} // Unique ID for each button
                                 className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                                onClick={() =>
-                                  handleDeleteBooking(booking?._id)
-                                }
+                                onClick={() => handleDeleteBooking(booking)}
                               >
                                 <FaRegTrashAlt className="text-red-500" />{" "}
                                 {/* Delete Icon */}
@@ -376,7 +418,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                     <button
                       id={`cancel-btn-${booking._id}`} // Unique ID for each button
                       className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                      onClick={() => handleDeleteBooking(booking?._id)}
+                      onClick={() => handleDeleteBooking(booking)}
                     >
                       <FaRegTrashAlt className="text-red-500" />{" "}
                       {/* Delete Icon */}
@@ -388,7 +430,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                     <button
                       id={`cancel-btn-${booking._id}`} // Unique ID for each button
                       className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                      onClick={() => handleDeleteBooking(booking?._id)}
+                      onClick={() => handleDeleteBooking(booking)}
                     >
                       <FaRegTrashAlt className="text-red-500" />{" "}
                       {/* Delete Icon */}
@@ -417,7 +459,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                         <button
                           id={`cancel-btn-${booking._id}`} // Unique ID for each button
                           className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                          onClick={() => handleDeleteBooking(booking?._id)}
+                          onClick={() => handleDeleteBooking(booking)}
                         >
                           <FaRegTrashAlt className="text-red-500" />{" "}
                           {/* Delete Icon */}
@@ -467,7 +509,6 @@ UserTrainerBookingSession.propTypes = {
     })
   ),
   refetch: PropTypes.func,
-  setBookings: PropTypes.func,
 };
 
 export default UserTrainerBookingSession;
