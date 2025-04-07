@@ -13,6 +13,7 @@ import UserTrainerBookingInfoModal from "./UserTrainerBookingInfoModal/UserTrain
 
 // import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import UserTrainerBookingAcceptModal from "./UserTrainerBookingAcceptModal/UserTrainerBookingAcceptModal";
 
 // Format: "06-04-2025T11:12"
 const parseCustomDate = (input) => {
@@ -256,7 +257,12 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                             id={`go-btn-${booking._id}`} // Unique ID for each button
                             className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"
                             onClick={() => {
-                              // Handle Go action here
+                              setSelectedBooking(booking);
+                              document
+                                .getElementById(
+                                  "User_Trainer_Booking_Accept_Modal"
+                                )
+                                .showModal();
                             }}
                           >
                             <FaArrowUp className="text-blue-500" />{" "}
@@ -406,7 +412,10 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                       id={`go-btn-${booking._id}`} // Unique ID for each button
                       className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"
                       onClick={() => {
-                        // Handle Go action here
+                        setSelectedBooking(booking);
+                        document
+                          .getElementById("User_Trainer_Booking_Accept_Modal")
+                          .showModal();
                       }}
                     >
                       <FaArrowUp className="text-blue-500" /> {/* Go Icon */}
@@ -490,6 +499,11 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
       {/* User Trainer Booking Info Modal */}
       <dialog id="User_Trainer_Booking_Info_Modal" className="modal">
         <UserTrainerBookingInfoModal selectedBooking={selectedBooking} />
+      </dialog>
+
+      {/* User Trainer Booking Info Modal */}
+      <dialog id="User_Trainer_Booking_Accept_Modal" className="modal">
+        <UserTrainerBookingAcceptModal selectedBooking={selectedBooking} />
       </dialog>
     </div>
   );
