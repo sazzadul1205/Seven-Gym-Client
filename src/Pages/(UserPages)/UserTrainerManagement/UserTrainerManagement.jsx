@@ -49,17 +49,27 @@ const UserTrainerManagement = () => {
 
   // Fetch all Trainer Booking Request
   const {
-    data: TrainersBookingRequestData,
+    data: TrainersBookingRequestData = [],
     isLoading: TrainersBookingRequestIsLoading,
     error: TrainersBookingRequestError,
     refetch: TrainersBookingRequestDataRefetch,
   } = useQuery({
     enabled: !!user?.email,
     queryKey: ["UsersData", user?.email],
-    queryFn: () =>
-      axiosPublic
-        .get(`/Trainers_Booking_Request/Booker/${user.email}`)
-        .then((res) => res.data),
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainers_Booking_Request/Booker/${user.email}`
+        );
+        return res.data;
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          // No bookings found — not a real error
+          return [];
+        }
+        throw err; // Re-throw other errors (e.g., 500, 401, etc.)
+      }
+    },
   });
 
   // Load State

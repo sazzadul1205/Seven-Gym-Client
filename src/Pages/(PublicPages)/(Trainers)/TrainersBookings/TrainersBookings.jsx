@@ -160,8 +160,6 @@ const TrainersBookings = () => {
   )
     return <FetchingError />;
 
-  console.log(listedSessions);
-
   return (
     <div
       className="bg-fixed bg-cover bg-center"

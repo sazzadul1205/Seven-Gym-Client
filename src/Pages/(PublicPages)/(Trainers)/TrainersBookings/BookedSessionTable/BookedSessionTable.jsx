@@ -386,7 +386,6 @@ BookedSessionTable.propTypes = {
   listedSessions: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
-      day: PropTypes.string.isRequired,
       classType: PropTypes.string.isRequired,
       classPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
         .isRequired,

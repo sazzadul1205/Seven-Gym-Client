@@ -49,9 +49,6 @@ const TrainersDetailsHeader = ({ TrainerDetails }) => {
   // Get gender details (icon + label)
   const { icon } = getGenderIcon(TrainerDetails?.gender);
 
-  // Ensure TrainerDetails exists before rendering
-  if (!TrainerDetails) return null;
-
   return (
     <div className="relative bg-linear-to-b from-gray-500/80 to-gray-500/50 mx-auto justify-between text-center py-10">
       {/* Section-Scoped Floating Back Button */}

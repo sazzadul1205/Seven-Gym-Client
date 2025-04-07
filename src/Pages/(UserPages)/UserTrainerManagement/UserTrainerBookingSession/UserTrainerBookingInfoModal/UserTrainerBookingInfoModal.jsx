@@ -1,6 +1,5 @@
-/* eslint-disable react/prop-types */
-
 // import Packages
+import PropTypes from "prop-types";
 import { useQuery } from "@tanstack/react-query";
 
 // Import Hooks
@@ -11,7 +10,7 @@ import FetchingError from "../../../../../Shared/Component/FetchingError";
 // import Icons
 import { ImCross } from "react-icons/im";
 import { MdOutlinePeopleAlt } from "react-icons/md";
-import { IoMdMale, IoMdFemale } from "react-icons/io"; // Add this import
+import { IoMdMale, IoMdFemale } from "react-icons/io";
 
 function formatDate(dateStr) {
   const date = new Date(dateStr);
@@ -23,7 +22,7 @@ function formatDate(dateStr) {
   const minutes = String(date.getMinutes()).padStart(2, "0"); // Ensure two digits for minutes
 
   // Convert to 12-hour format and determine AM/PM
-  const ampm = hours >= 12 ? "PM" : "AM";
+  const amps = hours >= 12 ? "PM" : "AM";
   hours = hours % 12;
   hours = hours ? hours : 12; // Handle midnight (0 hours)
 
@@ -31,11 +30,11 @@ function formatDate(dateStr) {
   return `${String(day).padStart(
     2,
     "0"
-  )}-${month}-${year} ${hours}:${minutes} ${ampm}`;
+  )}-${month}-${year} ${hours}:${minutes} ${amps}`;
 }
 
 const fixDateFormat = (dateStr) => {
-  // If the date format is 'DD-MM-YYYYTHH:mm', convert it to 'YYYY-MM-DDTHH:mm:ss'
+  // If the date format is 'DD-MM-YYYY T HH:mm', convert it to 'YYYY-MM-DDTHH:mm:ss'
   const parts = dateStr.split("T");
   if (parts.length === 2) {
     const [day, month, year] = parts[0].split("-");
@@ -199,6 +198,7 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
           {/* Booking Details */}
           <div className="w-full lg:w-1/2 mt-6 lg:mt-0 p-4 sm:p-6 border-t sm:border-t-0 sm:border-l-2 border-gray-300">
             <div className="space-y-4 text-sm sm:text-base">
+              {/* Duration */}
               <div className="flex justify-between">
                 <strong>Duration (Weeks):</strong>
                 <span>
@@ -208,6 +208,7 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
                 </span>
               </div>
 
+              {/* Total Price */}
               <div className="flex justify-between">
                 <strong>Total Price:</strong>
                 <span>
@@ -217,11 +218,13 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
                 </span>
               </div>
 
+              {/* Status */}
               <div className="flex justify-between">
                 <strong>Status:</strong>
                 <span>{selectedBooking?.status || "N/A"}</span>
               </div>
 
+              {/* Booked At */}
               <div className="flex justify-between">
                 <strong>Booked At:</strong>
                 <span>
@@ -482,6 +485,18 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
       </div>
     </div>
   );
+};
+
+// Prop Type Validation
+UserTrainerBookingInfoModal.propTypes = {
+  selectedBooking: PropTypes.shape({
+    trainer: PropTypes.string,
+    sessions: PropTypes.arrayOf(PropTypes.string),
+    durationWeeks: PropTypes.number,
+    totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    status: PropTypes.string,
+    bookedAt: PropTypes.string,
+  }).isRequired,
 };
 
 export default UserTrainerBookingInfoModal;
