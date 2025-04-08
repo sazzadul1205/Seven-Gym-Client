@@ -87,6 +87,15 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData }) => {
     return () => clearInterval(interval);
   }, []);
 
+  
+  const handleAccept = async (Booking) => {
+    console.log("Accept :",Booking);
+  };
+  
+  const handleReject = async (Booking) => {
+    console.log("Reject :",Booking);
+  };
+
   return (
     <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
       {/* Header */}
@@ -101,7 +110,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData }) => {
       </div>
 
       {/* Divider */}
-      <div className="mx-auto bg-gray-300 w-1/3 h-[2px]" />
+      <div className="mx-auto bg-white w-1/3 p-[1px]" />
 
       {/* Booking Table */}
       <div className="py-4 px-4 md:px-10">
@@ -112,7 +121,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData }) => {
               <thead className="bg-gray-800 text-white text-sm uppercase">
                 <tr>
                   {[
-                    "Trainer",
+                    "Booker",
                     "Booked At",
                     "Total Price",
                     "Duration",
@@ -140,7 +149,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData }) => {
                     )}`}
                   >
                     {/* Column: Trainer Name */}
-                    <td className="px-4 py-3 font-medium">{booking.trainer}</td>
+                    <td className="px-4 py-3 font-medium">{booking.bookerEmail}</td>
 
                     {/* Column: Booking Date (formatted) */}
                     <td className="px-4 py-3">
@@ -189,6 +198,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData }) => {
                       <button
                         id={`accept-btn-${booking._id}`}
                         className="border-2 border-green-500 bg-green-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                        onClick={() => handleAccept(booking)}
                       >
                         <FaCheck className="text-green-500" />
                       </button>
@@ -201,6 +211,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData }) => {
                       <button
                         id={`reject-btn-${booking._id}`}
                         className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                        onClick={() => handleReject(booking)}
                       >
                         <ImCross className="text-red-500" />
                       </button>
