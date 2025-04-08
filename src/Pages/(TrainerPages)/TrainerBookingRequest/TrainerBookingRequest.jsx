@@ -88,7 +88,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData }) => {
   }, []);
 
   return (
-    <div className="text-black">
+    <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
       {/* Header */}
       <div className="text-center space-y-1 py-4">
         {/* Title */}
