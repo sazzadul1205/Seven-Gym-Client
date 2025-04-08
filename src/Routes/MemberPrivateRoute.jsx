@@ -47,12 +47,12 @@ const MemberPrivateRoute = ({ children }) => {
     <FetchingError />;
   }
 
-  if (UserRoleData.role !== "member") {
-    // User does not have the 'member' role
+  if (UserRoleData.role !== "Member") {
+    // User does not have the 'Member' role
     return <Navigate to="/Unauthorized" replace />;
   }
 
-  // User is authenticated and has the 'member' role
+  // User is authenticated and has the 'Member' role
   return children;
 };
 

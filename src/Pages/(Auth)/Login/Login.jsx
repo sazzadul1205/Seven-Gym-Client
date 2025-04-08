@@ -10,6 +10,7 @@ import LoginBack from "../../../assets/Background-Auth/LoginBack.jpeg";
 import useAuth from "../../../Hooks/useAuth";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import SocialLinks from "../../../Shared/SocialLinks/SocialLinks";
+import CommonButton from "../../../Shared/Buttons/CommonButton";
 
 const Login = () => {
   // Hooks for authentication, navigation, and API calls
@@ -165,24 +166,19 @@ const Login = () => {
           </div>
 
           {/* Login button */}
-          <button
+          <CommonButton
             type="submit"
+            text="Log In"
+            isLoading={loading}
+            loadingText="Logging In..."
+            textColor="text-white"
+            bgColor="OriginalRed"
+            borderRadius="rounded-xl"
+            width="full"
+            px="px-5"
+            py="py-3"
             disabled={loading}
-            className={`w-full text-4xl font-bold rounded-xl py-3 ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a]/80 to-[#ff0040] text-white cursor-pointer"
-            }`}
-          >
-            {loading ? (
-              <div className="flex items-center justify-center space-x-2">
-                <span className="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></span>
-                <span>Logging In ...</span>
-              </div>
-            ) : (
-              "Log In"
-            )}
-          </button>
+          />
 
           {/* Sign-up link */}
           <p className="font-semibold text-black pt-2">

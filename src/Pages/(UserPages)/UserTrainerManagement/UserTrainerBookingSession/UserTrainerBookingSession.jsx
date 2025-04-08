@@ -60,6 +60,20 @@ const getRemainingTime = (input, now) => {
   return `${days}d ${hours}h ${minutes}m left`;
 };
 
+// Function to determine background color based on status
+const getStatusBackgroundColor = (status) => {
+  switch (status) {
+    case "Accepted":
+      return "bg-linear-to-bl from-green-400 to-green-200";
+    case "Rejected":
+      return "bg-linear-to-bl from-red-400 to-red-200";
+    case "Expired":
+      return "bg-linear-to-bl from-gray-400 to-gray-200";
+    default:
+      return "bg-white";
+  }
+};
+
 const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
   const axiosPublic = useAxiosPublic();
 
@@ -162,20 +176,6 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
     }
   };
 
-  // Function to determine background color based on status
-  const getStatusBackgroundColor = (status) => {
-    switch (status) {
-      case "Accepted":
-        return "bg-linear-to-bl from-green-400 to-green-200";
-      case "Rejected":
-        return "bg-linear-to-bl from-red-400 to-red-200";
-      case "Expired":
-        return "bg-linear-to-bl from-gray-400 to-gray-200";
-      default:
-        return "bg-white"; // Default background (for Pending)
-    }
-  };
-
   // Return Null if data is none
   if (!TrainersBookingRequestData) return null;
 
@@ -204,20 +204,26 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
             <div className="overflow-x-auto">
               <table className="min-w-full table-auto bg-white border-collapse">
                 {/* Table Header */}
-                <thead>
-                  <tr className="bg-[#A1662F] text-white">
-                    <th className="px-4 py-2 text-left">Trainer</th>
-                    <th className="px-4 py-2 text-left">Booked At</th>
-                    <th className="px-4 py-2 text-left">Total Price</th>
-                    <th className="px-4 py-2 text-left">Duration</th>
-                    <th className="px-4 py-2 text-left">Status</th>
-                    <th className="px-4 py-2 text-center">Expires In</th>
-                    <th className="px-4 py-2 text-left">Action</th>
+                <thead className="bg-[#A1662F] text-white">
+                  <tr>
+                    {[
+                      "Trainer",
+                      "Booked At",
+                      "Total Price",
+                      "Duration",
+                      "Status",
+                      "Expires In",
+                      "Action",
+                    ].map((header) => (
+                      <th key={header} className="px-4 py-2 text-lef">
+                        {header}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
 
                 {/* Table Body */}
-                <tbody>
+                <tbody className="text-sm text-gray-700">
                   {TrainersBookingRequestData.map((booking) => (
                     <tr
                       key={booking._id}
@@ -225,21 +231,26 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                         booking.status
                       )}`}
                     >
-                      {/* Table : Trainer */}
+                      {/* Column : Trainer */}
                       <td className="px-4 py-2">{booking.trainer}</td>
-                      {/* Table : Booked At */}
+
+                      {/* Column : Booked At */}
                       <td className="px-4 py-2">
                         {formatDate(booking.bookedAt)}
                       </td>
-                      {/* Table : Total Price */}
+
+                      {/* Column : Total Price */}
                       <td className="px-4 py-2">$ {booking.totalPrice}</td>
-                      {/* Table : Duration Weeks */}
+
+                      {/* Column : Duration Weeks */}
                       <td className="px-4 py-2">
                         {booking.durationWeeks} Weeks
                       </td>
-                      {/* Table : Status */}
+
+                      {/* Column : Status */}
                       <td className="px-4 py-2">{booking.status}</td>
-                      {/* Table : Remaining Time */}
+
+                      {/* Column : Remaining Time */}
                       <td className="px-4 py-2 font-semibold text-sm text-center">
                         {
                           booking.status === "Pending"
@@ -248,7 +259,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                         }
                       </td>
 
-                      {/* Table : Buttons */}
+                      {/* Column : Buttons */}
                       <td className="flex px-4 py-2 gap-2">
                         {/* Conditional Buttons */}
                         {booking.status === "Accepted" && (
@@ -350,7 +361,9 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
               </table>
             </div>
           ) : (
-            <p>No bookings available.</p>
+            <div className="text-center text-gray-500 mt-8 italic">
+              No booking requests at the moment.
+            </div>
           )}
         </div>
 

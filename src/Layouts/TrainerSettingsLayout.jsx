@@ -25,6 +25,7 @@ import FetchingError from "../Shared/Component/FetchingError";
 import CommonButton from "../Shared/Buttons/CommonButton";
 import { RiArchiveDrawerFill } from "react-icons/ri";
 import TrainerBookingRequest from "../Pages/(TrainerPages)/TrainerBookingRequest/TrainerBookingRequest";
+import TrainerScheduleParticipant from "../Pages/(TrainerPages)/TrainerScheduleParticipant/TrainerScheduleParticipant";
 
 // Function to determine gender icon & label
 const getGenderIcon = (gender) => {
@@ -135,12 +136,6 @@ const TrainerSettingsLayout = () => {
   // Extract schedule data
   const TrainerProfileScheduleData = TrainerScheduleData?.[0] || null;
 
-  // Unified refetch function
-  const refetchAll = async () => {
-    await refetchTrainerData();
-    await refetchTrainerScheduleData();
-  };
-
   // Fetch available class types
   const {
     data: ClassTypesData = [],
@@ -152,29 +147,24 @@ const TrainerSettingsLayout = () => {
       axiosPublic.get(`/Trainers/classTypes`).then((res) => res.data),
   });
 
-  // Get gender details (icon + label)
-  const { icon } = getGenderIcon(TrainerProfileData?.gender);
+  // Fetch Trainer Booking Requests class types
+  const {
+    data: TrainerBookingRequestData = [],
+    isLoading: TrainerBookingRequestIsLoading,
+    error: TrainerBookingRequestError,
+  } = useQuery({
+    queryKey: ["TrainerBookingRequestData", TrainerProfileData?.name],
+    queryFn: () =>
+      axiosPublic
+        .get(`/Trainers_Booking_Request/Trainer/${TrainerProfileData?.name}`)
+        .then((res) => res.data),
+    enabled: !!TrainerProfileData?.name,
+  });
 
-  // Logout function
-  const handleSignOut = async () => {
-    setIsLoggingOut(true);
-    try {
-      await logOut();
-      navigate("/"); // Redirects to the home page
-      setTimeout(() => {
-        window.location.reload(); // Force reload
-      }, 100); // Short delay to ensure navigation happens first
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Logout Failed",
-        text: `Error logging out: ${error.message}`,
-        confirmButtonColor: "#d33",
-        timer: 3000,
-      });
-    } finally {
-      setIsLoggingOut(false);
-    }
+  // Unified refetch function
+  const refetchAll = async () => {
+    await refetchTrainerData();
+    await refetchTrainerScheduleData();
   };
 
   // Tabs List
@@ -211,11 +201,23 @@ const TrainerSettingsLayout = () => {
       ),
     },
     {
-      id: "Trainer_Booking Request",
+      id: "Trainer_Booking_Request",
       Icon: "https://i.ibb.co.com/YBcHM9vp/booking.png",
       title: "Trainer Booking Request",
       content: (
         <TrainerBookingRequest
+          TrainerBookingRequestData={TrainerBookingRequestData}
+        />
+      ),
+    },
+    {
+      id: "Schedule_Participant",
+      Icon: "https://i.ibb.co.com/hFTNrhbm/schedule.png",
+      title: "Schedule Participant",
+      content: (
+        <TrainerScheduleParticipant
+          refetch={refetchAll}
+          TrainerProfileScheduleData={TrainerProfileScheduleData}
         />
       ),
     },
@@ -226,13 +228,44 @@ const TrainerSettingsLayout = () => {
   if (
     TrainerDataIsLoading ||
     TrainerScheduleIsLoading ||
-    ClassTypesDataIsLoading
+    ClassTypesDataIsLoading ||
+    TrainerBookingRequestIsLoading
   )
     return <Loading />;
 
   // Error state
-  if (TrainerDataError || TrainerScheduleError || ClassTypesDataError)
+  if (
+    TrainerDataError ||
+    TrainerScheduleError ||
+    ClassTypesDataError ||
+    TrainerBookingRequestError
+  )
     return <FetchingError />;
+
+  // Logout function
+  const handleSignOut = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logOut();
+      navigate("/"); // Redirects to the home page
+      setTimeout(() => {
+        window.location.reload(); // Force reload
+      }, 100); // Short delay to ensure navigation happens first
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Logout Failed",
+        text: `Error logging out: ${error.message}`,
+        confirmButtonColor: "#d33",
+        timer: 3000,
+      });
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  // Get gender details (icon + label)
+  const { icon } = getGenderIcon(TrainerProfileData?.gender);
 
   return (
     <div className="min-h-screen bg-white ">
