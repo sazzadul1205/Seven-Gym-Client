@@ -24,6 +24,7 @@ import FetchingError from "../Shared/Component/FetchingError";
 // Import Button
 import CommonButton from "../Shared/Buttons/CommonButton";
 import { RiArchiveDrawerFill } from "react-icons/ri";
+import TrainerBookingRequest from "../Pages/(TrainerPages)/TrainerBookingRequest/TrainerBookingRequest";
 
 // Function to determine gender icon & label
 const getGenderIcon = (gender) => {
@@ -206,6 +207,15 @@ const TrainerSettingsLayout = () => {
           TrainerProfileData={TrainerProfileData}
           AvailableClassTypesData={ClassTypesData}
           TrainerProfileScheduleData={TrainerProfileScheduleData}
+        />
+      ),
+    },
+    {
+      id: "Trainer_Booking Request",
+      Icon: "https://i.ibb.co.com/YBcHM9vp/booking.png",
+      title: "Trainer Booking Request",
+      content: (
+        <TrainerBookingRequest
         />
       ),
     },

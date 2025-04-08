@@ -47,6 +47,11 @@ import TestimonialsPage from "./Pages/(PublicPages)/(About)/TestimonialsPage/Tes
 import TrainerSettingsLayout from "./Layouts/TrainerSettingsLayout.jsx";
 import UserTrainerManagement from "./Pages/(UserPages)/UserTrainerManagement/UserTrainerManagement.jsx";
 
+// Private Route
+import MemberPrivateRoute from "./Routes/MemberPrivateRoute.jsx";
+import TrainerPrivateRoute from "./Routes/TrainerPrivateRoute.jsx";
+import UnauthorizedPage from "./Pages/UnauthorizedPage/UnauthorizedPage.jsx";
+
 // React Query Client
 const queryClient = new QueryClient();
 
@@ -66,6 +71,7 @@ createRoot(document.getElementById("root")).render(
               <Route path="/Login" element={<Login />} />
               <Route path="/SignUp" element={<SignUp />} />
               <Route path="/SignUp/Details" element={<SignUpDetails />} />
+              <Route path="/Unauthorized" element={<UnauthorizedPage />} />
 
               {/* Home Pages Link */}
               <Route path="/" element={<Home />} />
@@ -79,7 +85,11 @@ createRoot(document.getElementById("root")).render(
               <Route path="/Trainers/:name" element={<TrainersDetails />} />
               <Route
                 path="/Trainers/Booking/:name"
-                element={<TrainersBookings />}
+                element={
+                  <MemberPrivateRoute>
+                    <TrainersBookings />
+                  </MemberPrivateRoute>
+                }
               />
               <Route path="/Classes" element={<Classes />} />
               <Route path="/Classes/:module" element={<ClassesDetails />} />
@@ -93,31 +103,66 @@ createRoot(document.getElementById("root")).render(
               <Route path="/About/Feedback" element={<Feedback />} />
 
               {/* User Pages Links */}
+
               <Route
                 path="/User/UserProfile/:email"
-                element={<UserProfile />}
+                element={
+                  <MemberPrivateRoute>
+                    <UserProfile />
+                  </MemberPrivateRoute>
+                }
               />
-              <Route path="/User/UserSettings" element={<UserSettings />} />
+              <Route
+                path="/User/UserSettings"
+                element={
+                  <MemberPrivateRoute>
+                    <UserSettings />
+                  </MemberPrivateRoute>
+                }
+              />
               <Route
                 path="/User/TierUpgrade/:email"
-                element={<UserTierUpgrade />}
+                element={
+                  <MemberPrivateRoute>
+                    <UserTierUpgrade />
+                  </MemberPrivateRoute>
+                }
               />
               <Route
                 path="/User/TierUpgradePayment/:email/:tier"
-                element={<TearUpgradePayment />}
+                element={
+                  <MemberPrivateRoute>
+                    <TearUpgradePayment />
+                  </MemberPrivateRoute>
+                }
               />
               <Route
                 path="/User/UserSchedule/:email"
-                element={<UserSchedulePlanner />}
+                element={
+                  <MemberPrivateRoute>
+                    <UserSchedulePlanner />
+                  </MemberPrivateRoute>
+                }
               />
               <Route
                 path="/User/UserTrainerManagement"
-                element={<UserTrainerManagement />}
+                element={
+                  <MemberPrivateRoute>
+                    <UserTrainerManagement />
+                  </MemberPrivateRoute>
+                }
               />
             </Route>
 
             {/* Trainer Page Links */}
-            <Route path="/Trainer" element={<TrainerSettingsLayout />} />
+            <Route
+              path="/Trainer"
+              element={
+                <TrainerPrivateRoute>
+                  <TrainerSettingsLayout />
+                </TrainerPrivateRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>
