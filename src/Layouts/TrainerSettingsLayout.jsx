@@ -206,6 +206,7 @@ const TrainerSettingsLayout = () => {
       title: "Trainer Booking Request",
       content: (
         <TrainerBookingRequest
+          refetch={refetchAll}
           TrainerBookingRequestData={TrainerBookingRequestData}
         />
       ),

@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 
 // Import Package
-
+import Swal from "sweetalert2";
 import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
 
 // Import icons
-import { FaCheck, FaInfo } from "react-icons/fa";
+import { FaCheck, FaInfo, FaRegTrashAlt } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 
 // Import Modal
 import UserTrainerBookingInfoModal from "../../(UserPages)/UserTrainerManagement/UserTrainerBookingSession/UserTrainerBookingInfoModal/UserTrainerBookingInfoModal";
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
+import TrainerBookingRequestButton from "./TrainerBookingRequestButton/TrainerBookingRequestButton";
 
 // Format: "06-04-2025T11:12"
 const parseCustomDate = (input) => {
@@ -71,53 +73,74 @@ const getStatusBackgroundColor = (status) => {
   }
 };
 
-const TrainerBookingRequest = ({ TrainerBookingRequestData }) => {
-  // Now State
+const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
+  const axiosPublic = useAxiosPublic();
+
   const [now, setNow] = useState(new Date());
+  const [bookingValidityMap, setBookingValidityMap] = useState({});
 
-  // Initializes a state variable for the selected booking.
-  const [selectedBooking, setSelectedBooking] = useState(null);
-
-  // useEffect hook that updates the current time every 60 seconds.
+  // Update "now" every 60 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setNow(new Date());
     }, 60000);
-
     return () => clearInterval(interval);
   }, []);
 
-  
-  const handleAccept = async (Booking) => {
-    console.log("Accept :",Booking);
-  };
-  
-  const handleReject = async (Booking) => {
-    console.log("Reject :",Booking);
-  };
+  // Validate each pending booking on load
+  useEffect(() => {
+    const validateAllBookings = async () => {
+      const pendingBookings = TrainerBookingRequestData.filter(
+        (b) => b.status === "Pending"
+      );
+
+      const results = await Promise.all(
+        pendingBookings.map(async (booking) => {
+          try {
+            const res = await axiosPublic.post(
+              "/Trainers_Schedule/SessionValidation",
+              {
+                trainer: booking.trainerName,
+                sessions: booking.sessionKeys,
+              }
+            );
+            return { id: booking._id, valid: res.data.valid };
+          } catch (err) {
+            console.error(`Validation error for ${booking._id}`, err);
+            return { id: booking._id, valid: false };
+          }
+        })
+      );
+
+      const newValidityMap = {};
+      results.forEach(({ id, valid }) => {
+        newValidityMap[id] = valid;
+      });
+
+      setBookingValidityMap(newValidityMap);
+    };
+
+    if (TrainerBookingRequestData.length > 0) {
+      validateAllBookings();
+    }
+  }, [TrainerBookingRequestData, axiosPublic]);
 
   return (
     <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
       {/* Header */}
       <div className="text-center space-y-1 py-4">
-        {/* Title */}
         <h3 className="text-xl font-semibold">Incoming Booking Requests</h3>
-
-        {/* Warnings */}
         <p className="text-sm text-red-600 italic">
           Note: Requests expire one week after submission if not accepted.
         </p>
       </div>
 
-      {/* Divider */}
       <div className="mx-auto bg-white w-1/3 p-[1px]" />
 
-      {/* Booking Table */}
       <div className="py-4 px-4 md:px-10">
         {TrainerBookingRequestData.length > 0 ? (
           <div className="overflow-x-auto rounded shadow-sm border border-gray-300">
-            <table className="min-w-full bg-white ">
-              {/* Table Header */}
+            <table className="min-w-full bg-white">
               <thead className="bg-gray-800 text-white text-sm uppercase">
                 <tr>
                   {[
@@ -139,89 +162,58 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData }) => {
                 </tr>
               </thead>
 
-              {/* Table Body */}
               <tbody className="text-sm text-gray-700">
-                {TrainerBookingRequestData.map((booking) => (
-                  <tr
-                    key={booking._id}
-                    className={`transition-colors duration-200 hover:bg-gray-100 border border-b border-gray-500  ${getStatusBackgroundColor(
-                      booking.status
-                    )}`}
-                  >
-                    {/* Column: Trainer Name */}
-                    <td className="px-4 py-3 font-medium">{booking.bookerEmail}</td>
+                {TrainerBookingRequestData.filter(
+                  (booking) => booking.status !== "Rejected"
+                ).map((booking) => {
+                  const isValid = bookingValidityMap[booking._id] !== false;
+                  const rowBg = !isValid
+                    ? "bg-red-100 hover:bg-red-200"
+                    : booking.status === "Accepted"
+                    ? "bg-green-100 hover:bg-green-200"
+                    : getStatusBackgroundColor(booking.status);
 
-                    {/* Column: Booking Date (formatted) */}
-                    <td className="px-4 py-3">
-                      {formatDate(booking.bookedAt)}
-                    </td>
+                  return (
+                    <tr
+                      key={booking._id}
+                      className={`transition-colors duration-200 hover:bg-gray-100 border border-b border-gray-500 ${rowBg}`}
+                    >
+                      <td className="px-4 py-3 font-medium">
+                        {booking.bookerEmail}
+                      </td>
+                      <td className="px-4 py-3">
+                        {formatDate(booking.bookedAt)}
+                      </td>
+                      <td className="px-4 py-3">
+                        $ {Number(booking.totalPrice).toFixed(2)}
+                      </td>
+                      <td className="px-4 py-3">
+                        {booking.durationWeeks} Weeks
+                      </td>
 
-                    {/* Column: Total Price */}
-                    <td className="px-4 py-3">
-                      $ {Number(booking.totalPrice).toFixed(2)}
-                    </td>
+                      {/* Show "Unavailable" if invalid */}
+                      <td className="px-4 py-3 capitalize">
+                        {!isValid ? "Unavailable" : booking.status}
+                      </td>
 
-                    {/* Column: Duration in Weeks */}
-                    <td className="px-4 py-3">{booking.durationWeeks} Weeks</td>
+                      <td className="px-4 py-3 text-center font-semibold">
+                        {booking.status === "Accepted"
+                          ? "Waiting for payment"
+                          : booking.status === "Pending"
+                          ? getRemainingTime(booking.bookedAt, now)
+                          : "-- / --"}
+                      </td>
 
-                    {/* Column: Current Booking Status */}
-                    <td className="px-4 py-3 capitalize">{booking.status}</td>
-
-                    {/* Column: Remaining Time until expiration (only shown if status is Pending) */}
-                    <td className="px-4 py-3 text-center font-semibold">
-                      {booking.status === "Pending"
-                        ? getRemainingTime(booking.bookedAt, now)
-                        : "-- / --"}
-                    </td>
-
-                    {/* Column: Buttons */}
-                    <td className="flex px-4 py-3 gap-2 items-center">
-                      {/* View Details Button */}
-                      <button
-                        id={`view-details-btn-${booking._id}`}
-                        className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                        onClick={() => {
-                          setSelectedBooking(booking);
-                          document
-                            .getElementById("User_Trainer_Booking_Info_Modal")
-                            .showModal();
-                        }}
-                      >
-                        <FaInfo className="text-yellow-500" />
-                      </button>
-                      <Tooltip
-                        anchorSelect={`#view-details-btn-${booking._id}`}
-                        content="View Detailed Booking Info"
-                      />
-
-                      {/* Accept Request Button */}
-                      <button
-                        id={`accept-btn-${booking._id}`}
-                        className="border-2 border-green-500 bg-green-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                        onClick={() => handleAccept(booking)}
-                      >
-                        <FaCheck className="text-green-500" />
-                      </button>
-                      <Tooltip
-                        anchorSelect={`#accept-btn-${booking._id}`}
-                        content="Accept Booking Request"
-                      />
-
-                      {/* Reject Request Button */}
-                      <button
-                        id={`reject-btn-${booking._id}`}
-                        className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                        onClick={() => handleReject(booking)}
-                      >
-                        <ImCross className="text-red-500" />
-                      </button>
-                      <Tooltip
-                        anchorSelect={`#reject-btn-${booking._id}`}
-                        content="Reject Booking Request"
-                      />
-                    </td>
-                  </tr>
-                ))}
+                      <td className="flex px-4 py-3 gap-2 items-center">
+                        <TrainerBookingRequestButton
+                          booking={booking}
+                          refetch={refetch}
+                          isBookingValid={isValid}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -231,17 +223,13 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData }) => {
           </div>
         )}
       </div>
-
-      {/* User Trainer Booking Info Modal */}
-      <dialog id="User_Trainer_Booking_Info_Modal" className="modal">
-        <UserTrainerBookingInfoModal selectedBooking={selectedBooking} />
-      </dialog>
     </div>
   );
 };
 
 TrainerBookingRequest.propTypes = {
   TrainerBookingRequestData: PropTypes.array.isRequired,
+  refetch: PropTypes.func,
 };
 
 export default TrainerBookingRequest;

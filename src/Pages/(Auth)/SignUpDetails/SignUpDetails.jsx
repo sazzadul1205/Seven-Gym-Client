@@ -15,6 +15,7 @@ import FitnessGoalsSelector from "./FitnessGoalsSelector/FitnessGoalsSelector";
 // Background Image
 import LoginBack from "../../../assets/Background-Auth/LoginBack.jpeg";
 import FetchingError from "../../../Shared/Component/FetchingError";
+import CommonButton from "../../../Shared/Buttons/CommonButton";
 
 // Constants for image hosting API
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
@@ -243,17 +244,20 @@ const SignUpDetails = () => {
 
           {/* Submit Button */}
           <div className="flex justify-end">
-            <button
+            <CommonButton
               type="submit"
-              disabled={loading} // Disable the button when loading
-              className={`w-1/3 text-4xl font-bold rounded-xl py-3 ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white cursor-pointer"
-              }`}
-            >
-              {loading ? "Submitting..." : "Create Account"}
-            </button>
+              text="Create Account"
+              isLoading={loading}
+              loadingText="Submitting..."
+              textColor="text-white"
+              bgColor="OriginalRed"
+              width="1/3"
+              px="px-5"
+              py="py-3"
+              borderRadius="rounded-xl"
+              cursorStyle="cursor-pointer"
+              disabled={loading}
+            />
           </div>
         </form>
       </div>
