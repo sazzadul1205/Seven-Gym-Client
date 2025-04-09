@@ -180,7 +180,7 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
               <p className="text-xs sm:text-sm md:text-base italic text-gray-600">
                 {SelectedTrainerData?.specialization ||
                   "Specialization Not Available"}
-              </p>
+              </p> 
 
               {/* Tier Badge */}
               {SelectedTrainerData?.tier && (

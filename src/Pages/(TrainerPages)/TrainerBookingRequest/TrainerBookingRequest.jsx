@@ -1,20 +1,16 @@
 import { useEffect, useState } from "react";
 
 // Import Package
-import Swal from "sweetalert2";
 import PropTypes from "prop-types";
-import { Tooltip } from "react-tooltip";
 
-// Import icons
-import { FaCheck, FaInfo, FaRegTrashAlt } from "react-icons/fa";
-import { ImCross } from "react-icons/im";
-
-// Import Modal
-import UserTrainerBookingInfoModal from "../../(UserPages)/UserTrainerManagement/UserTrainerBookingSession/UserTrainerBookingInfoModal/UserTrainerBookingInfoModal";
+// Import Hook
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
-import TrainerBookingRequestButton from "./TrainerBookingRequestButton/TrainerBookingRequestButton";
 
-// Format: "06-04-2025T11:12"
+// Import Modal & Subcomponents
+import TrainerBookingRequestButton from "./TrainerBookingRequestButton/TrainerBookingRequestButton";
+import TrainerBookingRequestUserBasicInfo from "./TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+
+// Parse custom date string (Format: "06-04-2025T11:12")
 const parseCustomDate = (input) => {
   if (!input) return null;
   const [datePart, timePart] = input.split("T");
@@ -24,7 +20,7 @@ const parseCustomDate = (input) => {
   return new Date(`${year}-${month}-${day}T${hour}:${minute}`);
 };
 
-//  Formats the input date string into a custom date format.
+// Formats date to "06 Apr 2025, 11:12 AM"
 const formatDate = (input) => {
   const dateObj = parseCustomDate(input);
   if (!dateObj) return "";
@@ -41,13 +37,13 @@ const formatDate = (input) => {
   return dateObj.toLocaleString("en-US", options);
 };
 
-// Calculates the remaining time between the input date and the current date.
+// Calculates how much time is left before the request expires (1 week window)
 const getRemainingTime = (input, now) => {
   const startDate = parseCustomDate(input);
   if (!startDate) return "Invalid date";
 
   const expiry = new Date(startDate);
-  expiry.setDate(expiry.getDate() + 7); // 1 week later
+  expiry.setDate(expiry.getDate() + 7);
 
   const diff = expiry - now;
   if (diff <= 0) return "Expired";
@@ -59,7 +55,7 @@ const getRemainingTime = (input, now) => {
   return `${days}d ${hours}h ${minutes}m left`;
 };
 
-// Function to determine background color based on status
+// Determines background color based on booking status
 const getStatusBackgroundColor = (status) => {
   switch (status) {
     case "Accepted":
@@ -78,8 +74,9 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
 
   const [now, setNow] = useState(new Date());
   const [bookingValidityMap, setBookingValidityMap] = useState({});
+  const [bookingInvalidReasonMap, setBookingInvalidReasonMap] = useState({}); 
 
-  // Update "now" every 60 seconds
+  // Update clock every 60s to refresh expiration countdown
   useEffect(() => {
     const interval = setInterval(() => {
       setNow(new Date());
@@ -87,7 +84,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Validate each pending booking on load
+  // Validate all pending bookings on initial load
   useEffect(() => {
     const validateAllBookings = async () => {
       const pendingBookings = TrainerBookingRequestData.filter(
@@ -100,24 +97,34 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
             const res = await axiosPublic.post(
               "/Trainers_Schedule/SessionValidation",
               {
-                trainer: booking.trainerName,
-                sessions: booking.sessionKeys,
+                trainer: booking.trainer,
+                sessions: booking.sessions,
               }
             );
-            return { id: booking._id, valid: res.data.valid };
+            return {
+              id: booking._id,
+              valid: res.data.valid,
+              reason: res.data.reason,
+            };
           } catch (err) {
             console.error(`Validation error for ${booking._id}`, err);
-            return { id: booking._id, valid: false };
+            return { id: booking._id, valid: true, reason: null };
           }
         })
       );
 
       const newValidityMap = {};
-      results.forEach(({ id, valid }) => {
+      const newReasonMap = {};
+
+      results.forEach(({ id, valid, reason }) => {
         newValidityMap[id] = valid;
+        if (!valid && reason) {
+          newReasonMap[id] = reason;
+        }
       });
 
       setBookingValidityMap(newValidityMap);
+      setBookingInvalidReasonMap(newReasonMap); 
     };
 
     if (TrainerBookingRequestData.length > 0) {
@@ -127,7 +134,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
 
   return (
     <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
-      {/* Header */}
+      {/* Header Section */}
       <div className="text-center space-y-1 py-4">
         <h3 className="text-xl font-semibold">Incoming Booking Requests</h3>
         <p className="text-sm text-red-600 italic">
@@ -167,6 +174,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
                   (booking) => booking.status !== "Rejected"
                 ).map((booking) => {
                   const isValid = bookingValidityMap[booking._id] !== false;
+                  const invalidReason = bookingInvalidReasonMap[booking._id];
                   const rowBg = !isValid
                     ? "bg-red-100 hover:bg-red-200"
                     : booking.status === "Accepted"
@@ -176,26 +184,30 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
                   return (
                     <tr
                       key={booking._id}
-                      className={`transition-colors duration-200 hover:bg-gray-100 border border-b border-gray-500 ${rowBg}`}
+                      className={`transition-colors duration-200 hover:bg-gray-100 border-b border-gray-500 ${rowBg}`}
                     >
                       <td className="px-4 py-3 font-medium">
-                        {booking.bookerEmail}
+                        <TrainerBookingRequestUserBasicInfo
+                          email={booking?.bookerEmail}
+                        />
                       </td>
+
                       <td className="px-4 py-3">
                         {formatDate(booking.bookedAt)}
                       </td>
                       <td className="px-4 py-3">
-                        $ {Number(booking.totalPrice).toFixed(2)}
+                        ${Number(booking.totalPrice).toFixed(2)}
                       </td>
                       <td className="px-4 py-3">
                         {booking.durationWeeks} Weeks
                       </td>
 
-                      {/* Show "Unavailable" if invalid */}
-                      <td className="px-4 py-3 capitalize">
+                      {/* Status */}
+                      <td className="px-4 py-3 font-bold capitalize">
                         {!isValid ? "Unavailable" : booking.status}
                       </td>
 
+                      {/* Time left before expiry */}
                       <td className="px-4 py-3 text-center font-semibold">
                         {booking.status === "Accepted"
                           ? "Waiting for payment"
@@ -204,11 +216,13 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
                           : "-- / --"}
                       </td>
 
-                      <td className="flex px-4 py-3 gap-2 items-center">
+                      {/* Action Button */}
+                      <td className="px-4 py-3">
                         <TrainerBookingRequestButton
                           booking={booking}
                           refetch={refetch}
                           isBookingValid={isValid}
+                          invalidReason={invalidReason}
                         />
                       </td>
                     </tr>

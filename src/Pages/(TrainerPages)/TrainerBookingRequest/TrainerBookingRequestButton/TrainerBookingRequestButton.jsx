@@ -12,8 +12,14 @@ import Swal from "sweetalert2";
 // Import Modal
 import UserTrainerBookingInfoModal from "../../../(UserPages)/UserTrainerManagement/UserTrainerBookingSession/UserTrainerBookingInfoModal/UserTrainerBookingInfoModal";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import TrainerBookingInfoModal from "./trainerBookingInfoModal/trainerBookingInfoModal";
 
-const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
+const TrainerBookingRequestButton = ({
+  booking,
+  refetch,
+  isBookingValid,
+  invalidReason,
+}) => {
   const axiosPublic = useAxiosPublic();
 
   // State for the currently selected booking
@@ -142,6 +148,8 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
     console.log("Cancel Accepted Booking :", Booking); // Log cancel action
   };
 
+  console.log(selectedBooking);
+
   return (
     <div className="flex items-center gap-2">
       {!isBookingValid ? (
@@ -164,9 +172,9 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
               className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
               onClick={() => {
                 setSelectedBooking(booking);
-                document
-                  .getElementById("User_Trainer_Booking_Info_Modal")
-                  .showModal();
+                // document
+                //   .getElementById("User_Trainer_Booking_Info_Modal")
+                //   .showModal();
               }}
             >
               <FaInfo className="text-yellow-500" />
@@ -266,7 +274,10 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
 
       {/* The modal for booking details */}
       <dialog id="User_Trainer_Booking_Info_Modal" className="modal">
-        <UserTrainerBookingInfoModal selectedBooking={selectedBooking} />
+        <TrainerBookingInfoModal
+          selectedBooking={selectedBooking}
+          invalidReason={invalidReason}
+        />
       </dialog>
     </div>
   );
