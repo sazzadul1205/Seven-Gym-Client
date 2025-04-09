@@ -168,7 +168,7 @@ const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
             return (
               <div
                 key={goal}
-                className="flex cursor-pointer font-semibold items-center rounded-full px-5 py-2 gap-5 hover:opacity-90"
+                className="flex text-sm md:text-md cursor-pointer font-semibold items-center rounded-full px-4 md:px-5 py-2 gap-5 hover:opacity-90"
                 style={{
                   backgroundColor: bgColor,
 

@@ -194,13 +194,16 @@ const SignUpDetails = () => {
         backgroundImage: `url(${LoginBack})`,
       }}
     >
-      <div className="w-full max-w-7xl shadow-md rounded-tl-[50px] rounded-br-[50px] p-10 bg-white/90">
+      <div className="w-full max-w-7xl shadow-md rounded-tl-[50px] rounded-br-[50px] p-6 sm:p-8 md:p-10 pt-24 md:pt-6 bg-white/90">
         {/* Forms */}
         <form onSubmit={handleSubmit(confirmAndSubmit)}>
           {/* Content */}
-          <div className="flex gap-10 pb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-10 items-center">
             {/* Left Side Data */}
-            <div className="w-1/2 space-y-4">
+            <div className="space-y-4">
+              <h3 className="text-black font-semibold text-xl">
+                Trainer Profile
+              </h3>
               <ImageCropper
                 onImageCropped={setProfileImage}
                 register={register}
@@ -217,7 +220,7 @@ const SignUpDetails = () => {
             </div>
 
             {/* Right Side Data */}
-            <div className="w-1/2 space-y-4">
+            <div className="space-y-4">
               <InputField
                 label="Phone Number"
                 placeholder="+8801234567890"
@@ -245,13 +248,13 @@ const SignUpDetails = () => {
           {/* Submit Button */}
           <div className="flex justify-end">
             <CommonButton
-              type="submit"
+              type="none"
               text="Create Account"
               isLoading={loading}
               loadingText="Submitting..."
               textColor="text-white"
               bgColor="OriginalRed"
-              width="1/3"
+              width="[300px]"
               px="px-5"
               py="py-3"
               borderRadius="rounded-xl"

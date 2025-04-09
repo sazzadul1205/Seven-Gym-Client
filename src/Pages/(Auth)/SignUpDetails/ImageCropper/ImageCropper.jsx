@@ -15,6 +15,7 @@ const ImageCropper = ({ onImageCropped }) => {
   const [cropArea, setCropArea] = useState(null); // Cropped area in pixels
   const [crop, setCrop] = useState({ x: 0, y: 0 }); // Crop position
   const [showCropper, setShowCropper] = useState(false); // Show/hide cropper
+  const [croppedImage, setCroppedImage] = useState(null); // Store cropped image data
 
   // Handle file selection
   const handleImageChange = (e) => {
@@ -67,9 +68,12 @@ const ImageCropper = ({ onImageCropped }) => {
         );
         ctx.restore();
 
+        // Convert canvas to image blob and update preview
         canvas.toBlob(
           (blob) => {
-            onImageCropped(blob);
+            const croppedImageUrl = URL.createObjectURL(blob);
+            setCroppedImage(croppedImageUrl); // Update cropped image
+            onImageCropped(blob); // Notify parent with cropped image
             setShowCropper(false); // Hide cropper after saving
             resolve(blob);
           },
@@ -84,20 +88,21 @@ const ImageCropper = ({ onImageCropped }) => {
   useEffect(() => {
     return () => {
       if (imageSrc) URL.revokeObjectURL(imageSrc);
+      if (croppedImage) URL.revokeObjectURL(croppedImage); // Clean up cropped image URL
     };
-  }, [imageSrc]);
+  }, [imageSrc, croppedImage]);
 
   return (
     <div>
       {/* Image Preview & Upload */}
       <div
-        className="w-[250px] h-[250px] rounded-full mx-auto border-2 border-dashed border-gray-500 flex items-center justify-center relative overflow-hidden hover:scale-105"
+        className="w-[250px] h-[250px] rounded-full mx-auto border-2 border-dashed border-gray-500 flex items-center justify-center relative overflow-hidden hover:scale-105 sm:w-[200px] sm:h-[200px] md:w-[250px] md:h-[250px]"
         style={{ backgroundColor: "#f9f9f9" }}
       >
         {/* Display cropped image if available, else show upload icon */}
-        {imageSrc && !showCropper ? (
+        {croppedImage && !showCropper ? (
           <img
-            src={imageSrc}
+            src={croppedImage}
             alt="Profile"
             className="w-full h-full object-cover rounded-full"
           />
@@ -120,7 +125,7 @@ const ImageCropper = ({ onImageCropped }) => {
       <div className="relative">
         {showCropper && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40">
-            <div className="bg-white p-5 rounded-lg shadow-lg relative w-full max-w-4xl">
+            <div className="bg-white p-5 rounded-lg shadow-lg relative w-full max-w-4xl sm:w-[90%] md:w-[80%] lg:w-[60%]">
               <div className="relative h-96">
                 <Cropper
                   image={imageSrc}
@@ -134,10 +139,10 @@ const ImageCropper = ({ onImageCropped }) => {
                   onCropComplete={onCropComplete}
                 />
               </div>
-              <div className="flex justify-between items-center mt-4 space-x-4">
+              <div className="flex flex-col md:flex-row justify-between items-center mt-4 space-x-4">
                 {/* Zoom Control */}
-                <div>
-                  <label className="text-gray-700">Zoom:</label>
+                <div className="flex items-center">
+                  <label className="text-gray-700 text-sm">Zoom:</label>
                   <input
                     type="range"
                     min="1"
@@ -145,20 +150,20 @@ const ImageCropper = ({ onImageCropped }) => {
                     step="0.1"
                     value={zoom}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="ml-2"
+                    className="ml-2 w-24 sm:w-32 md:w-48"
                   />
                 </div>
 
                 {/* Buttons */}
                 <div className="flex space-x-2 gap-4">
                   <button
-                    className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-500 to-gray-300 text-white px-4 py-2 rounded-lg w-[100px] cursor-pointer"
+                    className="bg-gray-500 hover:bg-gray-300 text-white px-4 py-2 rounded-lg w-[100px] cursor-pointer"
                     onClick={() => setShowCropper(false)}
                   >
                     Cancel
                   </button>
                   <button
-                    className="bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white px-4 py-2 rounded-lg w-[100px] cursor-pointer"
+                    className="bg-[#b8264a] hover:bg-[#fc003f] text-white px-4 py-2 rounded-lg w-[100px] cursor-pointer"
                     onClick={getCroppedImage}
                   >
                     Save

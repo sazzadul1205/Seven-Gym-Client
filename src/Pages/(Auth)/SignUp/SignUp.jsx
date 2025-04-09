@@ -9,6 +9,7 @@ import SocialLinks from "../../../Shared/SocialLinks/SocialLinks";
 
 // Background Image
 import LoginBack from "../../../assets/Background-Auth/LoginBack.jpeg";
+import CommonButton from "../../../Shared/Buttons/CommonButton";
 
 const SignUp = () => {
   // Custom authentication hook
@@ -150,24 +151,19 @@ const SignUp = () => {
             </div>
 
             {/* Submit button */}
-            <button
+            <CommonButton
               type="submit"
-              disabled={loading} // Disable button while loading
-              className={`w-full text-4xl font-bold rounded-xl py-3 ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-linear-to-bl hover:bg-linear-to-tr from-[#b8264a] to-[#fc003f] text-white cursor-pointer"
-              }`}
-            >
-              {loading ? (
-                <div className="flex items-center justify-center space-x-2">
-                  <span className="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></span>
-                  <span>Sign Up ...</span>
-                </div>
-              ) : (
-                "Sign Up"
-              )}
-            </button>
+              text="Sign Up"
+              bgColor="OriginalRed"
+              textColor="text-white"
+              py="py-4"
+              px="px-6"
+              width="full"
+              borderRadius="rounded-xl"
+              isLoading={loading}
+              loadingText="Signing Up..."
+              disabled={loading}
+            />
 
             {/* Login link for existing users */}
             <p className="font-semibold text-black pt-2">
