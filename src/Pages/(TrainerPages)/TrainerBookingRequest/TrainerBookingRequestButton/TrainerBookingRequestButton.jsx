@@ -1,30 +1,17 @@
-import { useState } from "react";
-/* eslint-disable react/prop-types */
-
 // Import Icons
 import { Tooltip } from "react-tooltip";
 import { ImCross } from "react-icons/im";
-import { FaCheck, FaInfo, FaRegTrashAlt } from "react-icons/fa";
+import { FaCheck, FaRegTrashAlt } from "react-icons/fa";
 
 // Import Package
 import Swal from "sweetalert2";
+import PropTypes from "prop-types";
 
-// Import Modal
-import UserTrainerBookingInfoModal from "../../../(UserPages)/UserTrainerManagement/UserTrainerBookingSession/UserTrainerBookingInfoModal/UserTrainerBookingInfoModal";
+// Import Hook
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-import TrainerBookingInfoModal from "./trainerBookingInfoModal/trainerBookingInfoModal";
 
-const TrainerBookingRequestButton = ({
-  booking,
-  refetch,
-  isBookingValid,
-  invalidReason,
-}) => {
+const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
   const axiosPublic = useAxiosPublic();
-
-  // State for the currently selected booking
-  const [selectedBooking, setSelectedBooking] = useState(null);
-
   // Helper: Checks if expired booking can be deleted (only after 12 days)
   const canDeleteExpired = (bookedAt) => {
     const bookingDate = new Date(
@@ -148,10 +135,8 @@ const TrainerBookingRequestButton = ({
     console.log("Cancel Accepted Booking :", Booking); // Log cancel action
   };
 
-  console.log(selectedBooking);
-
   return (
-    <div className="flex items-center gap-2">
+    <>
       {!isBookingValid ? (
         <>
           <button
@@ -165,25 +150,6 @@ const TrainerBookingRequestButton = ({
             anchorSelect={`#delete-btn-${booking._id}`}
             content="Delete Unavailable Booking"
           />
-
-          <div>
-            <button
-              id={`view-details-btn-${booking._id}`}
-              className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
-              onClick={() => {
-                setSelectedBooking(booking);
-                // document
-                //   .getElementById("User_Trainer_Booking_Info_Modal")
-                //   .showModal();
-              }}
-            >
-              <FaInfo className="text-yellow-500" />
-            </button>
-            <Tooltip
-              anchorSelect={`#view-details-btn-${booking._id}`}
-              content="View Detailed Booking Info"
-            />
-          </div>
         </>
       ) : (
         <>
@@ -249,38 +215,21 @@ const TrainerBookingRequestButton = ({
               />
             </>
           )}
-
-          {/* Always show View Details button */}
-          <div>
-            <button
-              id={`view-details-btn-${booking._id}`}
-              className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
-              onClick={() => {
-                setSelectedBooking(booking);
-                document
-                  .getElementById("User_Trainer_Booking_Info_Modal")
-                  .showModal();
-              }}
-            >
-              <FaInfo className="text-yellow-500" />
-            </button>
-            <Tooltip
-              anchorSelect={`#view-details-btn-${booking._id}`}
-              content="View Detailed Booking Info"
-            />
-          </div>
         </>
       )}
-
-      {/* The modal for booking details */}
-      <dialog id="User_Trainer_Booking_Info_Modal" className="modal">
-        <TrainerBookingInfoModal
-          selectedBooking={selectedBooking}
-          invalidReason={invalidReason}
-        />
-      </dialog>
-    </div>
+    </>
   );
+};
+
+TrainerBookingRequestButton.propTypes = {
+  booking: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    status: PropTypes.oneOf(["Pending", "Accepted", "Rejected", "Expired"])
+      .isRequired,
+    bookedAt: PropTypes.string.isRequired,
+  }).isRequired,
+  refetch: PropTypes.func.isRequired,
+  isBookingValid: PropTypes.bool.isRequired,
 };
 
 export default TrainerBookingRequestButton;

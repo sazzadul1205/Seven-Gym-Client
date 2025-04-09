@@ -514,7 +514,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
         <UserTrainerBookingInfoModal selectedBooking={selectedBooking} />
       </dialog>
 
-      {/* User Trainer Booking Info Modal */}
+      {/* User Trainer Booking Accept Modal */}
       <dialog id="User_Trainer_Booking_Accept_Modal" className="modal">
         <UserTrainerBookingAcceptModal selectedBooking={selectedBooking} />
       </dialog>

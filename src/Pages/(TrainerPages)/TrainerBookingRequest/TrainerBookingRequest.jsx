@@ -1,14 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 // Import Package
 import PropTypes from "prop-types";
 
-// Import Hook
+// Import Hooks
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 
-// Import Modal & Subcomponents
+// Import Modal and Components
 import TrainerBookingRequestButton from "./TrainerBookingRequestButton/TrainerBookingRequestButton";
+import TrainerBookingInfoModal from "./TrainerBookingRequestButton/trainerBookingInfoModal/trainerBookingInfoModal";
 import TrainerBookingRequestUserBasicInfo from "./TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+
+// Import Icons
+import { FaInfo } from "react-icons/fa";
+import { Tooltip } from "react-tooltip";
 
 // Parse custom date string (Format: "06-04-2025T11:12")
 const parseCustomDate = (input) => {
@@ -59,11 +64,11 @@ const getRemainingTime = (input, now) => {
 const getStatusBackgroundColor = (status) => {
   switch (status) {
     case "Accepted":
-      return "bg-linear-to-bl from-green-400 to-green-200";
+      return "bg-gradient-to-bl from-green-400 to-green-200";
     case "Rejected":
-      return "bg-linear-to-bl from-red-400 to-red-200";
+      return "bg-gradient-to-bl from-red-400 to-red-200";
     case "Expired":
-      return "bg-linear-to-bl from-gray-400 to-gray-200";
+      return "bg-gradient-to-bl from-gray-400 to-gray-200";
     default:
       return "bg-white";
   }
@@ -72,9 +77,20 @@ const getStatusBackgroundColor = (status) => {
 const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
   const axiosPublic = useAxiosPublic();
 
+  // Current time for comparison
   const [now, setNow] = useState(new Date());
+
+  // Booking ID -> validity status
   const [bookingValidityMap, setBookingValidityMap] = useState({});
-  const [bookingInvalidReasonMap, setBookingInvalidReasonMap] = useState({}); 
+
+  // Booking ID -> invalid reason
+  const [bookingInvalidReasonMap, setBookingInvalidReasonMap] = useState({});
+
+  // Selected booking data
+  const [selectedBooking, setSelectedBooking] = useState(null);
+
+  // Create a ref for the modal
+  const modalRef = useRef(null);
 
   // Update clock every 60s to refresh expiration countdown
   useEffect(() => {
@@ -84,13 +100,15 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Validate all pending bookings on initial load
+  // Validate all pending bookings on initial load and when data changes
   useEffect(() => {
     const validateAllBookings = async () => {
+      // Filter only pending bookings
       const pendingBookings = TrainerBookingRequestData.filter(
         (b) => b.status === "Pending"
       );
 
+      // Validate each booking via API
       const results = await Promise.all(
         pendingBookings.map(async (booking) => {
           try {
@@ -108,11 +126,13 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
             };
           } catch (err) {
             console.error(`Validation error for ${booking._id}`, err);
+            // Default to valid if error occurs
             return { id: booking._id, valid: true, reason: null };
           }
         })
       );
 
+      // Store validity results in maps
       const newValidityMap = {};
       const newReasonMap = {};
 
@@ -123,14 +143,23 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
         }
       });
 
+      // Update state with validation results
       setBookingValidityMap(newValidityMap);
-      setBookingInvalidReasonMap(newReasonMap); 
+      setBookingInvalidReasonMap(newReasonMap);
     };
 
+    // Run validation if booking data is available
     if (TrainerBookingRequestData.length > 0) {
       validateAllBookings();
     }
   }, [TrainerBookingRequestData, axiosPublic]);
+
+  // Create a close handler
+  const closeModal = () => {
+    modalRef.current?.close();
+    // Optionally, clear the selected booking if needed:
+    setSelectedBooking(null);
+  };
 
   return (
     <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
@@ -142,12 +171,15 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
         </p>
       </div>
 
+      {/* Divider */}
       <div className="mx-auto bg-white w-1/3 p-[1px]" />
 
+      {/* Main Content Area */}
       <div className="py-4 px-4 md:px-10">
         {TrainerBookingRequestData.length > 0 ? (
           <div className="overflow-x-auto rounded shadow-sm border border-gray-300">
             <table className="min-w-full bg-white">
+              {/* Table Header */}
               <thead className="bg-gray-800 text-white text-sm uppercase">
                 <tr>
                   {[
@@ -169,10 +201,13 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
                 </tr>
               </thead>
 
+              {/* Table Body */}
               <tbody className="text-sm text-gray-700">
+                {/* Filter out rejected bookings */}
                 {TrainerBookingRequestData.filter(
                   (booking) => booking.status !== "Rejected"
                 ).map((booking) => {
+                  // Booking validation and background style setup
                   const isValid = bookingValidityMap[booking._id] !== false;
                   const invalidReason = bookingInvalidReasonMap[booking._id];
                   const rowBg = !isValid
@@ -186,28 +221,34 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
                       key={booking._id}
                       className={`transition-colors duration-200 hover:bg-gray-100 border-b border-gray-500 ${rowBg}`}
                     >
+                      {/* Booker Info */}
                       <td className="px-4 py-3 font-medium">
                         <TrainerBookingRequestUserBasicInfo
                           email={booking?.bookerEmail}
                         />
                       </td>
 
+                      {/* Booking Date */}
                       <td className="px-4 py-3">
                         {formatDate(booking.bookedAt)}
                       </td>
+
+                      {/* Total Price */}
                       <td className="px-4 py-3">
                         ${Number(booking.totalPrice).toFixed(2)}
                       </td>
+
+                      {/* Duration */}
                       <td className="px-4 py-3">
                         {booking.durationWeeks} Weeks
                       </td>
 
-                      {/* Status */}
+                      {/* Status Display */}
                       <td className="px-4 py-3 font-bold capitalize">
                         {!isValid ? "Unavailable" : booking.status}
                       </td>
 
-                      {/* Time left before expiry */}
+                      {/* Expiry Countdown */}
                       <td className="px-4 py-3 text-center font-semibold">
                         {booking.status === "Accepted"
                           ? "Waiting for payment"
@@ -216,14 +257,35 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
                           : "-- / --"}
                       </td>
 
-                      {/* Action Button */}
+                      {/* Action Buttons: Accept/Reject & View Details */}
                       <td className="px-4 py-3">
-                        <TrainerBookingRequestButton
-                          booking={booking}
-                          refetch={refetch}
-                          isBookingValid={isValid}
-                          invalidReason={invalidReason}
-                        />
+                        <div className="flex gap-2">
+                          {/* Accept / Reject Button */}
+                          <TrainerBookingRequestButton
+                            booking={booking}
+                            refetch={refetch}
+                            isBookingValid={isValid}
+                            invalidReason={invalidReason}
+                          />
+
+                          {/* View Details Button */}
+                          <div>
+                            <button
+                              id={`view-details-btn-${booking._id}`}
+                              className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                              onClick={() => {
+                                setSelectedBooking(booking);
+                                modalRef.current?.showModal();
+                              }}
+                            >
+                              <FaInfo className="text-yellow-500" />
+                            </button>
+                            <Tooltip
+                              anchorSelect={`#view-details-btn-${booking._id}`}
+                              content="View Detailed Booking Info"
+                            />
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -232,11 +294,24 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
             </table>
           </div>
         ) : (
+          // No bookings fallback
           <div className="text-center text-gray-500 mt-8 italic">
             No booking requests at the moment.
           </div>
         )}
       </div>
+
+      {/* Booking Details Modal */}
+      <dialog
+        ref={modalRef}
+        id="User_Trainer_Booking_Info_Modal"
+        className="modal"
+      >
+        <TrainerBookingInfoModal
+          selectedBooking={selectedBooking}
+          closeModal={closeModal}
+        />
+      </dialog>
     </div>
   );
 };
