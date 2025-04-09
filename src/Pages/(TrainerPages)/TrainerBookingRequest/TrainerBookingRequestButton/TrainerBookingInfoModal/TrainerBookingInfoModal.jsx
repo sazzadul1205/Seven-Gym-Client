@@ -1,44 +1,46 @@
 /* eslint-disable react/prop-types */
+
+// Import Icons
 import { ImCross } from "react-icons/im";
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
-import { useQuery } from "@tanstack/react-query";
-import Loading from "../../../../../Shared/Loading/Loading";
-import FetchingError from "../../../../../Shared/Component/FetchingError";
-import { IoMdFemale, IoMdMale } from "react-icons/io";
 import { MdOutlinePeopleAlt } from "react-icons/md";
+import { IoMdFemale, IoMdMale } from "react-icons/io";
 
-function formatDate(dateStr) {
+// Import Hooks
+import Loading from "../../../../../Shared/Loading/Loading";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import FetchingError from "../../../../../Shared/Component/FetchingError";
+
+// Import Package
+import { useQuery } from "@tanstack/react-query";
+
+// Format date to "DD-Month-YYYY HH:MM AM/PM"
+const formatDate = (dateStr) => {
   const date = new Date(dateStr);
-
   const day = date.getDate();
-  const month = date.toLocaleString("default", { month: "long" }); // Full month name (e.g., "April")
+  const month = date.toLocaleString("default", { month: "long" });
   const year = date.getFullYear();
   let hours = date.getHours();
-  const minutes = String(date.getMinutes()).padStart(2, "0"); // Ensure two digits for minutes
-
-  // Convert to 12-hour format and determine AM/PM
+  const minutes = String(date.getMinutes()).padStart(2, "0");
   const amps = hours >= 12 ? "PM" : "AM";
-  hours = hours % 12;
-  hours = hours ? hours : 12; // Handle midnight (0 hours)
+  hours = hours % 12 || 12;
 
-  // Format: DD-MM(written)-YYYY HH:MM AM/PM
   return `${String(day).padStart(
     2,
     "0"
   )}-${month}-${year} ${hours}:${minutes} ${amps}`;
-}
+};
 
+// Convert 'DD-MM-YYYY T HH:mm' to ISO format
 const fixDateFormat = (dateStr) => {
-  // If the date format is 'DD-MM-YYYY T HH:mm', convert it to 'YYYY-MM-DDTHH:mm:ss'
   const parts = dateStr.split("T");
   if (parts.length === 2) {
     const [day, month, year] = parts[0].split("-");
-    return `${year}-${month}-${day}T${parts[1]}:00`; // Add the seconds to make it a valid ISO string
+    return `${year}-${month}-${day}T${parts[1]}:00`;
   }
-  return dateStr; // Return original if format is not recognized
+  return dateStr;
 };
 
-// Get Tier Badge
+// Return style string for tier badge
 const getTierBadge = (tier) => {
   const tierStyles = {
     Bronze: "bg-orange-600 text-white ring-2 ring-orange-300 shadow-lg",
@@ -51,7 +53,7 @@ const getTierBadge = (tier) => {
   return tierStyles[tier] || "bg-gray-200 text-gray-700 ring-2 ring-gray-300";
 };
 
-// Get Gender Icon with normalization to ensure correct lookup
+// Return gender icon and label
 const getGenderIcon = (gender) => {
   if (!gender) {
     return {
@@ -59,7 +61,7 @@ const getGenderIcon = (gender) => {
       label: "Not specified",
     };
   }
-  // Normalize: make first letter uppercase and rest lowercase
+
   const normalizedGender =
     gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase();
 
@@ -86,8 +88,26 @@ const getGenderIcon = (gender) => {
   );
 };
 
-const TrainerBookingInfoModal = ({ selectedBooking, closeModal }) => {
+// Convert 24-hour time to 12-hour AM/PM format
+const formatTimeTo12Hour = (time) => {
+  if (!time) return "";
+  const [hour, minute] = time.split(":");
+  const h = parseInt(hour, 10);
+  const amPm = h >= 12 ? "PM" : "AM";
+  const formattedHour = h % 12 === 0 ? 12 : h % 12;
+  return `${formattedHour}:${minute} ${amPm}`;
+};
+
+const TrainerBookingInfoModal = ({
+  closeModal,
+  selectedBooking,
+  bookingValidity,
+  bookingInvalidReason,
+}) => {
   const axiosPublic = useAxiosPublic();
+
+  console.log("Booking Validity :", bookingValidity);
+  console.log("Booking Invalid Reason :", bookingInvalidReason);
 
   // Fetch Booker Data
   const {
@@ -103,11 +123,39 @@ const TrainerBookingInfoModal = ({ selectedBooking, closeModal }) => {
     enabled: !!selectedBooking?.bookerEmail,
   });
 
+  // Use selectedBooking.sessions directly
+  const sessionQuery =
+    selectedBooking?.sessions
+      ?.map((id) => `ids=${encodeURIComponent(id)}`)
+      .join("&") || "";
+
+  // Fetch session details by ID
+  const {
+    data: ScheduleByIDData,
+    isLoading: ScheduleByIDDataIsLoading,
+    error: ScheduleByIDDataError,
+  } = useQuery({
+    queryKey: ["ScheduleByIDData", selectedBooking?.sessions],
+    enabled: !!selectedBooking?.sessions?.length,
+    queryFn: () =>
+      axiosPublic
+        .get(`/Trainers_Schedule/ByID?${sessionQuery}`)
+        .then((res) => res.data),
+  });
+
   // Loading state
-  if (BookerIsLoading) return <Loading />;
+  if (BookerIsLoading || ScheduleByIDDataIsLoading) return <Loading />;
 
   // Error handling
-  if (BookerError) return <FetchingError />;
+  if (BookerError || ScheduleByIDDataError) return <FetchingError />;
+
+  let invalidSessionId = null;
+  if (!bookingValidity && bookingInvalidReason) {
+    const match = bookingInvalidReason.match(/session id:\s*(.+)$/i);
+    if (match) {
+      invalidSessionId = match[1].trim();
+    }
+  }
 
   // Get the gender icon for the user
   const { icon } = getGenderIcon(BookerData?.gender);
@@ -123,7 +171,15 @@ const TrainerBookingInfoModal = ({ selectedBooking, closeModal }) => {
         />
       </div>
 
-      {/* Scrollable Body */}
+      {!bookingValidity && bookingInvalidReason && (
+        <div className="px-5 pt-4">
+          <p className="text-sm text-red-600 font-semibold">
+            ❗ {bookingInvalidReason}
+          </p>
+        </div>
+      )}
+
+      {/* Basic Information : Booker Info , Booking Details */}
       <div className="overflow-auto px-4 py-6 sm:px-6 md:px-8">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           {/* Booker Info */}
@@ -204,6 +260,115 @@ const TrainerBookingInfoModal = ({ selectedBooking, closeModal }) => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Sessions Table */}
+      <div className="p-3">
+        {/* Title */}
+        <h3 className="text-lg font-semibold py-2">Session Bookings</h3>
+
+        {/* Schedule By Id  */}
+        {ScheduleByIDData?.length > 0 ? (
+          <>
+            {/* Desktop View */}
+            <div className="hidden md:flex">
+              {/* Schedule By ID  */}
+              <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black mb-6">
+                {/* Table Header */}
+                <thead>
+                  <tr className="bg-gray-300">
+                    {["Day", "Class Code", "Class Type", "Time", "Price"].map(
+                      (head, i) => (
+                        <th key={i} className="px-4 py-2 border-b text-center">
+                          {head}
+                        </th>
+                      )
+                    )}
+                  </tr>
+                </thead>
+
+                {/* Table Content */}
+                <tbody>
+                  {ScheduleByIDData?.map((s, idx) => (
+                    <tr
+                      key={`${s.id}-${idx}`}
+                      className={`border border-gray-300 cursor-pointer ${
+                        s.id === invalidSessionId
+                          ? "bg-red-200 hover:bg-red-300"
+                          : "bg-gray-50 hover:bg-gray-200"
+                      }`}
+                    >
+                      {/* Day */}
+                      <td className="px-4 py-2">{s.day}</td>
+
+                      {/* Class Code */}
+                      <td className="px-4 py-2">{s.id}</td>
+
+                      {/* Class Type */}
+                      <td className="px-4 py-2">{s.classType}</td>
+
+                      {/* Time */}
+                      <td className="px-4 py-2 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <p className="w-16 md:w-20">
+                            {formatTimeTo12Hour(s.start)}
+                          </p>
+                          <span>-</span>
+                          <p className="w-16 md:w-20">
+                            {formatTimeTo12Hour(s.end)}
+                          </p>
+                        </div>
+                      </td>
+
+                      {/* Price */}
+                      <td className="px-4 py-2">
+                        {s.classPrice === "free" || s.classPrice === "Free"
+                          ? "Free"
+                          : `$ ${s.classPrice}`}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile View */}
+            <div className="flex md:hidden flex-col mb-6">
+              {ScheduleByIDData.map((s, idx) => (
+                <div
+                  key={`${s.id}-${idx}`}
+                  className={`text-black text-center ${
+                    idx % 2 === 0 ? "bg-gray-100" : "bg-white"
+                  } md:rounded-xl p-5 shadow-md border-2 border-gray-300`}
+                >
+                  {/* Day */}
+                  <h4>{s.day}</h4>
+
+                  {/* Class Type */}
+                  <p className="text-xl font-semibold">{s.classType}</p>
+
+                  {/* Time */}
+                  <div className="flex justify-center gap-2">
+                    <p>{formatTimeTo12Hour(s.start)}</p>
+                    <span>-</span>
+                    <p>{formatTimeTo12Hour(s.end)}</p>
+                  </div>
+
+                  {/* Price */}
+                  <p className="font-bold text-lg">
+                    {" "}
+                    {s.classPrice === "free" || s.classPrice === "Free"
+                      ? "Free"
+                      : `$ ${s.classPrice}`}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          // If No Session Available
+          <p className="text-center text-xl">No sessions available</p>
+        )}
       </div>
     </div>
   );

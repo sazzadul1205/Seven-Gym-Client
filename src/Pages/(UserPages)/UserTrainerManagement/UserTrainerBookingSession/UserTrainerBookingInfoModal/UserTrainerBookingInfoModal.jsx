@@ -12,38 +12,34 @@ import { ImCross } from "react-icons/im";
 import { MdOutlinePeopleAlt } from "react-icons/md";
 import { IoMdMale, IoMdFemale } from "react-icons/io";
 
-function formatDate(dateStr) {
+// Format date to "DD-Month-YYYY HH:MM AM/PM"
+const formatDate = (dateStr) => {
   const date = new Date(dateStr);
-
   const day = date.getDate();
-  const month = date.toLocaleString("default", { month: "long" }); // Full month name (e.g., "April")
+  const month = date.toLocaleString("default", { month: "long" });
   const year = date.getFullYear();
   let hours = date.getHours();
-  const minutes = String(date.getMinutes()).padStart(2, "0"); // Ensure two digits for minutes
-
-  // Convert to 12-hour format and determine AM/PM
+  const minutes = String(date.getMinutes()).padStart(2, "0");
   const amps = hours >= 12 ? "PM" : "AM";
-  hours = hours % 12;
-  hours = hours ? hours : 12; // Handle midnight (0 hours)
+  hours = hours % 12 || 12;
 
-  // Format: DD-MM(written)-YYYY HH:MM AM/PM
   return `${String(day).padStart(
     2,
     "0"
   )}-${month}-${year} ${hours}:${minutes} ${amps}`;
-}
+};
 
+// Convert 'DD-MM-YYYY T HH:mm' to ISO format
 const fixDateFormat = (dateStr) => {
-  // If the date format is 'DD-MM-YYYY T HH:mm', convert it to 'YYYY-MM-DDTHH:mm:ss'
   const parts = dateStr.split("T");
   if (parts.length === 2) {
     const [day, month, year] = parts[0].split("-");
-    return `${year}-${month}-${day}T${parts[1]}:00`; // Add the seconds to make it a valid ISO string
+    return `${year}-${month}-${day}T${parts[1]}:00`;
   }
-  return dateStr; // Return original if format is not recognized
+  return dateStr;
 };
 
-// Get Tier Badge
+// Return style string for tier badge
 const getTierBadge = (tier) => {
   const tierStyles = {
     Bronze: "bg-orange-600 text-white ring-2 ring-orange-300 shadow-lg",
@@ -56,8 +52,18 @@ const getTierBadge = (tier) => {
   return tierStyles[tier] || "bg-gray-200 text-gray-700 ring-2 ring-gray-300";
 };
 
-// Get Gender Icon
+// Return gender icon and label
 const getGenderIcon = (gender) => {
+  if (!gender) {
+    return {
+      icon: <MdOutlinePeopleAlt className="text-gray-500 text-3xl" />,
+      label: "Not specified",
+    };
+  }
+
+  const normalizedGender =
+    gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase();
+
   const genderData = {
     Male: {
       icon: <IoMdMale className="text-blue-500 text-3xl font-bold" />,
@@ -74,7 +80,7 @@ const getGenderIcon = (gender) => {
   };
 
   return (
-    genderData[gender] || {
+    genderData[normalizedGender] || {
       icon: <MdOutlinePeopleAlt className="text-gray-500 text-3xl" />,
       label: "Not specified",
     }
@@ -111,9 +117,6 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
   // Unpack trainer data
   const SelectedTrainerData = TrainerData?.[0] || {};
 
-  // Get the gender icon
-  const { icon } = getGenderIcon(SelectedTrainerData?.gender);
-
   // Use selectedBooking.sessions directly
   const sessionQuery =
     selectedBooking?.sessions
@@ -140,6 +143,9 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
   // Error Management
   if (TrainerDataError || ScheduleByIDDataError) return <FetchingError />;
 
+  // Get the gender icon
+  const { icon } = getGenderIcon(SelectedTrainerData?.gender);
+
   return (
     <div className="modal-box max-w-5xl w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black">
       {/* Header */}
@@ -153,7 +159,7 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
         />
       </div>
 
-      {/* Scrollable Body */}
+      {/* Basic Information : Trainer Info , Booking Details */}
       <div className="overflow-auto px-4 py-6 sm:px-6 md:px-8">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           {/* Trainer Info */}
@@ -180,7 +186,7 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
               <p className="text-xs sm:text-sm md:text-base italic text-gray-600">
                 {SelectedTrainerData?.specialization ||
                   "Specialization Not Available"}
-              </p> 
+              </p>
 
               {/* Tier Badge */}
               {SelectedTrainerData?.tier && (

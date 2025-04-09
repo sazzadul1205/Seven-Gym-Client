@@ -46,7 +46,7 @@ const ClassesDetails = () => {
     queryKey: ["ClassScheduleData", module],
     queryFn: async () =>
       axiosPublic
-        .get(`/Our_Classes_Schedule/searchByModule?moduleName=${module}`)
+        .get(`/Our_Classes_Schedule/SearchByModule?moduleName=${module}`)
         .then((res) => res.data),
   });
 

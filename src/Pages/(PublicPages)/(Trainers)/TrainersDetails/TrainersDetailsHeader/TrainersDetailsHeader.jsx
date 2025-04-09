@@ -53,11 +53,11 @@ const TrainersDetailsHeader = ({ TrainerDetails }) => {
     <div className="relative bg-linear-to-b from-gray-500/80 to-gray-500/50 mx-auto justify-between text-center py-10">
       {/* Section-Scoped Floating Back Button */}
       <button
-        className="absolute top-5 left-5 flex items-center gap-2 text-lg px-10 py-2 bg-white hover:bg-gray-100/90 text-black rounded-lg cursor-pointer"
+        className="absolute top-5 left-5 flex items-center gap-2 text-lg px-5 md:px-10 py-2 bg-white hover:bg-gray-100/90 text-black rounded-lg cursor-pointer"
         onClick={() => navigate(-1)}
       >
         <IoMdArrowRoundBack className="text-xl" />
-        Back
+        <p className="hidden md:flex" > Back</p>
       </button>
 
       {/* Trainer Profile Image */}

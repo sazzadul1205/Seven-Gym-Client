@@ -39,13 +39,15 @@ const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
     <div className="relative bg-gradient-to-b from-gray-500/80 to-gray-500/50">
       {/* Section-Scoped Floating Back Button */}
       <button
-        className="absolute top-5 left-5 flex items-center gap-2 text-lg px-10 py-2 bg-white hover:bg-gray-100/90 text-black rounded-lg cursor-pointer"
+        className="absolute top-5 left-5 flex items-center gap-2 text-lg px-5 md:px-10 py-2 bg-white hover:bg-gray-100/90 text-black rounded-lg cursor-pointer"
         onClick={() => navigate(-1)}
       >
         <IoMdArrowRoundBack className="text-xl" />
-        Back
+        <p className="hidden md:flex">Back</p>
       </button>
-      <div className="mx-auto max-w-7xl py-5 flex flex-col md:flex-row items-center justify-center gap-2">
+
+      {/* Page Content */}
+      <div className="mx-auto max-w-7xl py-5 pt-5 md:pt-20 flex flex-col md:flex-row items-center justify-center gap-2">
         {/* Selected Session Data */}
         <div className="max-w-4xl w-full bg-black/20 rounded-4xl shadow-lg p-6">
           {/* Title */}

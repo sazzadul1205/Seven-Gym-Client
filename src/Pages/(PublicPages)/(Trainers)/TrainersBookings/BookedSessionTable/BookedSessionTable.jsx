@@ -309,14 +309,14 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
                       className="flex flex-col sm:flex-row justify-between bg-gray-300 hover:bg-gray-400 py-3 px-5 font-semibold rounded-lg"
                     >
                       {/* Class Type and Price Details */}
-                      <span className="mb-2 sm:mb-0">
+                      <span className="mb-2 sm:mb-0 text-sm mb:text-md">
                         {classType} (
                         {classPrice > 0 ? `$${classPrice}` : "Free"}) × {count}{" "}
                         × {duration} week{duration > 1 ? "s" : ""}
                       </span>
 
                       {/* Adjusted Subtotal */}
-                      <span className="mt-2 sm:mt-0 flex justify-end">
+                      <span className="mt-2 sm:mt-0 flex text-sm mb:text-md justify-end">
                         $ {adjustedSubtotal.toFixed(2)}
                       </span>
                     </li>

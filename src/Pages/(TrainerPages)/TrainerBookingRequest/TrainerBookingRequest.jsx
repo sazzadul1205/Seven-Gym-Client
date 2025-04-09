@@ -308,8 +308,10 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
         className="modal"
       >
         <TrainerBookingInfoModal
-          selectedBooking={selectedBooking}
           closeModal={closeModal}
+          selectedBooking={selectedBooking}
+          bookingValidity={bookingValidityMap[selectedBooking?._id]}
+          bookingInvalidReason={bookingInvalidReasonMap[selectedBooking?._id]}
         />
       </dialog>
     </div>
