@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import PropTypes from "prop-types";
 import { fetchTierBadge } from "../../Utility/fetchTierBadge";
+import CommonButton from "../Buttons/CommonButton";
 
 const TrainerPublicIdCard = ({ trainer }) => {
   return (
@@ -44,7 +45,9 @@ const TrainerPublicIdCard = ({ trainer }) => {
 
           <div className="flex justify-between">
             <span className="font-medium">Age:</span>
-            <span className="font-semibold text-green-700">{trainer?.age} yrs old</span>
+            <span className="font-semibold text-green-700">
+              {trainer?.age} yrs old
+            </span>
           </div>
         </div>
 
@@ -59,9 +62,16 @@ const TrainerPublicIdCard = ({ trainer }) => {
         {/* CTA Button */}
         <div>
           <Link to={`/Trainers/${trainer?.name}`}>
-            <button className="w-full py-2 bg-gradient-to-r from-[#c23e5f] to-[#ff0040] text-white font-semibold rounded-lg border border-red-500 hover:brightness-110 transition-all duration-200">
-              View Details
-            </button>
+            <CommonButton
+              text="View Details"
+              bgColor="OriginalRed" // Your custom gradient
+              px="px-4" // Matches w-full width spacing
+              py="py-2" // Keeps the vertical padding
+              textColor="text-white"
+              borderRadius="rounded-lg"
+              width="full" // Make button full width
+              cursorStyle="cursor-pointer"
+            />
           </Link>
         </div>
       </div>

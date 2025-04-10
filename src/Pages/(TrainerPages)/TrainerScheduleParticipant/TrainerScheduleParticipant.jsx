@@ -1,48 +1,26 @@
 /* eslint-disable react/prop-types */
 
+// Import Package
+import { useQuery } from "@tanstack/react-query";
+
+// Import Icon
 import { FaUserCheck } from "react-icons/fa";
-import TrainerBookingRequestUserBasicInfo from "../TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
 
-// Format time "HH:mm" -> "h:mm AM/PM"
-const formatTime = (timeStr) => {
-  if (!timeStr) return "";
-  const [hour, minute] = timeStr.split(":").map(Number);
-  const ampm = hour >= 12 ? "PM" : "AM";
-  const hour12 = hour % 12 === 0 ? 12 : hour % 12;
-  return `${hour12}:${minute.toString().padStart(2, "0")} ${ampm}`;
-};
+// Import Utility
+import { formatTime } from "../../../Utility/formatTime";
 
-// Parse custom date string (Format: "06-04-2025T11:12")
-const parseCustomDate = (input) => {
-  if (!input) return null;
-  const [datePart, timePart] = input.split("T");
-  const [day, month, year] = datePart.split("-");
-  const [hour, minute] = timePart.split(":");
+// Import Hooks
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 
-  return new Date(`${year}-${month}-${day}T${hour}:${minute}`);
-};
-
-// Formats date to "06 Apr 2025, 11:12 AM"
-const formatDate = (input) => {
-  const dateObj = parseCustomDate(input);
-  if (!dateObj) return "";
-
-  const options = {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  };
-
-  return dateObj.toLocaleString("en-US", options);
-};
+// Import Component
+import TrainerScheduleParticipantReserved from "./TrainerScheduleParticipantReserved/TrainerScheduleParticipantReserved";
 
 const TrainerScheduleParticipant = ({
   TrainerProfileScheduleData,
   TrainerBookingRequestData,
 }) => {
+  const axiosPublic = useAxiosPublic();
+
   console.log(TrainerProfileScheduleData);
 
   const schedule = TrainerProfileScheduleData?.trainerSchedule;
@@ -62,6 +40,31 @@ const TrainerScheduleParticipant = ({
   );
 
   const sortedTimes = Array.from(allTimes).sort((a, b) => a.localeCompare(b));
+
+  // Helper function to fetch the user's name by email (This should ideally be an API call or a lookup from your data source)
+  const getUserNameByEmail = (email) => {
+    // Initialize Axios instance
+
+    // Fetch user basic info using email
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { data, isLoading, error } = useQuery({
+      queryKey: ["UserBasicInfo", email],
+      queryFn: () =>
+        axiosPublic
+          .get(`/Users/BasicProfile?email=${email}`)
+          .then((res) => res.data),
+      enabled: !!email,
+    });
+
+    // Show loading state
+    if (isLoading)
+      return <span className="text-xs text-gray-500">Loading...</span>;
+
+    // Handle error or missing data
+    if (error || !data) return <span className="text-xs">{email}</span>;
+
+    return data?.fullName || email;
+  };
 
   return (
     <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
@@ -119,19 +122,26 @@ const TrainerScheduleParticipant = ({
                     {displayTime}
                   </td>
 
-                  {/* Limit & Participant */}
                   {days.map((day) => {
                     const session = schedule[day]?.[time];
+                    const isFull =
+                      session?.participant.length === session?.participantLimit;
+                    const bgColor = isFull ? "bg-red-200/50" : ""; // Light background for full session
+                    const bgSuperColor = isFull
+                      ? "bg-red-500/50"
+                      : "bg-gray-300"; // Light background for full session
 
                     return (
                       <td
                         key={`${time}-${day}`}
-                        className="border border-black"
+                        className={`border border-black ${bgColor}`} // Conditionally apply background color
                       >
                         {session ? (
                           <div>
                             {/* Limit Info */}
-                            <div className="text-center bg-gray-200 flex justify-center items-center gap-5 py-1">
+                            <div
+                              className={`text-center ${bgSuperColor} flex justify-center items-center gap-5 py-1`}
+                            >
                               <p className="font-semibold">Limit:</p>
                               <p className="w-[20px]">
                                 {session.participantLimit}
@@ -139,23 +149,28 @@ const TrainerScheduleParticipant = ({
                               <FaUserCheck />
                             </div>
 
-                            {/* Participant Emails */}
+                            {/* Participant Names (instead of emails) */}
                             <div className="flex justify-center gap-2">
                               {session.participant.length > 0 ? (
                                 session.participant.map(
-                                  (participant, index) => (
-                                    <span
-                                      key={index}
-                                      className={`inline-block text-sm px-3 py-1 my-2 rounded-full shadow-md transition duration-200 ${
-                                        participant.paid
-                                          ? "bg-blue-600 text-white"
-                                          : "bg-red-600 text-white"
-                                      }`}
-                                      style={{ fontSize: "0.875rem" }} // Slightly smaller font size
-                                    >
-                                      {participant.bookerEmail}
-                                    </span>
-                                  )
+                                  (participant, index) => {
+                                    const userName = getUserNameByEmail(
+                                      participant.bookerEmail
+                                    ); // Fetch name by email
+                                    return (
+                                      <span
+                                        key={index}
+                                        className={`inline-block text-sm px-3 py-1 my-2 rounded-full shadow-md transition duration-200 ${
+                                          participant.paid
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-red-600 text-white"
+                                        }`}
+                                        style={{ fontSize: "0.875rem" }} // Slightly smaller font size
+                                      >
+                                        {userName}
+                                      </span>
+                                    );
+                                  }
                                 )
                               ) : (
                                 <span className="text-gray-400 italic my-3">
@@ -178,59 +193,7 @@ const TrainerScheduleParticipant = ({
       </div>
 
       {/* Reserved Not Paid Sessions */}
-      <div className="px-5">
-        <p className="text-xl font-semibold text-black border-b-2 border-gray-700 pb-2">
-          Reserved Class Participant
-        </p>
-
-        <table className="min-w-full bg-white text-black">
-          <thead className="bg-gray-800 text-white text-sm uppercase">
-            <tr>
-              {[
-                "Booker",
-                "Booked At",
-                "Total Price",
-                "Duration",
-                "Status",
-                "Accepted At",
-                "Booker Code",
-              ].map((header) => (
-                <th
-                  key={header}
-                  className="px-4 py-3 border-b border-gray-600 text-left"
-                >
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {acceptedBookings?.map((booking) => (
-              <tr
-                key={booking._id}
-                className="transition-colors duration-200 hover:bg-gray-100 border-b border-gray-500"
-              >
-                {/* Booker Info */}
-                <td className="px-4 py-3 font-medium">
-                  <TrainerBookingRequestUserBasicInfo
-                    email={booking.bookerEmail}
-                  />
-                </td>
-
-                {/* Booked At */}
-                <td className="px-4 py-3">{formatDate(booking.bookedAt)}</td>
-                <td className="px-4 py-3">$ {booking.totalPrice}</td>
-                <td className="px-4 py-3">{booking.durationWeeks} Weeks</td>
-                <td className="px-4 py-3 font-bold capitalize">
-                  {booking.paid ? "Paid" : "Not Paid"}
-                </td>
-                <td className="px-4 py-3">{formatDate(booking.acceptedAt)}</td>
-                <td className="px-4 py-3">P2234</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <TrainerScheduleParticipantReserved acceptedBookings={acceptedBookings} />
     </div>
   );
 };

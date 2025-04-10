@@ -278,7 +278,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
 
   // Function: Dummy function to cancel accepted bookings
   const cancelAcceptedBooking = async (Booking) => {
-    console.log("Cancel Accepted Booking :", Booking); // Log cancel action
+    console.log("Cancel Accepted Booking :", Booking);
   };
 
   return (
@@ -348,6 +348,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
                 anchorSelect={`#accept-btn-${booking._id}`}
                 content="Accept Booking Request"
               />
+              
               <button
                 id={`reject-btn-${booking._id}`}
                 className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"

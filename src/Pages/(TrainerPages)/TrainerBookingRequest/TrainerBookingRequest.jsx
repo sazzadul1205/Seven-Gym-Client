@@ -16,50 +16,9 @@ import { FaInfo } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
 import { FaTriangleExclamation } from "react-icons/fa6";
 
-// Parse custom date string (Format: "06-04-2025T11:12")
-const parseCustomDate = (input) => {
-  if (!input) return null;
-  const [datePart, timePart] = input.split("T");
-  const [day, month, year] = datePart.split("-");
-  const [hour, minute] = timePart.split(":");
-
-  return new Date(`${year}-${month}-${day}T${hour}:${minute}`);
-};
-
-// Formats date to "06 Apr 2025, 11:12 AM"
-const formatDate = (input) => {
-  const dateObj = parseCustomDate(input);
-  if (!dateObj) return "";
-
-  const options = {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  };
-
-  return dateObj.toLocaleString("en-US", options);
-};
-
-// Calculates how much time is left before the request expires (1 week window)
-const getRemainingTime = (input, now) => {
-  const startDate = parseCustomDate(input);
-  if (!startDate) return "Invalid date";
-
-  const expiry = new Date(startDate);
-  expiry.setDate(expiry.getDate() + 7);
-
-  const diff = expiry - now;
-  if (diff <= 0) return "Expired";
-
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((diff / (1000 * 60)) % 60);
-
-  return `${days}d ${hours}h ${minutes}m left`;
-};
+// Import Utility
+import { formatDate } from "../../../Utility/formatDate";
+import { getRemainingTime } from "../../../Utility/getRemainingTime";
 
 // Determines background color based on booking status
 const getStatusBackgroundColor = (status) => {
@@ -297,7 +256,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
         ) : (
           // No bookings fallback
           <div className="flex items-center bg-gray-100 py-5 text-black italic">
-            <div className="flex gap-4 mx-auto items-center" >
+            <div className="flex gap-4 mx-auto items-center">
               <FaTriangleExclamation className="text-xl text-red-500" />
               No booking requests at the moment.
             </div>

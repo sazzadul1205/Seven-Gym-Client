@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 import Title from "../../../../Shared/Component/Title";
 import TrainerPublicIdCard from "../../../../Shared/Component/TrainerPublicIdCard";
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 // Main Featured Trainers Component
 const FeaturedTrainers = ({ trainersData }) => {
@@ -23,11 +24,18 @@ const FeaturedTrainers = ({ trainersData }) => {
         </div>
 
         {/* "Find More Teachers" Button */}
-        <div className="text-center mt-8">
+        <div className="flex text-center justify-center mt-8">
           <Link to="/Trainers">
-            <button className="bg-linear-to-bl hover:bg-linear-to-tr from-[#d1234f] to-[#fc003f] px-14 py-3 text-xl font-semibold text-white rounded-xl shadow-lg hover:shadow-2xl">
-              Find More Teachers
-            </button>
+            <CommonButton
+              text="Find More Teachers"
+              bgColor="OriginalRed" // Uses your custom red gradient
+              px="px-14"
+              py="py-3"
+              textColor="text-white"
+              borderRadius="rounded-xl"
+              width="auto"
+              cursorStyle="cursor-pointer"
+            />
           </Link>
         </div>
       </div>
