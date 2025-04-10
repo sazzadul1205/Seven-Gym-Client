@@ -16,10 +16,16 @@ import TrainerDetailsTestimonials from "./TrainerDetailsTestimonials/TrainerDeta
 import Loading from "../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../Shared/Component/FetchingError";
+import { useEffect } from "react";
 
 const TrainersDetails = () => {
   const { name } = useParams();
   const axiosPublic = useAxiosPublic();
+
+  // To Page Top Automatically on Page load
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" }); // or just window.scrollTo(0, 0)
+  }, []);
 
   // Decode the trainer's name from the URL
   const decodedName = decodeURIComponent(name);

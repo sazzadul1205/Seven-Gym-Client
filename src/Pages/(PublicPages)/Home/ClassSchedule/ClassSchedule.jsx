@@ -64,10 +64,13 @@ const ClassSchedule = ({ ourClasses, classDetails }) => {
       : 0;
 
     return (
-      <div key={index} className="relative group border p-1 hover:bg-gray-200/20">
+      <div
+        key={index}
+        className="relative group border p-1 hover:bg-gray-200/20"
+      >
         {/* Class Card */}
         <div
-          className={`relative p-4 border-2 border-gray-400 transition duration-300 rounded-lg lg:hover:scale-105 h-[220px]
+          className={`relative border-2 border-gray-400 transition duration-300 rounded-lg lg:hover:scale-105 space-y-2 items-center py-4 h-48 
             ${
               isCurrent
                 ? "bg-green-200 text-gray-800"
@@ -91,7 +94,7 @@ const ClassSchedule = ({ ourClasses, classDetails }) => {
           </p>
 
           {/* Class Timing */}
-          <p className="text-sm font-medium mb-4 bg-blue-300">
+          <p className="text-xs ms:text-sm font-bold bg-blue-300 py-1">
             {format(startTime, "hh:mm a")} - {format(endTime, "hh:mm a")}
           </p>
 

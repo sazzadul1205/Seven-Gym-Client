@@ -14,6 +14,7 @@ import TrainerBookingRequestUserBasicInfo from "./TrainerBookingRequestUserBasic
 // Import Icons
 import { FaInfo } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
+import { FaTriangleExclamation } from "react-icons/fa6";
 
 // Parse custom date string (Format: "06-04-2025T11:12")
 const parseCustomDate = (input) => {
@@ -295,8 +296,11 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
           </div>
         ) : (
           // No bookings fallback
-          <div className="text-center text-gray-500 mt-8 italic">
-            No booking requests at the moment.
+          <div className="flex items-center bg-gray-100 py-5 text-black italic">
+            <div className="flex gap-4 mx-auto items-center" >
+              <FaTriangleExclamation className="text-xl text-red-500" />
+              No booking requests at the moment.
+            </div>
           </div>
         )}
       </div>

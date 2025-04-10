@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 // Import Icons
 import { Tooltip } from "react-tooltip";
 import { ImCross } from "react-icons/im";
@@ -36,9 +37,7 @@ const getFormattedStartDate = () => {
 const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
   const axiosPublic = useAxiosPublic();
 
-  console.log(booking);
-
-  const handleAccept = async (booking, simulate = true) => {
+  const handleAccept = async (booking) => {
     // Confirm acceptance with SweetAlert
     const confirmAccept = await Swal.fire({
       title: "Are you sure?",
@@ -51,21 +50,20 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
 
     if (!confirmAccept.isConfirmed) return;
 
-    // Prepare data for updating the booking request
+    // Prepare data for updating the booking request.
     const BookingAcceptData = {
       status: "Accepted",
       acceptedAt: getFormattedStartDate(),
       paid: false,
     };
 
-    // Build data to add a participant into the trainer's schedule.
+    // Prepare data for adding the booking participant into the trainer's schedule.
     const SessionData = {
       trainerName: booking.trainer, // e.g., "Thomas King"
-      // Adjust if booking.session is an array; here we're assuming a single session ID.
-      ids: [booking.session],
+      ids: booking.sessions, // Use the array of session IDs
       payload: {
-        bookerEmail: booking.email, // adjust if your booking data field is different
-        duration: booking.duration, // if applicable
+        bookerEmail: booking.bookerEmail, // Use the correct field from your data
+        duration: booking.durationWeeks, // Duration in weeks
         bookingReqID: booking._id,
         acceptedAt: getFormattedStartDate(),
         paid: false,
@@ -73,39 +71,14 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
     };
 
     try {
-      if (simulate) {
-        // Simulation: Log the payloads instead of calling the APIs
-        console.log(
-          "Simulation Mode - Booking Request Update Payload:",
-          BookingAcceptData
-        );
-        console.log(
-          "Simulation Mode - Trainer Schedule AddParticipant Payload:",
-          SessionData
-        );
-
-        // Simulate successful responses for testing.
-        Swal.fire({
-          icon: "success",
-          title: "Accepted!",
-          text: "Booking accepted (simulation) and participant updated successfully.",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-
-        // Optionally refetch data or update UI.
-        refetch();
-        return;
-      }
-
-      // First: update the booking request status
+      // Update the booking request status.
       const bookingResponse = await axiosPublic.patch(
         `/Trainers_Booking_Request/${booking._id}`,
         BookingAcceptData
       );
 
       if (bookingResponse.data?.message) {
-        // Second: update the trainer's schedule with the participant data
+        // Update the trainer's schedule with participant info.
         const participantResponse = await axiosPublic.post(
           "/Trainers_Schedule/AddParticipant",
           SessionData
@@ -122,9 +95,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
             timer: 1500,
             showConfirmButton: false,
           });
-
-          // Optionally, refetch your data to update the UI
-          refetch();
+          refetch(); // Refresh the UI if needed
         } else {
           throw new Error("Failed to add participant to schedule.");
         }

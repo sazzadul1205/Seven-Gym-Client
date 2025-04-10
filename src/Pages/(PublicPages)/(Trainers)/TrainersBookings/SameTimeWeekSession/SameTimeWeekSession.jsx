@@ -20,7 +20,6 @@ const formatTimeTo12Hour = (time) => {
 };
 
 const SameTimeWeekSession = ({
-  Day,
   SameTimeData,
   listedSessions,
   setListedSessions,
@@ -57,7 +56,10 @@ const SameTimeWeekSession = ({
         <div className="flex justify-between items-center py-1">
           <h2 className="text-lg font-semibold text-black">
             Same Time Session&apos;s for This Week{" "}
-            <span className="font-bold text-red-500">[ {Day} ]</span>
+            <span className="font-bold text-red-500">
+              [ {SameTimeData[0] && formatTimeTo12Hour(SameTimeData[0].start)} -
+              {SameTimeData[0] && formatTimeTo12Hour(SameTimeData[0].end)} ]
+            </span>
           </h2>
 
           <div className="flex items-center text-lg font-semibold text-black gap-2">

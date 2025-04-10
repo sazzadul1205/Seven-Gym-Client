@@ -284,18 +284,17 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
                         } p-3 `}
                       >
                         <div className="flex flex-col space-y-2">
-                          {/* Day */}
-                          <div className="mx-auto text-lg font-semibold">
-                            [ {day} ]
-                          </div>
-
-                          {/* Time */}
-                          <div className="font-semibold mx-auto">
-                            <div className="flex items-center justify-between gap-2">
-                              <p>{formatTimeTo12Hour(classDetails.start)}</p>
-                              <span>-</span>
-                              <p>{formatTimeTo12Hour(classDetails.end)}</p>
-                            </div>
+                          {/* Day & Time */}
+                          <div className="flex justify-between font-semibold">
+                            <p>{classDetails.day}</p>[{" "}
+                            <span>
+                              {formatTimeTo12Hour(classDetails.start)}
+                            </span>
+                            <span className="px-1">-</span>
+                            <span>
+                              {formatTimeTo12Hour(classDetails.end)}
+                            </span>{" "}
+                            ]
                           </div>
 
                           {/* Divider */}

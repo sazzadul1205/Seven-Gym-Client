@@ -47,7 +47,7 @@ const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
       </button>
 
       {/* Page Content */}
-      <div className="mx-auto max-w-7xl py-5 pt-5 md:pt-20 flex flex-col md:flex-row items-center justify-center gap-2">
+      <div className="mx-auto max-w-7xl py-5 pt-20 flex flex-col md:flex-row items-center justify-center gap-2">
         {/* Selected Session Data */}
         <div className="max-w-4xl w-full bg-black/20 rounded-4xl shadow-lg p-6">
           {/* Title */}
@@ -56,22 +56,22 @@ const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
           </h2>
 
           {/* Trainer and Session Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-white py-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-white text-white py-4">
             {/* Trainer and General Session Info */}
             <div className="space-y-3">
               {/* Trainer Name */}
-              <div className="text-gray-300 flex justify-between">
+              <div className="flex justify-between">
                 <span className="font-semibold text-white">Trainer:</span>{" "}
                 {trainerName}
               </div>
 
               {/* Day */}
-              <div className="text-gray-300 flex justify-between">
+              <div className="flex justify-between">
                 <span className="font-semibold text-white">Day:</span> {day}
               </div>
 
               {/* Time */}
-              <div className="text-gray-300 flex justify-between">
+              <div className="flex justify-between">
                 <span className="font-semibold text-white">
                   Requested Time:
                 </span>{" "}
@@ -82,13 +82,13 @@ const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
             {/* Session Specific Details */}
             <div className="space-y-3">
               {/* Class Type */}
-              <div className="text-gray-300 flex justify-between">
+              <div className="flex justify-between">
                 <span className="font-semibold text-white">Class Type:</span>{" "}
                 {session?.classType}
               </div>
 
               {/* Participant Limit */}
-              <div className="text-gray-300 flex justify-between">
+              <div className="flex justify-between">
                 <span className="font-semibold text-white">
                   Participant Limit:
                 </span>
@@ -103,7 +103,7 @@ const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
               </div>
 
               {/* Class Price */}
-              <div className="text-gray-300 flex justify-between">
+              <div className="flex justify-between">
                 <span className="font-semibold text-white">
                   Price Per Class:
                 </span>
@@ -122,7 +122,7 @@ const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
             {/* Timing Start & End */}
             <div className="flex justify-between items-center px-0 md:px-20">
               {/* Start Time */}
-              <p className="text-gray-300 ">
+              <p className="">
                 <span className="font-semibold text-white mr-2">Start:</span>
                 {formatTimeTo12Hour(session?.start)}
               </p>
@@ -131,7 +131,7 @@ const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
               <span className="px-0 lg:px-5">-</span>
 
               {/* End Time */}
-              <p className="text-gray-300 ">
+              <p className="">
                 <span className="font-semibold text-white mr-2">End:</span>
                 {formatTimeTo12Hour(session?.end)}
               </p>

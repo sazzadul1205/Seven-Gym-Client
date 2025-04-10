@@ -1,5 +1,5 @@
-import { useNavigate, useLocation } from "react-router";
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router";
 
 // Import Packages
 import Swal from "sweetalert2";
@@ -13,6 +13,7 @@ import TrainerDashboard from "../Pages/(TrainerPages)/TrainerDashboard/TrainerDa
 // Import Icons
 import { FaPowerOff } from "react-icons/fa";
 import { MdOutlinePeopleAlt } from "react-icons/md";
+import { RiArchiveDrawerFill } from "react-icons/ri";
 import { IoMdFemale, IoMdMale } from "react-icons/io";
 
 // Import Hooks
@@ -23,9 +24,11 @@ import FetchingError from "../Shared/Component/FetchingError";
 
 // Import Button
 import CommonButton from "../Shared/Buttons/CommonButton";
-import { RiArchiveDrawerFill } from "react-icons/ri";
 import TrainerBookingRequest from "../Pages/(TrainerPages)/TrainerBookingRequest/TrainerBookingRequest";
 import TrainerScheduleParticipant from "../Pages/(TrainerPages)/TrainerScheduleParticipant/TrainerScheduleParticipant";
+
+// Import Utility
+import { fetchTierBadge } from "../Utility/fetchTierBadge";
 
 // Function to determine gender icon & label
 const getGenderIcon = (gender) => {
@@ -50,26 +53,6 @@ const getGenderIcon = (gender) => {
       label: "Not specified",
     }
   );
-};
-
-// Function to determine tier badge styles
-const getTierBadge = (tier) => {
-  const tierStyles = {
-    Bronze:
-      "bg-gradient-to-bl hover:bg-gradient-to-tr from-orange-300 to-orange-500 ring-2 ring-orange-700",
-    Silver:
-      "bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-300 to-gray-500 ring-2 ring-gray-700",
-    Gold: "bg-gradient-to-bl hover:bg-gradient-to-tr from-yellow-300 to-yellow-500 ring-2 ring-yellow-700",
-    Diamond:
-      "bg-gradient-to-bl hover:bg-gradient-to-tr from-blue-300 to-blue-500 ring-2 ring-blue-700",
-    Platinum:
-      "bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-500 to-gray-700 ring-2 ring-gray-900",
-  };
-
-  return `px-14 py-2 mt-2 rounded-full text-sm font-semibold shadow-lg  ${
-    tierStyles[tier] ||
-    "bg-gradient-to-bl hover:bg-gradient-to-tr from-green-300 to-green-500"
-  }`;
 };
 
 const TrainerSettingsLayout = () => {
@@ -97,6 +80,7 @@ const TrainerSettingsLayout = () => {
     navigate({ search: params.toString() }, { replace: true });
     window.scrollTo(0, 0); // Scroll to top
   }, [activeTab, navigate]);
+
 
   // Fetch trainer data
   const {
@@ -302,12 +286,8 @@ const TrainerSettingsLayout = () => {
         {/* Badge Display */}
         <div className="hidden md:flex items-center">
           {TrainerProfileData?.tier && (
-            <span
-              className={`inline-block px-6 py-1 mt-2 rounded-full text-sm font-semibold cursor-pointer ${getTierBadge(
-                TrainerProfileData?.tier
-              )}`}
-            >
-              {TrainerProfileData?.tier} Tier
+            <span className={fetchTierBadge(TrainerProfileData.tier)}>
+              {TrainerProfileData.tier} Tier
             </span>
           )}
         </div>

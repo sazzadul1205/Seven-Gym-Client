@@ -261,10 +261,10 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
                 >
                   <div className="flex flex-col space-y-2">
                     {/* Time */}
-                    <div className="font-semibold">
-                      <span>{formatTimeTo12Hour(s.start)}</span>
-                      <span className="px-5">-</span>
-                      <span>{formatTimeTo12Hour(s.end)}</span>
+                    <div className="flex justify-between font-semibold">
+                      <p>{s.day}</p>[ <span>{formatTimeTo12Hour(s.start)}</span>
+                      <span className="px-1">-</span>
+                      <span>{formatTimeTo12Hour(s.end)}</span> ]
                     </div>
 
                     {/* Class Type */}

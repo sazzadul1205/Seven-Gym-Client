@@ -1,70 +1,65 @@
 import { Link } from "react-router";
-
 import PropTypes from "prop-types";
-
-// Tier badge styles (Optimized object lookup)
-const tierStyles = {
-  Bronze: "bg-orange-600 text-white ring-2 ring-orange-300 shadow-lg",
-  Silver: "bg-gray-400 text-white ring-2 ring-gray-200 shadow-lg",
-  Gold: "bg-yellow-500 text-white ring-2 ring-yellow-300 shadow-lg",
-  Diamond: "bg-blue-600 text-white ring-2 ring-blue-300 shadow-lg",
-  Platinum: "bg-gray-800 text-white ring-2 ring-gray-500 shadow-lg",
-};
+import { fetchTierBadge } from "../../Utility/fetchTierBadge";
 
 const TrainerPublicIdCard = ({ trainer }) => {
   return (
-    <div className="bg-white rounded-lg shadow-lg hover:shadow-2xl overflow-hidden relative flex flex-col">
+    <div className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden relative flex flex-col border border-gray-300">
       {/* Tier Badge */}
-      <span
-        className={`absolute opacity-90 top-4 left-4 inline-block px-4 py-1 rounded-full text-sm font-semibold ${
-          tierStyles[trainer?.tier] || "bg-gray-200 text-gray-700"
-        }`}
-      >
-        {trainer?.tier} Tier
-      </span>
+      {trainer?.tier && (
+        <span
+          className={`absolute top-3 left-3 z-10 ${fetchTierBadge(
+            trainer.tier
+          )} px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide shadow-md`}
+        >
+          {trainer.tier} Tier
+        </span>
+      )}
 
       {/* Trainer Image */}
-      <div>
+      <div className="relative">
         <img
           src={trainer?.imageUrl}
           alt={trainer?.name}
-          className="w-full h-[300px] object-cover"
+          className="w-full h-[260px] object-cover object-top"
         />
       </div>
 
       {/* Card Content */}
-      <div className="bg-linear-to-bl from-gray-200 to-gray-300 border-t-4 border-black">
-        {/* Content */}
-        <div className="px-3 text-left flex-1 pt-2  ">
-          {/* Trainer Name & Specialization */}
-          <h3 className="text-xl font-bold text-gray-800">{trainer?.name}</h3>
-          <p className="text-gray-600 italic">{trainer?.specialization}</p>
+      <div className="flex flex-col flex-1 justify-between bg-gradient-to-b from-gray-100 to-gray-200 p-4 space-y-4">
+        {/* Trainer Info */}
+        <div>
+          <h4 className="text-2xl font-bold text-gray-800">{trainer?.name}</h4>
+          <p className="text-gray-600 italic text-sm">
+            {trainer?.specialization}
+          </p>
+        </div>
 
-          {/* Availability Info */}
-          <div className="mt-2 text-sm text-gray-600 space-y-1 border-t border-gray-700">
-            <p className="flex justify-between text-md">
-              <strong className="text-gray-800">Experience:</strong>{" "}
-              <span className="font-semibold">{trainer?.experience} years</span>
-            </p>
-            <p className="flex justify-between text-md">
-              <strong className="text-gray-800">
-                Fee Per Personal Session:
-              </strong>{" "}
-              <span className="font-semibold">{trainer?.perSession} $</span>
-            </p>
-            <p className="text-gray-800 text-center font-black border-t border-gray-700 pt-1">
-              Available Days
-            </p>
-            <p className="font-bold text-center">
-              [{trainer?.availableDays.join(", ")}]
-            </p>
+        {/* Stats Section */}
+        <div className="text-sm text-gray-700 space-y-1 border-t pt-1 border-gray-400">
+          <div className="flex justify-between">
+            <span className="font-medium">Experience:</span>
+            <span className="font-semibold">{trainer?.experience} yrs</span>
+          </div>
+
+          <div className="flex justify-between">
+            <span className="font-medium">Age:</span>
+            <span className="font-semibold text-green-700">{trainer?.age} yrs old</span>
           </div>
         </div>
 
-        {/* View Details Button */}
-        <div className="mt-auto p-4">
+        {/* Availability */}
+        <div className="text-center border-t border-gray-400 pt-2">
+          <p className="text-gray-800 font-bold text-sm mb-1">Available Days</p>
+          <p className="font-semibold text-xs text-gray-600">
+            [{trainer?.availableDays.join(", ")}]
+          </p>
+        </div>
+
+        {/* CTA Button */}
+        <div>
           <Link to={`/Trainers/${trainer?.name}`}>
-            <button className="w-full border-2 border-red-500 bg-linear-to-tl hover:bg-linear-to-br from-[#c23e5f] to-[#ff0040] py-2 font-semibold rounded-xl hover:text-white cursor-pointer">
+            <button className="w-full py-2 bg-gradient-to-r from-[#c23e5f] to-[#ff0040] text-white font-semibold rounded-lg border border-red-500 hover:brightness-110 transition-all duration-200">
               View Details
             </button>
           </Link>
@@ -74,7 +69,6 @@ const TrainerPublicIdCard = ({ trainer }) => {
   );
 };
 
-// Prop validation with PropTypes
 TrainerPublicIdCard.propTypes = {
   trainer: PropTypes.shape({
     name: PropTypes.string.isRequired,
@@ -82,6 +76,7 @@ TrainerPublicIdCard.propTypes = {
     tier: PropTypes.string.isRequired,
     imageUrl: PropTypes.string.isRequired,
     experience: PropTypes.number.isRequired,
+    age: PropTypes.number.isRequired,
     perSession: PropTypes.number.isRequired,
     availableDays: PropTypes.arrayOf(PropTypes.string).isRequired,
   }).isRequired,

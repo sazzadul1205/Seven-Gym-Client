@@ -25,6 +25,11 @@ const TrainersBookings = () => {
   const location = useLocation();
   const { name } = useParams();
 
+  // To Page Top Automatically on Page load
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" }); // or just window.scrollTo(0, 0)
+  }, []);
+
   // State for listed sessions
   const [listedSessions, setListedSessions] = useState([]);
 
