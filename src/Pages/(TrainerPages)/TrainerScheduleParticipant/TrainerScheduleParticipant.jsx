@@ -43,6 +43,8 @@ const TrainerScheduleParticipant = ({
   TrainerProfileScheduleData,
   TrainerBookingRequestData,
 }) => {
+  console.log(TrainerProfileScheduleData);
+
   const schedule = TrainerProfileScheduleData?.trainerSchedule;
   if (!schedule) return null;
 
@@ -117,16 +119,17 @@ const TrainerScheduleParticipant = ({
                     {displayTime}
                   </td>
 
-                  {/*  */}
+                  {/* Limit & Participant */}
                   {days.map((day) => {
                     const session = schedule[day]?.[time];
+
                     return (
                       <td
                         key={`${time}-${day}`}
                         className="border border-black"
                       >
                         {session ? (
-                          <div className="">
+                          <div>
                             {/* Limit Info */}
                             <div className="text-center bg-gray-200 flex justify-center items-center gap-5 py-1">
                               <p className="font-semibold">Limit:</p>
@@ -136,11 +139,33 @@ const TrainerScheduleParticipant = ({
                               <FaUserCheck />
                             </div>
 
-                            {/* User */}
-                            <div className="min-h-5"></div>
+                            {/* Participant Emails */}
+                            <div className="flex justify-center gap-2">
+                              {session.participant.length > 0 ? (
+                                session.participant.map(
+                                  (participant, index) => (
+                                    <span
+                                      key={index}
+                                      className={`inline-block text-sm px-3 py-1 my-2 rounded-full shadow-md transition duration-200 ${
+                                        participant.paid
+                                          ? "bg-blue-600 text-white"
+                                          : "bg-red-600 text-white"
+                                      }`}
+                                      style={{ fontSize: "0.875rem" }} // Slightly smaller font size
+                                    >
+                                      {participant.bookerEmail}
+                                    </span>
+                                  )
+                                )
+                              ) : (
+                                <span className="text-gray-400 italic my-3">
+                                  No participants yet
+                                </span>
+                              )}
+                            </div>
                           </div>
                         ) : (
-                          <span className="text-gray-400 italic">—</span>
+                          <p className="text-gray-400 italic">—</p>
                         )}
                       </td>
                     );
