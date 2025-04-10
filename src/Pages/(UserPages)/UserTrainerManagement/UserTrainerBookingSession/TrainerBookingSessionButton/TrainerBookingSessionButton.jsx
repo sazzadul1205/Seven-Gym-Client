@@ -1,25 +1,16 @@
-/* eslint-disable react/prop-types */
-import { useState } from "react";
-
 // Import Ico9ns
-import { FaArrowUp, FaInfo, FaRegTrashAlt } from "react-icons/fa";
+import { FaArrowUp, FaRegTrashAlt } from "react-icons/fa";
 
 // Import Packages
 import Swal from "sweetalert2";
+import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
 
 // Import Hooks
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
-// import Modals
-import UserTrainerBookingInfoModal from "../UserTrainerBookingInfoModal/UserTrainerBookingInfoModal";
-import UserTrainerBookingAcceptModal from "../UserTrainerBookingAcceptModal/UserTrainerBookingAcceptModal";
-
 const TrainerBookingSessionButton = ({ booking, refetch }) => {
   const axiosPublic = useAxiosPublic();
-
-  // Initializes a state variable for the selected booking.
-  const [selectedBooking, setSelectedBooking] = useState(null);
 
   // Handle Delete Bookings
   const handleDeleteBooking = async (booking) => {
@@ -113,10 +104,10 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
           id={`go-btn-${booking._id}`}
           className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"
           onClick={() => {
-            setSelectedBooking(booking);
-            document
-              .getElementById("User_Trainer_Booking_Accept_Modal")
-              .showModal();
+            // setSelectedBooking(booking);
+            // document
+            //   .getElementById("User_Trainer_Booking_Accept_Modal")
+            //   .showModal();
           }}
         >
           <FaArrowUp className="text-blue-500" />
@@ -172,20 +163,6 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
           </>
         )}
 
-      {/* View Button */}
-      <button
-        id={`view-details-btn-${booking._id}`}
-        className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
-        onClick={() => {
-          setSelectedBooking(booking);
-          document
-            .getElementById("User_Trainer_Booking_Info_Modal")
-            .showModal();
-        }}
-      >
-        <FaInfo className="text-yellow-500" />
-      </button>
-
       {/* Tooltips */}
       <Tooltip
         anchorSelect={`#go-btn-${booking._id}`}
@@ -196,25 +173,21 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
         content="Cancel Booking"
       />
       <Tooltip
-        anchorSelect={`#view-details-btn-${booking._id}`}
-        content="View Detailed Booking Data"
-      />
-      <Tooltip
         anchorSelect={`#delete-btn-${booking._id}`}
         content="Delete Booking"
       />
-
-      {/* User Trainer Booking Info Modal */}
-      <dialog id="User_Trainer_Booking_Info_Modal" className="modal">
-        <UserTrainerBookingInfoModal selectedBooking={selectedBooking} />
-      </dialog>
-
-      {/* User Trainer Booking Accept Modal */}
-      <dialog id="User_Trainer_Booking_Accept_Modal" className="modal">
-        <UserTrainerBookingAcceptModal selectedBooking={selectedBooking} />
-      </dialog>
     </>
   );
+};
+
+// Prop Type
+TrainerBookingSessionButton.propTypes = {
+  booking: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    status: PropTypes.string.isRequired,
+    // You can add more fields if needed
+  }).isRequired,
+  refetch: PropTypes.func.isRequired,
 };
 
 export default TrainerBookingSessionButton;

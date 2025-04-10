@@ -9,83 +9,7 @@ import FetchingError from "../../../../../Shared/Component/FetchingError";
 
 // import Icons
 import { ImCross } from "react-icons/im";
-import { MdOutlinePeopleAlt } from "react-icons/md";
-import { IoMdMale, IoMdFemale } from "react-icons/io";
-
-// Format date to "DD-Month-YYYY HH:MM AM/PM"
-const formatDate = (dateStr) => {
-  const date = new Date(dateStr);
-  const day = date.getDate();
-  const month = date.toLocaleString("default", { month: "long" });
-  const year = date.getFullYear();
-  let hours = date.getHours();
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const amps = hours >= 12 ? "PM" : "AM";
-  hours = hours % 12 || 12;
-
-  return `${String(day).padStart(
-    2,
-    "0"
-  )}-${month}-${year} ${hours}:${minutes} ${amps}`;
-};
-
-// Convert 'DD-MM-YYYY T HH:mm' to ISO format
-const fixDateFormat = (dateStr) => {
-  const parts = dateStr.split("T");
-  if (parts.length === 2) {
-    const [day, month, year] = parts[0].split("-");
-    return `${year}-${month}-${day}T${parts[1]}:00`;
-  }
-  return dateStr;
-};
-
-// Return style string for tier badge
-const getTierBadge = (tier) => {
-  const tierStyles = {
-    Bronze: "bg-orange-600 text-white ring-2 ring-orange-300 shadow-lg",
-    Silver: "bg-gray-400 text-white ring-2 ring-gray-200 shadow-lg",
-    Gold: "bg-yellow-500 text-white ring-2 ring-yellow-300 shadow-lg",
-    Diamond: "bg-blue-600 text-white ring-2 ring-blue-300 shadow-lg",
-    Platinum: "bg-gray-800 text-white ring-2 ring-gray-500 shadow-lg",
-  };
-
-  return tierStyles[tier] || "bg-gray-200 text-gray-700 ring-2 ring-gray-300";
-};
-
-// Return gender icon and label
-const getGenderIcon = (gender) => {
-  if (!gender) {
-    return {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 text-3xl" />,
-      label: "Not specified",
-    };
-  }
-
-  const normalizedGender =
-    gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase();
-
-  const genderData = {
-    Male: {
-      icon: <IoMdMale className="text-blue-500 text-3xl font-bold" />,
-      label: "Male",
-    },
-    Female: {
-      icon: <IoMdFemale className="text-pink-500 text-3xl font-bold" />,
-      label: "Female",
-    },
-    Other: {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 text-3xl font-bold" />,
-      label: "Other",
-    },
-  };
-
-  return (
-    genderData[normalizedGender] || {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 text-3xl" />,
-      label: "Not specified",
-    }
-  );
-};
+import UserTrainerBookingInfoModalBasic from "./UserTrainerBookingInfoModalBasic/UserTrainerBookingInfoModalBasic";
 
 // Convert 24-hour time to 12-hour AM/PM format
 const formatTimeTo12Hour = (time) => {
@@ -97,7 +21,7 @@ const formatTimeTo12Hour = (time) => {
   return `${formattedHour}:${minute} ${amPm}`;
 };
 
-const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
+const UserTrainerBookingInfoModal = ({ selectedBooking, closeModal }) => {
   const axiosPublic = useAxiosPublic();
 
   // Fetch Trainer Data
@@ -143,9 +67,6 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
   // Error Management
   if (TrainerDataError || ScheduleByIDDataError) return <FetchingError />;
 
-  // Get the gender icon
-  const { icon } = getGenderIcon(SelectedTrainerData?.gender);
-
   return (
     <div className="modal-box max-w-5xl w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black">
       {/* Header */}
@@ -154,95 +75,17 @@ const UserTrainerBookingInfoModal = ({ selectedBooking }) => {
         <ImCross
           className="text-xl hover:text-[#F72C5B] cursor-pointer"
           onClick={() =>
-            document.getElementById("User_Trainer_Booking_Info_Modal")?.close()
+            // document.getElementById("User_Trainer_Booking_Info_Modal")?.close()
+            closeModal()
           }
         />
       </div>
 
       {/* Basic Information : Trainer Info , Booking Details */}
-      <div className="overflow-auto px-4 py-6 sm:px-6 md:px-8">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          {/* Trainer Info */}
-          <div className="w-full lg:w-1/2 flex flex-col sm:flex-row items-center sm:items-start justify-center gap-4 sm:gap-6">
-            {/* Image */}
-            <img
-              src={SelectedTrainerData?.imageUrl || "/default-profile.png"}
-              alt={SelectedTrainerData?.name || "Trainer"}
-              className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full shadow-md object-cover"
-              loading="lazy"
-            />
-
-            {/* Trainer Content */}
-            <div className="text-center sm:text-left space-y-1">
-              {/* Name */}
-              <div className="flex items-center justify-center sm:justify-start gap-2">
-                <p className="text-xl sm:text-2xl font-bold">
-                  {SelectedTrainerData?.name || "Unknown Trainer"}
-                </p>
-                {icon}
-              </div>
-
-              {/* Specialization */}
-              <p className="text-xs sm:text-sm md:text-base italic text-gray-600">
-                {SelectedTrainerData?.specialization ||
-                  "Specialization Not Available"}
-              </p>
-
-              {/* Tier Badge */}
-              {SelectedTrainerData?.tier && (
-                <span
-                  className={`inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-semibold ${getTierBadge(
-                    SelectedTrainerData?.tier
-                  )}`}
-                >
-                  {SelectedTrainerData?.tier} Tier
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Booking Details */}
-          <div className="w-full lg:w-1/2 mt-6 lg:mt-0 p-4 sm:p-6 border-t sm:border-t-0 sm:border-l-2 border-gray-300">
-            <div className="space-y-4 text-sm sm:text-base">
-              {/* Duration */}
-              <div className="flex justify-between">
-                <strong>Duration (Weeks):</strong>
-                <span>
-                  {selectedBooking?.durationWeeks === 1
-                    ? "1 Week"
-                    : `${selectedBooking?.durationWeeks} Weeks`}
-                </span>
-              </div>
-
-              {/* Total Price */}
-              <div className="flex justify-between">
-                <strong>Total Price:</strong>
-                <span>
-                  {selectedBooking?.totalPrice === "free"
-                    ? "Free"
-                    : `$${selectedBooking?.totalPrice}`}
-                </span>
-              </div>
-
-              {/* Status */}
-              <div className="flex justify-between">
-                <strong>Status:</strong>
-                <span>{selectedBooking?.status || "N/A"}</span>
-              </div>
-
-              {/* Booked At */}
-              <div className="flex justify-between">
-                <strong>Booked At:</strong>
-                <span>
-                  {selectedBooking?.bookedAt
-                    ? formatDate(fixDateFormat(selectedBooking?.bookedAt))
-                    : "N/A"}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <UserTrainerBookingInfoModalBasic
+        selectedBooking={selectedBooking}
+        SelectedTrainerData={SelectedTrainerData}
+      />
 
       {/* Sessions Table */}
       <div className="p-3">
@@ -503,6 +346,7 @@ UserTrainerBookingInfoModal.propTypes = {
     status: PropTypes.string,
     bookedAt: PropTypes.string,
   }),
+  closeModal: PropTypes.func.isRequired,
 };
 
 export default UserTrainerBookingInfoModal;

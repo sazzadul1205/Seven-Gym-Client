@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 
 // Components
@@ -8,6 +8,9 @@ import TrainerBookingSessionButton from "./TrainerBookingSessionButton/TrainerBo
 import { formatDate } from "../../../../Utility/formatDate";
 import { getRemainingTime } from "../../../../Utility/getRemainingTime";
 import { FaTriangleExclamation } from "react-icons/fa6";
+import UserTrainerBookingInfoModal from "./UserTrainerBookingInfoModal/UserTrainerBookingInfoModal";
+import { FaInfo } from "react-icons/fa";
+import { Tooltip } from "react-tooltip";
 
 // Background color based on booking status
 const getStatusBackgroundColor = (status) => {
@@ -27,6 +30,12 @@ const getStatusBackgroundColor = (status) => {
 const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
   const [now, setNow] = useState(new Date());
 
+  // Initializes a state variable for the selected booking.
+  const [selectedBooking, setSelectedBooking] = useState(null);
+
+  // Create a ref for the modal
+  const modalRef = useRef(null);
+
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 60000);
     return () => clearInterval(interval);
@@ -36,6 +45,13 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
   const visibleBookings = TrainersBookingRequestData.filter(
     (booking) => booking.status !== "Rejected" && booking.status !== "Cancelled"
   );
+
+  // Create a close handler
+  const closeModal = () => {
+    modalRef.current?.close();
+    // Optionally, clear the selected booking if needed:
+    setSelectedBooking(null);
+  };
 
   return (
     <div className="min-h-screen">
@@ -48,6 +64,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
         </p>
       </div>
 
+      {/* Divider */}
       <div className="mx-auto bg-black w-1/3 p-[1px]" />
 
       {/* Bookings List */}
@@ -120,6 +137,22 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                         <TrainerBookingSessionButton
                           booking={booking}
                           refetch={refetch}
+                        />
+
+                        {/* View Button */}
+                        <button
+                          id={`view-details-btn-${booking._id}`}
+                          className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                          onClick={() => {
+                            setSelectedBooking(booking);
+                            modalRef.current?.showModal();
+                          }}
+                        >
+                          <FaInfo className="text-yellow-500" />
+                        </button>
+                        <Tooltip
+                          anchorSelect={`#view-details-btn-${booking._id}`}
+                          content="View Detailed Booking Data"
                         />
                       </td>
                     </tr>
@@ -197,6 +230,18 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
           ))}
         </div>
       </div>
+
+      {/* User Trainer Booking Info Modal */}
+      <dialog
+        ref={modalRef}
+        id="User_Trainer_Booking_Info_Sessions_Modal"
+        className="modal"
+      >
+        <UserTrainerBookingInfoModal
+          selectedBooking={selectedBooking}
+          closeModal={closeModal}
+        />
+      </dialog>
     </div>
   );
 };

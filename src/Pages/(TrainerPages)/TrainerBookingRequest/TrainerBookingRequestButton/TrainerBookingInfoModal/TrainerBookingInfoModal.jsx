@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 // Import Icons
 import { ImCross } from "react-icons/im";
 import { MdOutlinePeopleAlt } from "react-icons/md";
@@ -11,6 +9,7 @@ import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../../Shared/Component/FetchingError";
 
 // Import Package
+import PropTypes from "prop-types";
 import { useQuery } from "@tanstack/react-query";
 
 // Format date to "DD-Month-YYYY HH:MM AM/PM"
@@ -373,6 +372,18 @@ const TrainerBookingInfoModal = ({
   );
 };
 
+TrainerBookingInfoModal.propTypes = {
+  closeModal: PropTypes.func.isRequired,
+  selectedBooking: PropTypes.shape({
+    bookerEmail: PropTypes.string,
+    sessions: PropTypes.arrayOf(PropTypes.string),
+    durationWeeks: PropTypes.number,
+    totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    status: PropTypes.string,
+    bookedAt: PropTypes.string,
+  }).isRequired,
+  bookingValidity: PropTypes.bool,
+  bookingInvalidReason: PropTypes.string,
+};
+
 export default TrainerBookingInfoModal;
-
-
