@@ -10,21 +10,135 @@ import PropTypes from "prop-types";
 // Import Hook
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
+// Helper: Checks if expired booking can be deleted (only after 12 days)
+const canDeleteExpired = (bookedAt) => {
+  const bookingDate = new Date(
+    bookedAt.split("T")[0].split("-").reverse().join("-")
+  );
+  const now = new Date();
+  const diffDays = Math.floor((now - bookingDate) / (1000 * 60 * 60 * 24));
+  return diffDays >= 12;
+};
+
+const getFormattedStartDate = () => {
+  const now = new Date();
+  const pad = (n) => n.toString().padStart(2, "0");
+
+  const day = pad(now.getDate());
+  const month = pad(now.getMonth() + 1);
+  const year = now.getFullYear();
+  const hours = pad(now.getHours());
+  const minutes = pad(now.getMinutes());
+
+  return `${day}-${month}-${year}T${hours}:${minutes}`;
+};
+
 const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
   const axiosPublic = useAxiosPublic();
-  // Helper: Checks if expired booking can be deleted (only after 12 days)
-  const canDeleteExpired = (bookedAt) => {
-    const bookingDate = new Date(
-      bookedAt.split("T")[0].split("-").reverse().join("-")
-    );
-    const now = new Date();
-    const diffDays = Math.floor((now - bookingDate) / (1000 * 60 * 60 * 24));
-    return diffDays >= 12;
-  };
 
-  // Function: Handles acceptance of a booking request (dummy function here)
-  const handleAccept = async (Booking) => {
-    console.log("Accept :", Booking);
+  console.log(booking);
+
+  const handleAccept = async (booking, simulate = true) => {
+    // Confirm acceptance with SweetAlert
+    const confirmAccept = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to accept this booking?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Accept it",
+      cancelButtonText: "No, Cancel",
+    });
+
+    if (!confirmAccept.isConfirmed) return;
+
+    // Prepare data for updating the booking request
+    const BookingAcceptData = {
+      status: "Accepted",
+      acceptedAt: getFormattedStartDate(),
+      paid: false,
+    };
+
+    // Build data to add a participant into the trainer's schedule.
+    const SessionData = {
+      trainerName: booking.trainer, // e.g., "Thomas King"
+      // Adjust if booking.session is an array; here we're assuming a single session ID.
+      ids: [booking.session],
+      payload: {
+        bookerEmail: booking.email, // adjust if your booking data field is different
+        duration: booking.duration, // if applicable
+        bookingReqID: booking._id,
+        acceptedAt: getFormattedStartDate(),
+        paid: false,
+      },
+    };
+
+    try {
+      if (simulate) {
+        // Simulation: Log the payloads instead of calling the APIs
+        console.log(
+          "Simulation Mode - Booking Request Update Payload:",
+          BookingAcceptData
+        );
+        console.log(
+          "Simulation Mode - Trainer Schedule AddParticipant Payload:",
+          SessionData
+        );
+
+        // Simulate successful responses for testing.
+        Swal.fire({
+          icon: "success",
+          title: "Accepted!",
+          text: "Booking accepted (simulation) and participant updated successfully.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        // Optionally refetch data or update UI.
+        refetch();
+        return;
+      }
+
+      // First: update the booking request status
+      const bookingResponse = await axiosPublic.patch(
+        `/Trainers_Booking_Request/${booking._id}`,
+        BookingAcceptData
+      );
+
+      if (bookingResponse.data?.message) {
+        // Second: update the trainer's schedule with the participant data
+        const participantResponse = await axiosPublic.post(
+          "/Trainers_Schedule/AddParticipant",
+          SessionData
+        );
+
+        if (
+          participantResponse.data?.message ||
+          participantResponse.data === "Participants added successfully."
+        ) {
+          Swal.fire({
+            icon: "success",
+            title: "Accepted!",
+            text: "Booking has been accepted and participant updated successfully.",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+
+          // Optionally, refetch your data to update the UI
+          refetch();
+        } else {
+          throw new Error("Failed to add participant to schedule.");
+        }
+      } else {
+        throw new Error("Failed to update booking.");
+      }
+    } catch (error) {
+      console.error("Error accepting booking:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Failed!",
+        text: "Something went wrong while accepting the booking.",
+      });
+    }
   };
 
   // Function: Handles rejection of a booking with SweetAlert2 modals for reason input
@@ -126,8 +240,47 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
   };
 
   // Function: Dummy function to handle deletion of expired bookings
-  const DeleteExpired = async (Booking) => {
-    console.log("Expired Delete :", Booking); // Log deletion action
+  const DeleteExpired = async (booking) => {
+    console.log("Expired Delete:", booking); // Log deletion action
+
+    const confirmReject = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to Delete this booking?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Delete it",
+      cancelButtonText: "No, Keep it",
+    });
+
+    if (confirmReject.isConfirmed) {
+      try {
+        const deleteResponse = await axiosPublic.delete(
+          `/Trainers_Booking_Request/${booking._id}`
+        );
+
+        if (deleteResponse.data?.message) {
+          Swal.fire({
+            icon: "success",
+            title: "Deleted!",
+            text: "Booking deleted successfully.",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+
+          // Refresh the data
+          refetch();
+        } else {
+          throw new Error("No success message in response");
+        }
+      } catch (error) {
+        console.error("Delete error:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong while deleting the booking.",
+        });
+      }
+    }
   };
 
   // Function: Dummy function to cancel accepted bookings

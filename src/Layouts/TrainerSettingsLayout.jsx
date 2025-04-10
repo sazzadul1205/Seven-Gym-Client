@@ -152,6 +152,7 @@ const TrainerSettingsLayout = () => {
     data: TrainerBookingRequestData = [],
     isLoading: TrainerBookingRequestIsLoading,
     error: TrainerBookingRequestError,
+    refetch: refetchTrainerBookingRequestData,
   } = useQuery({
     queryKey: ["TrainerBookingRequestData", TrainerProfileData?.name],
     queryFn: () =>
@@ -165,6 +166,7 @@ const TrainerSettingsLayout = () => {
   const refetchAll = async () => {
     await refetchTrainerData();
     await refetchTrainerScheduleData();
+    await refetchTrainerBookingRequestData();
   };
 
   // Tabs List
@@ -219,6 +221,7 @@ const TrainerSettingsLayout = () => {
         <TrainerScheduleParticipant
           refetch={refetchAll}
           TrainerProfileData={TrainerProfileData}
+          TrainerBookingRequestData={TrainerBookingRequestData}
           TrainerProfileScheduleData={TrainerProfileScheduleData}
         />
       ),

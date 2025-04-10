@@ -150,7 +150,7 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
         });
 
         setListedSessions([]);
-        navigate(-1);
+        navigate("/User/UserTrainerManagement?tab=User-Booking-Session");
       } else {
         throw new Error("Server did not return a valid response.");
       }

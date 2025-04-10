@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import { FaUserCheck } from "react-icons/fa";
+import TrainerBookingRequestUserBasicInfo from "../TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
 
 // Format time "HH:mm" -> "h:mm AM/PM"
 const formatTime = (timeStr) => {
@@ -11,7 +12,37 @@ const formatTime = (timeStr) => {
   return `${hour12}:${minute.toString().padStart(2, "0")} ${ampm}`;
 };
 
-const TrainerScheduleParticipant = ({ TrainerProfileScheduleData }) => {
+// Parse custom date string (Format: "06-04-2025T11:12")
+const parseCustomDate = (input) => {
+  if (!input) return null;
+  const [datePart, timePart] = input.split("T");
+  const [day, month, year] = datePart.split("-");
+  const [hour, minute] = timePart.split(":");
+
+  return new Date(`${year}-${month}-${day}T${hour}:${minute}`);
+};
+
+// Formats date to "06 Apr 2025, 11:12 AM"
+const formatDate = (input) => {
+  const dateObj = parseCustomDate(input);
+  if (!dateObj) return "";
+
+  const options = {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  };
+
+  return dateObj.toLocaleString("en-US", options);
+};
+
+const TrainerScheduleParticipant = ({
+  TrainerProfileScheduleData,
+  TrainerBookingRequestData,
+}) => {
   const schedule = TrainerProfileScheduleData?.trainerSchedule;
   if (!schedule) return null;
 
@@ -23,6 +54,10 @@ const TrainerScheduleParticipant = ({ TrainerProfileScheduleData }) => {
     const times = Object.keys(schedule[day] || {});
     times.forEach((t) => allTimes.add(t));
   });
+
+  const acceptedBookings = TrainerBookingRequestData?.filter(
+    (booking) => booking.status === "Accepted"
+  );
 
   const sortedTimes = Array.from(allTimes).sort((a, b) => a.localeCompare(b));
 
@@ -113,6 +148,61 @@ const TrainerScheduleParticipant = ({ TrainerProfileScheduleData }) => {
                 </tr>
               );
             })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Reserved Not Paid Sessions */}
+      <div className="px-5">
+        <p className="text-xl font-semibold text-black border-b-2 border-gray-700 pb-2">
+          Reserved Class Participant
+        </p>
+
+        <table className="min-w-full bg-white text-black">
+          <thead className="bg-gray-800 text-white text-sm uppercase">
+            <tr>
+              {[
+                "Booker",
+                "Booked At",
+                "Total Price",
+                "Duration",
+                "Status",
+                "Accepted At",
+                "Booker Code",
+              ].map((header) => (
+                <th
+                  key={header}
+                  className="px-4 py-3 border-b border-gray-600 text-left"
+                >
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {acceptedBookings?.map((booking) => (
+              <tr
+                key={booking._id}
+                className="transition-colors duration-200 hover:bg-gray-100 border-b border-gray-500"
+              >
+                {/* Booker Info */}
+                <td className="px-4 py-3 font-medium">
+                  <TrainerBookingRequestUserBasicInfo
+                    email={booking.bookerEmail}
+                  />
+                </td>
+
+                {/* Booked At */}
+                <td className="px-4 py-3">{formatDate(booking.bookedAt)}</td>
+                <td className="px-4 py-3">$ {booking.totalPrice}</td>
+                <td className="px-4 py-3">{booking.durationWeeks} Weeks</td>
+                <td className="px-4 py-3 font-bold capitalize">
+                  {booking.paid ? "Paid" : "Not Paid"}
+                </td>
+                <td className="px-4 py-3">{formatDate(booking.acceptedAt)}</td>
+                <td className="px-4 py-3">P2234</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

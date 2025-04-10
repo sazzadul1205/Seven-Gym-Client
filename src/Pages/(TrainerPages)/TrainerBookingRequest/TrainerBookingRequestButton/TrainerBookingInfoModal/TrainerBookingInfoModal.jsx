@@ -106,9 +106,6 @@ const TrainerBookingInfoModal = ({
 }) => {
   const axiosPublic = useAxiosPublic();
 
-  console.log("Booking Validity :", bookingValidity);
-  console.log("Booking Invalid Reason :", bookingInvalidReason);
-
   // Fetch Booker Data
   const {
     data: BookerData,
@@ -149,11 +146,14 @@ const TrainerBookingInfoModal = ({
   // Error handling
   if (BookerError || ScheduleByIDDataError) return <FetchingError />;
 
-  let invalidSessionId = null;
+  let invalidSessionIds = [];
   if (!bookingValidity && bookingInvalidReason) {
     const match = bookingInvalidReason.match(/session id:\s*(.+)$/i);
     if (match) {
-      invalidSessionId = match[1].trim();
+      invalidSessionIds = match[1]
+        .split(",")
+        .map((id) => id.trim())
+        .filter((id) => id.length > 0);
     }
   }
 
@@ -181,7 +181,7 @@ const TrainerBookingInfoModal = ({
 
       {/* Basic Information : Booker Info , Booking Details */}
       <div className="overflow-auto px-4 py-6 sm:px-6 md:px-8">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+        <div className="flex bg-gray-200 flex-col lg:flex-row items-start lg:items-center justify-between gap-6 py-2">
           {/* Booker Info */}
           <div className="w-full lg:w-1/2 flex flex-col sm:flex-row items-center sm:items-start justify-center gap-4 sm:gap-6">
             {/* Image */}
@@ -193,7 +193,7 @@ const TrainerBookingInfoModal = ({
             />
 
             {/* Booker Content */}
-            <div className="text-center sm:text-left space-y-1">
+            <div className="items-center text-left my-auto space-y-2">
               <div className="flex items-center justify-center sm:justify-start gap-2">
                 <p className="text-xl sm:text-2xl font-bold">
                   {BookerData?.fullName || "Unknown Trainer"}
@@ -220,43 +220,41 @@ const TrainerBookingInfoModal = ({
           </div>
 
           {/* Booking Details */}
-          <div className="w-full lg:w-1/2 mt-6 lg:mt-0 p-4 sm:p-6 border-t sm:border-t-0 sm:border-l-2 border-gray-300">
-            <div className="space-y-4 text-sm sm:text-base">
-              {/* Duration */}
-              <div className="flex justify-between">
-                <strong>Duration (Weeks):</strong>
-                <span>
-                  {selectedBooking?.durationWeeks === 1
-                    ? "1 Week"
-                    : `${selectedBooking?.durationWeeks} Weeks`}
-                </span>
-              </div>
+          <div className="w-full md:w-1/2 border-l-2 border-gray-400 px-5 py-2 text-sm sm:text-base space-y-2">
+            {/* Duration */}
+            <div className="flex justify-between">
+              <strong>Duration (Weeks):</strong>
+              <span>
+                {selectedBooking?.durationWeeks === 1
+                  ? "1 Week"
+                  : `${selectedBooking?.durationWeeks} Weeks`}
+              </span>
+            </div>
 
-              {/* Total Price */}
-              <div className="flex justify-between">
-                <strong>Total Price:</strong>
-                <span>
-                  {selectedBooking?.totalPrice === "free"
-                    ? "Free"
-                    : `$${selectedBooking?.totalPrice}`}
-                </span>
-              </div>
+            {/* Total Price */}
+            <div className="flex justify-between">
+              <strong>Total Price:</strong>
+              <span>
+                {selectedBooking?.totalPrice === "free"
+                  ? "Free"
+                  : `$${selectedBooking?.totalPrice}`}
+              </span>
+            </div>
 
-              {/* Status */}
-              <div className="flex justify-between">
-                <strong>Status:</strong>
-                <span>{selectedBooking?.status || "N/A"}</span>
-              </div>
+            {/* Status */}
+            <div className="flex justify-between">
+              <strong>Status:</strong>
+              <span>{selectedBooking?.status || "N/A"}</span>
+            </div>
 
-              {/* Booked At */}
-              <div className="flex justify-between">
-                <strong>Booked At:</strong>
-                <span>
-                  {selectedBooking?.bookedAt
-                    ? formatDate(fixDateFormat(selectedBooking?.bookedAt))
-                    : "N/A"}
-                </span>
-              </div>
+            {/* Booked At */}
+            <div className="flex justify-between">
+              <strong>Booked At:</strong>
+              <span>
+                {selectedBooking?.bookedAt
+                  ? formatDate(fixDateFormat(selectedBooking?.bookedAt))
+                  : "N/A"}
+              </span>
             </div>
           </div>
         </div>
@@ -293,22 +291,22 @@ const TrainerBookingInfoModal = ({
                     <tr
                       key={`${s.id}-${idx}`}
                       className={`border border-gray-300 cursor-pointer ${
-                        s.id === invalidSessionId
-                          ? "bg-red-200 hover:bg-red-300"
+                        invalidSessionIds.includes(s.id)
+                          ? "bg-red-100 hover:bg-red-200 text-red-600 font-semibold"
                           : "bg-gray-50 hover:bg-gray-200"
                       }`}
                     >
                       {/* Day */}
-                      <td className="px-4 py-2">{s.day}</td>
+                      <td className="px-4 py-3">{s.day}</td>
 
                       {/* Class Code */}
-                      <td className="px-4 py-2">{s.id}</td>
+                      <td className="px-4 py-3">{s.id}</td>
 
                       {/* Class Type */}
-                      <td className="px-4 py-2">{s.classType}</td>
+                      <td className="px-4 py-3">{s.classType}</td>
 
                       {/* Time */}
-                      <td className="px-4 py-2 text-center">
+                      <td className="px-4 py-3 text-center">
                         <div className="flex items-center justify-center gap-2">
                           <p className="w-16 md:w-20">
                             {formatTimeTo12Hour(s.start)}
@@ -321,7 +319,7 @@ const TrainerBookingInfoModal = ({
                       </td>
 
                       {/* Price */}
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-3">
                         {s.classPrice === "free" || s.classPrice === "Free"
                           ? "Free"
                           : `$ ${s.classPrice}`}
@@ -337,9 +335,11 @@ const TrainerBookingInfoModal = ({
               {ScheduleByIDData.map((s, idx) => (
                 <div
                   key={`${s.id}-${idx}`}
-                  className={`text-black text-center ${
-                    idx % 2 === 0 ? "bg-gray-100" : "bg-white"
-                  } md:rounded-xl p-5 shadow-md border-2 border-gray-300`}
+                  className={`border border-gray-300 cursor-pointer ${
+                    invalidSessionIds.includes(s.id)
+                      ? "bg-red-100 hover:bg-red-200 text-red-600 font-semibold"
+                      : "bg-gray-50 hover:bg-gray-200"
+                  }`}
                 >
                   {/* Day */}
                   <h4>{s.day}</h4>
@@ -356,7 +356,6 @@ const TrainerBookingInfoModal = ({
 
                   {/* Price */}
                   <p className="font-bold text-lg">
-                    {" "}
                     {s.classPrice === "free" || s.classPrice === "Free"
                       ? "Free"
                       : `$ ${s.classPrice}`}
@@ -367,7 +366,7 @@ const TrainerBookingInfoModal = ({
           </>
         ) : (
           // If No Session Available
-          <p className="text-center text-xl">No sessions available</p>
+          <p className="text-center text-xl font-bold">No sessions available</p>
         )}
       </div>
     </div>
@@ -375,3 +374,5 @@ const TrainerBookingInfoModal = ({
 };
 
 export default TrainerBookingInfoModal;
+
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Import Packages
 import PropTypes from "prop-types";
@@ -18,25 +18,26 @@ import useAuth from "../../../Hooks/useAuth";
 import Loading from "../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
+import { useLocation, useNavigate } from "react-router";
 
 // Tab Icons
 const icons = [
   {
     src: "https://i.ibb.co/gF6qkSKF/Active-Trainer.png",
     alt: "Active Sessions",
-    id: "tooltip-active",
+    id: "User-Active-Session",
     label: "Active Session's",
   },
   {
     src: "https://i.ibb.co/LdVXnyDK/Trainer-Booking.png",
     alt: "Booking Request",
-    id: "tooltip-booking",
+    id: "User-Booking-Session",
     label: "Booking Session's",
   },
   {
     src: "https://i.ibb.co/SXM5XxWG/Trainer-History.png",
     alt: "History",
-    id: "tooltip-history",
+    id: "User-Session-History",
     label: "Session's History",
   },
 ];
@@ -45,8 +46,24 @@ const UserTrainerManagement = () => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
-  // State to track the active tab
-  const [activeTab, setActiveTab] = useState("tooltip-active");
+  // Use Cases Call
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Extract tab parameter from URL
+  const searchParams = new URLSearchParams(location.search);
+  const initialTab = searchParams.get("tab") || "User-Boking-Session";
+
+  // Tab Management
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  // Update URL when activeTab changes
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set("tab", activeTab);
+    navigate({ search: params.toString() }, { replace: true });
+    window.scrollTo(0, 0); // Scroll to top
+  }, [activeTab, navigate]);
 
   // Fetch all Trainer Booking Request Request
   const {
@@ -140,14 +157,16 @@ const UserTrainerManagement = () => {
 
           {/* Main content */}
           <div className="flex-1 text-black bg-[#f6eee3] border-[10px] border-[#A1662F] min-h-screen">
-            {activeTab === "tooltip-active" && <UserTrainerActiveSession />}
-            {activeTab === "tooltip-booking" && (
+            {activeTab === "User-Active-Session" && (
+              <UserTrainerActiveSession />
+            )}
+            {activeTab === "User-Booking-Session" && (
               <UserTrainerBookingSession
                 TrainersBookingRequestData={TrainersBookingRequestData || {}}
                 refetch={refetch}
               />
             )}
-            {activeTab === "tooltip-history" && (
+            {activeTab === "User-Session-History" && (
               <UserTrainerSessionHistory
                 TrainersBookingHistoryData={TrainersBookingHistoryData || {}}
               />
