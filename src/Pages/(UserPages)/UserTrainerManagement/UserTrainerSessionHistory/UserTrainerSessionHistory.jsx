@@ -1,50 +1,28 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 // Import Packages
 import PropTypes from "prop-types";
 
 // Import Icons
 import { FaInfo } from "react-icons/fa";
+import { FaTriangleExclamation } from "react-icons/fa6";
 
 // Import Modal
 import UserTrainerBookingHistoryInfoModal from "./UserTrainerBookingHistoryInfoModal/UserTrainerBookingHistoryInfoModal";
-
-// Format: "06-04-2025T11:12"
-const parseCustomDate = (input) => {
-  if (!input) return null;
-  const [datePart, timePart] = input.split("T");
-  const [day, month, year] = datePart.split("-");
-  const [hour, minute] = timePart.split(":");
-
-  return new Date(`${year}-${month}-${day}T${hour}:${minute}`);
-};
-
-//  Formats the input date string into a custom date format.
-const formatDate = (input) => {
-  const dateObj = parseCustomDate(input);
-  if (!dateObj) return "";
-
-  const options = {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  };
-
-  return dateObj.toLocaleString("en-US", options);
-};
+import { formatDate } from "../../../../Utility/formatDate";
 
 const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
   // Initializes a state variable for the selected booking.
   const [selectedBooking, setSelectedBooking] = useState(null);
 
+  // Create a ref for the modal
+  const modalRef = useRef(null);
+
   // Function to determine background color based on status
   const getStatusBackgroundColor = (status) => {
     switch (status) {
       case "Accepted":
-        return "bg-linear-to-bl from-green-400 to-green-200";
+        return "bg-linear-to-bl from-yellow-400 to-yellow-200";
       case "Rejected":
         return "bg-linear-to-bl from-red-400 to-red-200";
       case "Expired":
@@ -53,6 +31,13 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
         return "bg-white"; // Default background (for Pending)
     }
   };
+  // Create a close handler
+  const closeModal = () => {
+    modalRef.current?.close();
+    // Optionally, clear the selected booking if needed:
+    setSelectedBooking(null);
+  };
+
   return (
     <div>
       {/* Header */}
@@ -68,10 +53,10 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
 
       {/* Bookings List */}
       <div className="py-4">
-        {/* Desktop View */}
-        <div className="hidden md:block">
-          {TrainersBookingHistoryData.length > 0 ? (
-            <div className="overflow-x-auto">
+        {TrainersBookingHistoryData.length > 0 ? (
+          <div>
+            {/* Desktop View */}
+            <div className="overflow-x-auto hidden md:block">
               <table className="min-w-full table-auto bg-white border-collapse">
                 {/* Table Header */}
                 <thead>
@@ -122,7 +107,7 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                       <td className="flex px-4 py-2 gap-2">
                         <button
                           id={`view-details-btn-${booking._id}`} // Unique ID for each button
-                          className="border-2 border-green-500 bg-green-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                          className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
                           onClick={() => {
                             setSelectedBooking(booking);
                             document
@@ -132,7 +117,7 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                               .showModal();
                           }}
                         >
-                          <FaInfo className="text-green-500" />{" "}
+                          <FaInfo className="text-yellow-500" />{" "}
                           {/* Info Icon */}
                         </button>
                       </td>
@@ -141,86 +126,101 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                 </tbody>
               </table>
             </div>
-          ) : (
-            <p>No bookings available.</p>
-          )}
-        </div>
 
-        {/* Mobile View */}
-        <div className="flex md:hidden flex-col space-y-4 mb-6">
-          {TrainersBookingHistoryData.map((booking) => (
-            <div
-              key={booking._id}
-              className={`text-black text-center ${getStatusBackgroundColor(
-                booking.status
-              )} mb-4 p-4 border-b`}
-            >
-              <div className="flex flex-col space-y-2">
-                {/* Trainer */}
-                <div className="font-semibold">Trainer: {booking.trainer}</div>
+            {/* Mobile View */}
+            <div className="flex md:hidden flex-col space-y-4 mb-6">
+              {TrainersBookingHistoryData.map((booking) => (
+                <div
+                  key={booking._id}
+                  className={`text-black text-center ${getStatusBackgroundColor(
+                    booking.status
+                  )} mb-4 p-4 border-b`}
+                >
+                  <div className="flex flex-col space-y-2">
+                    {/* Trainer */}
+                    <div className="font-semibold">
+                      Trainer: {booking.trainer}
+                    </div>
 
-                {/* Booked At */}
-                <div className="flex justify-between items-center pt-2">
-                  <p className="font-bold">Booked At:</p>
-                  <span>{formatDate(booking.bookedAt)}</span>
+                    {/* Booked At */}
+                    <div className="flex justify-between items-center pt-2">
+                      <p className="font-bold">Booked At:</p>
+                      <span>{formatDate(booking.bookedAt)}</span>
+                    </div>
+
+                    {/* Total Price */}
+                    <div className="flex justify-between items-center">
+                      <p className="font-bold">Total Price:</p>
+                      <span>$ {booking.totalPrice}</span>
+                    </div>
+
+                    {/* Duration */}
+                    <div className="flex justify-between items-center">
+                      <p className="font-bold">Duration:</p>
+                      <span>{booking.durationWeeks} Weeks</span>
+                    </div>
+
+                    {/* Status */}
+                    <div className="flex justify-between items-center">
+                      <p className="font-bold">Status:</p>
+                      <span>{booking.status}</span>
+                    </div>
+
+                    {/* Remaining Time */}
+                    <div className="flex justify-between items-center font-semibold text-sm">
+                      <p className="font-bold">Expired In:</p>
+                      <span>
+                        {
+                          booking.status === "Expired"
+                            ? formatDate(booking.expiredAt) // Show remaining time if Pending
+                            : "-- / --" // Show Expired if not Pending
+                        }
+                      </span>
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex justify-between gap-4 pt-4">
+                      <button
+                        id={`view-details-btn-${booking._id}`} // Unique ID for each button
+                        className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                        onClick={() => {
+                          setSelectedBooking(booking);
+                          document
+                            .getElementById(
+                              "User_Trainer_Booking_History_Info_Modal"
+                            )
+                            .showModal();
+                        }}
+                      >
+                        <FaInfo className="text-yellow-500" /> {/* Info Icon */}
+                      </button>
+                    </div>
+                  </div>
                 </div>
-
-                {/* Total Price */}
-                <div className="flex justify-between items-center">
-                  <p className="font-bold">Total Price:</p>
-                  <span>$ {booking.totalPrice}</span>
-                </div>
-
-                {/* Duration */}
-                <div className="flex justify-between items-center">
-                  <p className="font-bold">Duration:</p>
-                  <span>{booking.durationWeeks} Weeks</span>
-                </div>
-
-                {/* Status */}
-                <div className="flex justify-between items-center">
-                  <p className="font-bold">Status:</p>
-                  <span>{booking.status}</span>
-                </div>
-
-                {/* Remaining Time */}
-                <div className="flex justify-between items-center font-semibold text-sm">
-                  <p className="font-bold">Expired In:</p>
-                  <span>
-                    {
-                      booking.status === "Expired"
-                        ? formatDate(booking.expiredAt) // Show remaining time if Pending
-                        : "-- / --" // Show Expired if not Pending
-                    }
-                  </span>
-                </div>
-
-                {/* Buttons */}
-                <div className="flex justify-between gap-4 pt-4">
-                  <button
-                    id={`view-details-btn-${booking._id}`} // Unique ID for each button
-                    className="border-2 border-green-500 bg-green-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                    onClick={() => {
-                      setSelectedBooking(booking);
-                      document
-                        .getElementById(
-                          "User_Trainer_Booking_History_Info_Modal"
-                        )
-                        .showModal();
-                    }}
-                  >
-                    <FaInfo className="text-green-500" /> {/* Info Icon */}
-                  </button>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ) : (
+          // No bookings fallback
+          <div className="flex items-center bg-gray-100 py-5 text-black italic">
+            <div className="flex gap-4 mx-auto items-center">
+              <FaTriangleExclamation className="text-xl text-red-500" />
+              No booking requests at the moment.
+            </div>
+          </div>
+        )}
       </div>
 
       {/* User Trainer Booking Info Modal */}
-      <dialog id="User_Trainer_Booking_History_Info_Modal" className="modal">
-        <UserTrainerBookingHistoryInfoModal selectedBooking={selectedBooking} />
+      <dialog
+        ref={modalRef}
+        id="User_Trainer_Booking_History_Info_Modal"
+        className="modal"
+      >
+        <UserTrainerBookingHistoryInfoModal
+          closeModal={closeModal}
+          selectedBooking={selectedBooking}
+        />
       </dialog>
     </div>
   );
@@ -232,10 +232,10 @@ UserTrainerSessionHistory.propTypes = {
       _id: PropTypes.string.isRequired,
       trainer: PropTypes.string.isRequired,
       bookedAt: PropTypes.string.isRequired,
-      totalPrice: PropTypes.number,
+      totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Allow both string and number
       durationWeeks: PropTypes.number.isRequired,
       status: PropTypes.string.isRequired,
-      expiredAt: PropTypes.string, // This is optional, as some bookings may not have it.
+      expiredAt: PropTypes.string, // This is optional
     })
   ).isRequired,
 };
