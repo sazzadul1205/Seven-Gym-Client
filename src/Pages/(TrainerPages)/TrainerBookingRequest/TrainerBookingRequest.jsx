@@ -165,7 +165,9 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
               <tbody className="text-sm text-gray-700">
                 {/* Filter out rejected bookings */}
                 {TrainerBookingRequestData.filter(
-                  (booking) => booking.status !== "Rejected"
+                  (booking) =>
+                    booking.status !== "Rejected" &&
+                    booking.status !== "Cancelled"
                 ).map((booking) => {
                   // Booking validation and background style setup
                   const isValid = bookingValidityMap[booking._id] !== false;

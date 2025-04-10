@@ -232,7 +232,7 @@ UserTrainerSessionHistory.propTypes = {
       _id: PropTypes.string.isRequired,
       trainer: PropTypes.string.isRequired,
       bookedAt: PropTypes.string.isRequired,
-      totalPrice: PropTypes.number.isRequired,
+      totalPrice: PropTypes.number,
       durationWeeks: PropTypes.number.isRequired,
       status: PropTypes.string.isRequired,
       expiredAt: PropTypes.string, // This is optional, as some bookings may not have it.

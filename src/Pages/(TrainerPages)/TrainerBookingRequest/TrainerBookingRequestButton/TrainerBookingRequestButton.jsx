@@ -276,9 +276,96 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
     }
   };
 
-  // Function: Dummy function to cancel accepted bookings
-  const cancelAcceptedBooking = async (Booking) => {
-    console.log("Cancel Accepted Booking :", Booking);
+  // Function: Cancel accepted booking and remove participant
+  const cancelAcceptedBooking = async (booking, simulate = false) => {
+    const confirmCancel = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to cancel this booking?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Cancel it",
+      cancelButtonText: "No, Keep it",
+    });
+
+    if (!confirmCancel.isConfirmed) return;
+
+    // Prepare cancellation data for booking
+    const bookingCancelData = {
+      status: "Cancelled",
+      acceptedAt: "",
+      cancelAt: getFormattedStartDate(),
+      paid: false,
+    };
+
+    // Prepare data to remove the participant from trainer schedule
+    const removeParticipantData = {
+      trainerName: booking.trainer, // e.g., "Thomas King"
+      ids: booking.sessions, // Array of session IDs
+      bookerEmail: booking.bookerEmail, // Email to identify participant
+    };
+
+    try {
+      if (simulate) {
+        // Simulate mode: just log the actions
+        console.log("Simulation - Booking Cancel Payload:", bookingCancelData);
+        console.log(
+          "Simulation - Remove Participant Payload:",
+          removeParticipantData
+        );
+
+        Swal.fire({
+          icon: "success",
+          title: "Cancelled!",
+          text: "Booking cancelled and participant removed (simulation).",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+        refetch();
+        return;
+      }
+
+      // Step 1: Update booking request status to "Cancelled"
+      const bookingResponse = await axiosPublic.patch(
+        `/Trainers_Booking_Request/${booking._id}`,
+        bookingCancelData
+      );
+
+      if (
+        bookingResponse.data?.message ||
+        bookingResponse.data === "Booking updated successfully."
+      ) {
+        // Step 2: Remove the participant from the trainer's session(s)
+        const removeResponse = await axiosPublic.put(
+          "/Trainers_Schedule/RemoveParticipant",
+          removeParticipantData
+        );
+
+        if (
+          removeResponse.data?.message ||
+          removeResponse.data === "Participant removed successfully."
+        ) {
+          Swal.fire({
+            icon: "success",
+            title: "Cancelled!",
+            text: "Booking has been cancelled and participant removed.",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+          refetch();
+        } else {
+          throw new Error("Failed to remove participant.");
+        }
+      } else {
+        throw new Error("Failed to cancel booking.");
+      }
+    } catch (error) {
+      console.error("Error cancelling booking:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Failed!",
+        text: "Something went wrong while cancelling the booking.",
+      });
+    }
   };
 
   return (
@@ -348,7 +435,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
                 anchorSelect={`#accept-btn-${booking._id}`}
                 content="Accept Booking Request"
               />
-              
+
               <button
                 id={`reject-btn-${booking._id}`}
                 className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
