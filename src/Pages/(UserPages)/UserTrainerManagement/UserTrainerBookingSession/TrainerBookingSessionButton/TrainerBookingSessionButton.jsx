@@ -12,13 +12,16 @@ import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 const TrainerBookingSessionButton = ({ booking, refetch }) => {
   const axiosPublic = useAxiosPublic();
 
-  // Handle Delete Bookings
+  // Archive booking into history, then delete from request table
   const handleDeleteBooking = async (booking) => {
     if (!booking) return;
 
+    // // Destructure ID from booking
+    // eslint-disable-next-line no-unused-vars
     const { _id, ...rest } = booking;
     let updatedBooking = { ...rest };
 
+    // If booking is still Pending, add a timestamp & mark as "Deleted"
     if (booking.status === "Pending") {
       const now = new Date();
       const pad = (n) => n.toString().padStart(2, "0");
@@ -34,6 +37,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
       };
     }
 
+    // Custom message based on booking status
     const confirmMessage =
       booking.status === "Pending"
         ? "This will cancel the booking permanently."
@@ -52,8 +56,10 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
 
     if (confirmResult.isConfirmed) {
       try {
+        // Step 1: Archive to history collection
         await axiosPublic.post("/Trainer_Booking_History", updatedBooking);
 
+        // Step 2: Delete original booking request
         const deleteResponse = await axiosPublic.delete(
           `/Trainers_Booking_Request/${booking._id}`
         );
@@ -70,6 +76,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
             showConfirmButton: false,
           });
 
+          // Refetch all
           refetch();
         } else {
           Swal.fire({
@@ -89,6 +96,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
     }
   };
 
+  // Cancel booking directly without archiving
   const handleCancelBooking = async (booking) => {
     if (!booking || !booking._id) {
       Swal.fire({
@@ -115,7 +123,10 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
         `/Trainers_Booking_Request/${booking._id}`
       );
 
-      if (data?.deletedCount && data.deletedCount > 0) {
+      // Check for success instead of deletedCount
+      const isSuccess = data?.success;
+
+      if (isSuccess) {
         Swal.fire({
           icon: "success",
           title: "Booking Cancelled",
@@ -123,12 +134,16 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
           timer: 1500,
           showConfirmButton: false,
         });
+
+        // Refetch all
         refetch();
       } else {
         Swal.fire({
           icon: "error",
           title: "Failed to Cancel",
-          text: "The booking could not be cancelled. It may already be deleted.",
+          text:
+            data?.message ||
+            "The booking could not be cancelled. It may already be deleted.",
         });
       }
     } catch (error) {
@@ -141,10 +156,12 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
     }
   };
 
+  // Generate a unique ID for tooltip targeting
   const getButtonId = () => `booking-btn-${booking._id}-${booking.status}`;
 
   return (
     <>
+      {/* Accepted Booking: Show 'Register Session' Button */}
       {booking.status === "Accepted" && (
         <>
           <button
@@ -163,6 +180,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
         </>
       )}
 
+      {/* Expired, Cancelled, or Pending: Show Cancel Button */}
       {["Expired", "Cancelled", "Pending"].includes(booking.status) && (
         <>
           <button
@@ -179,6 +197,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
         </>
       )}
 
+      {/* Rejected Bookings: Show Permanent Delete Button */}
       {booking.status === "Rejected" && (
         <>
           <button

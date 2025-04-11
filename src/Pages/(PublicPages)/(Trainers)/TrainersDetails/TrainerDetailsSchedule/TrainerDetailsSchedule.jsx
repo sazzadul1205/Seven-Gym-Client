@@ -343,7 +343,6 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
   );
 };
 
-// PropTypes for type safety
 TrainerDetailsSchedule.propTypes = {
   TrainerDetails: PropTypes.shape({
     name: PropTypes.string.isRequired,
@@ -357,7 +356,7 @@ TrainerDetailsSchedule.propTypes = {
           start: PropTypes.string.isRequired,
           end: PropTypes.string.isRequired,
           classType: PropTypes.string.isRequired,
-          participant: PropTypes.object,
+          participant: PropTypes.arrayOf(PropTypes.object), // ✅ Fixed here
           participantLimit: PropTypes.oneOfType([
             PropTypes.number,
             PropTypes.string,

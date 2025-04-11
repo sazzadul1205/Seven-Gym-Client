@@ -400,7 +400,8 @@ AllSessions.propTypes = {
       day: PropTypes.string,
       time: PropTypes.string,
       classType: PropTypes.string,
-      participant: PropTypes.arrayOf(PropTypes.object), // ✅ fixed
+      participant: PropTypes.object, // ✅ CORRECT
+
       participantLimit: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
