@@ -11,7 +11,6 @@ import FetchingError from "../../../../../Shared/Component/FetchingError";
 // Import Package
 import PropTypes from "prop-types";
 import { useQuery } from "@tanstack/react-query";
-import BookedSessionTable from "../../../../(UserPages)/UserTrainerManagement/UserTrainerBookingSession/UserTrainerBookingInfoModal/BookedSessionTable/BookedSessionTable";
 
 // Format date to "DD-Month-YYYY HH:MM AM/PM"
 const formatDate = (dateStr) => {
