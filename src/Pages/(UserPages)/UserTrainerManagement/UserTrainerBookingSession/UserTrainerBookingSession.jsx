@@ -1,29 +1,34 @@
 import { useEffect, useRef, useState } from "react";
-import PropTypes from "prop-types";
 
-// Components
+// import Packages
+import PropTypes from "prop-types";
+import { Tooltip } from "react-tooltip";
+
+// Import Components & Modal
+import UserTrainerBookingInfoModal from "./UserTrainerBookingInfoModal/UserTrainerBookingInfoModal";
 import TrainerBookingSessionButton from "./TrainerBookingSessionButton/TrainerBookingSessionButton";
 
 // Utilities
 import { formatDate } from "../../../../Utility/formatDate";
 import { getRemainingTime } from "../../../../Utility/getRemainingTime";
-import { FaTriangleExclamation } from "react-icons/fa6";
-import UserTrainerBookingInfoModal from "./UserTrainerBookingInfoModal/UserTrainerBookingInfoModal";
+
+// import Icons
 import { FaInfo } from "react-icons/fa";
-import { Tooltip } from "react-tooltip";
+import { FaTriangleExclamation } from "react-icons/fa6";
 
 // Background color based on booking status
 const getStatusBackgroundColor = (status) => {
   switch (status) {
     case "Accepted":
-      return "bg-green-300 text-white";
+      return "bg-green-200 hover:bg-green-100 text-black py-2";
     case "Rejected":
+      return "bg-red-200 hover:bg-red-300 text-black py-2";
     case "Cancelled":
-      return "flex";
+      return "bg-red-400 hover:bg-red-500 text-black";
     case "Expired":
-      return "bg-gray-300 text-white";
+      return "bg-gray-200 hover:bg-gray-100 text-black py-2";
     default:
-      return "bg-white";
+      return "";
   }
 };
 
@@ -40,11 +45,6 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
     const interval = setInterval(() => setNow(new Date()), 60000);
     return () => clearInterval(interval);
   }, []);
-
-  // Filter out Rejected and Cancelled bookings
-  const visibleBookings = TrainersBookingRequestData.filter(
-    (booking) => booking.status !== "Rejected" && booking.status !== "Cancelled"
-  );
 
   // Create a close handler
   const closeModal = () => {
@@ -71,7 +71,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
       <div className="py-4">
         {/* Desktop View */}
         <div className="hidden md:block">
-          {visibleBookings.length ? (
+          {TrainersBookingRequestData.length ? (
             <div className="overflow-x-auto">
               <table className="min-w-full table-auto bg-white border-collapse">
                 {/* Table Header */}
@@ -95,7 +95,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
 
                 {/* Table Body */}
                 <tbody className="text-sm text-gray-700">
-                  {visibleBookings.map((booking) => (
+                  {TrainersBookingRequestData.map((booking) => (
                     <tr
                       key={booking._id}
                       className={`border-b hover:bg-gray-100 ${getStatusBackgroundColor(
@@ -103,7 +103,9 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                       )}`}
                     >
                       {/* Trainer */}
-                      <td className="px-4 py-2">{booking.trainer}</td>
+                      <td className="px-4 py-2 font-semibold">
+                        {booking.trainer}
+                      </td>
 
                       {/* Booked At */}
                       <td className="px-4 py-2">
@@ -173,7 +175,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
 
         {/* Mobile View */}
         <div className="flex md:hidden flex-col space-y-4 mb-6">
-          {visibleBookings.map((booking) => (
+          {TrainersBookingRequestData.map((booking) => (
             <div
               key={booking._id}
               className={`text-black ${getStatusBackgroundColor(

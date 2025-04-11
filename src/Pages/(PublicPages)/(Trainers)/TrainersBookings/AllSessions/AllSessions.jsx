@@ -374,6 +374,7 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
   );
 };
 
+// Prop Validation
 AllSessions.propTypes = {
   AllSessionData: PropTypes.shape({
     trainerSchedule: PropTypes.objectOf(
@@ -399,7 +400,7 @@ AllSessions.propTypes = {
       day: PropTypes.string,
       time: PropTypes.string,
       classType: PropTypes.string,
-      participant: PropTypes.object,
+      participant: PropTypes.arrayOf(PropTypes.object), // ✅ fixed
       participantLimit: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,

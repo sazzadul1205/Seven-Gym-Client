@@ -370,8 +370,6 @@ const TrainerBookingInfoModal = ({
         )}
       </div>
 
-      {/* Sessions Table */}
-      <BookedSessionTable ScheduleByIDData={ScheduleByIDData} />
     </div>
   );
 };

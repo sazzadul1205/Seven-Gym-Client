@@ -339,7 +339,7 @@ SameTimeWeekSession.propTypes = {
       day: PropTypes.string,
       time: PropTypes.string,
       classType: PropTypes.string,
-      participant: PropTypes.object,
+      participant: PropTypes.arrayOf(PropTypes.object), // ✅ fixed
       participantLimit: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,

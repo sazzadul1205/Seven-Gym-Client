@@ -312,7 +312,6 @@ const SameClassTypeWeekSession = ({
   );
 };
 
-// Prop Type Validation
 SameClassTypeWeekSession.propTypes = {
   SameClassTypeData: PropTypes.arrayOf(
     PropTypes.shape({
@@ -334,7 +333,7 @@ SameClassTypeWeekSession.propTypes = {
       day: PropTypes.string,
       time: PropTypes.string,
       classType: PropTypes.string,
-      participant: PropTypes.object,
+      participant: PropTypes.arrayOf(PropTypes.object), // ✅ Fixed here
       participantLimit: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
@@ -344,7 +343,7 @@ SameClassTypeWeekSession.propTypes = {
       end: PropTypes.string,
     })
   ).isRequired,
-  setListedSessions: PropTypes.func.isRequired,
+  setListedSessions: PropTypes.func,
   ClassType: PropTypes.string.isRequired,
 };
 

@@ -15,10 +15,6 @@ import { ImCross } from "react-icons/im";
 import UserTrainerBookingInfoModalBasic from "../../UserTrainerBookingSession/UserTrainerBookingInfoModal/UserTrainerBookingInfoModalBasic/UserTrainerBookingInfoModalBasic";
 import BookedSessionTable from "../../UserTrainerBookingSession/UserTrainerBookingInfoModal/BookedSessionTable/BookedSessionTable";
 
-
-
-
-
 const UserTrainerBookingHistoryInfoModal = ({ selectedBooking }) => {
   const axiosPublic = useAxiosPublic();
 
@@ -101,7 +97,7 @@ UserTrainerBookingHistoryInfoModal.propTypes = {
       .isRequired,
     status: PropTypes.string,
     bookedAt: PropTypes.string,
-  }).isRequired,
+  }),
 };
 
 export default UserTrainerBookingHistoryInfoModal;
