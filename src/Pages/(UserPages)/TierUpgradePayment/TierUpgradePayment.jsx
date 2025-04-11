@@ -9,12 +9,11 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useQuery } from "@tanstack/react-query";
 import { Elements } from "@stripe/react-stripe-js";
 
-// Import Utility
-import useAuth from "../../../Hooks/useAuth";
-import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 
-// Import Component
+// Import Hooks
+import useAuth from "../../../Hooks/useAuth";
 import Loading from "../../../Shared/Loading/Loading";
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
 
 // Import Background Image

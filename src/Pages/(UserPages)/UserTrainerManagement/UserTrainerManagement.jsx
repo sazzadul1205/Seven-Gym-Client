@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 
 // Import Packages
 import PropTypes from "prop-types";
@@ -18,7 +19,6 @@ import useAuth from "../../../Hooks/useAuth";
 import Loading from "../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
-import { useLocation, useNavigate } from "react-router";
 
 // Tab Icons
 const icons = [

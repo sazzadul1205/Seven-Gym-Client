@@ -172,7 +172,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
       {/* Accepted Booking: Show 'Register Session' Button */}
       {booking.status === "Accepted" && (
         <>
-          <Link to={"/"}>
+          <Link to={`/User/UserTrainerSessionPayment/${booking?._id}`}>
             <button
               id={getButtonId()}
               className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"

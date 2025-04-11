@@ -33,6 +33,7 @@ import Trainers from "./Pages/(PublicPages)/(Trainers)/Trainers/Trainers.jsx";
 import OurMission from "./Pages/(PublicPages)/(About)/OurMission/OurMission.jsx";
 import ClassesDetails from "./Pages/(PublicPages)/(Classes)/ClassesDetails/ClassesDetails.jsx";
 import TrainersDetails from "./Pages/(PublicPages)/(Trainers)/TrainersDetails/TrainersDetails.jsx";
+import TestimonialsPage from "./Pages/(PublicPages)/(About)/TestimonialsPage/TestimonialsPage.jsx";
 import TrainersBookings from "./Pages/(PublicPages)/(Trainers)/TrainersBookings/TrainersBookings.jsx";
 
 // User Pages Import
@@ -41,7 +42,7 @@ import UserSettings from "./Pages/(UserPages)/UserSettings/UserSettings.jsx";
 import UserTierUpgrade from "./Pages/(UserPages)/UserTierUpgrade/UserTierUpgrade.jsx";
 import TearUpgradePayment from "./Pages/(UserPages)/TierUpgradePayment/TierUpgradePayment.jsx";
 import UserSchedulePlanner from "./Pages/(UserPages)/UserSchedulePlanner/UserSchedulePlanner.jsx";
-import TestimonialsPage from "./Pages/(PublicPages)/(About)/TestimonialsPage/TestimonialsPage.jsx";
+import UserTrainerSessionPayment from "./Pages/(UserPages)/UserTrainerSessionPayment/UserTrainerSessionPayment.jsx";
 
 // Trainer Pages Import
 import TrainerSettingsLayout from "./Layouts/TrainerSettingsLayout.jsx";
@@ -149,6 +150,15 @@ createRoot(document.getElementById("root")).render(
                 element={
                   <MemberPrivateRoute>
                     <UserTrainerManagement />
+                  </MemberPrivateRoute>
+                }
+              />
+
+              <Route
+                path="/User/UserTrainerSessionPayment/:id"
+                element={
+                  <MemberPrivateRoute>
+                    <UserTrainerSessionPayment />
                   </MemberPrivateRoute>
                 }
               />
