@@ -229,7 +229,13 @@ const UserTrainerBookingInfoModal = ({ selectedBooking, closeModal }) => {
 // Prop Type Validation
 UserTrainerBookingInfoModal.propTypes = {
   selectedBooking: PropTypes.shape({
-    trainerId: PropTypes.string,
+    trainerId: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        name: PropTypes.string, // Optional: add other fields if needed
+      }),
+    ]),
     sessions: PropTypes.arrayOf(PropTypes.string),
     durationWeeks: PropTypes.number,
     totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

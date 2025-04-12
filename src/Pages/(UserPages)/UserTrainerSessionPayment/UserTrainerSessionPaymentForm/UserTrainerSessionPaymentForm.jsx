@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import { useNavigate } from "react-router";
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
   const axiosPublic = useAxiosPublic();
@@ -65,6 +66,8 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
     if (!confirmPayment.isConfirmed) return;
 
     let clientSecret;
+
+    // Get Price
     const totalPrice = Number(TrainerBookingRequestByIDData?.totalPrice);
 
     // Step 4: Check if the total price is valid
@@ -72,13 +75,22 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
       return Swal.fire("Error", "Invalid total price provided.", "error");
     }
 
+    // Start Button Load State
+    setIsProcessing(true);
+
     // Step 5: Initialize Stripe payment
     try {
       const res = await axiosPublic.post("/Stripe_Payment_Intent", {
         totalPrice,
       });
+
+      // get Client secret
       clientSecret = res.data?.clientSecret;
+
+      // client secret not available
       if (!clientSecret) throw new Error("Client secret missing.");
+
+      // Error Part
     } catch (err) {
       console.error("Stripe init error:", err);
       return Swal.fire(
@@ -88,11 +100,11 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
       );
     }
 
-    setIsProcessing(true);
-
     try {
       // Step 6: Confirm card payment
       const cardElement = elements.getElement(CardElement);
+
+      // Stripe Payment Intent
       const { paymentIntent, error } = await stripe.confirmCardPayment(
         clientSecret,
         {
@@ -108,6 +120,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         return Swal.fire("Payment Failed", error.message, "error");
       }
 
+      // Get Stripe Payment Id
       const stripePaymentID = paymentIntent.id;
 
       // Step 8: Build payload for accepted booking
@@ -120,29 +133,27 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
 
       // Step 9: Update booking as accepted
       try {
-        await axiosPublic.post(
+        const TrainerBookingAcceptRes = await axiosPublic.post(
           "/Trainer_Booking_Accepted",
           sessionAcceptedPayload
         );
 
-        // Step 10: Fetch updated booking info
-        const updatedSessionData = await axiosPublic.get(
-          `/Trainer_Booking_Accepted/${TrainerBookingRequestByIDData._id}`
-        );
-        const updatedSessionInfo = updatedSessionData.data;
+        // Get Trainer Booking Accepted Data
+        const updatedSessionInfo = TrainerBookingAcceptRes.data;
 
-        // Step 11: Prepare payment payload
+        // Step 10: Prepare payment payload
         const paymentPayload = {
           sessionInfo: {
             ...updatedSessionInfo,
           },
+          cardHolder: data.cardholderName,
           paymentMethod: "Card",
           stripePaymentID,
         };
 
         try {
-          // Step 12: Post payment info
-          await axiosPublic.put("/Trainer_Session_Payment", paymentPayload);
+          // Step 11: Post payment info
+          await axiosPublic.post("/Trainer_Session_Payment", paymentPayload);
 
           Swal.fire(
             "Success",
@@ -150,7 +161,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
             "success"
           );
 
-          // ✅ Step 13: Delete original booking request
+          // ✅ Step 12: Delete original booking request
           try {
             await axiosPublic.delete(
               `/Trainers_Booking_Request/${TrainerBookingRequestByIDData._id}`
@@ -243,13 +254,25 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
 
         {/* Submit Button */}
         <div className="flex justify-end">
-          <button
+          <CommonButton
             type="submit"
-            className={`w-1/3 py-3 text-white font-bold rounded-lg transition-all duration-300 cursor-pointer ${
+            text="Pay Now"
+            isLoading={isProcessing}
+            loadingText="Processing..."
+            bgColor="blue" // You can customize this or use bgFromColor/bgToColor directly
+            width="1/3"
+            py="py-3"
+            textColor="text-white"
+            borderRadius="rounded-lg"
+            cursorStyle={
+              !stripe ||
+              !elements ||
+              isSubmitting ||
+              !isConfirmed ||
               isProcessing
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-linear-to-bl hover:bg-linear-to-tr from-blue-300 to-blue-600"
-            }`}
+                ? "cursor-not-allowed"
+                : "cursor-pointer"
+            }
             disabled={
               !stripe ||
               !elements ||
@@ -257,9 +280,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
               !isConfirmed ||
               isProcessing
             }
-          >
-            {isProcessing ? "Processing..." : "Pay Now"}
-          </button>
+          />
         </div>
       </form>
     </div>
