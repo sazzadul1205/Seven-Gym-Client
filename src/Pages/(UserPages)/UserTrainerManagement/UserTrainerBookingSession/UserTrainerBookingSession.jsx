@@ -24,7 +24,7 @@ const getStatusBackgroundColor = (status) => {
     case "Rejected":
       return "bg-red-200 hover:bg-red-300 text-black py-2";
     case "Cancelled":
-      return "bg-red-400 hover:bg-red-500 text-black";
+      return "bg-linear-to-bl from-red-300 to-red-500 text-black";
     case "Expired":
       return "bg-gray-200 hover:bg-gray-100 text-black py-2";
     default:
@@ -69,10 +69,10 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
 
       {/* Bookings List */}
       <div className="py-4">
-        {/* Desktop View */}
-        <div className="hidden md:block">
-          {TrainersBookingRequestData.length ? (
-            <div className="overflow-x-auto">
+        {TrainersBookingRequestData.length > 0 ? (
+          <div>
+            {/* Desktop View */}
+            <div className="overflow-x-auto hidden md:flex">
               <table className="min-w-full table-auto bg-white border-collapse">
                 {/* Table Header */}
                 <thead className="bg-[#A1662F] text-white">
@@ -162,75 +162,92 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                 </tbody>
               </table>
             </div>
-          ) : (
-            // No bookings fallback
-            <div className="flex items-center bg-gray-100 py-5 text-black italic">
-              <div className="flex gap-4 mx-auto items-center">
-                <FaTriangleExclamation className="text-xl text-red-500" />
-                No booking requests at the moment.
-              </div>
-            </div>
-          )}
-        </div>
 
-        {/* Mobile View */}
-        <div className="flex md:hidden flex-col space-y-4 mb-6">
-          {TrainersBookingRequestData.map((booking) => (
-            <div
-              key={booking._id}
-              className={`text-black ${getStatusBackgroundColor(
-                booking.status
-              )} mb-4 p-4 border rounded-lg shadow-md`}
-            >
-              <div className="flex flex-col space-y-2 text-left">
-                {/* Trainer */}
-                <p className="font-semibold flex justify-between">
-                  <strong>Trainer:</strong> {booking.trainer || "N/A"}
-                </p>
+            {/* Mobile View */}
+            <div className="flex md:hidden flex-col space-y-4 mb-6">
+              {TrainersBookingRequestData.map((booking) => (
+                <div
+                  key={booking._id}
+                  className={`text-black ${getStatusBackgroundColor(
+                    booking.status
+                  )} mb-4 p-4 border rounded-lg shadow-md`}
+                >
+                  <div className="flex flex-col space-y-2 text-left">
+                    {/* Trainer */}
+                    <p className="font-semibold flex justify-between">
+                      <strong>Trainer:</strong> {booking.trainer || "N/A"}
+                    </p>
 
-                {/* Booked At */}
-                <p className="flex justify-between">
-                  <strong>Booked At:</strong>
-                  {formatDate(booking.bookedAt) || "N/A"}
-                </p>
+                    {/* Booked At */}
+                    <p className="flex justify-between">
+                      <strong>Booked At:</strong>
+                      {formatDate(booking.bookedAt) || "N/A"}
+                    </p>
 
-                {/* Total Price */}
-                <p className="flex justify-between">
-                  <strong>Total Price:</strong> $ {booking.totalPrice || "0.00"}
-                </p>
+                    {/* Total Price */}
+                    <p className="flex justify-between">
+                      <strong>Total Price:</strong> ${" "}
+                      {booking.totalPrice || "0.00"}
+                    </p>
 
-                {/* Duration */}
-                <p className="flex justify-between">
-                  <strong>Duration:</strong>
-                  {booking.durationWeeks === 1
-                    ? `${booking.durationWeeks} Week`
-                    : `${booking.durationWeeks || "N/A"} Weeks`}
-                </p>
+                    {/* Duration */}
+                    <p className="flex justify-between">
+                      <strong>Duration:</strong>
+                      {booking.durationWeeks === 1
+                        ? `${booking.durationWeeks} Week`
+                        : `${booking.durationWeeks || "N/A"} Weeks`}
+                    </p>
 
-                {/* Status */}
-                <p className="flex justify-between">
-                  <strong>Status:</strong> {booking.status || "Unknown"}
-                </p>
+                    {/* Status */}
+                    <p className="flex justify-between">
+                      <strong>Status:</strong> {booking.status || "Unknown"}
+                    </p>
 
-                {/* Expires */}
-                <p className="flex justify-between">
-                  <strong>Expires In:</strong>
-                  {booking.status === "Pending"
-                    ? getRemainingTime(booking.bookedAt, now)
-                    : "-- / --"}
-                </p>
+                    {/* Expires */}
+                    <p className="flex justify-between">
+                      <strong>Expires In:</strong>
+                      {booking.status === "Pending"
+                        ? getRemainingTime(booking.bookedAt, now)
+                        : "-- / --"}
+                    </p>
 
-                {/* Action Button */}
-                <div className="flex justify-between items-center mt-4">
-                  <TrainerBookingSessionButton
-                    booking={booking}
-                    refetch={refetch}
-                  />
+                    {/* Action Button */}
+                    <div className="flex justify-between items-center mt-4">
+                      <TrainerBookingSessionButton
+                        booking={booking}
+                        refetch={refetch}
+                      />
+
+                      {/* View Button */}
+                      <button
+                        id={`view-details-btn-${booking._id}`}
+                        className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                        onClick={() => {
+                          setSelectedBooking(booking);
+                          modalRef.current?.showModal();
+                        }}
+                      >
+                        <FaInfo className="text-yellow-500" />
+                      </button>
+                      <Tooltip
+                        anchorSelect={`#view-details-btn-${booking._id}`}
+                        content="View Detailed Booking Data"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ) : (
+          // No bookings fallback
+          <div className="flex items-center bg-gray-100 py-5 text-black italic">
+            <div className="flex gap-4 mx-auto items-center">
+              <FaTriangleExclamation className="text-xl text-red-500" />
+              No booking requests at the moment.
+            </div>
+          </div>
+        )}
       </div>
 
       {/* User Trainer Booking Info Modal */}

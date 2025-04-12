@@ -31,6 +31,7 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
         return "bg-white"; // Default background (for Pending)
     }
   };
+
   // Create a close handler
   const closeModal = () => {
     modalRef.current?.close();
@@ -66,7 +67,7 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                     <th className="px-4 py-2 text-left">Total Price</th>
                     <th className="px-4 py-2 text-left">Duration</th>
                     <th className="px-4 py-2 text-left">Status</th>
-                    <th className="px-4 py-2 text-center">Expired In</th>
+                    <th className="px-4 py-2 text-center">Reason</th>
                     <th className="px-4 py-2 text-left">Action</th>
                   </tr>
                 </thead>
@@ -76,7 +77,7 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                   {TrainersBookingHistoryData.map((booking) => (
                     <tr
                       key={booking._id}
-                      className={`border-b hover:bg-gray-100 ${getStatusBackgroundColor(
+                      className={`border-b bg-white hover:bg-gray-100 ${getStatusBackgroundColor(
                         booking.status
                       )}`}
                     >
@@ -96,11 +97,7 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                       <td className="px-4 py-2">{booking.status}</td>
                       {/* Table : Remaining Time */}
                       <td className="px-4 py-2 font-semibold text-sm text-center">
-                        {
-                          booking.status === "Expired"
-                            ? formatDate(booking.expiredAt) // Show remaining time if Pending
-                            : "-- / --" // Show Expired if not Pending
-                        }
+                        {booking?.reason && <span>{booking.reason}</span>}
                       </td>
 
                       {/* Table : Buttons */}
@@ -167,15 +164,9 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                     </div>
 
                     {/* Remaining Time */}
-                    <div className="flex justify-between items-center font-semibold text-sm">
+                    <div className=" text-sm">
                       <p className="font-bold">Expired In:</p>
-                      <span>
-                        {
-                          booking.status === "Expired"
-                            ? formatDate(booking.expiredAt) // Show remaining time if Pending
-                            : "-- / --" // Show Expired if not Pending
-                        }
-                      </span>
+                      {booking?.reason && <span>{booking.reason}</span>}
                     </div>
 
                     {/* Buttons */}
@@ -192,7 +183,7 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                             .showModal();
                         }}
                       >
-                        <FaInfo className="text-yellow-500" /> {/* Info Icon */}
+                        <FaInfo className="text-yellow-500" />
                       </button>
                     </div>
                   </div>
@@ -231,11 +222,12 @@ UserTrainerSessionHistory.propTypes = {
     PropTypes.shape({
       _id: PropTypes.string.isRequired,
       trainer: PropTypes.string.isRequired,
+      trainerId: PropTypes.string.isRequired,
       bookedAt: PropTypes.string.isRequired,
-      totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Allow both string and number
+      totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       durationWeeks: PropTypes.number.isRequired,
       status: PropTypes.string.isRequired,
-      expiredAt: PropTypes.string, // This is optional
+      expiredAt: PropTypes.string,
     })
   ).isRequired,
 };

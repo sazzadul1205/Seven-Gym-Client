@@ -64,7 +64,7 @@ const UserTrainerBookingInfoModal = ({ selectedBooking, closeModal }) => {
   if (TrainerDataError || ScheduleByIDDataError) return <FetchingError />;
 
   return (
-    <div className="modal-box max-w-5xl w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black">
+    <div className="modal-box max-w-5xl w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black pt-10 md:pt-0">
       {/* Header */}
       <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
         <h3 className="font-bold text-lg">Booked Sessions Details</h3>
@@ -76,6 +76,12 @@ const UserTrainerBookingInfoModal = ({ selectedBooking, closeModal }) => {
           }
         />
       </div>
+
+      {selectedBooking?.reason && (
+        <div className="px-5 py-2 text-red-600 font-semibold italic border-b border-red-300 bg-red-100">
+          Reason: {selectedBooking.reason}
+        </div>
+      )}
 
       {/* Basic Information : Trainer Info , Booking Details */}
       <UserTrainerBookingInfoModalBasic
@@ -241,6 +247,7 @@ UserTrainerBookingInfoModal.propTypes = {
     totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     status: PropTypes.string,
     bookedAt: PropTypes.string,
+    reason: PropTypes.string,
   }),
   closeModal: PropTypes.func.isRequired,
 };

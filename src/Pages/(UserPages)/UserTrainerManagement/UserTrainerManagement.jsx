@@ -115,23 +115,53 @@ const UserTrainerManagement = () => {
     },
   });
 
+  // Fetch all Trainer Booking History Request
+  const {
+    data: TrainersBookingAcceptedData = [],
+    isLoading: TrainersBookingAcceptedIsLoading,
+    error: TrainersBookingAcceptedError,
+    refetch: TrainersBookingAcceptedRefetch,
+  } = useQuery({
+    enabled: !!user?.email,
+    queryKey: ["TrainersBookingAcceptedData", user?.email],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainer_Booking_Accepted?email=${user.email}`
+        );
+        return res.data;
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          // No bookings found — not a real error
+          return [];
+        }
+        throw err; // Re-throw other errors (e.g., 500, 401, etc.)
+      }
+    },
+  });
+
   // Refetch Everything
   const refetch = () => {
     TrainersBookingRequestRefetch?.();
     TrainersBookingHistoryRefetch?.();
+    TrainersBookingAcceptedRefetch?.();
   };
 
   // Load State
-  if (TrainersBookingRequestIsLoading || TrainersBookingHistoryIsLoading)
+  if (
+    TrainersBookingRequestIsLoading ||
+    TrainersBookingHistoryIsLoading ||
+    TrainersBookingAcceptedIsLoading
+  )
     return <Loading />;
 
   // Error State
-  if (TrainersBookingRequestError || TrainersBookingHistoryError)
+  if (
+    TrainersBookingRequestError ||
+    TrainersBookingHistoryError ||
+    TrainersBookingAcceptedError
+  )
     return <FetchingError />;
-
-  // If Data is not available
-  if (!TrainersBookingRequestData || TrainersBookingRequestData.length === 0)
-    return null;
 
   return (
     <div
@@ -157,15 +187,22 @@ const UserTrainerManagement = () => {
 
           {/* Main content */}
           <div className="flex-1 text-black bg-[#f6eee3] border-[10px] border-[#A1662F] min-h-screen">
+            {/* User Active Session Tab */}
             {activeTab === "User-Active-Session" && (
-              <UserTrainerActiveSession />
-            )}
-            {activeTab === "User-Booking-Session" && (
-              <UserTrainerBookingSession
-                TrainersBookingRequestData={TrainersBookingRequestData || {}}
+              <UserTrainerActiveSession
+                TrainersBookingAcceptedData={TrainersBookingAcceptedData}
                 refetch={refetch}
               />
             )}
+
+            {/* User Booking Session Tab */}
+            {activeTab === "User-Booking-Session" && (
+              <UserTrainerBookingSession
+                TrainersBookingRequestData={TrainersBookingRequestData}
+                refetch={refetch}
+              />
+            )}
+            {/* User Session History Tab */}
             {activeTab === "User-Session-History" && (
               <UserTrainerSessionHistory
                 TrainersBookingHistoryData={TrainersBookingHistoryData || {}}
