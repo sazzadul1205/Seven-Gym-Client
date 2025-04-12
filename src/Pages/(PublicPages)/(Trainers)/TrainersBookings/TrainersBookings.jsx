@@ -180,7 +180,7 @@ const TrainersBookings = () => {
       {/* Trainer Information */}
       <TrainerBookingTrainer trainer={trainer} />
 
-      {/* Uncomment as needed */}
+      {/* Payment Component */}
       <BookedSessionTable
         name={name}
         listedSessions={listedSessions}

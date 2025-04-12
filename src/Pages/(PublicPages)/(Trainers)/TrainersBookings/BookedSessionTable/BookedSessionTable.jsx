@@ -14,16 +14,10 @@ import { FaBookmark, FaTrash } from "react-icons/fa";
 
 // Import Buttons
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+import { useQuery } from "@tanstack/react-query";
 
-// Convert 24-hour time to 12-hour AM/PM format
-const formatTimeTo12Hour = (time) => {
-  if (!time) return "";
-  const [hour, minute] = time.split(":");
-  const h = parseInt(hour, 10);
-  const amPm = h >= 12 ? "PM" : "AM";
-  const formattedHour = h % 12 === 0 ? 12 : h % 12;
-  return `${formattedHour}:${minute} ${amPm}`;
-};
+// import Utility
+import { formatTimeTo12Hour } from "../../../../../Utility/formatTimeTo12Hour";
 
 const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
   const axiosPublic = useAxiosPublic();
@@ -34,6 +28,18 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
   // State for loading and duration
   const [loading, setLoading] = useState(false);
   const [duration, setDuration] = useState(1);
+
+  // Fetch Trainer Booking Request By ID Data
+  const { data: TrainerIdByNameData } = useQuery({
+    queryKey: ["TrainerIdByName", name],
+    queryFn: () =>
+      axiosPublic
+        .get(`/Trainers/TrainerIdByName?name=${name}`)
+        .then((res) => res.data),
+    enabled: !!name, // The query will only run if "name" is truthy
+  });
+
+  console.log(TrainerIdByNameData);
 
   // Group by classType + classPrice, count and subtotal
   const { groups, baseGrandTotal } = useMemo(() => {
@@ -131,13 +137,13 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
       sessions: sessionIds,
       bookerEmail: user?.email,
       trainer: name,
+      trainerId: TrainerIdByNameData,
       totalPrice: adjustedGrandTotal.toFixed(2),
       durationWeeks: duration,
       status: "Pending",
     };
 
     try {
-      // Replace with actual request when ready
       const res = await axiosPublic.post("/Trainers_Booking_Request", payload);
 
       if (res.data?.requestId) {

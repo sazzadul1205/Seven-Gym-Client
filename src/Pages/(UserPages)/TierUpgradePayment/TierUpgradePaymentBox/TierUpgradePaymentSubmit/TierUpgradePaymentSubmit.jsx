@@ -66,6 +66,7 @@ const TierUpgradePaymentSubmit = ({
 
   // Handle form submission and payment processing
   const onSubmit = async (data) => {
+    // This code checks if the Stripe and elements objects are initialized. If either is not ready, it displays an error message using SweetAlert and exits the function to prevent further execution.
     if (!stripe || !elements) {
       Swal.fire(
         "Error",
@@ -74,7 +75,8 @@ const TierUpgradePaymentSubmit = ({
       );
       return;
     }
-
+    
+    // This code checks if a plan duration has been selected. If not, it displays an error message using SweetAlert and exits the function.
     if (!selectedDuration) {
       Swal.fire("Error", "Please select a plan.", "error");
       return;

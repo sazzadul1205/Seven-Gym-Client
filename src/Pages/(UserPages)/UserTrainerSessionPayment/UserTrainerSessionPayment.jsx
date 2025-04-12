@@ -4,6 +4,7 @@ import { useParams } from "react-router";
 import UserTrainerManagementBackground from "../../../assets/User-Trainer-Management-Background/UserTrainerManagementBackground.jpg";
 
 // Import Hooks
+
 import Loading from "../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
@@ -18,6 +19,7 @@ import BookedSessionTable from "../UserTrainerManagement/UserTrainerBookingSessi
 
 // Import Utility
 import { formatDate } from "../../../Utility/formatDate";
+import UserTrainerSessionPaymentForm from "./UserTrainerSessionPaymentForm/UserTrainerSessionPaymentForm";
 
 // Stripe promise
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PROMISE);
@@ -69,8 +71,6 @@ const UserTrainerSessionPayment = () => {
   if (TrainerBookingRequestByIDError || ScheduleByIDError)
     return <FetchingError />;
 
-  console.log(TrainerBookingRequestByIDData);
-
   return (
     <div
       className="min-h-screen bg-fixed bg-cover bg-center"
@@ -81,14 +81,14 @@ const UserTrainerSessionPayment = () => {
           {/* Booking Details and Payment Info */}
           <div className="flex py-2 gap-5">
             {/* Details */}
-            <div className="bg-white rounded-2xl p-5 w-1/4">
+            <div className="bg-white rounded-2xl p-5 w-2/5">
               {/* Title */}
               <h2 className="text-2xl font-bold text-gray-800 border-b border-gray-700 pb-2">
                 Booking Summary
               </h2>
 
               {/* Contents */}
-              <div className="text-gray-700 leading-relaxed">
+              <div className="grid grid-cols-2 text-gray-700 leading-relaxed">
                 {/* Trainer */}
                 <div className="border-b-2 border-gray-200 py-2">
                   <span className="block font-semibold text-gray-800 py-1">
@@ -176,12 +176,11 @@ const UserTrainerSessionPayment = () => {
             </div>
 
             {/* Payment */}
-            <div className="w-3/4 bg-white">
+            <div className="w-3/5 bg-white">
               <Elements stripe={stripePromise}>
-                <div className="py-5">
-                  {/* Title Section */}
-                  <h2 className="text-xl font-semibold bglinear-to">Payment Information</h2>
-                </div>
+                <UserTrainerSessionPaymentForm
+                  TrainerBookingRequestByIDData={TrainerBookingRequestByIDData}
+                />
               </Elements>
             </div>
           </div>
