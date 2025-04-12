@@ -8,16 +8,7 @@ import { BiArrowToTop } from "react-icons/bi";
 
 // Import Button
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
-
-// Convert 24-hour time to 12-hour AM/PM format
-const formatTimeTo12Hour = (time) => {
-  if (!time) return "";
-  const [hour, minute] = time.split(":");
-  const h = parseInt(hour, 10);
-  const amPm = h >= 12 ? "PM" : "AM";
-  const formattedHour = h % 12 === 0 ? 12 : h % 12;
-  return `${formattedHour}:${minute} ${amPm}`;
-};
+import { formatTimeTo12Hour } from "../../../../../Utility/formatTimeTo12Hour";
 
 const SameClassTypeWeekSession = ({
   ClassType,
@@ -312,6 +303,7 @@ const SameClassTypeWeekSession = ({
   );
 };
 
+// Prop Validation
 SameClassTypeWeekSession.propTypes = {
   SameClassTypeData: PropTypes.arrayOf(
     PropTypes.shape({
@@ -327,13 +319,14 @@ SameClassTypeWeekSession.propTypes = {
       ]),
     })
   ).isRequired,
+
   listedSessions: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
       day: PropTypes.string,
       time: PropTypes.string,
       classType: PropTypes.string,
-      participant: PropTypes.object, // ✅ Corrected: Expecting an object
+      participant: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
       participantLimit: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
@@ -343,6 +336,7 @@ SameClassTypeWeekSession.propTypes = {
       end: PropTypes.string,
     })
   ).isRequired,
+
   setListedSessions: PropTypes.func,
   ClassType: PropTypes.string.isRequired,
 };

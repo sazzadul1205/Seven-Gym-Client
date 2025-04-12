@@ -10,9 +10,9 @@ import FetchingError from "../../../../../Shared/Component/FetchingError";
 // import Icons
 import { ImCross } from "react-icons/im";
 
-// import Modal
-import UserTrainerBookingInfoModalBasic from "./UserTrainerBookingInfoModalBasic/UserTrainerBookingInfoModalBasic";
+// import Modal & Component
 import BookedSessionTable from "./BookedSessionTable/BookedSessionTable";
+import UserTrainerBookingInfoModalBasic from "./UserTrainerBookingInfoModalBasic/UserTrainerBookingInfoModalBasic";
 
 // import Utility
 import { formatTimeTo12Hour } from "../../../../../Utility/formatTimeTo12Hour";

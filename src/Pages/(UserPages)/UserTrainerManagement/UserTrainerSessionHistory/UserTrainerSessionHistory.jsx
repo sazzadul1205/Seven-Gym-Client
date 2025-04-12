@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 
 // Import Packages
 import PropTypes from "prop-types";
+import { Tooltip } from "react-tooltip";
 
 // Import Icons
 import { FaInfo } from "react-icons/fa";
@@ -115,8 +116,11 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                           }}
                         >
                           <FaInfo className="text-yellow-500" />{" "}
-                          {/* Info Icon */}
                         </button>
+                        <Tooltip
+                          anchorSelect={`#view-details-btn-${booking._id}`}
+                          content="View Detailed Booking Data"
+                        />
                       </td>
                     </tr>
                   ))}

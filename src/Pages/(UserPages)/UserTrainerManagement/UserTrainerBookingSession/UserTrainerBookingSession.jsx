@@ -71,7 +71,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
       <div className="py-4">
         {TrainersBookingRequestData.length > 0 ? (
           <div>
-            {/* Desktop View */}
+            {/*  Bookings List : Desktop View */}
             <div className="overflow-x-auto hidden md:flex">
               <table className="min-w-full table-auto bg-white border-collapse">
                 {/* Table Header */}
@@ -163,7 +163,7 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
               </table>
             </div>
 
-            {/* Mobile View */}
+            {/*  Bookings List : Mobile View */}
             <div className="flex md:hidden flex-col space-y-4 mb-6">
               {TrainersBookingRequestData.map((booking) => (
                 <div

@@ -8,16 +8,7 @@ import { FaRegUser } from "react-icons/fa";
 
 // Import Components
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
-
-// Convert 24-hour time to 12-hour AM/PM format
-const formatTimeTo12Hour = (time) => {
-  if (!time) return "";
-  const [hour, minute] = time.split(":");
-  const h = parseInt(hour, 10);
-  const amPm = h >= 12 ? "PM" : "AM";
-  const formattedHour = h % 12 === 0 ? 12 : h % 12;
-  return `${formattedHour}:${minute} ${amPm}`;
-};
+import { formatTimeTo12Hour } from "../../../../../Utility/formatTimeTo12Hour";
 
 // Main TrainerDetailsSchedule Component
 const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
@@ -41,18 +32,8 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
     participant,
     participantLimit
   ) => {
-    // Check if class is fully booked
-    const isBooked =
-      participant?.length >= participantLimit &&
-      ![
-        "Group Classes",
-        "Online Class",
-        "Private Session",
-        "Outdoor Class",
-        "Partner Workout",
-      ].includes(classType);
+    const FullSession = participant.length == participantLimit;
 
-    // Valid class types for booking
     const classLinks = [
       "Private Training",
       "Group Classes",
@@ -68,14 +49,13 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
       "Partner Workout",
     ];
 
-    // Render "Break" button
+    // Break button
     if (classType === "Break") {
       return (
         <div className="flex justify-center items-center">
           <CommonButton
             text="In Break"
-            bgFromColor="gray-400"
-            bgToColor="gray-400"
+            bgColor="gray"
             borderRadius="rounded-xl"
             disabled={true}
             px="px-0"
@@ -87,14 +67,13 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
       );
     }
 
-    // Render "Fully Booked" button
-    if (isBooked) {
+    //  Session full for any classType
+    if (FullSession) {
       return (
         <div className="flex justify-center items-center">
           <CommonButton
-            text="Fully Booked"
-            bgFromColor="gray-400"
-            bgToColor="gray-400"
+            text="Session Full"
+            bgColor="gray"
             borderRadius="rounded-xl"
             disabled={true}
             px="px-0"
@@ -106,7 +85,7 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
       );
     }
 
-    // Render "Book Session" button
+    // Bookable session
     if (classLinks.includes(classType)) {
       return (
         <div className="flex justify-center items-center">
@@ -123,7 +102,7 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
       );
     }
 
-    // Render "Visit Class" link button
+    // Visit class button
     return (
       <div className="flex justify-center items-center">
         <Link to={`/Classes/${classType.split(" ").slice(0, -1).join(" ")}`}>
@@ -169,27 +148,19 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                 {day}
               </h3>
 
-              {/* Collapse Content */}
+              {/* Weekly Schedule */}
               <div className="collapse-content">
-                {/* Desktop View */}
+                {/* Weekly Schedule : Desktop View */}
                 <div className="hidden sm:block">
                   <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black mt-4">
                     {/* Table Headers */}
-                    <thead>
+                    <thead className="border-b bg-gray-200">
                       <tr>
-                        <th className="px-4 py-2 border-b bg-gray-200">Time</th>
-                        <th className="px-4 py-2 border-b bg-gray-200">
-                          Class Type
-                        </th>
-                        <th className="px-4 py-2 border-b bg-gray-200">
-                          Participant Limit
-                        </th>
-                        <th className="px-4 py-2 border-b bg-gray-200">
-                          Price
-                        </th>
-                        <th className="px-4 py-2 border-b bg-gray-200 text-center">
-                          Action
-                        </th>
+                        <th className="px-4 py-2">Time</th>
+                        <th className="px-4 py-2">Class Type</th>
+                        <th className="px-4 py-2">Participant Limit</th>
+                        <th className="px-4 py-2">Price</th>
+                        <th className="px-4 py-2 text-center">Action</th>
                       </tr>
                     </thead>
 
@@ -215,14 +186,9 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                               } border-b`}
                             >
                               {/* Time Range */}
-                              <td className="flex px-4 py-3">
-                                <span className="w-16 md:w-20 text-center">
-                                  {formatTimeTo12Hour(classDetails.start)}
-                                </span>
-                                <span className="px-1 lg:px-5">-</span>
-                                <span className="w-16 md:w-20 text-center">
-                                  {formatTimeTo12Hour(classDetails.end)}
-                                </span>
+                              <td className="flex px-4 py-3 text-center">
+                                {formatTimeTo12Hour(classDetails.start)} -{" "}
+                                {formatTimeTo12Hour(classDetails.end)}
                               </td>
 
                               {/* Class Type */}
@@ -269,7 +235,7 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                   </table>
                 </div>
 
-                {/* Mobile View */}
+                {/* Weekly Schedule : Mobile View */}
                 <div className="block sm:hidden">
                   {Object.entries(classesObj).map(([index, classDetails]) => {
                     const participantLimit = classDetails.participantLimit
@@ -290,11 +256,8 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                         <div className="flex flex-col space-y-2">
                           {/* Time */}
                           <div className="font-semibold">
-                            <span>
-                              {formatTimeTo12Hour(classDetails?.start)}
-                            </span>
-                            <span className="px-5">-</span>
-                            <span>{formatTimeTo12Hour(classDetails?.end)}</span>
+                            {formatTimeTo12Hour(classDetails.start)} -{" "}
+                            {formatTimeTo12Hour(classDetails.end)}
                           </div>
 
                           {/* Class Type */}
@@ -356,7 +319,10 @@ TrainerDetailsSchedule.propTypes = {
           start: PropTypes.string.isRequired,
           end: PropTypes.string.isRequired,
           classType: PropTypes.string.isRequired,
-          participant: PropTypes.arrayOf(PropTypes.object), // ✅ Fixed here
+          participant: PropTypes.oneOfType([
+            PropTypes.object, // handles { userId1: {}, userId2: {} }
+            PropTypes.arrayOf(PropTypes.object), // handles [{}, {}]
+          ]),
           participantLimit: PropTypes.oneOfType([
             PropTypes.number,
             PropTypes.string,

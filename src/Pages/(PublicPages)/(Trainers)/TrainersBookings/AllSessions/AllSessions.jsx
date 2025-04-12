@@ -105,23 +105,13 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
                   <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black">
                     {/* Table Headers */}
                     <thead>
-                      <tr>
-                        <th className="px-4 py-2 border-b bg-gray-300">Day</th>
-                        <th className="px-4 py-2 border-b bg-gray-300">
-                          Class Type
-                        </th>
-                        <th className="px-4 py-2 border-b bg-gray-300 text-center">
-                          Participant Limit
-                        </th>
-                        <th className="px-4 py-2 border-b bg-gray-300 text-center">
-                          Time
-                        </th>
-                        <th className="px-4 py-2 border-b bg-gray-300 text-center">
-                          Price
-                        </th>
-                        <th className="px-4 py-2 border-b bg-gray-300 text-center">
-                          Action
-                        </th>
+                      <tr className="border-b bg-gray-300">
+                        <th className="px-4 py-2">Day</th>
+                        <th className="px-4 py-2">Class Type</th>
+                        <th className="px-4 py-2">Participant Limit</th>
+                        <th className="px-4 py-2">Time</th>
+                        <th className="px-4 py-2">Price</th>
+                        <th className="px-4 py-2">Action</th>
                       </tr>
                     </thead>
 
@@ -400,8 +390,11 @@ AllSessions.propTypes = {
       day: PropTypes.string,
       time: PropTypes.string,
       classType: PropTypes.string,
-      participant: PropTypes.object, // ✅ CORRECT
-
+      participant: PropTypes.oneOfType([
+        // 🔄 updated here
+        PropTypes.object,
+        PropTypes.array,
+      ]),
       participantLimit: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
