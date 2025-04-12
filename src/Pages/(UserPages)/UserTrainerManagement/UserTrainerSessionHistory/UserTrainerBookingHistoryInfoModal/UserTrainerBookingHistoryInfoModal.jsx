@@ -10,7 +10,6 @@ import FetchingError from "../../../../../Shared/Component/FetchingError";
 // import Icons
 import { ImCross } from "react-icons/im";
 
-
 // Import Component
 import UserTrainerBookingInfoModalBasic from "../../UserTrainerBookingSession/UserTrainerBookingInfoModal/UserTrainerBookingInfoModalBasic/UserTrainerBookingInfoModalBasic";
 import BookedSessionTable from "../../UserTrainerBookingSession/UserTrainerBookingInfoModal/BookedSessionTable/BookedSessionTable";
@@ -24,12 +23,12 @@ const UserTrainerBookingHistoryInfoModal = ({ selectedBooking }) => {
     isLoading: TrainerDataIsLoading,
     error: TrainerDataError,
   } = useQuery({
-    queryKey: ["TrainerData", selectedBooking?.trainer],
+    queryKey: ["TrainerData", selectedBooking?.trainerId],
     queryFn: () =>
       axiosPublic
-        .get(`/Trainers?name=${selectedBooking?.trainer}`)
+        .get(`/Trainers?name=${selectedBooking?.trainerId}`)
         .then((res) => res.data),
-    enabled: !!selectedBooking?.trainer,
+    enabled: !!selectedBooking?.trainerId,
   });
 
   // Unpack trainer data
@@ -90,7 +89,7 @@ const UserTrainerBookingHistoryInfoModal = ({ selectedBooking }) => {
 
 UserTrainerBookingHistoryInfoModal.propTypes = {
   selectedBooking: PropTypes.shape({
-    trainer: PropTypes.string.isRequired,
+    trainerId: PropTypes.string.isRequired,
     sessions: PropTypes.arrayOf(PropTypes.string).isRequired,
     durationWeeks: PropTypes.number.isRequired,
     totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number])

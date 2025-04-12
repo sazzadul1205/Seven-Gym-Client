@@ -26,12 +26,12 @@ const UserTrainerBookingInfoModal = ({ selectedBooking, closeModal }) => {
     isLoading: TrainerDataIsLoading,
     error: TrainerDataError,
   } = useQuery({
-    queryKey: ["TrainerData", selectedBooking?.trainer],
+    queryKey: ["TrainerData", selectedBooking?.trainerId],
     queryFn: () =>
       axiosPublic
-        .get(`/Trainers?name=${selectedBooking?.trainer}`)
+        .get(`/Trainers?id=${selectedBooking?.trainerId}`)
         .then((res) => res.data),
-    enabled: !!selectedBooking?.trainer,
+    enabled: !!selectedBooking?.trainerId,
   });
 
   // Unpack trainer data
@@ -229,7 +229,7 @@ const UserTrainerBookingInfoModal = ({ selectedBooking, closeModal }) => {
 // Prop Type Validation
 UserTrainerBookingInfoModal.propTypes = {
   selectedBooking: PropTypes.shape({
-    trainer: PropTypes.string,
+    trainerId: PropTypes.string,
     sessions: PropTypes.arrayOf(PropTypes.string),
     durationWeeks: PropTypes.number,
     totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

@@ -100,12 +100,12 @@ const UserTrainerBookingAcceptModal = ({ selectedBooking }) => {
     isLoading: TrainerDataIsLoading,
     error: TrainerDataError,
   } = useQuery({
-    queryKey: ["TrainerData", selectedBooking?.trainer],
+    queryKey: ["TrainerData", selectedBooking?.trainerId],
     queryFn: () =>
       axiosPublic
-        .get(`/Trainers?name=${selectedBooking?.trainer}`)
+        .get(`/Trainers?name=${selectedBooking?.trainerId}`)
         .then((res) => res.data),
-    enabled: !!selectedBooking?.trainer,
+    enabled: !!selectedBooking?.trainerId,
   });
 
   // Unpack trainer data
@@ -238,7 +238,10 @@ const UserTrainerBookingAcceptModal = ({ selectedBooking }) => {
 
               {/* Code Input */}
               <div className="flex items-center">
-                <label className="text-black font-semibold w-1/2"> Confirmation Code </label>
+                <label className="text-black font-semibold w-1/2">
+                  {" "}
+                  Confirmation Code{" "}
+                </label>
                 <input
                   type="text"
                   placeholder="*******"
@@ -365,7 +368,7 @@ const UserTrainerBookingAcceptModal = ({ selectedBooking }) => {
 // Prop Type Validation
 UserTrainerBookingAcceptModal.propTypes = {
   selectedBooking: PropTypes.shape({
-    trainer: PropTypes.string,
+    trainerId: PropTypes.string,
     sessions: PropTypes.arrayOf(PropTypes.string),
     durationWeeks: PropTypes.number,
     totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

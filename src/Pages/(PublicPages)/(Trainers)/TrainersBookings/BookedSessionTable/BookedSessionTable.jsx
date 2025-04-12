@@ -39,8 +39,6 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
     enabled: !!name, // The query will only run if "name" is truthy
   });
 
-  console.log(TrainerIdByNameData);
-
   // Group by classType + classPrice, count and subtotal
   const { groups, baseGrandTotal } = useMemo(() => {
     const map = {};
