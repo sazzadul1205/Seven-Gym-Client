@@ -304,7 +304,7 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
                             : "bg-gray-50 hover:bg-gray-200"
                         }`}
                       >
-                        <div className="flex flex-col space-y-2">
+                        <div className="flex flex-col space-y-1 p-5 ">
                           {/* Day & Time */}
                           <div className="flex justify-between font-semibold">
                             <p>{classDetails.day}</p>[

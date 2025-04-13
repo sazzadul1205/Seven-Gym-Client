@@ -1,4 +1,7 @@
+import { useEffect } from "react";
 import { useParams } from "react-router";
+
+// Import Package
 import { useQuery } from "@tanstack/react-query";
 
 // Import Background Image
@@ -16,7 +19,6 @@ import TrainerDetailsTestimonials from "./TrainerDetailsTestimonials/TrainerDeta
 import Loading from "../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../Shared/Component/FetchingError";
-import { useEffect } from "react";
 
 const TrainersDetails = () => {
   const { name } = useParams();

@@ -19,6 +19,7 @@ const CommonButton = ({
   cursorStyle = "cursor-pointer", // Default cursor
   disabled = false, // Disabled state
 }) => {
+  // Preset color gradients for common background colors
   const colorMap = {
     OriginalRed: {
       from: "from-[#c23e5f]",
@@ -35,6 +36,7 @@ const CommonButton = ({
     // add other colors as needed
   };
 
+  // Determine fromColor and toColor using override or colorMap fallback
   const fromColor = bgFromColor
     ? `from-[${bgFromColor}]`
     : colorMap[bgColor]?.from || `from-${bgColor}-300`;
@@ -51,20 +53,23 @@ const CommonButton = ({
       className={`flex w-${width} items-center justify-center font-semibold ${px} ${py} ${borderRadius} ${cursorStyle} transition-all duration-300 
         ${textColor} 
         bg-gradient-to-bl ${fromColor} ${toColor}
-        hover:bg-gradient-to-tr disabled:opacity-50 disabled:cursor-not-allowed`}
+        hover:bg-gradient-to-tr active:opacity-70 disabled:opacity-50 disabled:cursor-not-allowed`} // Add active:opacity-70 for mobile feedback
       onClick={clickEvent}
       disabled={isButtonDisabled} // Disable button while loading
     >
       {isLoading ? (
+        // Show loading state with spinner
         <span className="flex items-center">
           <span className="animate-spin mr-2">🔄</span> {loadingText}
         </span>
       ) : (
         <>
+          {/* Optional icon */}
           {icon && (
             <span className={`${text ? "mr-2" : ""} ${iconSize}`}>{icon}</span>
           )}
-          {text && <span>{text}</span>} {/* Conditionally render text */}
+          {/* Optional button text */}
+          {text && <span>{text}</span>}
         </>
       )}
     </button>
@@ -89,7 +94,7 @@ CommonButton.propTypes = {
   borderRadius: PropTypes.string,
   width: PropTypes.string,
   cursorStyle: PropTypes.string, // New: Custom cursor style
-  disabled: PropTypes.bool, // New: Custom cursor style
+  disabled: PropTypes.bool, // New: Disabled state
 };
 
 export default CommonButton;
