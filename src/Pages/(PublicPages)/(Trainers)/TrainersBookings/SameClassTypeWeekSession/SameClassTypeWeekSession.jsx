@@ -8,6 +8,8 @@ import { BiArrowToTop } from "react-icons/bi";
 
 // Import Button
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+
+// Import Utility
 import { formatTimeTo12Hour } from "../../../../../Utility/formatTimeTo12Hour";
 
 const SameClassTypeWeekSession = ({
@@ -46,11 +48,13 @@ const SameClassTypeWeekSession = ({
       <div className="max-w-7xl mx-auto items-center py-5 px-4 bg-white/80 rounded-xl">
         {/* Title and To top Button */}
         <div className="flex justify-between items-center py-1">
+          {/* Title */}
           <h2 className="text-lg font-semibold text-black">
             Same Class Type Schedule&apos;s for This Week{" "}
             <span className="font-bold text-red-500">[ {ClassType} ]</span>
           </h2>
 
+          {/* Button To Top */}
           <div className="flex items-center text-lg font-semibold text-black gap-2">
             <button
               className="bg-blue-500 hover:bg-blue-600 rounded-full p-2 cursor-pointer"
@@ -62,31 +66,23 @@ const SameClassTypeWeekSession = ({
         </div>
 
         {/* Divider */}
-        <div className="p-[1px] bg-black"></div>
+        <div className="p-[1px] bg-black" />
 
         {/* Original Schedule Section */}
         <div className="pt-1 text-black">
-          {/* Desktop View */}
+          {/* Original Schedule : Desktop View */}
           <div className="hidden md:flex">
             {SameClassTypeData.length > 0 ? (
               <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black">
                 {/* Table Header */}
                 <thead>
-                  <tr>
-                    <th className="px-4 py-2 border-b bg-gray-300">Day</th>
-                    <th className="px-4 py-2 border-b bg-gray-300">
-                      Class Type
-                    </th>
-                    <th className="px-4 py-2 border-b bg-gray-300 text-center">
-                      Participant Limit
-                    </th>
-                    <th className="px-4 py-2 border-b bg-gray-300 text-center">
-                      Time
-                    </th>
-                    <th className="px-4 py-2 border-b bg-gray-300 text-center">
-                      Price Per Session
-                    </th>
-                    <th className="px-4 py-2 border-b bg-gray-300">Action</th>
+                  <tr className=" border-b bg-gray-300">
+                    <th className="px-4 py-2">Day</th>
+                    <th className="px-4 py-2">Class Type</th>
+                    <th className="px-4 py-2 text-center">Participant Limit</th>
+                    <th className="px-4 py-2 text-center">Time</th>
+                    <th className="px-4 py-2 text-center">Price Per Session</th>
+                    <th className="px-4 py-2">Action</th>
                   </tr>
                 </thead>
 
@@ -115,12 +111,16 @@ const SameClassTypeWeekSession = ({
                     // Check if the session is already listed
                     const isListed = isSessionListed(classDetails.id);
 
+                    // Check if session is full
+                    const isSessionFull =
+                      classDetails.participant.length >= participantLimit;
+
                     return (
                       <tr
                         key={`listed-${classDetails.id}-${index}`}
                         className={`${
                           isListed
-                            ? "bg-gray-400"
+                            ? "bg-linear-to-bl hover:bg-linear-to-tr from-gray-200 to-gray-400"
                             : "bg-gray-50 hover:bg-gray-200"
                         } ${isLastOfDay ? "border-b-2 border-gray-200" : ""}`}
                       >
@@ -170,28 +170,47 @@ const SameClassTypeWeekSession = ({
 
                         {/* Action Button */}
                         <td className="px-4 py-2 text-center align-middle">
-                          {isListed ? (
-                            // Add Session Button (Disabled)
-                            <CommonButton
-                              icon={<MdLibraryAdd />}
-                              iconSize="text-lg"
-                              bgColor="gray"
-                              px="px-4"
-                              py="py-2"
-                              disabled={true}
-                              clickEvent={() => handleAddSession(classDetails)}
-                            />
-                          ) : (
-                            // Add Session Button
-                            <CommonButton
-                              icon={<MdLibraryAdd />}
-                              iconSize="text-lg"
-                              bgColor="green"
-                              px="px-4"
-                              py="py-2"
-                              clickEvent={() => handleAddSession(classDetails)}
-                            />
-                          )}
+                          {
+                            // If session is full, show disabled button saying "Full"
+                            isSessionFull ? (
+                              <CommonButton
+                                icon={<MdLibraryAdd />}
+                                iconSize="text-lg"
+                                bgColor="red"
+                                px="px-4"
+                                py="py-2"
+                                disabled={true}
+                                clickEvent={() =>
+                                  handleAddSession(classDetails)
+                                }
+                              />
+                            ) : isListed ? (
+                              // If already listed, show disabled button
+                              <CommonButton
+                                icon={<MdLibraryAdd />}
+                                iconSize="text-lg"
+                                bgColor="gray"
+                                px="px-4"
+                                py="py-2"
+                                disabled={true}
+                                clickEvent={() =>
+                                  handleAddSession(classDetails)
+                                }
+                              />
+                            ) : (
+                              // Otherwise, show active add button
+                              <CommonButton
+                                icon={<MdLibraryAdd />}
+                                iconSize="text-lg"
+                                bgColor="green"
+                                px="px-4"
+                                py="py-2"
+                                clickEvent={() =>
+                                  handleAddSession(classDetails)
+                                }
+                              />
+                            )
+                          }
                         </td>
                       </tr>
                     );
@@ -206,13 +225,18 @@ const SameClassTypeWeekSession = ({
             )}
           </div>
 
-          {/* Mobile View */}
+          {/* Original Schedule : Mobile View */}
           <div className="flex md:hidden flex-col space-y-4 mb-6">
             {SameClassTypeData.map((classDetails, index) => {
               // Check if classPrice is a number or string
               const classPrice = classDetails.classPrice
                 ? String(classDetails.classPrice).toLowerCase()
                 : "free";
+
+              // Check if classPrice is a number or string
+              const participantLimit = classDetails.participantLimit
+                ? String(classDetails.participantLimit).toLowerCase()
+                : "no limit";
 
               // Get the current day of the class
               const currentDay = classDetails.day;
@@ -225,6 +249,10 @@ const SameClassTypeWeekSession = ({
 
               // Determine if the current session is listed
               const isListed = isSessionListed(classDetails.id);
+
+              // Check if session is full
+              const isSessionFull =
+                classDetails.participant.length >= participantLimit;
 
               return (
                 <div
@@ -269,28 +297,41 @@ const SameClassTypeWeekSession = ({
 
                     {/* Action Button */}
                     <div className="flex justify-center mt-3">
-                      {isListed ? (
-                        // Add Session Button (Disabled)
-                        <CommonButton
-                          icon={<MdLibraryAdd />}
-                          iconSize="text-lg"
-                          bgColor="gray"
-                          width="full"
-                          py="py-3"
-                          disabled={true}
-                          clickEvent={() => handleAddSession(classDetails)}
-                        />
-                      ) : (
-                        // Add Session Button
-                        <CommonButton
-                          icon={<MdLibraryAdd />}
-                          iconSize="text-lg"
-                          bgColor="green"
-                          width="full"
-                          py="py-3"
-                          clickEvent={() => handleAddSession(classDetails)}
-                        />
-                      )}
+                      {
+                        // If session is full, show disabled button saying "Full"
+                        isSessionFull ? (
+                          <CommonButton
+                            icon={<MdLibraryAdd />}
+                            iconSize="text-lg"
+                            bgColor="red"
+                            px="px-4"
+                            py="py-2"
+                            disabled={true}
+                            clickEvent={() => handleAddSession(classDetails)}
+                          />
+                        ) : isListed ? (
+                          // If already listed, show disabled button
+                          <CommonButton
+                            icon={<MdLibraryAdd />}
+                            iconSize="text-lg"
+                            bgColor="gray"
+                            px="px-4"
+                            py="py-2"
+                            disabled={true}
+                            clickEvent={() => handleAddSession(classDetails)}
+                          />
+                        ) : (
+                          // Otherwise, show active add button
+                          <CommonButton
+                            icon={<MdLibraryAdd />}
+                            iconSize="text-lg"
+                            bgColor="green"
+                            px="px-4"
+                            py="py-2"
+                            clickEvent={() => handleAddSession(classDetails)}
+                          />
+                        )
+                      }
                     </div>
                   </div>
                 </div>

@@ -1,29 +1,23 @@
+import { useNavigate } from "react-router";
+
 // Import Packages
 import PropTypes from "prop-types";
 
 // import Icons
 import { FaRegUser } from "react-icons/fa";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 // Import Buttons
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
-import { IoMdArrowRoundBack } from "react-icons/io";
-import { useNavigate } from "react-router";
+
+// Import Utility
+import { formatTimeTo12Hour } from "../../../../../Utility/formatTimeTo12Hour";
 
 const TrainerBookingSelectedData = ({ SelectedSessionData }) => {
   const navigate = useNavigate();
 
   // UnPack the Selected Session Data
   const { trainerName, day, time, session } = SelectedSessionData;
-
-  // Convert 24-hour time to 12-hour AM/PM format
-  const formatTimeTo12Hour = (time) => {
-    if (!time) return "";
-    const [hour, minute] = time.split(":");
-    const h = parseInt(hour, 10);
-    const amPm = h >= 12 ? "PM" : "AM";
-    const formattedHour = h % 12 === 0 ? 12 : h % 12;
-    return `${formattedHour}:${minute} ${amPm}`;
-  };
 
   // Participant Limit Fix
   const participantLimit = session?.participantLimit

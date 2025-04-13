@@ -8,16 +8,7 @@ import { BiArrowToTop } from "react-icons/bi";
 
 // Import Button
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
-
-// Convert 24-hour time to 12-hour AM/PM format
-const formatTimeTo12Hour = (time) => {
-  if (!time) return "";
-  const [hour, minute] = time.split(":");
-  const h = parseInt(hour, 10);
-  const amPm = h >= 12 ? "PM" : "AM";
-  const formattedHour = h % 12 === 0 ? 12 : h % 12;
-  return `${formattedHour}:${minute} ${amPm}`;
-};
+import { formatTimeTo12Hour } from "../../../../../Utility/formatTimeTo12Hour";
 
 const SameTimeWeekSession = ({
   SameTimeData,
@@ -54,14 +45,16 @@ const SameTimeWeekSession = ({
       <div className="max-w-7xl mx-auto items-center py-5 px-4 bg-white/80 rounded-xl">
         {/* Title and To top Button */}
         <div className="flex justify-between items-center py-1">
-          <h2 className="text-lg font-semibold text-black">
+          {/* Title */}
+          <div className="flex text-lg font-semibold text-black">
             Same Time Session&apos;s for This Week{" "}
-            <span className="font-bold text-red-500">
-              [ {SameTimeData[0] && formatTimeTo12Hour(SameTimeData[0].start)} -
-              {SameTimeData[0] && formatTimeTo12Hour(SameTimeData[0].end)} ]
-            </span>
-          </h2>
+            <div className="flex items-center justify-center gap-2 ml-5">
+              [<p>{formatTimeTo12Hour(SameTimeData[0]?.start)}</p>-
+              <p>{formatTimeTo12Hour(SameTimeData[0]?.end)}</p>]
+            </div>
+          </div>
 
+          {/* Button To Top */}
           <div className="flex items-center text-lg font-semibold text-black gap-2">
             <button
               className="bg-blue-500 hover:bg-blue-600 rounded-full p-2 cursor-pointer"
@@ -73,31 +66,23 @@ const SameTimeWeekSession = ({
         </div>
 
         {/* Divider */}
-        <div className="p-[1px] bg-black"></div>
+        <div className="p-[1px] bg-black" />
 
         {/* Original Sessions Section */}
         <div className="pt-3 rounded-lg text-black">
-          {/* Desktop View */}
+          {/* Original Sessions : Desktop View */}
           <div className="hidden md:flex">
             {SameTimeData.length > 0 ? (
               <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black">
                 {/* Table Header */}
                 <thead>
-                  <tr>
-                    <th className="px-4 py-2 border-b bg-gray-300">Day</th>
-                    <th className="px-4 py-2 border-b bg-gray-300">
-                      Class Type
-                    </th>
-                    <th className="px-4 py-2 border-b bg-gray-300 text-center">
-                      Participant Limit
-                    </th>
-                    <th className="px-4 py-2 border-b bg-gray-300 text-center">
-                      Time
-                    </th>
-                    <th className="px-4 py-2 border-b bg-gray-300 text-center">
-                      Price Per Session
-                    </th>
-                    <th className="px-4 py-2 border-b bg-gray-300">Action</th>
+                  <tr className="border-b bg-gray-300">
+                    <th className="px-4 py-2">Day</th>
+                    <th className="px-4 py-2">Class Type</th>
+                    <th className="px-4 py-2 text-center">Participant Limit</th>
+                    <th className="px-4 py-2 text-center">Time</th>
+                    <th className="px-4 py-2 text-center">Price Per Session</th>
+                    <th className="px-4 py-2">Action</th>
                   </tr>
                 </thead>
 
@@ -125,6 +110,10 @@ const SameTimeWeekSession = ({
 
                     // Check if the session is already listed
                     const isListed = isSessionListed(classDetails.id);
+
+                    // Check if session is full
+                    const isSessionFull =
+                      classDetails.participant.length >= participantLimit;
 
                     return (
                       <tr
@@ -181,26 +170,47 @@ const SameTimeWeekSession = ({
 
                         {/* Action Button */}
                         <td className="px-4 py-2 text-center align-middle">
-                          {isListed ? (
-                            <CommonButton
-                              icon={<MdLibraryAdd />}
-                              iconSize="text-lg"
-                              bgColor="gray"
-                              px="px-4"
-                              py="py-2"
-                              disabled={true}
-                              clickEvent={() => handleAddSession(classDetails)}
-                            />
-                          ) : (
-                            <CommonButton
-                              icon={<MdLibraryAdd />}
-                              iconSize="text-lg"
-                              bgColor="green"
-                              px="px-4"
-                              py="py-2"
-                              clickEvent={() => handleAddSession(classDetails)}
-                            />
-                          )}
+                          {
+                            // If session is full, show disabled button saying "Full"
+                            isSessionFull ? (
+                              <CommonButton
+                                icon={<MdLibraryAdd />}
+                                iconSize="text-lg"
+                                bgColor="red"
+                                px="px-4"
+                                py="py-2"
+                                disabled={true}
+                                clickEvent={() =>
+                                  handleAddSession(classDetails)
+                                }
+                              />
+                            ) : isListed ? (
+                              // If already listed, show disabled button
+                              <CommonButton
+                                icon={<MdLibraryAdd />}
+                                iconSize="text-lg"
+                                bgColor="gray"
+                                px="px-4"
+                                py="py-2"
+                                disabled={true}
+                                clickEvent={() =>
+                                  handleAddSession(classDetails)
+                                }
+                              />
+                            ) : (
+                              // Otherwise, show active add button
+                              <CommonButton
+                                icon={<MdLibraryAdd />}
+                                iconSize="text-lg"
+                                bgColor="green"
+                                px="px-4"
+                                py="py-2"
+                                clickEvent={() =>
+                                  handleAddSession(classDetails)
+                                }
+                              />
+                            )
+                          }
                         </td>
                       </tr>
                     );
@@ -208,19 +218,25 @@ const SameTimeWeekSession = ({
                 </tbody>
               </table>
             ) : (
+              // No schedule booked yet
               <p className="text-center text-gray-500">
                 No schedule Booked yet. Please select a session.
               </p>
             )}
           </div>
 
-          {/* Mobile View */}
+          {/* Original Sessions : Mobile View */}
           <div className="flex md:hidden flex-col space-y-4 mb-6">
             {SameTimeData.map((classDetails, index) => {
               // Check if classPrice is a number or string
               const classPrice = classDetails.classPrice
                 ? String(classDetails.classPrice).toLowerCase()
                 : "free";
+
+              // Check if classPrice is a number or string
+              const participantLimit = classDetails.participantLimit
+                ? String(classDetails.participantLimit).toLowerCase()
+                : "no limit";
 
               // Get the current day of the class
               const currentDay = classDetails.day;
@@ -234,6 +250,10 @@ const SameTimeWeekSession = ({
               // Determine if the current session is listed
               const isListed = isSessionListed(classDetails.id);
 
+              // Check if session is full
+              const isSessionFull =
+                classDetails.participant.length >= participantLimit;
+
               return (
                 <div
                   key={`mobile-${classDetails.id}-${index}`}
@@ -242,18 +262,12 @@ const SameTimeWeekSession = ({
                   } ${isLastOfDay ? "border-b-2 border-gray-200" : ""} p-3`}
                 >
                   <div className="flex flex-col space-y-2">
-                    {/* Day */}
-                    <div className="mx-auto text-lg font-semibold">
-                      [ {classDetails.day} ]
-                    </div>
-
-                    {/* Time */}
-                    <div className="font-semibold mx-auto">
-                      <div className="flex items-center justify-between gap-2">
-                        <p>{formatTimeTo12Hour(classDetails.start)}</p>
-                        <span>-</span>
-                        <p>{formatTimeTo12Hour(classDetails.end)}</p>
-                      </div>
+                    {/* Day & Time */}
+                    <div className="flex justify-between font-semibold">
+                      <p>{classDetails.day}</p>[{" "}
+                      <span>{formatTimeTo12Hour(classDetails.start)}</span>
+                      <span className="px-1">-</span>
+                      <span>{formatTimeTo12Hour(classDetails.end)}</span> ]
                     </div>
 
                     {/* Divider */}
@@ -283,28 +297,41 @@ const SameTimeWeekSession = ({
 
                     {/* Action Button */}
                     <div className="flex justify-center mt-3">
-                      {isListed ? (
-                        // Add Session Button (Disabled)
-                        <CommonButton
-                          icon={<MdLibraryAdd />}
-                          iconSize="text-lg"
-                          bgColor="gray"
-                          width="full"
-                          py="py-3"
-                          disabled={true}
-                          clickEvent={() => handleAddSession(classDetails)}
-                        />
-                      ) : (
-                        // Add Session Button
-                        <CommonButton
-                          icon={<MdLibraryAdd />}
-                          iconSize="text-lg"
-                          bgColor="green"
-                          width="full"
-                          py="py-3"
-                          clickEvent={() => handleAddSession(classDetails)}
-                        />
-                      )}
+                      {
+                        // If session is full, show disabled button saying "Full"
+                        isSessionFull ? (
+                          <CommonButton
+                            icon={<MdLibraryAdd />}
+                            iconSize="text-lg"
+                            bgColor="red"
+                            px="px-4"
+                            py="py-2"
+                            disabled={true}
+                            clickEvent={() => handleAddSession(classDetails)}
+                          />
+                        ) : isListed ? (
+                          // If already listed, show disabled button
+                          <CommonButton
+                            icon={<MdLibraryAdd />}
+                            iconSize="text-lg"
+                            bgColor="gray"
+                            px="px-4"
+                            py="py-2"
+                            disabled={true}
+                            clickEvent={() => handleAddSession(classDetails)}
+                          />
+                        ) : (
+                          // Otherwise, show active add button
+                          <CommonButton
+                            icon={<MdLibraryAdd />}
+                            iconSize="text-lg"
+                            bgColor="green"
+                            px="px-4"
+                            py="py-2"
+                            clickEvent={() => handleAddSession(classDetails)}
+                          />
+                        )
+                      }
                     </div>
                   </div>
                 </div>
@@ -339,7 +366,7 @@ SameTimeWeekSession.propTypes = {
       day: PropTypes.string,
       time: PropTypes.string,
       classType: PropTypes.string,
-      participant: PropTypes.arrayOf(PropTypes.object), // ✅ fixed
+      participant: PropTypes.arrayOf(PropTypes.object),
       participantLimit: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,

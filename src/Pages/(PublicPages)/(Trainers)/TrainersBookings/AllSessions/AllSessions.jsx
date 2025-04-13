@@ -67,29 +67,35 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
       id="all-schedule-section"
     >
       <div className="max-w-7xl mx-auto py-5 px-4 bg-white/80 rounded-xl">
-        {/* Header */}
+        {/* Title and To top Button */}
         <div className="flex justify-between items-center py-1">
+          {/* Title */}
           <h2 className="text-lg font-semibold text-black">
             All Sessions for This Week
           </h2>
-          <button
-            className="bg-blue-500 hover:bg-blue-600 rounded-full p-2 cursor-pointer"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          >
-            <BiArrowToTop className="text-white" />
-          </button>
+
+          {/* Button To Top */}
+          <div className="flex items-center text-lg font-semibold text-black gap-2">
+            <button
+              className="bg-blue-500 hover:bg-blue-600 rounded-full p-2 cursor-pointer"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
+              <BiArrowToTop className="text-white" />
+            </button>
+          </div>
         </div>
 
         {/* Divider */}
-        <div className="p-[1px] bg-black mb-4"></div>
+        <div className="p-[1px] bg-black mb-4" />
 
-        {/* Weekly Schedule */}
+        {/* Weekly Schedule Accordion */}
         <div className="accordion space-y-2">
           {Object.entries(scheduleData).map(([day, classesObj]) => (
             <div
               key={day}
               className="collapse collapse-arrow bg-gradient-to-bl from-gray-100 to-gray-300 rounded-lg shadow"
             >
+              {/* Accordion Input  */}
               <input type="radio" name="schedule-accordion" />
 
               {/* Day Title */}
@@ -99,7 +105,7 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
 
               {/* Collapse Content */}
               <div className="collapse-content">
-                {/* Desktop View */}
+                {/* Collapse Content : Desktop View */}
                 <div className="hidden md:flex">
                   {/* Table for Desktop View */}
                   <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black">
@@ -118,7 +124,7 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
                     {/* Table Rows */}
                     <tbody>
                       {Object.entries(classesObj).map(
-                        ([time, classDetails]) => {
+                        ([index, classDetails]) => {
                           // Check if classDetails is an object and has the required properties
                           const isListed = isSessionListed(classDetails?.id);
 
@@ -139,16 +145,18 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
                               ).toLowerCase()
                             : "no limit";
 
+                          // Check if session is full
+                          const isSessionFull =
+                            classDetails.participant.length >= participantLimit;
+
                           return (
                             <tr
-                              key={`${day}-${time}`}
+                              key={`listed-${classDetails.id}-${index}`}
                               className={`${
-                                isAllowedType
-                                  ? isListed
-                                    ? "bg-gray-400"
-                                    : "bg-gray-50 hover:bg-gray-200"
-                                  : "bg-red-200"
-                              } `}
+                                isListed
+                                  ? "bg-linear-to-bl hover:bg-linear-to-tr from-gray-200 to-gray-400"
+                                  : "bg-gray-50 hover:bg-gray-200"
+                              }`}
                             >
                               {/* Day */}
                               <td className="px-4 py-2 text-left align-middle">
@@ -174,7 +182,7 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
                                     </div>
                                   )
                                 ) : (
-                                  "-"
+                                  "-" // or leave empty: "" if you don't want any symbol
                                 )}
                               </td>
 
@@ -202,10 +210,22 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
 
                               {/* Action Button */}
                               <td className="px-4 py-2 text-center align-middle">
-                                {/* Buttons for adding session */}
                                 {isAllowedType ? (
-                                  // If the session is allowed, show the appropriate button
-                                  isListed ? (
+                                  isSessionFull ? (
+                                    // Session is full
+                                    <CommonButton
+                                      icon={<MdLibraryAdd />}
+                                      iconSize="text-lg"
+                                      bgColor="red"
+                                      px="px-4"
+                                      py="py-2"
+                                      disabled={true}
+                                      clickEvent={() =>
+                                        handleAddSession(classDetails)
+                                      }
+                                    />
+                                  ) : isListed ? (
+                                    // Already added/listed
                                     <CommonButton
                                       icon={<MdLibraryAdd />}
                                       iconSize="text-lg"
@@ -213,8 +233,12 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
                                       px="px-4"
                                       py="py-2"
                                       disabled={true}
+                                      clickEvent={() =>
+                                        handleAddSession(classDetails)
+                                      }
                                     />
                                   ) : (
+                                    // Valid, not full, not listed
                                     <CommonButton
                                       icon={<MdLibraryAdd />}
                                       iconSize="text-lg"
@@ -227,7 +251,7 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
                                     />
                                   )
                                 ) : (
-                                  // If the session is not allowed, show a disabled button or nothing
+                                  // Not allowed type
                                   <CommonButton
                                     icon={<MdLibraryAdd />}
                                     iconSize="text-lg"
@@ -246,7 +270,7 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
                   </table>
                 </div>
 
-                {/* Mobile View */}
+                {/* Collapse Content : Mobile View */}
                 <div className="flex md:hidden text-black flex-col space-y-4 mb-6">
                   {Object.values(classesObj).map((classDetails, index) => {
                     // Check if classDetails is an object and has the required properties
@@ -262,33 +286,37 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
                       ? String(classDetails.classPrice).toLowerCase()
                       : "free";
 
+                    // Check if classPrice is a number or string
+                    const participantLimit = classDetails.participantLimit
+                      ? String(classDetails.participantLimit).toLowerCase()
+                      : "no limit";
+
+                    // Check if session is full
+                    const isSessionFull =
+                      classDetails.participant.length >= participantLimit;
+
                     return (
                       <div
                         key={`mobile-${classDetails.id}-${index}`}
                         className={`${
-                          isAllowedType
-                            ? isListed
-                              ? "bg-gray-400"
-                              : "bg-gray-50 hover:bg-gray-200"
-                            : "bg-red-200"
-                        } p-3 `}
+                          isListed
+                            ? "bg-linear-to-bl hover:bg-linear-to-tr from-gray-200 to-gray-400"
+                            : "bg-gray-50 hover:bg-gray-200"
+                        }`}
                       >
                         <div className="flex flex-col space-y-2">
                           {/* Day & Time */}
                           <div className="flex justify-between font-semibold">
-                            <p>{classDetails.day}</p>[{" "}
+                            <p>{classDetails.day}</p>[
                             <span>
                               {formatTimeTo12Hour(classDetails.start)}
                             </span>
                             <span className="px-1">-</span>
-                            <span>
-                              {formatTimeTo12Hour(classDetails.end)}
-                            </span>{" "}
-                            ]
+                            <span>{formatTimeTo12Hour(classDetails.end)}</span>]
                           </div>
 
                           {/* Divider */}
-                          <div className="p-[1px] bg-gray-300"></div>
+                          <div className="p-[1px] bg-gray-300" />
 
                           {/* Class Type */}
                           <div className="flex justify-between items-center pt-2">
@@ -299,9 +327,20 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
                           {/* Participant Limit */}
                           <div className="flex justify-between items-center">
                             <p className="font-bold">Participant Limit:</p>
-                            {classDetails.participantLimit
-                              ? classDetails.participantLimit
-                              : "No Limit"}
+                            {isAllowedType ? (
+                              participantLimit === "no limit" ? (
+                                "No Limit"
+                              ) : (
+                                <div className="flex justify-center items-center gap-2">
+                                  <span className="w-5">
+                                    {classDetails.participantLimit}
+                                  </span>
+                                  <FaRegUser />
+                                </div>
+                              )
+                            ) : (
+                              "-" // or leave empty: "" if you don't want any symbol
+                            )}
                           </div>
 
                           {/* Price */}
@@ -314,24 +353,40 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
 
                           {/* Action Button */}
                           <div className="flex justify-center mt-3">
-                            {/* Buttons for adding session */}
                             {isAllowedType ? (
-                              // If the session is allowed, show the appropriate button
-                              isListed ? (
+                              isSessionFull ? (
+                                // Session is full
+                                <CommonButton
+                                  icon={<MdLibraryAdd />}
+                                  iconSize="text-lg"
+                                  bgColor="red"
+                                  px="px-4"
+                                  py="py-2"
+                                  disabled={true}
+                                  clickEvent={() =>
+                                    handleAddSession(classDetails)
+                                  }
+                                />
+                              ) : isListed ? (
+                                // Already added/listed
                                 <CommonButton
                                   icon={<MdLibraryAdd />}
                                   iconSize="text-lg"
                                   bgColor="gray"
-                                  width="full"
+                                  px="px-4"
                                   py="py-2"
                                   disabled={true}
+                                  clickEvent={() =>
+                                    handleAddSession(classDetails)
+                                  }
                                 />
                               ) : (
+                                // Valid, not full, not listed
                                 <CommonButton
                                   icon={<MdLibraryAdd />}
                                   iconSize="text-lg"
                                   bgColor="green"
-                                  width="full"
+                                  px="px-4"
                                   py="py-2"
                                   clickEvent={() =>
                                     handleAddSession(classDetails)
@@ -339,12 +394,12 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
                                 />
                               )
                             ) : (
-                              // If the session is not allowed, show a disabled button or nothing
+                              // Not allowed type
                               <CommonButton
                                 icon={<MdLibraryAdd />}
                                 iconSize="text-lg"
                                 bgColor="gray"
-                                width="full"
+                                px="px-4"
                                 py="py-2"
                                 disabled={true}
                               />
