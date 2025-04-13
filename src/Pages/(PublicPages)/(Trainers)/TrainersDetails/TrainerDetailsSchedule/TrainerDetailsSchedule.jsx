@@ -8,7 +8,25 @@ import { FaRegUser } from "react-icons/fa";
 
 // Import Components
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+
+// Import Utility
 import { formatTimeTo12Hour } from "../../../../../Utility/formatTimeTo12Hour";
+
+// Class Data
+const classLinks = [
+  "Private Training",
+  "Group Classes",
+  "Online Class",
+  "Drop-In Class",
+  "Group Class",
+  "Private Session",
+  "Open Gym Class",
+  "Semi-Private Training",
+  "Workshops",
+  "Outdoor Class",
+  "Private Sessions",
+  "Partner Workout",
+];
 
 // Main TrainerDetailsSchedule Component
 const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
@@ -33,21 +51,6 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
     participantLimit
   ) => {
     const FullSession = participant.length == participantLimit;
-
-    const classLinks = [
-      "Private Training",
-      "Group Classes",
-      "Online Class",
-      "Drop-In Class",
-      "Group Class",
-      "Private Session",
-      "Open Gym Class",
-      "Semi-Private Training",
-      "Workshops",
-      "Outdoor Class",
-      "Private Sessions",
-      "Partner Workout",
-    ];
 
     // Break button
     if (classType === "Break") {
@@ -198,23 +201,29 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
 
                               {/* Participant Limit */}
                               <td className="px-4 py-2">
-                                {participantLimit === "no limit" ? (
-                                  "No Limit"
+                                {classLinks.includes(classDetails.classType) ? (
+                                  participantLimit === "no limit" ? (
+                                    "No Limit"
+                                  ) : (
+                                    <div className="flex text-center items-center gap-5">
+                                      <span className="w-5">
+                                        {classDetails.participantLimit}
+                                      </span>
+                                      <FaRegUser />
+                                    </div>
+                                  )
                                 ) : (
-                                  <div className="flex text-center items-center gap-5">
-                                    <span className="w-5">
-                                      {classDetails.participantLimit}
-                                    </span>
-                                    <FaRegUser />
-                                  </div>
+                                  "-"
                                 )}
                               </td>
 
                               {/* Class Price */}
                               <td className="px-4 py-2">
-                                {classPrice === "free"
-                                  ? "Free"
-                                  : `$ ${classDetails.classPrice}`}
+                                {classLinks.includes(classDetails.classType)
+                                  ? classPrice === "free"
+                                    ? "Free"
+                                    : `$ ${classDetails.classPrice}`
+                                  : "-"}
                               </td>
 
                               {/* Action Button */}
@@ -269,17 +278,21 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
                           {/* Participant Limit */}
                           <div className="flex justify-between items-center">
                             <p className="font-bold">Participant Limit:</p>
-                            {participantLimit === "no limit"
-                              ? "No Limit"
-                              : classDetails?.participantLimit}
+                            {classLinks.includes(classDetails.classType)
+                              ? participantLimit === "no limit"
+                                ? "No Limit"
+                                : classDetails?.participantLimit
+                              : "-"}
                           </div>
 
                           {/* Class Price */}
                           <div className="flex justify-between items-center">
                             <p className="font-bold">Price:</p>
-                            {classPrice === "free"
-                              ? "Free"
-                              : `$${classDetails?.classPrice}`}
+                            {classLinks.includes(classDetails.classType)
+                              ? classPrice === "free"
+                                ? "Free"
+                                : `$${classDetails?.classPrice}`
+                              : "-"}
                           </div>
 
                           {/* Button */}

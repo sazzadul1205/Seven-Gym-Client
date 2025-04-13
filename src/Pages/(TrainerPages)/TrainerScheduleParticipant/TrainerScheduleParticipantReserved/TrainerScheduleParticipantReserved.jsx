@@ -15,9 +15,13 @@ import TrainerBookingInfoModal from "../../TrainerBookingRequest/TrainerBookingR
 // import Utility
 import { formatDate } from "../../../../Utility/formatDate";
 
-const TrainerScheduleParticipantReserved = ({ acceptedBookings }) => {
+const TrainerScheduleParticipantReserved = ({ TrainerBookingRequestData }) => {
   // State to track which booking is selected to show in modal
   const [selectedBooking, setSelectedBooking] = useState(null);
+
+  const acceptedBookings = TrainerBookingRequestData?.filter(
+    (booking) => booking.status === "Accepted"
+  );
 
   // Ref to control modal visibility using the native <dialog> element
   const modalRef = useRef(null);

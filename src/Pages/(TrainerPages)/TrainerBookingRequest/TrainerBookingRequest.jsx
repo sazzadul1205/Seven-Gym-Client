@@ -1,6 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-
-// Import Package
 import PropTypes from "prop-types";
 
 // Import Hooks
@@ -18,6 +16,8 @@ import { FaTriangleExclamation } from "react-icons/fa6";
 
 // Import Utility
 import { formatDate } from "../../../Utility/formatDate";
+
+// Import Utility
 import { getRemainingTime } from "../../../Utility/getRemainingTime";
 
 // Determines background color based on booking status
@@ -37,22 +37,20 @@ const getStatusBackgroundColor = (status) => {
 const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
   const axiosPublic = useAxiosPublic();
 
-  // Current time for comparison
+  // State for current time to update expiration countdown
   const [now, setNow] = useState(new Date());
 
-  // Booking ID -> validity status
+  // State maps to store booking validity and reasons for invalidity
   const [bookingValidityMap, setBookingValidityMap] = useState({});
-
-  // Booking ID -> invalid reason
   const [bookingInvalidReasonMap, setBookingInvalidReasonMap] = useState({});
 
-  // Selected booking data
+  // Selected booking data for modal view
   const [selectedBooking, setSelectedBooking] = useState(null);
 
   // Create a ref for the modal
   const modalRef = useRef(null);
 
-  // Update clock every 60s to refresh expiration countdown
+  // Update clock every 60 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setNow(new Date());
@@ -60,10 +58,10 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Validate all pending bookings on initial load and when data changes
+  // Validate all pending bookings when data changes
   useEffect(() => {
     const validateAllBookings = async () => {
-      // Filter only pending bookings
+      // Filter pending bookings only
       const pendingBookings = TrainerBookingRequestData.filter(
         (b) => b.status === "Pending"
       );
@@ -92,32 +90,25 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
         })
       );
 
-      // Store validity results in maps
       const newValidityMap = {};
       const newReasonMap = {};
-
       results.forEach(({ id, valid, reason }) => {
         newValidityMap[id] = valid;
-        if (!valid && reason) {
-          newReasonMap[id] = reason;
-        }
+        if (!valid && reason) newReasonMap[id] = reason;
       });
 
-      // Update state with validation results
       setBookingValidityMap(newValidityMap);
       setBookingInvalidReasonMap(newReasonMap);
     };
 
-    // Run validation if booking data is available
     if (TrainerBookingRequestData.length > 0) {
       validateAllBookings();
     }
   }, [TrainerBookingRequestData, axiosPublic]);
 
-  // Create a close handler
+  // Modal close handler
   const closeModal = () => {
     modalRef.current?.close();
-    // Optionally, clear the selected booking if needed:
     setSelectedBooking(null);
   };
 
@@ -163,13 +154,11 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
 
               {/* Table Body */}
               <tbody className="text-sm text-gray-700">
-                {/* Filter out rejected bookings */}
                 {TrainerBookingRequestData.filter(
                   (booking) =>
                     booking.status !== "Rejected" &&
                     booking.status !== "Cancelled"
                 ).map((booking) => {
-                  // Booking validation and background style setup
                   const isValid = bookingValidityMap[booking._id] !== false;
                   const invalidReason = bookingInvalidReasonMap[booking._id];
                   const rowBg = !isValid
@@ -181,7 +170,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
                   return (
                     <tr
                       key={booking._id}
-                      className={`transition-colors duration-200 hover:bg-gray-100 border-b border-gray-500 ${rowBg}`}
+                      className={`transition-colors duration-200 hover:bg-gray-300 border-b border-gray-500 ${rowBg}`}
                     >
                       {/* Booker Info */}
                       <td className="px-4 py-3 font-medium">
@@ -197,7 +186,9 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
 
                       {/* Total Price */}
                       <td className="px-4 py-3">
-                        ${Number(booking.totalPrice).toFixed(2)}
+                        {booking?.totalPrice === "free"
+                          ? "Free"
+                          : `$ ${booking?.totalPrice}`}
                       </td>
 
                       {/* Duration */}
@@ -205,7 +196,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
                         {booking.durationWeeks} Weeks
                       </td>
 
-                      {/* Status Display */}
+                      {/* Status */}
                       <td className="px-4 py-3 font-bold capitalize">
                         {!isValid ? "Unavailable" : booking.status}
                       </td>
@@ -222,7 +213,6 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
                       {/* Action Buttons: Accept/Reject & View Details */}
                       <td className="px-4 py-3">
                         <div className="flex gap-2">
-                          {/* Accept / Reject Button */}
                           <TrainerBookingRequestButton
                             booking={booking}
                             refetch={refetch}
@@ -230,11 +220,10 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
                             invalidReason={invalidReason}
                           />
 
-                          {/* View Details Button */}
                           <div>
                             <button
                               id={`view-details-btn-${booking._id}`}
-                              className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                              className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
                               onClick={() => {
                                 setSelectedBooking(booking);
                                 modalRef.current?.showModal();
@@ -256,7 +245,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
             </table>
           </div>
         ) : (
-          // No bookings fallback
+          // Fallback if no bookings exist
           <div className="flex items-center bg-gray-100 py-5 text-black italic">
             <div className="flex gap-4 mx-auto items-center">
               <FaTriangleExclamation className="text-xl text-red-500" />

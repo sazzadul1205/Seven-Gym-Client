@@ -382,7 +382,7 @@ TrainerBookingInfoModal.propTypes = {
     totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     status: PropTypes.string,
     bookedAt: PropTypes.string,
-  }).isRequired,
+  }),  
   bookingValidity: PropTypes.bool,
   bookingInvalidReason: PropTypes.string,
 };

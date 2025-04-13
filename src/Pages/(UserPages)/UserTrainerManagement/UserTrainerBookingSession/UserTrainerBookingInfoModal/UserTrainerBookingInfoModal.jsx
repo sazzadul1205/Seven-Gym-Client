@@ -237,11 +237,8 @@ UserTrainerBookingInfoModal.propTypes = {
   selectedBooking: PropTypes.shape({
     trainerId: PropTypes.oneOfType([
       PropTypes.string,
-      PropTypes.shape({
-        _id: PropTypes.string.isRequired,
-        name: PropTypes.string, // Optional: add other fields if needed
-      }),
-    ]),
+      PropTypes.object, // accept anything — safely handle inside the component
+    ]),    
     sessions: PropTypes.arrayOf(PropTypes.string),
     durationWeeks: PropTypes.number,
     totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

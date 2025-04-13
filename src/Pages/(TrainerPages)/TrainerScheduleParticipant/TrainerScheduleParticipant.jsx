@@ -14,14 +14,16 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 
 // Import Component
 import TrainerScheduleParticipantReserved from "./TrainerScheduleParticipantReserved/TrainerScheduleParticipantReserved";
+import TrainerScheduleParticipantAccepted from "./TrainerScheduleParticipantAccepted/TrainerScheduleParticipantAccepted";
 
 const TrainerScheduleParticipant = ({
-  TrainerProfileScheduleData,
+  refetch,
+  TrainerProfileData,
   TrainerBookingRequestData,
+  TrainerBookingAcceptedData,
+  TrainerProfileScheduleData,
 }) => {
   const axiosPublic = useAxiosPublic();
-
-  console.log(TrainerProfileScheduleData);
 
   const schedule = TrainerProfileScheduleData?.trainerSchedule;
   if (!schedule) return null;
@@ -35,9 +37,6 @@ const TrainerScheduleParticipant = ({
     times.forEach((t) => allTimes.add(t));
   });
 
-  const acceptedBookings = TrainerBookingRequestData?.filter(
-    (booking) => booking.status === "Accepted"
-  );
 
   const sortedTimes = Array.from(allTimes).sort((a, b) => a.localeCompare(b));
 
@@ -78,7 +77,7 @@ const TrainerScheduleParticipant = ({
       {/* Divider */}
       <div className="mx-auto bg-white w-1/3 p-[1px]" />
 
-      {/* Schedule Table */}
+      {/* Daily Schedule Data Table */}
       <div className="overflow-x-auto text-black p-5">
         <table className="min-w-full table-auto border border-gray-600 text-sm text-left">
           {/* Table Head */}
@@ -192,8 +191,15 @@ const TrainerScheduleParticipant = ({
         </table>
       </div>
 
-      {/* Reserved Not Paid Sessions */}
-      <TrainerScheduleParticipantReserved acceptedBookings={acceptedBookings} />
+      {/* Reserved Not Paid and Accepted Sessions */}
+      <TrainerScheduleParticipantReserved
+        TrainerBookingRequestData={TrainerBookingRequestData}
+      />
+
+      {/* Accepted Paid and Accepted Session */}
+      <TrainerScheduleParticipantAccepted
+        TrainerBookingAcceptedData={TrainerBookingAcceptedData}
+      />
     </div>
   );
 };

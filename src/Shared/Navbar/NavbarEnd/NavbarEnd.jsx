@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { useEffect, useRef, useState } from "react";
 
+// Import Package
 import PropTypes from "prop-types";
 import Swal from "sweetalert2";
 
@@ -9,13 +10,11 @@ import useAuth from "../../../Hooks/useAuth";
 
 // Import Icons
 import { ImExit } from "react-icons/im";
-import { FaBook, FaStopwatch, FaUser } from "react-icons/fa";
 import { GiUpgrade } from "react-icons/gi";
+import { MdDashboard } from "react-icons/md";
 import { AiTwotoneSchedule } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
-import { MdClass, MdDashboard } from "react-icons/md";
-import { RiProfileLine } from "react-icons/ri";
-import { GrSchedules } from "react-icons/gr";
+import { FaStopwatch, FaUser } from "react-icons/fa";
 
 const NavbarEnd = ({ UsersData }) => {
   // Fetch authentication state and logout function
@@ -80,33 +79,8 @@ const NavbarEnd = ({ UsersData }) => {
     Trainer: [
       {
         name: "Trainer Dashboard",
-        path: `/Trainer/TrainerDashboard/${user?.email}`,
+        path: `/Trainer`,
         icon: <MdDashboard />,
-      },
-      {
-        name: "Trainer Profile",
-        path: `/Trainer/TrainerProfile/${user?.email}`,
-        icon: <RiProfileLine />,
-      },
-      {
-        name: "Trainer Schedule",
-        path: `/Trainer/TrainerSchedule/${user?.email}`,
-        icon: <GrSchedules />,
-      },
-      {
-        name: "Trainer Booking Management",
-        path: `/Trainer/TrainerBookingManagement/${user?.email}`,
-        icon: <FaBook />,
-      },
-      {
-        name: "Trainer Training Management",
-        path: `/Trainer/TrainerTrainingManagement/${user?.email}`,
-        icon: <MdClass />,
-      },
-      {
-        name: "Trainer Settings",
-        path: `/Trainer/TrainingSettings`,
-        icon: <MdClass />,
       },
     ],
     ClassManager: [{ name: "Dashboard", path: "/ClassManagerDashboard" }],

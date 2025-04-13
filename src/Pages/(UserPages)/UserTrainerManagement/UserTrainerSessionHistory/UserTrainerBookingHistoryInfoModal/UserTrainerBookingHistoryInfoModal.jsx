@@ -97,7 +97,8 @@ const UserTrainerBookingHistoryInfoModal = ({
 
 UserTrainerBookingHistoryInfoModal.propTypes = {
   selectedBooking: PropTypes.shape({
-    trainerId: PropTypes.string.isRequired,
+    trainerId: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
+      .isRequired,
     sessions: PropTypes.arrayOf(PropTypes.string).isRequired,
     durationWeeks: PropTypes.number.isRequired,
     totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number])

@@ -12,9 +12,8 @@ import TrainerDashboard from "../Pages/(TrainerPages)/TrainerDashboard/TrainerDa
 
 // Import Icons
 import { FaPowerOff } from "react-icons/fa";
-import { MdOutlinePeopleAlt } from "react-icons/md";
 import { RiArchiveDrawerFill } from "react-icons/ri";
-import { IoMdFemale, IoMdMale } from "react-icons/io";
+
 
 // Import Hooks
 import useAuth from "../Hooks/useAuth";
@@ -29,31 +28,8 @@ import TrainerScheduleParticipant from "../Pages/(TrainerPages)/TrainerScheduleP
 
 // Import Utility
 import { fetchTierBadge } from "../Utility/fetchTierBadge";
+import { getGenderIcon } from "../Utility/getGenderIcon";
 
-// Function to determine gender icon & label
-const getGenderIcon = (gender) => {
-  const genderData = {
-    Male: {
-      icon: <IoMdMale className="text-blue-500 font-bold" />,
-      label: "Male",
-    },
-    Female: {
-      icon: <IoMdFemale className="text-pink-500 font-bold" />,
-      label: "Female",
-    },
-    Other: {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 font-bold" />,
-      label: "Other",
-    },
-  };
-
-  return (
-    genderData[gender] || {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 text-2xl" />,
-      label: "Not specified",
-    }
-  );
-};
 
 const TrainerSettingsLayout = () => {
   const { user, logOut } = useAuth();
@@ -81,13 +57,12 @@ const TrainerSettingsLayout = () => {
     window.scrollTo(0, 0); // Scroll to top
   }, [activeTab, navigate]);
 
-
-  // Fetch trainer data
+  // Fetch Trainer Data
   const {
     data: TrainerData = [],
     isLoading: TrainerDataIsLoading,
     error: TrainerDataError,
-    refetch: refetchTrainerData,
+    refetch: TrainerRefetch,
   } = useQuery({
     queryKey: ["TrainerData", user?.email],
     queryFn: () =>
@@ -95,15 +70,15 @@ const TrainerSettingsLayout = () => {
     enabled: !!user?.email,
   });
 
-  // Extract trainer profile data
+  // Extract trainer profile Data
   const TrainerProfileData = TrainerData?.[0] || null;
 
-  // Fetch trainer schedule data
+  // Fetch trainer schedule Data
   const {
     data: TrainerScheduleData = [],
     isLoading: TrainerScheduleIsLoading,
     error: TrainerScheduleError,
-    refetch: refetchTrainerScheduleData,
+    refetch: TrainerScheduleRefetch,
   } = useQuery({
     queryKey: ["TrainerScheduleData", TrainerProfileData?.name],
     queryFn: () =>
@@ -131,12 +106,12 @@ const TrainerSettingsLayout = () => {
       axiosPublic.get(`/Trainers/classTypes`).then((res) => res.data),
   });
 
-  // Fetch Trainer Booking Requests class types
+  // Fetch Trainer Booking Request Data
   const {
     data: TrainerBookingRequestData = [],
     isLoading: TrainerBookingRequestIsLoading,
     error: TrainerBookingRequestError,
-    refetch: refetchTrainerBookingRequestData,
+    refetch: TrainerBookingRequestRefetch,
   } = useQuery({
     queryKey: ["TrainerBookingRequestData", TrainerProfileData?.name],
     queryFn: () =>
@@ -146,11 +121,27 @@ const TrainerSettingsLayout = () => {
     enabled: !!TrainerProfileData?.name,
   });
 
+  // Fetch Trainer Booking Accepted Data
+  const {
+    data: TrainerBookingAcceptedData = [],
+    isLoading: TrainerBookingAcceptedIsLoading,
+    error: TrainerBookingAcceptedError,
+    refetch: TrainerBookingAcceptedRefetch,
+  } = useQuery({
+    queryKey: ["TrainerBookingAcceptedData", TrainerProfileData?.name],
+    queryFn: () =>
+      axiosPublic
+        .get(`/Trainer_Booking_Accepted/Trainer/${TrainerProfileData?.name}`)
+        .then((res) => res.data),
+    enabled: !!TrainerProfileData?.name,
+  });
+
   // Unified refetch function
   const refetchAll = async () => {
-    await refetchTrainerData();
-    await refetchTrainerScheduleData();
-    await refetchTrainerBookingRequestData();
+    await TrainerRefetch();
+    await TrainerScheduleRefetch();
+    await TrainerBookingRequestRefetch();
+    await TrainerBookingAcceptedRefetch();
   };
 
   // Tabs List
@@ -207,6 +198,7 @@ const TrainerSettingsLayout = () => {
           TrainerProfileData={TrainerProfileData}
           TrainerBookingRequestData={TrainerBookingRequestData}
           TrainerProfileScheduleData={TrainerProfileScheduleData}
+          TrainerBookingAcceptedData={TrainerBookingAcceptedData}
         />
       ),
     },
@@ -216,18 +208,20 @@ const TrainerSettingsLayout = () => {
   // Loading state
   if (
     TrainerDataIsLoading ||
-    TrainerScheduleIsLoading ||
     ClassTypesDataIsLoading ||
-    TrainerBookingRequestIsLoading
+    TrainerScheduleIsLoading ||
+    TrainerBookingRequestIsLoading ||
+    TrainerBookingAcceptedIsLoading
   )
     return <Loading />;
 
   // Error state
   if (
     TrainerDataError ||
-    TrainerScheduleError ||
     ClassTypesDataError ||
-    TrainerBookingRequestError
+    TrainerScheduleError ||
+    TrainerBookingRequestError ||
+    TrainerBookingAcceptedError
   )
     return <FetchingError />;
 
@@ -271,12 +265,18 @@ const TrainerSettingsLayout = () => {
 
           {/* Trainer Name and Specialization */}
           <div className="py-1 w-full">
+            {/* Trainer Data */}
             <div className="flex justify-start items-center gap-3">
+              {/* Trainer Name */}
               <h3 className="text-lg font-bold text-gray-700">
                 {TrainerProfileData?.name}
               </h3>
+
+              {/* Trainer Icons */}
               <span className="text-xl font-bold">{icon}</span>
             </div>
+
+            {/* Trainer Specialization */}
             <p className="text-sm text-gray-600">
               {TrainerProfileData?.specialization}
             </p>

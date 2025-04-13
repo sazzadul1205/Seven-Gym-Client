@@ -221,17 +221,18 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
   );
 };
 
+// Prop Validation
 UserTrainerSessionHistory.propTypes = {
   TrainersBookingHistoryData: PropTypes.arrayOf(
     PropTypes.shape({
       _id: PropTypes.string.isRequired,
       trainer: PropTypes.string.isRequired,
-      trainerId: PropTypes.string.isRequired,
+      trainerId: PropTypes.oneOfType([PropTypes.string, PropTypes.object]), // Handle both string and object
       bookedAt: PropTypes.string.isRequired,
       totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       durationWeeks: PropTypes.number.isRequired,
       status: PropTypes.string.isRequired,
-      expiredAt: PropTypes.string,
+      expiredAt: PropTypes.oneOfType([PropTypes.string, PropTypes.null]),
     })
   ).isRequired,
 };
