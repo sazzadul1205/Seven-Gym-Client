@@ -14,7 +14,6 @@ import TrainerDashboard from "../Pages/(TrainerPages)/TrainerDashboard/TrainerDa
 import { FaPowerOff } from "react-icons/fa";
 import { RiArchiveDrawerFill } from "react-icons/ri";
 
-
 // Import Hooks
 import useAuth from "../Hooks/useAuth";
 import Loading from "../Shared/Loading/Loading";
@@ -29,7 +28,6 @@ import TrainerScheduleParticipant from "../Pages/(TrainerPages)/TrainerScheduleP
 // Import Utility
 import { fetchTierBadge } from "../Utility/fetchTierBadge";
 import { getGenderIcon } from "../Utility/getGenderIcon";
-
 
 const TrainerSettingsLayout = () => {
   const { user, logOut } = useAuth();
@@ -146,12 +144,14 @@ const TrainerSettingsLayout = () => {
 
   // Tabs List
   const tabs = [
+    // Trainer Dashboard Tab
     {
       id: "Trainer_Dashboard",
       Icon: "https://i.ibb.co.com/LhBG5FfY/dashboard.png",
       title: "Trainer Dashboard",
       content: <TrainerDashboard />,
     },
+    // Trainer Profile Tab
     {
       id: "Trainer_Profile",
       Icon: "https://i.ibb.co.com/0yHdfd7c/User-Settings.png",
@@ -164,6 +164,7 @@ const TrainerSettingsLayout = () => {
         />
       ),
     },
+    // Trainer Schedule Tab
     {
       id: "Trainer_Schedule",
       Icon: "https://i.ibb.co.com/xSjNG396/calendar.png",
@@ -177,6 +178,7 @@ const TrainerSettingsLayout = () => {
         />
       ),
     },
+    // Trainer Booking Request Tab
     {
       id: "Trainer_Booking_Request",
       Icon: "https://i.ibb.co.com/YBcHM9vp/booking.png",
@@ -188,6 +190,7 @@ const TrainerSettingsLayout = () => {
         />
       ),
     },
+    // Schedule Participant Tab
     {
       id: "Schedule_Participant",
       Icon: "https://i.ibb.co.com/hFTNrhbm/schedule.png",
