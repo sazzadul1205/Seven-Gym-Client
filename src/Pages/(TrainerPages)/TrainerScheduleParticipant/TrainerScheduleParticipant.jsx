@@ -15,6 +15,7 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 // Import Component
 import TrainerScheduleParticipantReserved from "./TrainerScheduleParticipantReserved/TrainerScheduleParticipantReserved";
 import TrainerScheduleParticipantAccepted from "./TrainerScheduleParticipantAccepted/TrainerScheduleParticipantAccepted";
+import { useState } from "react";
 
 const TrainerScheduleParticipant = ({
   refetch,
@@ -24,6 +25,9 @@ const TrainerScheduleParticipant = ({
   TrainerProfileScheduleData,
 }) => {
   const axiosPublic = useAxiosPublic();
+
+  // State to store remaining participants
+  const [moreParticipants, setMoreParticipants] = useState([]);
 
   const schedule = TrainerProfileScheduleData?.trainerSchedule;
   if (!schedule) return null;
@@ -93,53 +97,46 @@ const TrainerScheduleParticipant = ({
               </tr>
             </thead>
 
-            {/* Table Body */}
+            {/* Inside your table rendering code */}
             <tbody className="space-y-2">
-              {/* Loop through all sorted times to create rows */}
               {sortedTimes.map((time) => {
-                // Find the first available session at this time from any day
                 let sessionWithTime = null;
                 for (const day of days) {
                   if (schedule[day]?.[time]) {
                     sessionWithTime = schedule[day][time];
-                    break; // Stop at the first match
+                    break;
                   }
                 }
 
-                // Format the display time based on session's start and end time if available
                 const displayTime = sessionWithTime?.start
                   ? `${formatTime(sessionWithTime.start)} - ${formatTime(
                       sessionWithTime.end
                     )}`
-                  : formatTime(time); // Fallback if no start-end pair
+                  : formatTime(time);
 
                 return (
                   <tr key={time} className="border-t bg-white">
-                    {/* Time column on the left */}
                     <td className="border border-black w-[200px] text-center my-auto px-5 font-semibold">
                       {displayTime}
                     </td>
 
-                    {/* Loop through each day to create session cells */}
                     {days.map((day) => {
-                      const session = schedule[day]?.[time]; // Get session for current day and time
+                      const session = schedule[day]?.[time];
                       const isFull =
                         session?.participant.length ===
-                        session?.participantLimit; // Check if the session is full
-                      const bgColor = isFull ? "bg-red-200/50" : ""; // Light red background if full
+                        session?.participantLimit;
+                      const bgColor = isFull ? "bg-red-200/50" : "";
                       const bgSuperColor = isFull
-                        ? "bg-red-500/50" // Darker red if full
-                        : "bg-gray-300"; // Default gray background
+                        ? "bg-red-500/50"
+                        : "bg-gray-300";
 
                       return (
                         <td
                           key={`${time}-${day}`}
-                          className={`border border-black ${bgColor}`} // Main session cell
+                          className={`border border-black ${bgColor}`}
                         >
-                          {/* If a session exists for this time and day */}
                           {session ? (
                             <div>
-                              {/* Session limit section with icon */}
                               <div
                                 className={`text-center ${bgSuperColor} flex justify-center items-center gap-5 py-1`}
                               >
@@ -150,41 +147,77 @@ const TrainerScheduleParticipant = ({
                                 <FaUserCheck />
                               </div>
 
-                              {/* Participants section */}
-                              <div className="flex justify-center gap-2">
-                                {/* If participants exist */}
+                              <div className="flex flex-col gap-2 px-10 py-2 h-[250px]">
                                 {session.participant.length > 0 ? (
-                                  session.participant.map(
-                                    (participant, index) => {
-                                      const userName = getUserNameByEmail(
-                                        participant.bookerEmail
-                                      ); // Get name from email
+                                  <>
+                                    {session.participant
+                                      .slice(0, 5)
+                                      .map((participant, index) => {
+                                        const userName = getUserNameByEmail(
+                                          participant.bookerEmail
+                                        );
+                                        return (
+                                          <span
+                                            key={index}
+                                            className={`text-sm px-5 py-2 rounded-full shadow-md transition duration-200 ${
+                                              participant.paid
+                                                ? "bg-blue-600 text-white"
+                                                : "bg-linear-to-bl hover:bg-linear-to-tr from-red-600 to-red-400 text-white cursor-default"
+                                            }`}
+                                          >
+                                            {userName}
+                                          </span>
+                                        );
+                                      })}
 
-                                      return (
-                                        <span
-                                          key={index}
-                                          className={`inline-block text-sm px-3 py-1 my-2 rounded-full shadow-md transition duration-200 ${
-                                            participant.paid
-                                              ? "bg-blue-600 text-white" // Paid = Blue
-                                              : "bg-red-600 text-white" // Unpaid = Red
-                                          }`}
-                                          style={{ fontSize: "0.875rem" }}
-                                        >
-                                          {userName}
-                                        </span>
-                                      );
-                                    }
-                                  )
+                                    {/* Show "..." button if more than 5 participants */}
+                                    {session.participant.length > 1 && (
+                                      <button
+                                        className="mt-2 text-blue-600 hover:text-blue-500 hover:underline cursor-pointer"
+                                        onClick={() =>
+                                          setMoreParticipants(
+                                            session.participant.slice(5)
+                                          )
+                                        }
+                                      >
+                                        +{session.participant.length - 5}
+                                        more...
+                                      </button>
+                                    )}
+
+                                    {/* Show remaining participants when the button is clicked */}
+                                    {moreParticipants.length > 0 && (
+                                      <div className="mt-2">
+                                        {moreParticipants.map(
+                                          (participant, index) => {
+                                            const userName = getUserNameByEmail(
+                                              participant.bookerEmail
+                                            );
+                                            return (
+                                              <span
+                                                key={index}
+                                                className={`text-sm px-5 py-2 rounded-full shadow-md transition duration-200 ${
+                                                  participant.paid
+                                                    ? "bg-blue-600 text-white"
+                                                    : "bg-linear-to-bl hover:bg-linear-to-tr from-red-600 to-red-400 text-white cursor-default"
+                                                }`}
+                                              >
+                                                {userName}
+                                              </span>
+                                            );
+                                          }
+                                        )}
+                                      </div>
+                                    )}
+                                  </>
                                 ) : (
-                                  // No participants fallback
-                                  <span className="text-gray-400 italic my-3">
+                                  <span className="flex justify-center my-auto text-gray-800 italic">
                                     No participants yet
                                   </span>
                                 )}
                               </div>
                             </div>
                           ) : (
-                            // Fallback for no session
                             <p className="text-gray-400 italic">—</p>
                           )}
                         </td>

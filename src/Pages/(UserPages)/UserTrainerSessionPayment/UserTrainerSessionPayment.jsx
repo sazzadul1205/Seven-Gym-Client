@@ -77,18 +77,18 @@ const UserTrainerSessionPayment = () => {
       style={{ backgroundImage: `url(${UserTrainerManagementBackground})` }}
     >
       <div className="bg-gradient-to-b from-gray-500/50 to-gray-800/50 min-h-screen">
-        <div className="mx-auto max-w-7xl text-black py-2 ">
+        <div className="mx-auto max-w-7xl text-black">
           {/* Booking Details and Payment Info */}
-          <div className="flex py-2 gap-5">
+          <div className="flex flex-col sm:flex-row py-5 gap-5">
             {/* Details */}
-            <div className="bg-white rounded-2xl p-5 w-2/5">
+            <div className="bg-white rounded-2xl p-5 w-full sm:w-2/5">
               {/* Title */}
               <h2 className="text-2xl font-bold text-gray-800 border-b border-gray-700 pb-2">
                 Booking Summary
               </h2>
 
               {/* Contents */}
-              <div className="grid grid-cols-2 text-gray-700 leading-relaxed">
+              <div className="grid grid-cols-1 sm:grid-cols-2 text-gray-700 leading-relaxed">
                 {/* Trainer */}
                 <div className="border-b-2 border-gray-200 py-2">
                   <span className="block font-semibold text-gray-800 py-1">
@@ -176,7 +176,7 @@ const UserTrainerSessionPayment = () => {
             </div>
 
             {/* Payment */}
-            <div className="w-3/5 bg-white">
+            <div className="w-full sm:w-3/5 bg-white">
               <Elements stripe={stripePromise}>
                 <UserTrainerSessionPaymentForm
                   TrainerBookingRequestByIDData={TrainerBookingRequestByIDData}
