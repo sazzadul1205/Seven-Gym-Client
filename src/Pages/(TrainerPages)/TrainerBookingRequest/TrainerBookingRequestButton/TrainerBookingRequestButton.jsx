@@ -234,8 +234,6 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
 
   // Function: Dummy function to handle deletion of expired bookings
   const DeleteExpired = async (booking) => {
-    console.log("Expired Delete:", booking); // Log deletion action
-
     const confirmReject = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to Delete this booking?",
@@ -278,6 +276,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
 
   // Function: Cancel accepted booking and remove participant
   const cancelAcceptedBooking = async (booking, simulate = false) => {
+    // Step 1: Ask user for confirmation to cancel the booking
     const confirmCancel = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to cancel this booking?",
@@ -287,32 +286,80 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
       cancelButtonText: "No, Keep it",
     });
 
+    // If user cancels the confirmation prompt, exit the function
     if (!confirmCancel.isConfirmed) return;
 
-    // Prepare cancellation data for booking
+    // Step 2: Ask the user to provide a reason for cancellation
+    const { value: reason } = await Swal.fire({
+      title: "Reason for Rejection",
+      html: `
+      <div class="flex flex-col space-y-2">
+        <label for="reasonInput" class="text-left text-sm font-medium text-gray-700">
+          Select or type a reason
+        </label>
+        <input 
+          id="reasonInput" 
+          list="reasonOptions"
+          class="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all w-full text-sm" 
+          placeholder="e.g. Trainer not available or write your own"
+        />
+        <datalist id="reasonOptions">
+          <option value="Trainer not available"></option>
+          <option value="Invalid time slot"></option>
+          <option value="Payment issue"></option>
+          <option value="Violation of gym policy"></option>
+          <option value="Scheduling conflict"></option>
+          <option value="Session already booked by another client"></option>
+          <option value="Insufficient information provided"></option>
+          <option value="Client request to cancel"></option>
+          <option value="Trainer unavailable due to emergency"></option>
+          <option value="Session overlaps with another appointment"></option>
+          <option value="Client is not eligible for this session"></option>
+          <option value="Technical issue during booking"></option>
+          <option value="Exceeded session limit for this trainer"></option>
+          <option value="Unverified or suspicious booking details"></option>
+          <option value="Other"></option>
+        </datalist>
+      </div>
+    `,
+      showCancelButton: true,
+      confirmButtonText: "Submit Reason",
+      focusConfirm: false,
+      preConfirm: () => {
+        // Validate input – user must provide a reason
+        const input = document.getElementById("reasonInput").value.trim();
+        if (!input) {
+          Swal.showValidationMessage("Please provide a reason.");
+        }
+        return input;
+      },
+    });
+
+    // If no reason provided, exit function
+    if (!reason) return;
+
+    // Step 3: Prepare data to update the booking and remove participant
     const bookingCancelData = {
       status: "Cancelled",
-      acceptedAt: "",
+      reason: reason,
       cancelAt: getFormattedStartDate(),
       paid: false,
     };
 
-    // Prepare data to remove the participant from trainer schedule
     const removeParticipantData = {
-      trainerName: booking.trainer, // e.g., "Thomas King"
-      ids: booking.sessions, // Array of session IDs
-      bookerEmail: booking.bookerEmail, // Email to identify participant
+      trainerName: booking.trainer,
+      ids: booking.sessions,
+      bookerEmail: booking.bookerEmail,
     };
 
     try {
+      // Step 4: Simulate mode (used for testing without real API calls)
       if (simulate) {
-        // Simulate mode: just log the actions
         console.log("Simulation - Booking Cancel Payload:", bookingCancelData);
         console.log(
           "Simulation - Remove Participant Payload:",
           removeParticipantData
         );
-
         Swal.fire({
           icon: "success",
           title: "Cancelled!",
@@ -320,26 +367,28 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
           timer: 1500,
           showConfirmButton: false,
         });
-        refetch();
+        refetch(); // Refresh data
         return;
       }
 
-      // Step 1: Update booking request status to "Cancelled"
+      // Step 5: Send PATCH request to update booking status
       const bookingResponse = await axiosPublic.patch(
         `/Trainers_Booking_Request/${booking._id}`,
         bookingCancelData
       );
 
+      // If booking update is successful, proceed to remove participant
       if (
         bookingResponse.data?.message ||
         bookingResponse.data === "Booking updated successfully."
       ) {
-        // Step 2: Remove the participant from the trainer's session(s)
+        // Step 6: Send PUT request to remove participant from trainer's schedule
         const removeResponse = await axiosPublic.put(
           "/Trainers_Schedule/RemoveParticipant",
           removeParticipantData
         );
 
+        // If participant removed successfully, show success message
         if (
           removeResponse.data?.message ||
           removeResponse.data === "Participant removed successfully."
@@ -351,14 +400,17 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
             timer: 1500,
             showConfirmButton: false,
           });
-          refetch();
+          refetch(); // Refresh data
         } else {
+          // If participant removal fails
           throw new Error("Failed to remove participant.");
         }
       } else {
+        // If booking update fails
         throw new Error("Failed to cancel booking.");
       }
     } catch (error) {
+      // Step 7: Handle and display errors if any part fails
       console.error("Error cancelling booking:", error);
       Swal.fire({
         icon: "error",

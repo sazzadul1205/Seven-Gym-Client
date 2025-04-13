@@ -112,8 +112,6 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
     setSelectedBooking(null);
   };
 
-  console.log(TrainerBookingRequestData);
-
   return (
     <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
       {/* Header Section */}

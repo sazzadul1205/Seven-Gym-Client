@@ -296,7 +296,18 @@ const TrainerSettingsLayout = () => {
         </div>
 
         {/* Log out button */}
-        <div className="hidden md:flex w-full md:w-auto my-auto justify-end">
+        <div
+          className="hidden md:flex w-full md:w-auto my-auto justify-end gap-2"
+          onClick={() => refetchAll()}
+        >
+          <button className="bg-linear-to-bl hover:bg-linear-to-tr from-yellow-300 to-yellow-600 p-2 rounded-lg cursor-pointer">
+            <img
+              src="https://i.ibb.co.com/Wp0ymPyY/refresh.png"
+              alt="Refresh Icon"
+              className="w-[25px] h-[25px]"
+            />
+          </button>
+
           <CommonButton
             text={isLoggingOut ? "Logging Out..." : "Log Out"}
             clickEvent={handleSignOut}

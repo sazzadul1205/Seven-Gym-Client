@@ -137,7 +137,7 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                     booking.status
                   )} mb-4 p-4 border-b`}
                 >
-                  <div className="flex flex-col space-y-2">
+                  <div className="flex flex-col space-y-1">
                     {/* Trainer */}
                     <div className="font-semibold">
                       Trainer: {booking.trainer}
@@ -169,12 +169,12 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
 
                     {/* Remaining Time */}
                     <div className=" text-sm">
-                      <p className="font-bold">Expired In:</p>
+                      <p className="font-bold">Reason :</p>
                       {booking?.reason && <span>{booking.reason}</span>}
                     </div>
 
                     {/* Buttons */}
-                    <div className="flex justify-between gap-4 pt-4">
+                    <div className="flex justify-between">
                       <button
                         id={`view-details-btn-${booking._id}`} // Unique ID for each button
                         className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
