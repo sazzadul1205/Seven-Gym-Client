@@ -27,6 +27,8 @@ const getStatusBackgroundColor = (status) => {
       return "bg-linear-to-bl from-red-300 to-red-500 text-black";
     case "Expired":
       return "bg-gray-200 hover:bg-gray-100 text-black py-2";
+    case "Unavailable":
+      return "bg-gray-200 hover:bg-gray-100 text-black py-2";
     default:
       return "";
   }

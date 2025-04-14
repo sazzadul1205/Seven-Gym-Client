@@ -135,7 +135,7 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
       sessions: sessionIds,
       bookerEmail: user?.email,
       trainer: name,
-      trainerId: TrainerIdByNameData,
+      trainerId: TrainerIdByNameData?.id,
       totalPrice: adjustedGrandTotal.toFixed(2),
       durationWeeks: duration,
       status: "Pending",

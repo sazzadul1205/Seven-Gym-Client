@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // Import Icons
 import { FaArrowUp, FaRegTrashAlt } from "react-icons/fa";
 
@@ -9,6 +10,7 @@ import { Tooltip } from "react-tooltip";
 // Import Hooks
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import { Link } from "react-router";
+import { ImCross } from "react-icons/im";
 
 const TrainerBookingSessionButton = ({ booking, refetch }) => {
   const axiosPublic = useAxiosPublic();
@@ -26,11 +28,12 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
   const handleDeleteBooking = async (booking) => {
     if (!booking || !booking.status) return;
 
-    // eslint-disable-next-line no-unused-vars
     const { _id, ...rest } = booking;
     let updatedBooking = { ...rest };
 
-    // If pending, mark as deleted and add timestamp
+    const archiveStatuses = ["Pending", "Rejected", "Cancelled", "Unavailable"];
+
+    // Modify booking data if it's Pending
     if (booking.status === "Pending") {
       updatedBooking = {
         ...rest,
@@ -47,6 +50,24 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
         successTitle: "Canceled!",
         successText: "Booking canceled successfully.",
       },
+      Rejected: {
+        message: "This will delete the rejected booking.",
+        button: "Yes, delete it!",
+        successTitle: "Deleted!",
+        successText: "Rejected booking deleted.",
+      },
+      Cancelled: {
+        message: "This will delete the cancelled booking.",
+        button: "Yes, delete it!",
+        successTitle: "Deleted!",
+        successText: "Cancelled booking deleted.",
+      },
+      Unavailable: {
+        message: "This will delete the unavailable booking.",
+        button: "Yes, delete it!",
+        successTitle: "Deleted!",
+        successText: "Unavailable booking deleted.",
+      },
       default: {
         message: "This will delete the booking permanently.",
         button: "Yes, delete it!",
@@ -57,7 +78,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
 
     const label = statusLabels[booking.status] || statusLabels.default;
 
-    // Show confirmation alert
+    // Confirmation popup
     const confirmResult = await Swal.fire({
       title: "Are you sure?",
       text: label.message,
@@ -71,15 +92,16 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
     if (!confirmResult.isConfirmed) return;
 
     try {
-      // Step 1: Archive booking into history
-      await axiosPublic.post("/Trainer_Booking_History", updatedBooking);
+      // Archive if in our target list
+      if (archiveStatuses.includes(booking.status)) {
+        await axiosPublic.post("/Trainer_Booking_History", updatedBooking);
+      }
 
-      // Step 2: Delete booking from active request table
+      // Delete from main request table
       const deleteResponse = await axiosPublic.delete(
-        `/Trainers_Booking_Request?${booking._id}`
+        `/Trainers_Booking_Request?id=${booking._id}`
       );
 
-      // Handle success
       if (deleteResponse.data?.message) {
         Swal.fire({
           icon: "success",
@@ -89,7 +111,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
           showConfirmButton: false,
         });
 
-        refetch(); // Refresh the data
+        refetch();
       } else {
         throw new Error("API did not return success message.");
       }
@@ -105,7 +127,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
 
   // Cancel booking directly without archiving
   const handleCancelBooking = async (booking) => {
-    if (!booking || !booking._id) {
+    if (!booking || !booking._id || !booking.status) {
       Swal.fire({
         icon: "error",
         title: "Invalid Booking",
@@ -114,44 +136,71 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
       return;
     }
 
-    // Confirm cancel action
+    const isPending = booking.status === "Pending";
+    const isExpired = booking.status === "Expired";
+
+    if (!isPending && !isExpired) {
+      Swal.fire({
+        icon: "info",
+        title: "Not Cancellable",
+        text: "Only 'Pending' or 'Expired' bookings can be cancelled directly.",
+      });
+      return;
+    }
+
+    // Set dynamic text based on status
+    const statusText = isPending
+      ? "This will cancel your pending booking permanently."
+      : "This will remove the expired booking.";
+
+    const confirmBtnText = isPending ? "Yes, cancel it" : "Yes, delete it";
+
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: "This will cancel the booking permanently.",
+      text: statusText,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, cancel it",
+      confirmButtonText: confirmBtnText,
       cancelButtonText: "No",
     });
 
     if (!result.isConfirmed) return;
 
     try {
-      // Delete booking from active request table
+      // For Pending, optionally archive before deletion
+      if (isPending) {
+        const { _id, ...rest } = booking;
+        const archivedBooking = {
+          ...rest,
+          status: "Deleted",
+          deletedAt: new Date().toISOString(),
+        };
+
+        await axiosPublic.post("/Trainer_Booking_History", archivedBooking);
+      }
+
+      // Delete the booking
       const { data } = await axiosPublic.delete(
-        `/Trainers_Booking_Request?${booking._id}`
+        `/Trainers_Booking_Request?id=${booking._id}` // ✅ Fixed query param
       );
 
-      // Handle success
-      const isSuccess = data?.success;
-
-      if (isSuccess) {
+      if (data?.success || data?.message) {
         Swal.fire({
           icon: "success",
-          title: "Booking Cancelled",
-          text: "The booking was successfully cancelled.",
+          title: isPending ? "Booking Cancelled" : "Expired Booking Removed",
+          text: isPending
+            ? "The pending booking was cancelled successfully."
+            : "The expired booking was removed.",
           timer: 1500,
           showConfirmButton: false,
         });
 
-        refetch(); // Refresh the data
+        refetch();
       } else {
         Swal.fire({
           icon: "error",
-          title: "Failed to Cancel",
-          text:
-            data?.message ||
-            "The booking could not be cancelled. It may already be deleted.",
+          title: "Failed",
+          text: data?.message || "Could not process the request.",
         });
       }
     } catch (error) {
@@ -159,7 +208,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: "Something went wrong while cancelling the booking.",
+        text: "Something went wrong while processing the cancellation.",
       });
     }
   };
@@ -192,7 +241,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
             className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
             onClick={() => handleCancelBooking(booking)}
           >
-            <FaRegTrashAlt className="text-red-500" />
+            <ImCross className="text-red-500" />
           </button>
           <Tooltip
             anchorSelect={`#${getButtonId()}`}
@@ -202,7 +251,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
       )}
 
       {/* Rejected & Cancelled Bookings: Show Permanent Delete Button */}
-      {["Rejected", "Cancelled"].includes(booking.status) && (
+      {["Rejected", "Cancelled", "Unavailable"].includes(booking.status) && (
         <>
           <button
             id={getButtonId()}

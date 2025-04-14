@@ -162,7 +162,8 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
                   {TrainerBookingRequestData.filter(
                     (booking) =>
                       booking.status !== "Rejected" &&
-                      booking.status !== "Cancelled"
+                      booking.status !== "Cancelled" &&
+                      booking.status !== "Unavailable"
                   ).map((booking) => {
                     const isValid = bookingValidityMap[booking._id] !== false;
                     const invalidReason = bookingInvalidReasonMap[booking._id];

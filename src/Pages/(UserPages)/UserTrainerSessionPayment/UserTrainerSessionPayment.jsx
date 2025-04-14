@@ -186,10 +186,7 @@ const UserTrainerSessionPayment = () => {
           </div>
 
           {/* Sessions Table */}
-          <div className="bg-white rounded-2xl px-10 py-6 shadow-md">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
-              Booked Sessions
-            </h2>
+          <div className="bg-white px-5 ">
             <BookedSessionTable ScheduleByIDData={ScheduleByIDData} />
           </div>
         </div>

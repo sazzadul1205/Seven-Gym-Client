@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 // Import Icons
 import { Tooltip } from "react-tooltip";
 import { ImCross } from "react-icons/im";
@@ -8,11 +7,16 @@ import { FaCheck, FaRegTrashAlt } from "react-icons/fa";
 import Swal from "sweetalert2";
 import PropTypes from "prop-types";
 
-// Import Hook
+// Import Hook and Helpers
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+
+// Import Reason Part
+import { getRejectionReason } from "./getRejectionReasonPrompt";
 
 // Helper: Checks if expired booking can be deleted (only after 12 days)
 const canDeleteExpired = (bookedAt) => {
+  // bookedAt format: "DD-MM-YYYYTHH:mm"
+  // Split the date and reverse parts to create a YYYY-MM-DD string for Date() constructor
   const bookingDate = new Date(
     bookedAt.split("T")[0].split("-").reverse().join("-")
   );
@@ -21,122 +25,98 @@ const canDeleteExpired = (bookedAt) => {
   return diffDays >= 12;
 };
 
+// Helper: Get formatted current date as "DD-MM-YYYYTHH:mm"
 const getFormattedStartDate = () => {
   const now = new Date();
   const pad = (n) => n.toString().padStart(2, "0");
-
   const day = pad(now.getDate());
   const month = pad(now.getMonth() + 1);
   const year = now.getFullYear();
   const hours = pad(now.getHours());
   const minutes = pad(now.getMinutes());
-
   return `${day}-${month}-${year}T${hours}:${minutes}`;
 };
 
 const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
   const axiosPublic = useAxiosPublic();
 
-  const handleAccept = async (booking, simulate = false) => {
-    // Confirm acceptance with SweetAlert
-    const confirmAccept = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to accept this booking?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Yes, Accept it",
-      cancelButtonText: "No, Cancel",
-    });
-
-    if (!confirmAccept.isConfirmed) return;
-
-    // Prepare data for updating the booking request.
-    const BookingAcceptData = {
-      status: "Accepted",
-      acceptedAt: getFormattedStartDate(),
-      paid: false,
-    };
-
-    // Prepare data for adding the booking participant into the trainer's schedule.
-    const SessionData = {
-      trainerName: booking.trainer, // e.g., "Thomas King"
-      ids: booking.sessions, // Use the array of session IDs
-      payload: {
-        bookerEmail: booking.bookerEmail, // Use the correct field from your data
-        duration: booking.durationWeeks, // Duration in weeks
-        bookingReqID: booking._id,
-        acceptedAt: getFormattedStartDate(),
-        paid: false,
-      },
-    };
-
+  // Function: Accept Session
+  const handleAccept = async (booking) => {
     try {
-      if (simulate) {
-        // Simulation mode: log payloads instead of making API calls.
-        console.log(
-          "Simulation Mode - Booking Request Update Payload:",
-          BookingAcceptData
-        );
-        console.log(
-          "Simulation Mode - Trainer Schedule AddParticipant Payload:",
-          SessionData
-        );
+      // Step 1: Confirm with the user
+      const { isConfirmed } = await Swal.fire({
+        title: "Are you sure?",
+        text: "Do you want to accept this booking?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Accept it",
+        cancelButtonText: "No, Cancel",
+      });
+      if (!isConfirmed) return;
 
-        Swal.fire({
-          icon: "success",
-          title: "Accepted!",
-          text: "Booking accepted (simulation) and participant updated successfully.",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-        refetch(); // Refresh the data if needed
-        return;
-      }
+      // Step 2: Construct payloads with formatted date
+      const formattedDate = getFormattedStartDate();
+      const bookingUpdatePayload = {
+        status: "Accepted",
+        acceptedAt: formattedDate,
+        paid: false,
+      };
+      const participantPayload = {
+        trainerName: booking.trainer,
+        ids: booking.sessions, // Array of session IDs
+        payload: {
+          bookerEmail: booking.bookerEmail,
+          duration: booking.durationWeeks,
+          bookingReqID: booking._id,
+          acceptedAt: formattedDate,
+          paid: false,
+        },
+      };
 
-      // Update the booking request status.
-      const bookingResponse = await axiosPublic.patch(
+      // Step 3: Update booking status
+      const updateRes = await axiosPublic.patch(
         `/Trainers_Booking_Request/${booking._id}`,
-        BookingAcceptData
+        bookingUpdatePayload
       );
-
-      if (bookingResponse.data?.message) {
-        // Update the trainer's schedule with participant info.
-        const participantResponse = await axiosPublic.put(
-          "/Trainers_Schedule/AddParticipant",
-          SessionData
-        );
-
-        if (
-          participantResponse.data?.message ||
-          participantResponse.data === "Participants added successfully."
-        ) {
-          Swal.fire({
-            icon: "success",
-            title: "Accepted!",
-            text: "Booking has been accepted and participant updated successfully.",
-            timer: 1500,
-            showConfirmButton: false,
-          });
-          refetch(); // Refresh the UI if needed
-        } else {
-          throw new Error("Failed to add participant to schedule.");
-        }
-      } else {
-        throw new Error("Failed to update booking.");
+      if (!updateRes.data?.message) {
+        throw new Error("Booking status update failed.");
       }
-    } catch (error) {
-      console.error("Error accepting booking:", error);
+
+      // Step 4: Add participant to trainer's schedule
+      const scheduleRes = await axiosPublic.put(
+        "/Trainers_Schedule/AddParticipant",
+        participantPayload
+      );
+      const success =
+        scheduleRes.data?.message === "Participants added successfully." ||
+        typeof scheduleRes.data === "string";
+      if (!success) throw new Error("Participant addition failed.");
+
+      // Step 5: Show success notification and refresh UI
+      await Swal.fire({
+        icon: "success",
+        title: "Booking Accepted!",
+        text: "The participant was successfully added to the schedule.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      refetch();
+    } catch (err) {
+      console.error("Error in handleAccept:", err);
       Swal.fire({
         icon: "error",
-        title: "Failed!",
-        text: "Something went wrong while accepting the booking.",
+        title: "Operation Failed",
+        text:
+          err?.response?.data?.message ||
+          err.message ||
+          "An error occurred while processing the booking.",
       });
     }
   };
 
-  // Function: Handles rejection of a booking with SweetAlert2 modals for reason input
+  // Function: Reject Booking with reason input
   const handleReject = async (booking) => {
-    // Step 1: Confirm rejection action via modal
+    // Step 1: Confirm rejection action
     const confirmReject = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to reject this booking?",
@@ -145,83 +125,28 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
       confirmButtonText: "Yes, Reject it",
       cancelButtonText: "No, Keep it",
     });
-
-    // Exit if action is cancelled
     if (!confirmReject.isConfirmed) return;
 
-    // Step 2: Ask for rejection reason with an input box (using Tailwind classes)
-    const { value: reason } = await Swal.fire({
-      title: "Reason for Rejection",
-      html: `
-            <div class="flex flex-col space-y-2">
-              <label for="reasonInput" class="text-left text-sm font-medium text-gray-700">
-                Select or type a reason
-              </label>
-              <input 
-                id="reasonInput" 
-                list="reasonOptions"
-                class="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all w-full text-sm" 
-                placeholder="e.g. Trainer not available or write your own"
-              />
-              <datalist id="reasonOptions">
-                <option value="Trainer not available"></option>
-                <option value="Invalid time slot"></option>
-                <option value="Payment issue"></option>
-                <option value="Violation of gym policy"></option>
-                <option value="Scheduling conflict"></option>
-                <option value="Session already booked by another client"></option>
-                <option value="Insufficient information provided"></option>
-                <option value="Client request to cancel"></option>
-                <option value="Trainer unavailable due to emergency"></option>
-                <option value="Session overlaps with another appointment"></option>
-                <option value="Client is not eligible for this session"></option>
-                <option value="Technical issue during booking"></option>
-                <option value="Exceeded session limit for this trainer"></option>
-                <option value="Unverified or suspicious booking details"></option>
-                <option value="Other"></option>
-              </datalist>
-            </div>
-          `,
-      showCancelButton: true,
-      confirmButtonText: "Submit Reason",
-      focusConfirm: false,
-      preConfirm: () => {
-        // Get the trimmed input value
-        const input = document.getElementById("reasonInput").value.trim();
+    // Step 2: Prompt user for rejection reason
+    const reason = await getRejectionReason();
+    if (!reason) return; // Exit if cancelled or no reason provided
 
-        // Show error if empty
-        if (!input) {
-          Swal.showValidationMessage("Please provide a reason.");
-        }
-
-        // Return the reason
-        return input;
-      },
-    });
-
-    // Exit if no reason is provided or cancelled
-    if (!reason) return;
-
-    // Step 3: Send update to backend to update the booking status and add reason
+    // Step 3: Update backend booking status to "Rejected"
     try {
-      const response = await axiosPublic.patch(
-        `/Trainers_Booking_Request/${booking._id}`,
-        {
-          status: "Rejected",
-          reason: reason,
-        }
-      );
-
-      // Optionally refetch data after update
-      refetch();
-
-      // Step 4: Show final confirmation success message
+      await axiosPublic.patch(`/Trainers_Booking_Request/${booking._id}`, {
+        status: "Rejected",
+        rejectedAt: getFormattedStartDate(),
+        reason: reason,
+      });
+      // Step 4: Show success message and refresh UI
       await Swal.fire({
         title: "Booking Rejected",
         text: `Reason: ${reason}`,
         icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
       });
-      console.log("Booking updated:", response.data);
+      refetch();
     } catch (error) {
       console.error("Error rejecting booking:", error);
       Swal.fire({
@@ -232,51 +157,47 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
     }
   };
 
-  // Function: Dummy function to handle deletion of expired bookings
-  const DeleteExpired = async (booking) => {
-    const confirmReject = await Swal.fire({
+  // Function: Delete Expired Booking
+  const handleDeleteExpired = async (booking) => {
+    const confirmDelete = await Swal.fire({
       title: "Are you sure?",
-      text: "Do you want to Delete this booking?",
+      text: "Do you want to delete this booking?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yes, Delete it",
       cancelButtonText: "No, Keep it",
     });
+    if (!confirmDelete.isConfirmed) return;
 
-    if (confirmReject.isConfirmed) {
-      try {
-        const deleteResponse = await axiosPublic.delete(
-          `/Trainers_Booking_Request/${booking._id}`
-        );
-
-        if (deleteResponse.data?.message) {
-          Swal.fire({
-            icon: "success",
-            title: "Deleted!",
-            text: "Booking deleted successfully.",
-            timer: 1500,
-            showConfirmButton: false,
-          });
-
-          // Refresh the data
-          refetch();
-        } else {
-          throw new Error("No success message in response");
-        }
-      } catch (error) {
-        console.error("Delete error:", error);
+    try {
+      // Here, we assume deletion by booking ID in query parameter is corrected on backend.
+      const response = await axiosPublic.delete(
+        `/Trainers_Booking_Request?id=${booking._id}`
+      );
+      if (response.data?.message) {
         Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Something went wrong while deleting the booking.",
+          icon: "success",
+          title: "Deleted!",
+          text: "Booking has been deleted.",
+          timer: 1500,
+          showConfirmButton: false,
         });
+        refetch();
+      } else {
+        throw new Error("No success message in response");
       }
+    } catch (error) {
+      console.error("Delete error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong while deleting the booking.",
+      });
     }
   };
 
-  // Function: Cancel accepted booking and remove participant
-  const cancelAcceptedBooking = async (booking, simulate = false) => {
-    // Step 1: Ask user for confirmation to cancel the booking
+  // Function: Cancel Accepted Booking and Remove Participant
+  const handleCancelAcceptedBooking = async (booking) => {
     const confirmCancel = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to cancel this booking?",
@@ -285,67 +206,17 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
       confirmButtonText: "Yes, Cancel it",
       cancelButtonText: "No, Keep it",
     });
-
-    // If user cancels the confirmation prompt, exit the function
     if (!confirmCancel.isConfirmed) return;
 
-    // Step 2: Ask the user to provide a reason for cancellation
-    const { value: reason } = await Swal.fire({
-      title: "Reason for Rejection",
-      html: `
-      <div class="flex flex-col space-y-2">
-        <label for="reasonInput" class="text-left text-sm font-medium text-gray-700">
-          Select or type a reason
-        </label>
-        <input 
-          id="reasonInput" 
-          list="reasonOptions"
-          class="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all w-full text-sm" 
-          placeholder="e.g. Trainer not available or write your own"
-        />
-        <datalist id="reasonOptions">
-          <option value="Trainer not available"></option>
-          <option value="Invalid time slot"></option>
-          <option value="Payment issue"></option>
-          <option value="Violation of gym policy"></option>
-          <option value="Scheduling conflict"></option>
-          <option value="Session already booked by another client"></option>
-          <option value="Insufficient information provided"></option>
-          <option value="Client request to cancel"></option>
-          <option value="Trainer unavailable due to emergency"></option>
-          <option value="Session overlaps with another appointment"></option>
-          <option value="Client is not eligible for this session"></option>
-          <option value="Technical issue during booking"></option>
-          <option value="Exceeded session limit for this trainer"></option>
-          <option value="Unverified or suspicious booking details"></option>
-          <option value="Other"></option>
-        </datalist>
-      </div>
-    `,
-      showCancelButton: true,
-      confirmButtonText: "Submit Reason",
-      focusConfirm: false,
-      preConfirm: () => {
-        // Validate input – user must provide a reason
-        const input = document.getElementById("reasonInput").value.trim();
-        if (!input) {
-          Swal.showValidationMessage("Please provide a reason.");
-        }
-        return input;
-      },
-    });
-
-    // If no reason provided, exit function
+    const reason = await getRejectionReason();
     if (!reason) return;
 
-    // Step 3: Prepare data to update the booking and remove participant
     const bookingCancelData = {
       status: "Cancelled",
       reason: reason,
       cancelAt: getFormattedStartDate(),
       paid: false,
     };
-
     const removeParticipantData = {
       trainerName: booking.trainer,
       ids: booking.sessions,
@@ -353,64 +224,35 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
     };
 
     try {
-      // Step 4: Simulate mode (used for testing without real API calls)
-      if (simulate) {
-        console.log("Simulation - Booking Cancel Payload:", bookingCancelData);
-        console.log(
-          "Simulation - Remove Participant Payload:",
-          removeParticipantData
-        );
-        Swal.fire({
-          icon: "success",
-          title: "Cancelled!",
-          text: "Booking cancelled and participant removed (simulation).",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-        refetch(); // Refresh data
-        return;
-      }
-
-      // Step 5: Send PATCH request to update booking status
       const bookingResponse = await axiosPublic.patch(
         `/Trainers_Booking_Request/${booking._id}`,
         bookingCancelData
       );
-
-      // If booking update is successful, proceed to remove participant
       if (
-        bookingResponse.data?.message ||
-        bookingResponse.data === "Booking updated successfully."
+        !bookingResponse.data?.message &&
+        bookingResponse.data !== "Booking updated successfully."
       ) {
-        // Step 6: Send PUT request to remove participant from trainer's schedule
-        const removeResponse = await axiosPublic.put(
-          "/Trainers_Schedule/RemoveParticipant",
-          removeParticipantData
-        );
-
-        // If participant removed successfully, show success message
-        if (
-          removeResponse.data?.message ||
-          removeResponse.data === "Participant removed successfully."
-        ) {
-          Swal.fire({
-            icon: "success",
-            title: "Cancelled!",
-            text: "Booking has been cancelled and participant removed.",
-            timer: 1500,
-            showConfirmButton: false,
-          });
-          refetch(); // Refresh data
-        } else {
-          // If participant removal fails
-          throw new Error("Failed to remove participant.");
-        }
-      } else {
-        // If booking update fails
         throw new Error("Failed to cancel booking.");
       }
+      const removeResponse = await axiosPublic.put(
+        "/Trainers_Schedule/RemoveParticipant",
+        removeParticipantData
+      );
+      if (
+        !removeResponse.data?.message &&
+        removeResponse.data !== "Participant removed successfully."
+      ) {
+        throw new Error("Failed to remove participant.");
+      }
+      Swal.fire({
+        icon: "success",
+        title: "Cancelled!",
+        text: "Booking has been cancelled and participant removed.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      refetch();
     } catch (error) {
-      // Step 7: Handle and display errors if any part fails
       console.error("Error cancelling booking:", error);
       Swal.fire({
         icon: "error",
@@ -420,14 +262,54 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
     }
   };
 
+  // Function: Unavailable Booking with reason input
+  const handleUnavailableBooking = async (booking) => {
+    // Step 1: Confirm rejection action
+    const confirmReject = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to Unavailable this booking?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Unavailable it",
+      cancelButtonText: "No, Keep it",
+    });
+    if (!confirmReject.isConfirmed) return;
+
+    // Step 3: Update backend booking status to "Rejected"
+    try {
+      await axiosPublic.patch(`/Trainers_Booking_Request/${booking._id}`, {
+        status: "Unavailable",
+        rejectedAt: getFormattedStartDate(),
+        reason: "Some Sessions are Already Fully Booked",
+      });
+      // Step 4: Show success message and refresh UI
+      await Swal.fire({
+        title: "Booking Unavailable",
+        text: `Reason: Some Sessions are Already Fully Booked`,
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      refetch();
+    } catch (error) {
+      console.error("Error Unavailable booking:", error);
+      Swal.fire({
+        title: "Update Failed",
+        text: "Something went wrong while Unavailable the booking.",
+        icon: "error",
+      });
+    }
+  };
+
   return (
     <>
+      {/* For invalid bookings: Show Delete button */}
       {!isBookingValid ? (
         <>
           <button
             id={`delete-btn-${booking._id}`}
             className="border-2 border-red-600 bg-red-200 rounded-full p-2 text-sm text-red-800 cursor-pointer"
-            onClick={() => DeleteExpired(booking)}
+            onClick={() => handleUnavailableBooking(booking)}
           >
             <FaRegTrashAlt className="text-red-500" />
           </button>
@@ -438,14 +320,14 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
         </>
       ) : (
         <>
-          {/* For Expired bookings: Show Delete button, disabled until 12 days have passed */}
+          {/* For Expired bookings: Show Delete button (disabled until after 12 days) */}
           {booking.status === "Expired" && (
             <>
               <button
                 id={`delete-btn-${booking._id}`}
                 className="border-2 border-red-600 bg-red-200 rounded-full p-2 text-sm text-red-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={!canDeleteExpired(booking.bookedAt)}
-                onClick={() => DeleteExpired(booking)}
+                onClick={() => handleDeleteExpired(booking)}
               >
                 <FaRegTrashAlt className="text-red-500" />
               </button>
@@ -462,7 +344,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
               <button
                 id={`cancel-btn-${booking._id}`}
                 className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                onClick={() => cancelAcceptedBooking(booking)}
+                onClick={() => handleCancelAcceptedBooking(booking)}
               >
                 <ImCross className="text-red-500" />
               </button>
@@ -513,6 +395,10 @@ TrainerBookingRequestButton.propTypes = {
     status: PropTypes.oneOf(["Pending", "Accepted", "Rejected", "Expired"])
       .isRequired,
     bookedAt: PropTypes.string.isRequired,
+    trainer: PropTypes.string.isRequired,
+    bookerEmail: PropTypes.string.isRequired,
+    sessions: PropTypes.arrayOf(PropTypes.string).isRequired,
+    durationWeeks: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }).isRequired,
   refetch: PropTypes.func.isRequired,
   isBookingValid: PropTypes.bool.isRequired,

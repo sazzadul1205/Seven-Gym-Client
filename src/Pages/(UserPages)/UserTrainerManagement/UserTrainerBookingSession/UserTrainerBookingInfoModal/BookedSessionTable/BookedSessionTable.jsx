@@ -6,9 +6,9 @@ import { formatTimeTo12Hour } from "../../../../../../Utility/formatTimeTo12Hour
 
 const BookedSessionTable = ({ ScheduleByIDData }) => {
   return (
-    <div className="p-3">
+    <>
       {/* Title */}
-      <h3 className="text-lg font-semibold py-2">Session Bookings</h3>
+      <h3 className="text-lg font-bold py-2">Session Bookings</h3>
 
       {/* Schedule By Id  */}
       {ScheduleByIDData?.length > 0 ? (
@@ -19,14 +19,12 @@ const BookedSessionTable = ({ ScheduleByIDData }) => {
             <table className="table-auto w-full border-collapse text-left border border-gray-300 text-black mb-6">
               {/* Table Header */}
               <thead>
-                <tr>
-                  <th className="px-4 py-2 border-b bg-gray-300">Day</th>
-                  <th className="px-4 py-2 border-b bg-gray-300">Class Code</th>
-                  <th className="px-4 py-2 border-b bg-gray-300">Class Type</th>
-                  <th className="px-4 py-2 border-b bg-gray-300 text-center">
-                    Time
-                  </th>
-                  <th className="px-4 py-2 border-b bg-gray-300">Price</th>
+                <tr className="border-b bg-gray-700 text-white">
+                  <th className="px-4 py-2">Day</th>
+                  <th className="px-4 py-2">Class Code</th>
+                  <th className="px-4 py-2">Class Type</th>
+                  <th className="px-4 py-2 text-center">Time</th>
+                  <th className="px-4 py-2">Price</th>
                 </tr>
               </thead>
 
@@ -108,7 +106,7 @@ const BookedSessionTable = ({ ScheduleByIDData }) => {
         // If No Session Available
         <p className="text-center text-xl">No sessions available</p>
       )}
-    </div>
+    </>
   );
 };
 
