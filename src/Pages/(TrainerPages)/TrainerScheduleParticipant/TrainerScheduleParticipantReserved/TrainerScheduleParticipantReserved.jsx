@@ -10,8 +10,8 @@ import { FaTriangleExclamation } from "react-icons/fa6";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 // Import Modal & Components
-import TrainerBookingRequestUserBasicInfo from "../../TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
 import TrainerBookingInfoModal from "../../TrainerBookingRequest/TrainerBookingRequestButton/trainerBookingInfoModal/trainerBookingInfoModal";
+import TrainerBookingRequestUserBasicInfo from "../../TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
 
 // Import Utility
 import { formatDate } from "../../../../Utility/formatDate";
@@ -228,7 +228,6 @@ const TrainerScheduleParticipantReserved = ({
                     "Duration",
                     "Status",
                     "Accepted At",
-                    "Booker Code",
                     "Actions",
                   ].map((header) => (
                     <th
@@ -282,8 +281,6 @@ const TrainerScheduleParticipantReserved = ({
                     <td className="px-4 py-3">
                       {formatDate(booking.acceptedAt)}
                     </td>
-
-                    <td className="px-4 py-3">{booking.bookerCode || "--"}</td>
 
                     {/* Actions */}
                     <td className="px-4 py-3">
@@ -345,34 +342,34 @@ const TrainerScheduleParticipantReserved = ({
                 {/* Booking Data */}
                 <div className="text-sm space-y-1">
                   {/* Booked */}
-                  <div>
+                  <div className="flex justify-between">
                     <strong>Booked At:</strong> {formatDate(booking.bookedAt)}
                   </div>
+
                   {/* Price */}
-                  <p>
+                  <p className="flex justify-between">
                     <strong>Price:</strong>{" "}
                     {booking?.totalPrice === "free"
                       ? "Free"
                       : `$ ${booking?.totalPrice}`}
                   </p>
+
                   {/* Duration */}
-                  <p>
+                  <p className="flex justify-between">
                     <strong>Duration:</strong> {booking.durationWeeks}{" "}
                     {booking.durationWeeks === 1 ? "Week" : "Weeks"}
                   </p>
+
                   {/* Status */}
-                  <p>
+                  <p className="flex justify-between">
                     <strong>Status:</strong>{" "}
                     {booking.paid ? "Paid" : "Not Paid"}
                   </p>
+
                   {/* Accepted */}
-                  <p>
+                  <p className="flex justify-between">
                     <strong>Accepted At:</strong>{" "}
                     {formatDate(booking.acceptedAt)}
-                  </p>
-                  {/* Booker */}
-                  <p>
-                    <strong>Booker Code:</strong> {booking.bookerCode || "--"}
                   </p>
                 </div>
 

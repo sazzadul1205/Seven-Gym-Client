@@ -3,7 +3,9 @@ import { useNavigate } from "react-router";
 
 // Import Packages
 import Swal from "sweetalert2";
+import PropTypes from "prop-types";
 import { useForm } from "react-hook-form";
+
 
 // Import Stripe
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
@@ -13,8 +15,6 @@ import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 // Import Common Button
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
-
-/* eslint-disable react/prop-types */
 
 const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
   const axiosPublic = useAxiosPublic();
@@ -458,5 +458,19 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
     </div>
   );
 };
+
+// Prop validation for TrainerBookingRequestByIDData component
+UserTrainerSessionPaymentForm.propTypes = {
+  TrainerBookingRequestByIDData: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    totalPrice: PropTypes.number.isRequired,
+    bookerEmail: PropTypes.string.isRequired,
+    sessions: PropTypes.arrayOf(PropTypes.string).isRequired,
+    paid: PropTypes.bool.isRequired,
+    paidAt: PropTypes.string,
+    paymentID: PropTypes.string,
+  }).isRequired,
+};
+
 
 export default UserTrainerSessionPaymentForm;

@@ -53,6 +53,7 @@ const TrainerScheduleParticipant = ({
 
       {/* Accepted Paid and Accepted Session */}
       <TrainerScheduleParticipantAccepted
+        refetch={refetch}
         TrainerBookingAcceptedData={TrainerBookingAcceptedData}
       />
     </div>
