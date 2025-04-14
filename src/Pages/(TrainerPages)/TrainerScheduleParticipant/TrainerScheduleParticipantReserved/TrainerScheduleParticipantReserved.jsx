@@ -444,9 +444,7 @@ TrainerScheduleParticipantReserved.propTypes = {
       totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
         .isRequired,
       durationWeeks: PropTypes.number.isRequired,
-      paid: PropTypes.bool, // Make this optional if it can be undefined
-      acceptedAt: PropTypes.string.isRequired,
-      // Optional additional fields
+      paid: PropTypes.bool,
       bookerCode: PropTypes.string,
       sessions: PropTypes.arrayOf(PropTypes.string),
       status: PropTypes.string,
