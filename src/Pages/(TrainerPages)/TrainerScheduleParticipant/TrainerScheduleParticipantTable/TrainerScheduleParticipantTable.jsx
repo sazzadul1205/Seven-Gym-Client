@@ -15,6 +15,9 @@ import { formatTime } from "../../../../Utility/formatTime";
 // Import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
+// import Modal
+import TrainerScheduleParticipantTableMoreModal from "./TrainerScheduleParticipantTableMoreModal/TrainerScheduleParticipantTableMoreModal";
+
 // Fetch and display participant name using their email
 const ParticipantName = ({ email }) => {
   const axiosPublic = useAxiosPublic();
@@ -47,23 +50,29 @@ const TrainerScheduleParticipantTable = ({ days, sortedTimes, schedule }) => {
 
   // Handler to store selected participants into state
   const handleMoreClick = (participants) => {
+    document
+      .getElementById("Trainer_Schedule_Participant_Table_More_Modal")
+      .showModal();
     setSelectedCellParticipants(participants);
-    // Optionally trigger a modal here
-  };
 
-  console.log("Selected Cell Participants :", selectedCellParticipants);
+  };
 
   return (
     <>
-      {/* Daily Schedule Table : Desktop View  */}
-      <div className="overflow-x-auto text-black p-5">
-        <table className="min-w-full table-auto border border-gray-600 text-sm text-left">
+      {/* Daily Schedule Table : Desktop View */}
+      <div className="hidden md:block overflow-x-auto text-black p-5">
+        <table className="min-w-full table-auto border border-gray-300 text-sm text-left shadow-lg rounded overflow-hidden">
           {/* Table Header */}
-          <thead className="bg-gray-700 text-white">
+          <thead className="bg-gray-800 text-white">
             <tr>
-              <th className="border text-center px-4 py-2">Time / Day</th>
+              <th className="border px-4 py-3 text-center text-sm font-semibold tracking-wide">
+                Time / Day
+              </th>
               {days.map((day) => (
-                <th key={day} className="border px-4 py-2 text-center">
+                <th
+                  key={day}
+                  className="border px-4 py-3 text-center text-sm font-semibold tracking-wide"
+                >
                   {day}
                 </th>
               ))}
@@ -71,9 +80,8 @@ const TrainerScheduleParticipantTable = ({ days, sortedTimes, schedule }) => {
           </thead>
 
           {/* Table Body */}
-          <tbody className="space-y-2">
+          <tbody>
             {sortedTimes.map((time) => {
-              // Find the first session that matches the time for display purposes
               let sessionWithTime = null;
               for (const day of days) {
                 if (schedule[day]?.[time]) {
@@ -82,7 +90,6 @@ const TrainerScheduleParticipantTable = ({ days, sortedTimes, schedule }) => {
                 }
               }
 
-              // Format time range if session exists, otherwise just format time
               const displayTime = sessionWithTime?.start
                 ? `${formatTime(sessionWithTime.start)} - ${formatTime(
                     sessionWithTime.end
@@ -90,9 +97,12 @@ const TrainerScheduleParticipantTable = ({ days, sortedTimes, schedule }) => {
                 : formatTime(time);
 
               return (
-                <tr key={time} className="border-t bg-white">
+                <tr
+                  key={time}
+                  className="border-t bg-white hover:bg-gray-50 transition"
+                >
                   {/* Time Column */}
-                  <td className="border border-black w-[200px] text-center px-5 font-semibold">
+                  <td className="border border-gray-300 text-center px-4 py-2 font-medium w-[200px] bg-gray-100">
                     {displayTime}
                   </td>
 
@@ -101,75 +111,74 @@ const TrainerScheduleParticipantTable = ({ days, sortedTimes, schedule }) => {
                     const session = schedule[day]?.[time];
                     const isFull =
                       session?.participant.length === session?.participantLimit;
-                    const bgColor = isFull ? "bg-red-200/50" : "";
-                    const bgSuperColor = isFull
-                      ? "bg-red-500/50"
-                      : "bg-gray-300";
+                    const bgColor = isFull ? "bg-red-100" : "bg-white";
+                    const headerColor = isFull
+                      ? "bg-red-500/40"
+                      : "bg-gray-200";
 
                     return (
                       <td
                         key={`${time}-${day}`}
-                        className={`border border-black ${bgColor}`}
+                        className={`border border-gray-300 align-top ${bgColor}`}
                       >
                         {session ? (
-                          <div>
-                            {/* Participant Limit Info Header */}
+                          <div className="h-full">
+                            {/* Header */}
                             <div
-                              className={`text-center ${bgSuperColor} flex justify-center items-center gap-5 py-1`}
+                              className={`flex items-center justify-center gap-2 text-xs font-medium py-1 ${headerColor}`}
                             >
-                              <p className="font-semibold">Limit:</p>
-                              <p className="w-[20px]">
+                              <span>Limit:</span>
+                              <span className="font-bold">
+                                {session.participant.length}/
                                 {session.participantLimit}
-                              </p>
-                              <FaUserCheck />
+                              </span>
+                              <FaUserCheck size={14} />
                             </div>
 
-                            {/* Participant List */}
-                            <div className="flex flex-col gap-2 h-[250px] px-5 py-2">
+                            {/* Participants */}
+                            <div className="flex flex-col gap-1 max-h-[250px] px-2 py-2 overflow-y-auto">
                               {session.participant.length > 0 ? (
                                 <>
-                                  {/* Show up to 5 participants */}
                                   {session.participant
-                                    .slice(0, 5)
-                                    .map((participant, index) => (
+                                    .slice(0, 2)
+                                    .map((participant, idx) => (
                                       <span
-                                        key={index}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-full shadow-md transition duration-200 ${
+                                        key={idx}
+                                        className={`flex items-center gap-2 px-3 py-2 text-xs rounded-full shadow-sm cursor-default ${
                                           participant.paid
-                                            ? "bg-blue-600 text-white"
-                                            : "bg-linear-to-bl hover:bg-linear-to-tr from-red-400 to-red-600 text-white cursor-default"
+                                            ? "bg-gradient-to-bl hover:bg-gradient-to-tr from-blue-400 to-blue-600 text-white"
+                                            : "bg-gradient-to-bl hover:bg-gradient-to-tr from-red-400 to-red-600 text-white "
                                         }`}
                                       >
-                                        <GoDotFill />
+                                        <GoDotFill size={12} />
                                         <ParticipantName
                                           email={participant.bookerEmail}
                                         />
                                       </span>
                                     ))}
 
-                                  {/* Show "+ more" button if more than 5 */}
-                                  {session.participant.length > 5 && (
+                                  {session.participant.length > 2 && (
                                     <button
                                       onClick={() =>
                                         handleMoreClick(session.participant)
                                       }
-                                      className="text-blue-700 hover:underline text-xs font-medium text-left cursor-pointer"
+                                      className="text-blue-600 hover:underline text-xs font-semibold text-left mt-1 cursor-pointer"
                                     >
-                                      + {session.participant.length - 5} more
+                                      + {session.participant.length - 2} more
                                     </button>
                                   )}
                                 </>
                               ) : (
-                                // If no participants yet
-                                <span className="text-gray-800 font-semibold text-center italic">
+                                <span className="italic text-gray-500 text-xs text-center bg-gray-100 py-2 rounded">
                                   No participants yet
                                 </span>
                               )}
                             </div>
                           </div>
                         ) : (
-                          // If no session for this time/day
-                          <p className="text-gray-400 italic text-center">—</p>
+                          <p className="text-center italic text-gray-400 py-3">
+                            —
+                          </p>
                         )}
                       </td>
                     );
@@ -180,6 +189,89 @@ const TrainerScheduleParticipantTable = ({ days, sortedTimes, schedule }) => {
           </tbody>
         </table>
       </div>
+
+      {/* Mobile View: Card Layout */}
+      <div className="block md:hidden p-3 space-y-5">
+        {sortedTimes.map((time) => (
+          <div key={time}>
+            <h3 className="text-sm font-bold text-gray-700 border-b pb-1 mb-2">
+              {formatTime(time)}
+            </h3>
+            {days.map((day) => {
+              const session = schedule[day]?.[time];
+              if (!session) return null;
+
+              const isFull =
+                session.participant.length === session.participantLimit;
+              const bgColor = isFull ? "bg-red-200/50" : "bg-white";
+
+              return (
+                <div
+                  key={`${day}-${time}`}
+                  className={`rounded-xl shadow border ${bgColor} p-3 mb-3`}
+                >
+                  {/* Header */}
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="text-sm font-medium text-gray-800">
+                      {day}
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-gray-600">
+                      <FaUserCheck />
+                      {session.participant.length}/{session.participantLimit}
+                    </div>
+                  </div>
+
+                  {/* Participants */}
+                  <div className="flex flex-col gap-1">
+                    {session.participant.length > 0 ? (
+                      <>
+                        {session.participant
+                          .slice(0, 2)
+                          .map((participant, index) => (
+                            <span
+                              key={index}
+                              className={`flex items-center gap-2 px-2 py-1 text-xs rounded shadow ${
+                                participant.paid
+                                  ? "bg-blue-600 text-white"
+                                  : "bg-gradient-to-br from-red-500 to-red-700 text-white"
+                              }`}
+                            >
+                              <GoDotFill className="text-[10px]" />
+                              <ParticipantName
+                                email={participant.bookerEmail}
+                              />
+                            </span>
+                          ))}
+                        {session.participant.length > 2 && (
+                          <button
+                            onClick={() => handleMoreClick(session.participant)}
+                            className="text-blue-700 text-xs underline mt-1 text-left"
+                          >
+                            + {session.participant.length - 2} more
+                          </button>
+                        )}
+                      </>
+                    ) : (
+                      <span className="italic text-gray-500 text-xs">
+                        No participants yet
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+
+      <dialog
+        id="Trainer_Schedule_Participant_Table_More_Modal"
+        className="modal"
+      >
+        <TrainerScheduleParticipantTableMoreModal
+          selectedCellParticipants={selectedCellParticipants}
+        />
+      </dialog>
     </>
   );
 };
@@ -189,7 +281,5 @@ TrainerScheduleParticipantTable.propTypes = {
   days: PropTypes.arrayOf(PropTypes.string).isRequired,
   sortedTimes: PropTypes.arrayOf(PropTypes.string).isRequired,
   schedule: PropTypes.object.isRequired,
-  email: PropTypes.string.isRequired,
 };
-
 export default TrainerScheduleParticipantTable;

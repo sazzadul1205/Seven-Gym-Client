@@ -62,11 +62,11 @@ const TrainerScheduleParticipant = ({
 // Prop validation for TrainerScheduleParticipant component
 TrainerScheduleParticipant.propTypes = {
   refetch: PropTypes.func.isRequired,
-  TrainerBookingRequestData: PropTypes.object.isRequired,
-  TrainerBookingAcceptedData: PropTypes.object.isRequired,
+  TrainerBookingRequestData: PropTypes.array.isRequired,
+  TrainerBookingAcceptedData: PropTypes.array.isRequired,
   TrainerProfileScheduleData: PropTypes.shape({
-    trainerSchedule: PropTypes.object.isRequired,
-  }).isRequired,
+    trainerSchedule: PropTypes.object,
+  }), // No `isRequired` here
 };
 
 export default TrainerScheduleParticipant;

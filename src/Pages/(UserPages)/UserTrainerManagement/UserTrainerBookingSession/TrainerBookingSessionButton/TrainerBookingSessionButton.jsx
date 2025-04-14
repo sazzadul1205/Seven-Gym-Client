@@ -76,7 +76,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
 
       // Step 2: Delete booking from active request table
       const deleteResponse = await axiosPublic.delete(
-        `/Trainers_Booking_Request/${booking._id}`
+        `/Trainers_Booking_Request?${booking._id}`
       );
 
       // Handle success
@@ -129,7 +129,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
     try {
       // Delete booking from active request table
       const { data } = await axiosPublic.delete(
-        `/Trainers_Booking_Request/${booking._id}`
+        `/Trainers_Booking_Request?${booking._id}`
       );
 
       // Handle success
