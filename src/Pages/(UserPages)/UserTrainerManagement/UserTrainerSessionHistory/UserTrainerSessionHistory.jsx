@@ -227,7 +227,10 @@ UserTrainerSessionHistory.propTypes = {
     PropTypes.shape({
       _id: PropTypes.string.isRequired,
       trainer: PropTypes.string.isRequired,
-      trainerId: PropTypes.oneOfType([PropTypes.string, PropTypes.object]), // Handle both string and object
+      trainerId: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.shape({}), // this allows any object
+      ]),
       bookedAt: PropTypes.string.isRequired,
       totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       durationWeeks: PropTypes.number.isRequired,

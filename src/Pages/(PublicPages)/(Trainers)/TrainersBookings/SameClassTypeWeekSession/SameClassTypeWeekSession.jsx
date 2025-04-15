@@ -304,7 +304,7 @@ const SameClassTypeWeekSession = ({
                             icon={<MdLibraryAdd />}
                             iconSize="text-lg"
                             bgColor="red"
-                            px="px-4"
+                            px="px-20"
                             py="py-2"
                             disabled={true}
                             clickEvent={() => handleAddSession(classDetails)}
@@ -315,7 +315,7 @@ const SameClassTypeWeekSession = ({
                             icon={<MdLibraryAdd />}
                             iconSize="text-lg"
                             bgColor="gray"
-                            px="px-4"
+                            px="px-20"
                             py="py-2"
                             disabled={true}
                             clickEvent={() => handleAddSession(classDetails)}
@@ -326,7 +326,7 @@ const SameClassTypeWeekSession = ({
                             icon={<MdLibraryAdd />}
                             iconSize="text-lg"
                             bgColor="green"
-                            px="px-4"
+                            px="px-20"
                             py="py-2"
                             clickEvent={() => handleAddSession(classDetails)}
                           />

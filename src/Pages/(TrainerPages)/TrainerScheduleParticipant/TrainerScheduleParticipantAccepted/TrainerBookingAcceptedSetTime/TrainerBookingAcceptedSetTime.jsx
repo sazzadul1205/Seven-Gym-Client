@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 
 // Custom Hooks
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
 const TrainerBookingAcceptedSetTime = ({
   selectedAcceptedBooking,
@@ -19,12 +20,13 @@ const TrainerBookingAcceptedSetTime = ({
   // State to manage selected start date and calculated end date
   const [selectedDate, setSelectedDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Extract duration in weeks; default to 0 if not available
   const durationWeeks = selectedAcceptedBooking?.durationWeeks || 0;
 
   // Handle date input change and auto-calculate end date
-  const handleDateChange = (e) => {
+  const handleDateChange = (e) => { 
     const start = e.target.value;
     setSelectedDate(start);
     setEndDate(start && durationWeeks > 0 ? calculateEndDate(start) : "");
@@ -47,6 +49,8 @@ const TrainerBookingAcceptedSetTime = ({
     const payload = {
       startAt: selectedDate,
     };
+
+    setLoading(true);
 
     try {
       // 1. Update the main accepted booking with start date
@@ -84,6 +88,8 @@ const TrainerBookingAcceptedSetTime = ({
     } catch (error) {
       console.error("Failed to update booking or participant:", error);
       Swal.fire("Error", "Failed to update booking or participant", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -147,12 +153,16 @@ const TrainerBookingAcceptedSetTime = ({
         )}
 
         {/* Submit Button */}
-        <button
-          onClick={handleSubmit}
-          className="mt-4 w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition"
-        >
-          Set Start Time
-        </button>
+        <CommonButton
+          clickEvent={handleSubmit}
+          text={loading ? "Setting..." : "Set Start Time"}
+          width="full"
+          py="py-2"
+          px="px-4"
+          bgColor="blue"
+          borderRadius="rounded-md"
+          disabled={loading}
+        />
       </div>
     </div>
   );

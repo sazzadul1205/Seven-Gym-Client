@@ -70,7 +70,7 @@ const BookedSessionTable = ({ ScheduleByIDData }) => {
           </div>
 
           {/* Mobile View */}
-          <div className="flex md:hidden flex-col mb-6">
+          <div className="flex md:hidden flex-col pb-6">
             {ScheduleByIDData.map((s, idx) => (
               <div
                 key={`${s.id}-${idx}`}
