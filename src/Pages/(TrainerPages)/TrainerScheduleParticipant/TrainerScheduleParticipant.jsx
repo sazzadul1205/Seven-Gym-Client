@@ -2,9 +2,9 @@
 import PropTypes from "prop-types";
 
 // Import Component
+import TrainerScheduleParticipantTable from "./TrainerScheduleParticipantTable/TrainerScheduleParticipantTable";
 import TrainerScheduleParticipantReserved from "./TrainerScheduleParticipantReserved/TrainerScheduleParticipantReserved";
 import TrainerScheduleParticipantAccepted from "./TrainerScheduleParticipantAccepted/TrainerScheduleParticipantAccepted";
-import TrainerScheduleParticipantTable from "./TrainerScheduleParticipantTable/TrainerScheduleParticipantTable";
 
 const TrainerScheduleParticipant = ({
   refetch,
@@ -67,7 +67,7 @@ TrainerScheduleParticipant.propTypes = {
   TrainerBookingAcceptedData: PropTypes.array.isRequired,
   TrainerProfileScheduleData: PropTypes.shape({
     trainerSchedule: PropTypes.object,
-  }), // No `isRequired` here
+  }), 
 };
 
 export default TrainerScheduleParticipant;

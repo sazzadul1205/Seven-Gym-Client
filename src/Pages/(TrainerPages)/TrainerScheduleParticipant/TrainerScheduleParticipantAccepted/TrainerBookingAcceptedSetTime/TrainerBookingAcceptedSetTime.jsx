@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-// Import Icons
+// Icons
 import { ImCross } from "react-icons/im";
 
-// Import Import
+// Dependencies
 import PropTypes from "prop-types";
 import Swal from "sweetalert2";
 
-// Import Hooks
+// Custom Hooks
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
 const TrainerBookingAcceptedSetTime = ({
@@ -15,24 +15,30 @@ const TrainerBookingAcceptedSetTime = ({
   refetch,
 }) => {
   const axiosPublic = useAxiosPublic();
+
+  // State to manage selected start date and calculated end date
   const [selectedDate, setSelectedDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  // Extract duration in weeks; default to 0 if not available
   const durationWeeks = selectedAcceptedBooking?.durationWeeks || 0;
 
+  // Handle date input change and auto-calculate end date
   const handleDateChange = (e) => {
     const start = e.target.value;
     setSelectedDate(start);
     setEndDate(start && durationWeeks > 0 ? calculateEndDate(start) : "");
   };
 
+  // Calculate the end date based on the selected start date and duration
   const calculateEndDate = (start) => {
     const startDateObj = new Date(start);
     const resultDate = new Date(startDateObj);
     resultDate.setDate(startDateObj.getDate() + durationWeeks * 7);
-    return resultDate.toISOString().split("T")[0];
+    return resultDate.toISOString().split("T")[0]; // Format: yyyy-mm-dd
   };
 
+  // Submit selected start date and update both records
   const handleSubmit = async () => {
     if (!selectedDate) {
       return Swal.fire("Error", "Please select a start date", "error");
@@ -43,17 +49,19 @@ const TrainerBookingAcceptedSetTime = ({
     };
 
     try {
-      // 1. Update booking accepted record
+      // 1. Update the main accepted booking with start date
       const response = await axiosPublic.put(
         `/Trainer_Booking_Accepted/Update/${selectedAcceptedBooking._id}`,
         payload
       );
 
-      // 2. Then update the participant in trainer schedule
+      // 2. Update the participant's schedule as well
       if (response.status === 200) {
         const participantPayload = {
           startAt: selectedDate,
-          stripePaymentID: selectedAcceptedBooking.stripePaymentID,
+          stripePaymentID:
+            selectedAcceptedBooking?.stripePaymentID ||
+            selectedAcceptedBooking?.paymentID,
         };
 
         const participantResponse = await axiosPublic.post(
@@ -64,7 +72,7 @@ const TrainerBookingAcceptedSetTime = ({
         if (participantResponse.status === 200) {
           Swal.fire("Success", "Start date set successfully!", "success");
           handleClose();
-          refetch();
+          refetch(); // Refetch parent data to reflect changes
         } else {
           Swal.fire(
             "Warning",
@@ -79,6 +87,7 @@ const TrainerBookingAcceptedSetTime = ({
     }
   };
 
+  // Close modal and reset state
   const handleClose = () => {
     setSelectedDate("");
     setEndDate("");
@@ -87,7 +96,7 @@ const TrainerBookingAcceptedSetTime = ({
 
   return (
     <div className="modal-box max-w-lg w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black rounded-lg shadow-lg">
-      {/* Header */}
+      {/* Modal Header */}
       <div className="flex justify-between items-center border-b px-5 py-4">
         <h3 className="font-bold text-lg">Booked Sessions Details</h3>
         <ImCross
@@ -96,8 +105,9 @@ const TrainerBookingAcceptedSetTime = ({
         />
       </div>
 
-      {/* Content */}
+      {/* Modal Content */}
       <div className="p-5 space-y-5">
+        {/* Duration Info */}
         <p className="font-semibold">
           Duration:{" "}
           <span className="font-medium text-blue-700">
@@ -107,6 +117,7 @@ const TrainerBookingAcceptedSetTime = ({
           </span>
         </p>
 
+        {/* Date Picker */}
         <div className="flex flex-col gap-2">
           <label htmlFor="start-date" className="font-semibold">
             Select Start Date:
@@ -120,6 +131,7 @@ const TrainerBookingAcceptedSetTime = ({
           />
         </div>
 
+        {/* Display Selected Dates */}
         {selectedDate && (
           <div className="flex justify-between text-sm text-gray-800 bg-gray-50 rounded-md px-4 py-3 border">
             <p>
@@ -146,13 +158,14 @@ const TrainerBookingAcceptedSetTime = ({
   );
 };
 
-// Prop Types
+// Prop Type Validation
 TrainerBookingAcceptedSetTime.propTypes = {
   selectedAcceptedBooking: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     durationWeeks: PropTypes.number,
     stripePaymentID: PropTypes.string,
-  }).isRequired,
+    paymentID: PropTypes.string,
+  }),
   refetch: PropTypes.func.isRequired,
 };
 

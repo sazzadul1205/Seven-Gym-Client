@@ -1,13 +1,19 @@
+/* eslint-disable no-unused-vars */
 import { useRef, useState } from "react";
 
 // Import Icons
+import { ImCross } from "react-icons/im";
 import { MdDelete } from "react-icons/md";
 import { FaInfo, FaRegClock } from "react-icons/fa";
 import { FaTriangleExclamation } from "react-icons/fa6";
 
 // Import Package
+import Swal from "sweetalert2";
 import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
+
+// Import Hooks
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 // Import Utility
 import { calculateEndAt } from "./calculateEndAt";
@@ -18,11 +24,14 @@ import { formatDateWithTextMonth } from "./formatDateWithTextMonth ";
 import TrainerBookingAcceptedSetTime from "./TrainerBookingAcceptedSetTime/TrainerBookingAcceptedSetTime";
 import TrainerBookingInfoModal from "../../TrainerBookingRequest/TrainerBookingRequestButton/trainerBookingInfoModal/trainerBookingInfoModal";
 import TrainerBookingRequestUserBasicInfo from "../../TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+import { getRejectionReason } from "../../TrainerBookingRequest/TrainerBookingRequestButton/getRejectionReasonPrompt";
 
 const TrainerScheduleParticipantAccepted = ({
   refetch,
   TrainerBookingAcceptedData,
 }) => {
+  const axiosPublic = useAxiosPublic();
+
   // Ref to control modal visibility using native <dialog> element
   const modalRef = useRef(null);
 
@@ -38,12 +47,186 @@ const TrainerScheduleParticipantAccepted = ({
     setSelectedBooking(null);
   };
 
+  // Delete the Bookings that have Ended
+  const handleClearEndedBooking = async (booking) => {
+    const id = booking?._id;
+    if (!id) return;
+
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: "This will clear the booking permanently.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, clear it!",
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    try {
+      // Step 1: Remove _id before sending to history
+      const { _id, ...bookingDataForHistory } = booking;
+
+      await axiosPublic.post("/Trainer_Booking_History", bookingDataForHistory);
+
+      // Step 2: Delete from accepted
+      await axiosPublic.delete(`/Trainer_Booking_Accepted/Delete/${id}`);
+
+      // Step 3: Success alert
+      Swal.fire({
+        title: "Cleared!",
+        text: "The booking has been cleared.",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      // Optional: Refresh
+      // refetchBookings(); or update your local state
+    } catch (error) {
+      console.error("Error clearing ended booking:", error);
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to clear the booking. Try again.",
+        icon: "error",
+      });
+    }
+  };
+
+  const handleDropSession = async (booking) => {
+    const id = booking?._id;
+    if (!id) return;
+
+    // Step 1: Confirm Deletion
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: "This will clear the booking permanently.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, clear it!",
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    // Step 2: Ask for Drop Reason
+    const reason = await getRejectionReason();
+    if (!reason) return;
+
+    // Step 3: Ask for Refund Percentage
+    const refundPercentages = [0, 25, 50, 75, 100];
+    const totalPrice = booking?.totalPrice || 0;
+
+    const { value: selectedRefund } = await Swal.fire({
+      title: "Select Refund Percentage",
+      html: `
+      <div class="space-y-4 text-left text-sm font-medium text-gray-700">
+        <div>
+          <label class="block text-gray-800 font-semibold mb-1">Drop Reason:</label>
+          <p class="bg-gray-100 p-2 rounded text-gray-900">${reason}</p>
+        </div>
+    
+        <div>
+          <label class="block text-gray-800 font-semibold mb-1">Total Price:</label>
+          <p class="bg-gray-100 p-2 rounded text-gray-900">$${Number(
+            totalPrice
+          ).toFixed(2)}</p>
+        </div>
+    
+        <div>
+          <label class="block text-gray-800 font-semibold mb-1">Select Refund Percentage:</label>
+          <div class="flex flex-wrap gap-2">
+            ${refundPercentages
+              .map(
+                (percent) => `
+                <button type="button" 
+                  class="refund-btn px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  aria-label="Refund ${percent}%" 
+                  onclick="document.getElementById('refundPreview').textContent = 
+                    '${percent}% refund = $${(
+                  (percent / 100) *
+                  totalPrice
+                ).toFixed(2)}';
+                    document.getElementById('selectedRefundInput').value = ${percent}">
+                  ${percent}%
+                </button>`
+              )
+              .join("")}
+          </div>
+        </div>
+    
+        <input type="hidden" id="selectedRefundInput" />
+        <div id="refundPreview" class="mt-2 p-2 rounded bg-green-100 text-green-800 font-semibold">
+          Select a percentage to preview refund
+        </div>
+      </div>
+    `,
+      showCancelButton: true,
+      confirmButtonText: "Confirm",
+      preConfirm: () => {
+        const percent = document.getElementById("selectedRefundInput").value;
+        if (!percent) {
+          Swal.showValidationMessage("Please select a refund percentage.");
+        }
+        return Number(percent);
+      },
+      didOpen: () => {
+        // Style buttons if needed
+        const btns = Swal.getPopup().querySelectorAll(".refund-btn");
+        btns.forEach((btn) => {
+          btn.classList.add(
+            "hover:bg-gray-100",
+            "transition",
+            "cursor-pointer"
+          );
+        });
+      },
+    });
+
+    if (selectedRefund === undefined) return;
+
+    // Step 4: Submit to History and Delete
+    try {
+      const { _id, ...bookingDataForHistory } = booking;
+      bookingDataForHistory.dropReason = reason;
+      bookingDataForHistory.refundPercentage = selectedRefund;
+      bookingDataForHistory.estimatedRefund = (
+        (selectedRefund / 100) *
+        totalPrice
+      ).toFixed(2);
+
+      // await axiosPublic.post("/Trainer_Booking_History", bookingDataForHistory);
+      // await axiosPublic.delete(`/Trainer_Booking_Accepted/Delete/${id}`);
+      console.log(bookingDataForHistory);
+
+      Swal.fire({
+        title: "Cleared!",
+        text: `Booking archived with ${selectedRefund}% refund.`,
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      // Optionally refresh state
+      // refetchBookings();
+    } catch (error) {
+      console.error("Error during drop:", error);
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to clear the booking. Try again.",
+        icon: "error",
+      });
+    }
+  };
+
   return (
     <div className="px-5 pb-5">
       {/* Section Title */}
-      <p className="text-xl font-semibold text-black border-b-2 border-gray-700 pb-2">
+      <h3 className="text-xl font-semibold text-black border-b-2 border-gray-700 pb-2">
         Accepted Class Participant
-      </p>
+      </h3>
 
       {/* Accepted Bookings Data */}
       {TrainerBookingAcceptedData.length > 0 ? (
@@ -122,16 +305,17 @@ const TrainerScheduleParticipantAccepted = ({
 
                     {/* End At */}
                     <td className="px-4 py-3">
-                      {booking.endAt
-                        ? formatDateWithTextMonth(booking.endAt)
-                        : booking.startAt
-                        ? formatDateWithTextMonth(
-                            calculateEndAt(
-                              booking.startAt,
-                              booking.durationWeeks
-                            )
-                          )
-                        : "--/--"}
+                      {booking.status === "Ended" ? (
+                        <span className="font-bold text-red-600">Ended</span>
+                      ) : booking.endAt ? (
+                        formatDateWithTextMonth(booking.endAt)
+                      ) : booking.startAt ? (
+                        formatDateWithTextMonth(
+                          calculateEndAt(booking.startAt, booking.durationWeeks)
+                        )
+                      ) : (
+                        "--/--"
+                      )}
                     </td>
 
                     {/* Actions */}
@@ -153,46 +337,67 @@ const TrainerScheduleParticipantAccepted = ({
                           content="View Detailed Booking Info"
                         />
 
-                        {/* Conditionally Show "Set Time" Button */}
-                        {!booking.startAt && (
-                          <button
-                            id={`clock-details-btn-${booking._id}`}
-                            className="border-2 border-green-500 bg-green-100 hover:bg-green-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
-                            onClick={() => {
-                              document
-                                .getElementById(
-                                  "User_Trainer_Accepted_Time_Set"
-                                )
-                                .showModal();
-                              setSelectedAcceptedBooking(booking);
-                            }}
-                          >
-                            <FaRegClock className="text-green-500" />
-                          </button>
+                        {/* Show only if not started and not ended */}
+                        {!booking.startAt && booking.status !== "Ended" && (
+                          <>
+                            <button
+                              id={`clock-details-btn-${booking._id}`}
+                              className="border-2 border-green-500 bg-green-100 hover:bg-green-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
+                              onClick={() => {
+                                document
+                                  .getElementById(
+                                    "User_Trainer_Accepted_Time_Set"
+                                  )
+                                  .showModal();
+                                setSelectedAcceptedBooking(booking);
+                              }}
+                            >
+                              <FaRegClock className="text-green-500" />
+                            </button>
+                            <Tooltip
+                              anchorSelect={`#clock-details-btn-${booking._id}`}
+                              content="Set Start Time"
+                            />
+                          </>
                         )}
 
-                        {/* Conditionally Show "Set Time" Button */}
-                        {booking.startAt && (
-                          <button
-                            id={`drop-details-btn-${booking._id}`}
-                            className="border-2 border-red-500 bg-red-100 hover:bg-red-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
-                            onClick={() => {
-                              document
-                                .getElementById(
-                                  "User_Trainer_Accepted_Time_Set"
-                                )
-                                .showModal();
-                              setSelectedAcceptedBooking(booking);
-                            }}
-                          >
-                            <MdDelete className="text-red-500" />
-                          </button>
+                        {/* Show delete (actually set to ended) if started and not ended */}
+                        {booking.startAt && booking.status !== "Ended" && (
+                          <>
+                            <button
+                              id={`drop-details-btn-${booking._id}`}
+                              className="border-2 border-red-500 bg-red-100 hover:bg-red-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
+                              onClick={() => {
+                                handleDropSession(booking);
+                              }}
+                            >
+                              <MdDelete className="text-red-500" />
+                            </button>
+                            <Tooltip
+                              anchorSelect={`#drop-details-btn-${booking._id}`}
+                              content="Drop Class"
+                            />
+                          </>
                         )}
 
-                        <Tooltip
-                          anchorSelect={`#drop-details-btn-${booking._id}`}
-                          content="Drop Session"
-                        />
+                        {/* Show clear if status is ended */}
+                        {booking.status === "Ended" && (
+                          <>
+                            <button
+                              id={`clear-details-btn-${booking._id}`}
+                              className="border-2 border-red-500 bg-red-100 hover:bg-red-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
+                              onClick={() => {
+                                handleClearEndedBooking(booking);
+                              }}
+                            >
+                              <ImCross className="text-red-500" />
+                            </button>
+                            <Tooltip
+                              anchorSelect={`#clear-details-btn-${booking._id}`}
+                              content="Clear Booking"
+                            />
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -250,13 +455,17 @@ const TrainerScheduleParticipantAccepted = ({
                   {/* End At */}
                   <p className="flex justify-between">
                     <strong>End At:</strong>{" "}
-                    {booking.endAt
-                      ? formatDateWithTextMonth(booking.endAt)
-                      : booking.startAt
-                      ? formatDateWithTextMonth(
-                          calculateEndAt(booking.startAt, booking.durationWeeks)
-                        )
-                      : "--/--"}
+                    {booking.status === "Ended" ? (
+                      <span className="font-bold text-red-600">Ended</span>
+                    ) : booking.endAt ? (
+                      formatDateWithTextMonth(booking.endAt)
+                    ) : booking.startAt ? (
+                      formatDateWithTextMonth(
+                        calculateEndAt(booking.startAt, booking.durationWeeks)
+                      )
+                    ) : (
+                      "--/--"
+                    )}
                   </p>
                 </div>
 
@@ -279,42 +488,68 @@ const TrainerScheduleParticipantAccepted = ({
                       content="View Detailed Booking Info"
                     />
 
-                    {/* Conditionally Show "Set Time" Button */}
-                    {!booking.startAt && (
-                      <button
-                        id={`clock-details-btn-${booking._id}`}
-                        className="border-2 border-green-500 bg-green-100 hover:bg-green-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
-                        onClick={() => {
-                          document
-                            .getElementById("User_Trainer_Accepted_Time_Set")
-                            .showModal();
-                          setSelectedAcceptedBooking(booking);
-                        }}
-                      >
-                        <FaRegClock className="text-green-500" />
-                      </button>
+                    {/* Show only if not started and not ended */}
+                    {!booking.startAt && booking.status !== "Ended" && (
+                      <>
+                        <button
+                          id={`clock-details-btn-${booking._id}`}
+                          className="border-2 border-green-500 bg-green-100 hover:bg-green-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
+                          onClick={() => {
+                            document
+                              .getElementById("User_Trainer_Accepted_Time_Set")
+                              .showModal();
+                            setSelectedAcceptedBooking(booking);
+                          }}
+                        >
+                          <FaRegClock className="text-green-500" />
+                        </button>
+                        <Tooltip
+                          anchorSelect={`#clock-details-btn-${booking._id}`}
+                          content="Set Start Time"
+                        />
+                      </>
                     )}
 
-                    {/* Conditionally Show "Set Time" Button */}
-                    {booking.startAt && (
-                      <button
-                        id={`drop-details-btn-${booking._id}`}
-                        className="border-2 border-red-500 bg-red-100 hover:bg-red-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
-                        onClick={() => {
-                          document
-                            .getElementById("User_Trainer_Accepted_Time_Set")
-                            .showModal();
-                          setSelectedAcceptedBooking(booking);
-                        }}
-                      >
-                        <MdDelete className="text-red-500" />
-                      </button>
+                    {/* Show delete (actually set to ended) if started and not ended */}
+                    {booking.startAt && booking.status !== "Ended" && (
+                      <>
+                        <button
+                          id={`drop-details-btn-${booking._id}`}
+                          className="border-2 border-red-500 bg-red-100 hover:bg-red-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
+                          onClick={() => {
+                            document
+                              .getElementById("User_Trainer_Accepted_Time_Set")
+                              .showModal();
+                            setSelectedAcceptedBooking(booking);
+                          }}
+                        >
+                          <MdDelete className="text-red-500" />
+                        </button>
+                        <Tooltip
+                          anchorSelect={`#drop-details-btn-${booking._id}`}
+                          content="Mark as Ended"
+                        />
+                      </>
                     )}
 
-                    <Tooltip
-                      anchorSelect={`#drop-details-btn-${booking._id}`}
-                      content="Drop Session"
-                    />
+                    {/* Show clear if status is ended */}
+                    {booking.status === "Ended" && (
+                      <>
+                        <button
+                          id={`clear-details-btn-${booking._id}`}
+                          className="border-2 border-red-500 bg-red-100 hover:bg-red-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
+                          onClick={() => {
+                            handleClearEndedBooking(booking);
+                          }}
+                        >
+                          <ImCross className="text-red-500" />
+                        </button>
+                        <Tooltip
+                          anchorSelect={`#clear-details-btn-${booking._id}`}
+                          content="Clear Booking"
+                        />
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -341,7 +576,7 @@ const TrainerScheduleParticipantAccepted = ({
         />
       </dialog>
 
-      {/* Booking Details Modal */}
+      {/* Booking Details Time Set */}
       <dialog id="User_Trainer_Accepted_Time_Set" className="modal">
         <TrainerBookingAcceptedSetTime
           refetch={refetch}

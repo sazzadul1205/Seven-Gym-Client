@@ -6,7 +6,6 @@ import Swal from "sweetalert2";
 import PropTypes from "prop-types";
 import { useForm } from "react-hook-form";
 
-
 // Import Stripe
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 
@@ -370,7 +369,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
               isLoading={isProcessing}
               loadingText="Processing..."
               bgColor="blue" // You can customize this or use bgFromColor/bgToColor directly
-              width="1/3"
+              width="[200px]"
               py="py-2"
               textColor="text-white"
               borderRadius="rounded-lg"
@@ -436,13 +435,14 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
               </label>
             </div>
 
-            <div className="w-full md:w-1/3">
+            <div className="w-full">
               <CommonButton
                 type="submit"
                 text="Pay Now"
                 isLoading={isProcessing}
                 loadingText="Processing..."
                 bgColor="blue"
+                width="[200px]"
                 py="py-2"
                 textColor="text-white"
                 borderRadius="rounded-lg"
@@ -471,6 +471,5 @@ UserTrainerSessionPaymentForm.propTypes = {
     paymentID: PropTypes.string,
   }).isRequired,
 };
-
 
 export default UserTrainerSessionPaymentForm;
