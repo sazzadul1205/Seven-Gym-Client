@@ -14,12 +14,13 @@ import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 // Import Common Button
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
+import UserTrainerSessionPaymentFormSuccessModal from "./UserTrainerSessionPaymentFormSuccessModal/UserTrainerSessionPaymentFormSuccessModal";
 
 const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
   const axiosPublic = useAxiosPublic();
   const navigate = useNavigate();
 
-  console.log(TrainerBookingRequestByIDData);
+  const [PaymentID, setIsPaymentID] = useState(null);
 
   // Get Element & Stripe from Stripe hooks
   const stripe = useStripe();
@@ -85,6 +86,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
 
     setIsProcessing(true);
 
+
     // Step 4: Initialize Stripe Payment Intent on the server
     try {
       const res = await axiosPublic.post("/Stripe_Payment_Intent", {
@@ -148,7 +150,10 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
       };
 
       // Step 10: Save payment record on the server
-      await axiosPublic.post("/Trainer_Session_Payment", paymentPayload);
+      const res = await axiosPublic.post(
+        "/Trainer_Session_Payment",
+        paymentPayload
+      );
 
       // Step 11: Accepted Booking Schedule Update Payload
       const acceptBookingSchedulePayload = {
@@ -179,8 +184,10 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
           `/Trainers_Booking_Request?id=${TrainerBookingRequestByIDData?._id}`
         );
 
-        // Navigate the user back to their session management page
-        navigate("/User/UserTrainerManagement?tab=User-Active-Session");
+        // Set Success Full Payment and Open Payment Modal Modal
+        setIsPaymentID(res.data.paymentId);
+        document.getElementById('Session_Payment_Success_Modal').showModal()
+        
       } catch (deleteError) {
         console.error("Failed to delete booking request:", deleteError);
       }
@@ -308,7 +315,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
   return (
     <div className="m-2 p-2 rounded-xl border border-gray-400">
       {/* Title Section */}
-      <h2 className="text-xl text-center text-white font-semibold bg-linear-to-bl from-blue-200 to-blue-500 rounded-2xl py-4">
+      <h2 className="text-xl text-center text-white font-semibold bg-linear-to-bl from-blue-200 to-blue-500 rounded-2xl py-3 mb-5">
         Payment Information
       </h2>
 
@@ -397,7 +404,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
           className="text-green-600 font-semibold py-4 px-4 sm:px-6 md:px-8 max-w-xl mx-auto"
           onSubmit={handleSubmit(onSubmitWithoutPayment)}
         >
-          <p className="text-center mb-4">
+          <p className="text-center mb-4 ">
             No payment required. This session is free.
           </p>
 
@@ -456,20 +463,9 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         </form>
       )}
 
-{/*  */}
-      <dialog id="my_modal_1" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Hello!</h3>
-          <p className="py-4">
-            Press ESC key or click the button below to close
-          </p>
-          <div className="modal-action">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button className="btn">Close</button>
-            </form>
-          </div>
-        </div>
+      {/* Payment success modal */}
+      <dialog id="Session_Payment_Success_Modal" className="modal">
+        <UserTrainerSessionPaymentFormSuccessModal PaymentID={PaymentID} />
       </dialog>
     </div>
   );
