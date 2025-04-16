@@ -14,13 +14,10 @@ import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 // Import Common Button
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
-import UserTrainerSessionPaymentFormSuccessModal from "./UserTrainerSessionPaymentFormSuccessModal/UserTrainerSessionPaymentFormSuccessModal";
 
 const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
   const axiosPublic = useAxiosPublic();
   const navigate = useNavigate();
-
-  const [PaymentID, setIsPaymentID] = useState(null);
 
   // Get Element & Stripe from Stripe hooks
   const stripe = useStripe();
@@ -78,6 +75,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
     if (!confirmPayment.isConfirmed) return;
 
     let clientSecret;
+
     // Get total price from the booking data
     const totalPrice = Number(TrainerBookingRequestByIDData?.totalPrice);
     if (isNaN(totalPrice)) {
@@ -86,26 +84,40 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
 
     setIsProcessing(true);
 
-
     // Step 4: Initialize Stripe Payment Intent on the server
     try {
+      // Payment Post API
       const res = await axiosPublic.post("/Stripe_Payment_Intent", {
         totalPrice,
       });
+
+      // Fetch clientSecret
       clientSecret = res.data?.clientSecret;
-      if (!clientSecret) throw new Error("Client secret missing.");
+
+      // No clientSecret Found
+      if (!clientSecret) {
+        Swal.fire({
+          icon: "error",
+          title: "Payment Error",
+          text: "Client secret is missing. Unable to proceed with payment.",
+        });
+        return;
+      }
+
+      // Full Error
     } catch (err) {
-      console.error("Stripe init error:", err);
-      return Swal.fire(
-        "Error",
-        "Payment setup failed. Try again later.",
-        "error"
-      );
+      Swal.fire({
+        icon: "error",
+        title: "Payment Error",
+        text: `Payment setup failed. Try again later. Error: ${err}`,
+      });
     }
 
     try {
       // Step 5: Confirm card payment with Stripe
       const cardElement = elements.getElement(CardElement);
+
+      // Payment API Send
       const { paymentIntent, error } = await stripe.confirmCardPayment(
         clientSecret,
         {
@@ -116,6 +128,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         }
       );
 
+      // Payment Failed Error
       if (error) {
         return Swal.fire("Payment Failed", error.message, "error");
       }
@@ -124,6 +137,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
       const stripePaymentID = paymentIntent.id;
 
       // ===================== AcceptBooking Logic Begins =====================
+
       // Step 7: Build payload for marking the booking as accepted
       const sessionAcceptedPayload = {
         ...TrainerBookingRequestByIDData,
@@ -137,23 +151,34 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         "/Trainer_Booking_Accepted",
         sessionAcceptedPayload
       );
+
+      // Fetch the Updated Session Info from Successful Response
       const updatedSessionInfo = TrainerBookingAcceptRes.data;
+
+      // Use selectedBooking.sessions directly
+      const sessionQuery =
+        updatedSessionInfo?.sessions
+          ?.map((id) => `ids=${encodeURIComponent(id)}`)
+          .join("&") || "";
+
+      // Fetch session details by ID
+      const sessionRes = await axiosPublic.get(
+        `/Trainers_Schedule/BasicInfoByID?${sessionQuery}`
+      );
 
       // Step 9: Build payment record payload
       const paymentPayload = {
-        sessionInfo: {
+        BookingInfo: {
           ...updatedSessionInfo,
         },
+        sessionInfo: sessionRes?.data,
         cardHolder: data.cardholderName,
         paymentMethod: "Card",
         stripePaymentID,
       };
 
       // Step 10: Save payment record on the server
-      const res = await axiosPublic.post(
-        "/Trainer_Session_Payment",
-        paymentPayload
-      );
+      await axiosPublic.post("/Trainer_Session_Payment", paymentPayload);
 
       // Step 11: Accepted Booking Schedule Update Payload
       const acceptBookingSchedulePayload = {
@@ -178,23 +203,34 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
 
       // ===================== AcceptBooking Logic Ends =====================
 
-      // Step 13: Delete the original booking request to clean up active requests
       try {
+        // Step 13: Delete the original booking request to clean up active requests
         await axiosPublic.delete(
-          `/Trainers_Booking_Request?id=${TrainerBookingRequestByIDData?._id}`
+          `/Trainer_Booking_Request?id=${TrainerBookingRequestByIDData?._id}`
         );
 
-        // Set Success Full Payment and Open Payment Modal Modal
-        setIsPaymentID(res.data.paymentId);
-        document.getElementById('Session_Payment_Success_Modal').showModal()
-        
+        // Set Success Full Payment and Open Payment Modal
+        navigate("/User/UserTrainerManagement?tab=User-Active-Session");
+
+        // Show Error if Failed
       } catch (deleteError) {
-        console.error("Failed to delete booking request:", deleteError);
+        Swal.fire({
+          icon: "error",
+          title: "Delete Failed",
+          text: `Failed to delete booking request. Please try again. Error: ${deleteError}`,
+        });
       }
+
+      // Show Error is Fully Field
     } catch (err) {
-      console.error("Stripe error:", err);
-      Swal.fire("Error", "Something went wrong during payment.", "error");
+      console.error("Error:", err);
+      Swal.fire(
+        "Error",
+        "Something went wrong during booking confirmation.",
+        "error"
+      );
     } finally {
+      // Loading End
       setIsProcessing(false);
     }
   };
@@ -216,6 +252,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
       cancelButtonText: "Cancel",
     });
 
+    // If Canaled then leave swal
     if (!confirmBooking.isConfirmed) return;
 
     // Step 3: Validate total price from booking data
@@ -228,7 +265,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
     // Create a date string in the format YYYYMMDD
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+    const month = String(today.getMonth() + 1).padStart(2, "0");
     const day = String(today.getDate()).padStart(2, "0");
     const dateString = `${year}${month}${day}`;
 
@@ -237,6 +274,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
       Math.random() * 1000000
     )}_Free`;
 
+    // Start Load State
     setIsProcessing(true);
 
     try {
@@ -254,6 +292,8 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         "/Trainer_Booking_Accepted",
         sessionAcceptedPayload
       );
+
+      // Fetch the Updated Session Info from Successful Response
       const updatedSessionInfo = TrainerBookingAcceptRes.data;
 
       // Step 6: Build payment record payload with dummy payment details
@@ -290,16 +330,25 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         "success"
       );
 
-      // Step 11: Clean up by deleting the original booking request
       try {
+        // Step 11: Clean up by deleting the original booking request
         await axiosPublic.delete(
-          `/Trainers_Booking_Request?id=${TrainerBookingRequestByIDData?._id}`
+          `/Trainer_Booking_Request?id=${TrainerBookingRequestByIDData?._id}`
         );
-        // Navigate the user back to their session management page
+
+        // Set Success Full Payment and Open Payment Modal
         navigate("/User/UserTrainerManagement?tab=User-Active-Session");
+
+        // Show Error if Failed
       } catch (deleteError) {
-        console.error("Failed to delete booking request:", deleteError);
+        Swal.fire({
+          icon: "error",
+          title: "Delete Failed",
+          text: `Failed to delete booking request. Please try again. Error: ${deleteError}`,
+        });
       }
+
+      // Show Error is Fully Field
     } catch (err) {
       console.error("Error:", err);
       Swal.fire(
@@ -308,6 +357,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         "error"
       );
     } finally {
+      // Loading End
       setIsProcessing(false);
     }
   };
@@ -462,11 +512,6 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
           </div>
         </form>
       )}
-
-      {/* Payment success modal */}
-      <dialog id="Session_Payment_Success_Modal" className="modal">
-        <UserTrainerSessionPaymentFormSuccessModal PaymentID={PaymentID} />
-      </dialog>
     </div>
   );
 };
@@ -475,7 +520,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
 UserTrainerSessionPaymentForm.propTypes = {
   TrainerBookingRequestByIDData: PropTypes.shape({
     _id: PropTypes.string.isRequired,
-    totalPrice: PropTypes.number.isRequired,
+    totalPrice: PropTypes.string.isRequired,
     bookerEmail: PropTypes.string.isRequired,
     sessions: PropTypes.arrayOf(PropTypes.string).isRequired,
     paid: PropTypes.bool.isRequired,

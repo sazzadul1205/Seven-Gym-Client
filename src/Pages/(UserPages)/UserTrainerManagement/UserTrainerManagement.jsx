@@ -77,7 +77,7 @@ const UserTrainerManagement = () => {
     queryFn: async () => {
       try {
         const res = await axiosPublic.get(
-          `/Trainers_Booking_Request/Booker/${user.email}`
+          `/Trainer_Booking_Request/Booker/${user.email}`
         );
         return res.data;
       } catch (err) {
@@ -85,7 +85,8 @@ const UserTrainerManagement = () => {
           // No bookings found — not a real error
           return [];
         }
-        throw err; // Re-throw other errors (e.g., 500, 401, etc.)
+
+        throw err;
       }
     },
   });
@@ -110,7 +111,7 @@ const UserTrainerManagement = () => {
           // No bookings found — not a real error
           return [];
         }
-        throw err; // Re-throw other errors (e.g., 500, 401, etc.)
+        throw err;
       }
     },
   });

@@ -154,7 +154,7 @@ const TrainerScheduleParticipantReserved = ({
 
       // Step 5: Send PATCH request to update booking status
       const bookingResponse = await axiosPublic.patch(
-        `/Trainers_Booking_Request/${booking._id}`,
+        `/Trainer_Booking_Request/${booking._id}`,
         bookingCancelData
       );
 

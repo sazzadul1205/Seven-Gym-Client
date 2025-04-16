@@ -39,7 +39,7 @@ const UserTrainerSessionPayment = () => {
     queryKey: ["TrainerBookingRequestByID", id],
     queryFn: () =>
       axiosPublic
-        .get(`/Trainers_Booking_Request/${id}`)
+        .get(`/Trainer_Booking_Request/${id}`)
         .then((res) => res.data),
   });
 

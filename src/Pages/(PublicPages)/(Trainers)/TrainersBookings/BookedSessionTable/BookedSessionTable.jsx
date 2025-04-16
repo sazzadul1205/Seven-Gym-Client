@@ -142,7 +142,7 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
     };
 
     try {
-      const res = await axiosPublic.post("/Trainers_Booking_Request", payload);
+      const res = await axiosPublic.post("/Trainer_Booking_Request", payload);
 
       if (res.data?.requestId) {
         await Swal.fire({

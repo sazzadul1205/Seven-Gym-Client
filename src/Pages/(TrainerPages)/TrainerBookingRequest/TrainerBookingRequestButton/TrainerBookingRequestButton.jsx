@@ -75,7 +75,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
 
       // Step 3: Update booking status
       const updateRes = await axiosPublic.patch(
-        `/Trainers_Booking_Request/${booking._id}`,
+        `/Trainer_Booking_Request/${booking._id}`,
         bookingUpdatePayload
       );
       if (!updateRes.data?.message) {
@@ -133,7 +133,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
 
     // Step 3: Update backend booking status to "Rejected"
     try {
-      await axiosPublic.patch(`/Trainers_Booking_Request/${booking._id}`, {
+      await axiosPublic.patch(`/Trainer_Booking_Request/${booking._id}`, {
         status: "Rejected",
         rejectedAt: getFormattedStartDate(),
         reason: reason,
@@ -172,7 +172,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
     try {
       // Here, we assume deletion by booking ID in query parameter is corrected on backend.
       const response = await axiosPublic.delete(
-        `/Trainers_Booking_Request?id=${booking._id}`
+        `/Trainer_Booking_Request?id=${booking._id}`
       );
       if (response.data?.message) {
         Swal.fire({
@@ -225,7 +225,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
 
     try {
       const bookingResponse = await axiosPublic.patch(
-        `/Trainers_Booking_Request/${booking._id}`,
+        `/Trainer_Booking_Request/${booking._id}`,
         bookingCancelData
       );
       if (
@@ -277,7 +277,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
 
     // Step 3: Update backend booking status to "Rejected"
     try {
-      await axiosPublic.patch(`/Trainers_Booking_Request/${booking._id}`, {
+      await axiosPublic.patch(`/Trainer_Booking_Request/${booking._id}`, {
         status: "Unavailable",
         rejectedAt: getFormattedStartDate(),
         reason: "Some Sessions are Already Fully Booked",
@@ -392,8 +392,13 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
 TrainerBookingRequestButton.propTypes = {
   booking: PropTypes.shape({
     _id: PropTypes.string.isRequired,
-    status: PropTypes.oneOf(["Pending", "Accepted", "Rejected", "Expired"])
-      .isRequired,
+    status: PropTypes.oneOf([
+      "Pending",
+      "Accepted",
+      "Rejected",
+      "Expired",
+      "Unavailable",
+    ]).isRequired,
     bookedAt: PropTypes.string.isRequired,
     trainer: PropTypes.string.isRequired,
     bookerEmail: PropTypes.string.isRequired,

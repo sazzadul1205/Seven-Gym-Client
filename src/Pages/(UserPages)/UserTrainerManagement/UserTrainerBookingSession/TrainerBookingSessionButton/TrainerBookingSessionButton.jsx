@@ -99,7 +99,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
 
       // Delete from main request table
       const deleteResponse = await axiosPublic.delete(
-        `/Trainers_Booking_Request?id=${booking._id}`
+        `/Trainer_Booking_Request?id=${booking._id}`
       );
 
       if (deleteResponse.data?.message) {
@@ -181,7 +181,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
 
       // Delete the booking
       const { data } = await axiosPublic.delete(
-        `/Trainers_Booking_Request?id=${booking._id}` // ✅ Fixed query param
+        `/Trainer_Booking_Request?id=${booking._id}` // ✅ Fixed query param
       );
 
       if (data?.success || data?.message) {

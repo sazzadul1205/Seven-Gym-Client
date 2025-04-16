@@ -54,7 +54,6 @@ const TrainerScheduleParticipantTable = ({ days, sortedTimes, schedule }) => {
       .getElementById("Trainer_Schedule_Participant_Table_More_Modal")
       .showModal();
     setSelectedCellParticipants(participants);
-
   };
 
   return (
@@ -129,7 +128,7 @@ const TrainerScheduleParticipantTable = ({ days, sortedTimes, schedule }) => {
                             >
                               <span>Limit:</span>
                               <span className="font-bold">
-                                {session.participant.length}/
+                                {session.participant.length || 0}/
                                 {session.participantLimit}
                               </span>
                               <FaUserCheck size={14} />

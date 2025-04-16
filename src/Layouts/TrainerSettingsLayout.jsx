@@ -28,6 +28,7 @@ import TrainerScheduleParticipant from "../Pages/(TrainerPages)/TrainerScheduleP
 // Import Utility
 import { fetchTierBadge } from "../Utility/fetchTierBadge";
 import { getGenderIcon } from "../Utility/getGenderIcon";
+import TrainerScheduleHistory from "../Pages/(TrainerPages)/TrainerScheduleHistory/TrainerScheduleHistory";
 
 const TrainerSettingsLayout = () => {
   const { user, logOut } = useAuth();
@@ -39,6 +40,9 @@ const TrainerSettingsLayout = () => {
 
   // State Management
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Refetch Spin state
+  const [spinning, setSpinning] = useState(false);
 
   // Extract tab parameter from URL
   const searchParams = new URLSearchParams(location.search);
@@ -114,7 +118,7 @@ const TrainerSettingsLayout = () => {
     queryKey: ["TrainerBookingRequestData", TrainerProfileData?.name],
     queryFn: () =>
       axiosPublic
-        .get(`/Trainers_Booking_Request/Trainer/${TrainerProfileData?.name}`)
+        .get(`/Trainer_Booking_Request/Trainer/${TrainerProfileData?.name}`)
         .then((res) => res.data),
     enabled: !!TrainerProfileData?.name,
   });
@@ -134,13 +138,31 @@ const TrainerSettingsLayout = () => {
     enabled: !!TrainerProfileData?.name,
   });
 
+  // Fetch Trainer Booking Accepted Data
+  const {
+    data: TrainerBookingHistoryData = [],
+    isLoading: TrainerBookingHistoryIsLoading,
+    error: TrainerBookingHistoryError,
+    refetch: TrainerBookingHistoryRefetch,
+  } = useQuery({
+    queryKey: ["TrainerBookingHistoryData", TrainerProfileData?.name],
+    queryFn: () =>
+      axiosPublic
+        .get(`/Trainer_Booking_History`)
+        .then((res) => res.data),
+    enabled: !!TrainerProfileData?.name,
+  });
+
   // Unified refetch function
   const refetchAll = async () => {
     await TrainerRefetch();
     await TrainerScheduleRefetch();
     await TrainerBookingRequestRefetch();
+    await TrainerBookingHistoryRefetch();
     await TrainerBookingAcceptedRefetch();
   };
+
+  console.log("Trainer Booking History Data :", TrainerBookingHistoryData);
 
   // Tabs List
   const tabs = [
@@ -205,6 +227,13 @@ const TrainerSettingsLayout = () => {
         />
       ),
     },
+    // Schedule Participant Tab
+    {
+      id: "Schedule_History",
+      Icon: "https://i.ibb.co.com/gM88HmKm/clock.png ",
+      title: "Session History",
+      content: <TrainerScheduleHistory refetch={refetchAll} />,
+    },
     // Add more tabs as needed
   ];
 
@@ -214,7 +243,8 @@ const TrainerSettingsLayout = () => {
     ClassTypesDataIsLoading ||
     TrainerScheduleIsLoading ||
     TrainerBookingRequestIsLoading ||
-    TrainerBookingAcceptedIsLoading
+    TrainerBookingAcceptedIsLoading ||
+    TrainerBookingHistoryIsLoading
   )
     return <Loading />;
 
@@ -224,7 +254,8 @@ const TrainerSettingsLayout = () => {
     ClassTypesDataError ||
     TrainerScheduleError ||
     TrainerBookingRequestError ||
-    TrainerBookingAcceptedError
+    TrainerBookingAcceptedError ||
+    TrainerBookingHistoryError
   )
     return <FetchingError />;
 
@@ -252,6 +283,16 @@ const TrainerSettingsLayout = () => {
 
   // Get gender details (icon + label)
   const { icon } = getGenderIcon(TrainerProfileData?.gender);
+
+  // Handle Refetch Spin
+  const handleClick = () => {
+    if (spinning) return; // Prevent spam clicks
+    setSpinning(true);
+    refetchAll();
+
+    // Stop spinning after 1 second (adjust as needed)
+    setTimeout(() => setSpinning(false), 1000);
+  };
 
   return (
     <div className="min-h-screen bg-white ">
@@ -296,15 +337,15 @@ const TrainerSettingsLayout = () => {
         </div>
 
         {/* Log out button */}
-        <div
-          className="hidden md:flex w-full md:w-auto my-auto justify-end gap-2"
-          onClick={() => refetchAll()}
-        >
-          <button className="bg-linear-to-bl hover:bg-linear-to-tr from-yellow-300 to-yellow-600 p-2 rounded-lg cursor-pointer">
+        <div className="hidden md:flex w-full md:w-auto my-auto justify-end gap-2">
+          <button
+            className="bg-gradient-to-bl from-yellow-300 to-yellow-600 hover:from-yellow-400 hover:to-yellow-700 p-2 rounded-lg cursor-pointer"
+            onClick={handleClick}
+          >
             <img
               src="https://i.ibb.co.com/Wp0ymPyY/refresh.png"
               alt="Refresh Icon"
-              className="w-[25px] h-[25px]"
+              className={`w-[25px] h-[25px] ${spinning ? "animate-spin" : ""}`}
             />
           </button>
 
