@@ -166,49 +166,28 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
 
     if (!result.isConfirmed) return;
 
-    try {
-      // For Pending, optionally archive before deletion
-      if (isPending) {
-        const { _id, ...rest } = booking;
-        const archivedBooking = {
-          ...rest,
-          status: "Deleted",
-          deletedAt: new Date().toISOString(),
-        };
+    // Delete the booking
+    const { data } = await axiosPublic.delete(
+      `/Trainer_Booking_Request?id=${booking._id}`
+    );
 
-        await axiosPublic.post("/Trainer_Booking_History", archivedBooking);
-      }
+    if (data?.success || data?.message) {
+      Swal.fire({
+        icon: "success",
+        title: isPending ? "Booking Cancelled" : "Expired Booking Removed",
+        text: isPending
+          ? "The pending booking was cancelled successfully."
+          : "The expired booking was removed.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
 
-      // Delete the booking
-      const { data } = await axiosPublic.delete(
-        `/Trainer_Booking_Request?id=${booking._id}` // ✅ Fixed query param
-      );
-
-      if (data?.success || data?.message) {
-        Swal.fire({
-          icon: "success",
-          title: isPending ? "Booking Cancelled" : "Expired Booking Removed",
-          text: isPending
-            ? "The pending booking was cancelled successfully."
-            : "The expired booking was removed.",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-
-        refetch();
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Failed",
-          text: data?.message || "Could not process the request.",
-        });
-      }
-    } catch (error) {
-      console.error("Booking cancel error:", error);
+      refetch();
+    } else {
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: "Something went wrong while processing the cancellation.",
+        title: "Failed",
+        text: data?.message || "Could not process the request.",
       });
     }
   };
