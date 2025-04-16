@@ -48,6 +48,8 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
   // Ref to control modal visibility using native <dialog> element
   const modalRef = useRef(null);
 
+  const modalRefClock = useRef(null);
+
   // State to track which booking is selected for modal view
   const [selectedBooking, setSelectedBooking] = useState(null);
 
@@ -58,6 +60,12 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
   const closeModal = () => {
     modalRef.current?.close();
     setSelectedBooking(null);
+  };
+
+  // Modal close handler
+  const closeClockModal = () => {
+    modalRefClock.current?.close();
+    setSelectedAcceptedBooking(null);
   };
 
   // 🔹 Function: Clear a Booking that has already ended
@@ -165,6 +173,7 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
       // ✅ Enrich booking data for archiving
       bookingDataForHistory.droppedAt = todayDateTime;
       bookingDataForHistory.status = "Dropped";
+      bookingDataForHistory.reason = reason;
       bookingDataForHistory.RefundAmount = refundAmount;
 
       // ✅ Refund transaction details
@@ -262,9 +271,7 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
             id={`clock-details-btn-${booking._id}`}
             className="border-2 border-green-500 bg-green-100 hover:bg-green-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
             onClick={() => {
-              document
-                .getElementById("User_Trainer_Accepted_Time_Set")
-                .showModal();
+              modalRefClock.current?.showModal();
               setSelectedAcceptedBooking(booking);
             }}
           >
@@ -328,9 +335,14 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
       </dialog>
 
       {/* Booking Details Time Set */}
-      <dialog id="User_Trainer_Accepted_Time_Set" className="modal">
+      <dialog
+        ref={modalRefClock}
+        id="User_Trainer_Accepted_Time_Set"
+        className="modal"
+      >
         <TrainerBookingAcceptedSetTime
           refetch={refetch}
+          closeClockModal={closeClockModal}
           selectedAcceptedBooking={selectedAcceptedBooking}
         />
       </dialog>

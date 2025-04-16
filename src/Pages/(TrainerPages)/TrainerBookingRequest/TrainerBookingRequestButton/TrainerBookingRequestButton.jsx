@@ -198,6 +198,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
 
   // Function: Cancel Accepted Booking and Remove Participant
   const handleCancelAcceptedBooking = async (booking) => {
+    // Step 1: Ask for confirmation before canceling
     const confirmCancel = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to cancel this booking?",
@@ -206,17 +207,25 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
       confirmButtonText: "Yes, Cancel it",
       cancelButtonText: "No, Keep it",
     });
+
+    // Step 2: Exit early if user cancels the confirmation dialog
     if (!confirmCancel.isConfirmed) return;
 
+    // Step 3: Ask for a reason for cancellation
     const reason = await getRejectionReason();
+
+    // Step 4: Exit early if no reason is provided
     if (!reason) return;
 
+    // Step 5: Prepare the payload to cancel the booking
     const bookingCancelData = {
       status: "Cancelled",
       reason: reason,
       cancelAt: getFormattedStartDate(),
       paid: false,
     };
+
+    // Step 6: Prepare the payload to remove the participant from the trainer's schedule
     const removeParticipantData = {
       trainerName: booking.trainer,
       ids: booking.sessions,
@@ -224,26 +233,35 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
     };
 
     try {
+      // Step 7: Send cancellation request to the booking API
       const bookingResponse = await axiosPublic.patch(
         `/Trainer_Booking_Request/${booking._id}`,
         bookingCancelData
       );
+
+      // Step 8: Validate response from booking cancellation
       if (
         !bookingResponse.data?.message &&
         bookingResponse.data !== "Booking updated successfully."
       ) {
         throw new Error("Failed to cancel booking.");
       }
+
+      // Step 9: Send request to remove participant from the trainer schedule
       const removeResponse = await axiosPublic.put(
         "/Trainers_Schedule/RemoveParticipant",
         removeParticipantData
       );
+
+      // Step 10: Validate response from participant removal
       if (
         !removeResponse.data?.message &&
         removeResponse.data !== "Participant removed successfully."
       ) {
         throw new Error("Failed to remove participant.");
       }
+
+      // Step 11: Show success alert to the user
       Swal.fire({
         icon: "success",
         title: "Cancelled!",
@@ -251,8 +269,11 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
         timer: 1500,
         showConfirmButton: false,
       });
+
+      // Step 12: Refresh the data
       refetch();
     } catch (error) {
+      // Step 13: Handle and display errors during the process
       console.error("Error cancelling booking:", error);
       Swal.fire({
         icon: "error",

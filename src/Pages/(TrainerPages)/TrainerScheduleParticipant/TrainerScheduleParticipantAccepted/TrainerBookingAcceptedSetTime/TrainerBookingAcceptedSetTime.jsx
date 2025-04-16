@@ -13,6 +13,7 @@ import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
 const TrainerBookingAcceptedSetTime = ({
   selectedAcceptedBooking,
+  closeClockModal,
   refetch,
 }) => {
   const axiosPublic = useAxiosPublic();
@@ -26,7 +27,7 @@ const TrainerBookingAcceptedSetTime = ({
   const durationWeeks = selectedAcceptedBooking?.durationWeeks || 0;
 
   // Handle date input change and auto-calculate end date
-  const handleDateChange = (e) => { 
+  const handleDateChange = (e) => {
     const start = e.target.value;
     setSelectedDate(start);
     setEndDate(start && durationWeeks > 0 ? calculateEndDate(start) : "");
@@ -94,10 +95,10 @@ const TrainerBookingAcceptedSetTime = ({
   };
 
   // Close modal and reset state
-  const handleClose = () => {
+  const handleClose = async () => {
     setSelectedDate("");
     setEndDate("");
-    document.getElementById("User_Trainer_Accepted_Time_Set").close();
+    await closeClockModal();
   };
 
   return (
@@ -177,6 +178,7 @@ TrainerBookingAcceptedSetTime.propTypes = {
     paymentID: PropTypes.string,
   }),
   refetch: PropTypes.func.isRequired,
+  closeClockModal: PropTypes.func,
 };
 
 export default TrainerBookingAcceptedSetTime;

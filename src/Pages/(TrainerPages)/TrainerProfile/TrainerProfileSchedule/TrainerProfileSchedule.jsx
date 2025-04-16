@@ -160,7 +160,6 @@ const TrainerProfileSchedule = ({ TrainerDetails, TrainerSchedule }) => {
   );
 };
 
-// PropTypes for TrainerProfileSchedule component
 TrainerProfileSchedule.propTypes = {
   TrainerDetails: PropTypes.shape({
     name: PropTypes.string,
@@ -174,7 +173,7 @@ TrainerProfileSchedule.propTypes = {
           start: PropTypes.string.isRequired,
           end: PropTypes.string.isRequired,
           classType: PropTypes.string.isRequired,
-          participant: PropTypes.object,
+          participant: PropTypes.array, // <- FIXED THIS LINE
           participantLimit: PropTypes.oneOfType([
             PropTypes.number,
             PropTypes.string,
