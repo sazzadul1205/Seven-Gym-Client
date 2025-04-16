@@ -145,10 +145,10 @@ const TrainerSettingsLayout = () => {
     error: TrainerBookingHistoryError,
     refetch: TrainerBookingHistoryRefetch,
   } = useQuery({
-    queryKey: ["TrainerBookingHistoryData", TrainerProfileData?.name],
+    queryKey: ["TrainerBookingHistoryData", TrainerProfileData?._id],
     queryFn: () =>
       axiosPublic
-        .get(`/Trainer_Booking_History`)
+        .get(`/Trainer_Booking_History/Trainer/${TrainerProfileData?._id}`)
         .then((res) => res.data),
     enabled: !!TrainerProfileData?.name,
   });
@@ -161,8 +161,6 @@ const TrainerSettingsLayout = () => {
     await TrainerBookingHistoryRefetch();
     await TrainerBookingAcceptedRefetch();
   };
-
-  console.log("Trainer Booking History Data :", TrainerBookingHistoryData);
 
   // Tabs List
   const tabs = [
@@ -232,7 +230,12 @@ const TrainerSettingsLayout = () => {
       id: "Schedule_History",
       Icon: "https://i.ibb.co.com/gM88HmKm/clock.png ",
       title: "Session History",
-      content: <TrainerScheduleHistory refetch={refetchAll} />,
+      content: (
+        <TrainerScheduleHistory
+          refetch={refetchAll}
+          TrainerBookingHistoryData={TrainerBookingHistoryData}
+        />
+      ),
     },
     // Add more tabs as needed
   ];

@@ -1,10 +1,7 @@
+const TrainerScheduleHistory = ({ TrainerBookingHistoryData }) => {
+//   console.log(TrainerBookingHistoryData);
 
-const TrainerScheduleHistory = () => {
-    return (
-        <div>
-            
-        </div>
-    );
+  return <div></div>;
 };
 
 export default TrainerScheduleHistory;
