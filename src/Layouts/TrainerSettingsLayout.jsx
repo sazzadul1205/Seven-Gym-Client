@@ -234,6 +234,7 @@ const TrainerSettingsLayout = () => {
         <TrainerScheduleHistory
           refetch={refetchAll}
           TrainerBookingHistoryData={TrainerBookingHistoryData}
+          TrainerBookingAcceptedData={TrainerBookingAcceptedData}
         />
       ),
     },

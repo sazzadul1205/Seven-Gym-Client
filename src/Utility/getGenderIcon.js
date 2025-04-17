@@ -6,19 +6,19 @@ export const getGenderIcon = (gender) => {
   const genderData = {
     Male: {
       icon: React.createElement(IoMdMale, {
-        className: "text-blue-500 font-bold",
+        className: "text-blue-500 text-2xl font-bold",
       }),
       label: "Male",
     },
     Female: {
       icon: React.createElement(IoMdFemale, {
-        className: "text-pink-500 font-bold",
+        className: "text-pink-500 text-2xl font-bold",
       }),
       label: "Female",
     },
     Other: {
       icon: React.createElement(MdOutlinePeopleAlt, {
-        className: "text-gray-500 font-bold",
+        className: "text-gray-500 text-2xl font-bold",
       }),
       label: "Other",
     },
@@ -27,7 +27,7 @@ export const getGenderIcon = (gender) => {
   return (
     genderData[gender] || {
       icon: React.createElement(MdOutlinePeopleAlt, {
-        className: "text-gray-500 text-2xl",
+        className: "text-gray-500  text-2xl",
       }),
       label: "Not specified",
     }

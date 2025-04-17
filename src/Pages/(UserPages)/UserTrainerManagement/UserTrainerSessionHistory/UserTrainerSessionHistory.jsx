@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 
 // Import Packages
 import PropTypes from "prop-types";
+
 import { Tooltip } from "react-tooltip";
 
 // Import Icons
@@ -221,23 +222,19 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
   );
 };
 
-// Prop Validation
 UserTrainerSessionHistory.propTypes = {
   TrainersBookingHistoryData: PropTypes.arrayOf(
     PropTypes.shape({
       _id: PropTypes.string.isRequired,
       trainer: PropTypes.string.isRequired,
-      trainerId: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.shape({}), // this allows any object
-      ]),
-      bookedAt: PropTypes.string.isRequired,
-      totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      bookedAt: PropTypes.string.isRequired, // assuming ISO string date
+      totalPrice: PropTypes.number.isRequired,
       durationWeeks: PropTypes.number.isRequired,
-      status: PropTypes.string.isRequired,
-      expiredAt: PropTypes.oneOfType([PropTypes.string, PropTypes.null]),
+      status: PropTypes.oneOf(["Accepted", "Rejected", "Expired", "Pending"]).isRequired,
+      reason: PropTypes.string, // optional
     })
   ).isRequired,
 };
+
 
 export default UserTrainerSessionHistory;

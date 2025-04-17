@@ -1,7 +1,5 @@
 // Import Icons
 import { ImCross } from "react-icons/im";
-import { MdOutlinePeopleAlt } from "react-icons/md";
-import { IoMdFemale, IoMdMale } from "react-icons/io";
 
 // Import Hooks
 import Loading from "../../../../../Shared/Loading/Loading";
@@ -12,32 +10,10 @@ import FetchingError from "../../../../../Shared/Component/FetchingError";
 import PropTypes from "prop-types";
 import { useQuery } from "@tanstack/react-query";
 
-// Format date to "DD-Month-YYYY HH:MM AM/PM"
-const formatDate = (dateStr) => {
-  const date = new Date(dateStr);
-  const day = date.getDate();
-  const month = date.toLocaleString("default", { month: "long" });
-  const year = date.getFullYear();
-  let hours = date.getHours();
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const amps = hours >= 12 ? "PM" : "AM";
-  hours = hours % 12 || 12;
-
-  return `${String(day).padStart(
-    2,
-    "0"
-  )}-${month}-${year} ${hours}:${minutes} ${amps}`;
-};
-
-// Convert 'DD-MM-YYYY T HH:mm' to ISO format
-const fixDateFormat = (dateStr) => {
-  const parts = dateStr.split("T");
-  if (parts.length === 2) {
-    const [day, month, year] = parts[0].split("-");
-    return `${year}-${month}-${day}T${parts[1]}:00`;
-  }
-  return dateStr;
-};
+// Import Utility
+import { formatTimeTo12Hour } from "../../../../../Utility/formatTimeTo12Hour";
+import { getGenderIcon } from "../../../../../Utility/getGenderIcon";
+import { formatDate } from "../../../../../Utility/formatDate";
 
 // Return style string for tier badge
 const getTierBadge = (tier) => {
@@ -50,51 +26,6 @@ const getTierBadge = (tier) => {
   };
 
   return tierStyles[tier] || "bg-gray-200 text-gray-700 ring-2 ring-gray-300";
-};
-
-// Return gender icon and label
-const getGenderIcon = (gender) => {
-  if (!gender) {
-    return {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 text-3xl" />,
-      label: "Not specified",
-    };
-  }
-
-  const normalizedGender =
-    gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase();
-
-  const genderData = {
-    Male: {
-      icon: <IoMdMale className="text-blue-500 text-3xl font-bold" />,
-      label: "Male",
-    },
-    Female: {
-      icon: <IoMdFemale className="text-pink-500 text-3xl font-bold" />,
-      label: "Female",
-    },
-    Other: {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 text-3xl font-bold" />,
-      label: "Other",
-    },
-  };
-
-  return (
-    genderData[normalizedGender] || {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 text-3xl" />,
-      label: "Not specified",
-    }
-  );
-};
-
-// Convert 24-hour time to 12-hour AM/PM format
-const formatTimeTo12Hour = (time) => {
-  if (!time) return "";
-  const [hour, minute] = time.split(":");
-  const h = parseInt(hour, 10);
-  const amPm = h >= 12 ? "PM" : "AM";
-  const formattedHour = h % 12 === 0 ? 12 : h % 12;
-  return `${formattedHour}:${minute} ${amPm}`;
 };
 
 const TrainerBookingInfoModal = ({
@@ -201,19 +132,21 @@ const TrainerBookingInfoModal = ({
               </div>
 
               {/* Email */}
-              <p className="text-xs sm:text-sm md:text-base italic text-gray-600">
+              <p className="text-center md:text-left italic text-gray-600">
                 {BookerData?.email || "Email Unavailable"}
               </p>
 
               {/* Tier Badge */}
               {BookerData?.tier && (
-                <span
-                  className={`inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-semibold ${getTierBadge(
-                    BookerData?.tier
-                  )}`}
-                >
-                  {BookerData?.tier} Tier
-                </span>
+                <div className="w-full flex justify-center sm:justify-start">
+                  <p
+                    className={`px-3 py-1 rounded-full text-xs sm:text-sm font-semibold ${getTierBadge(
+                      BookerData?.tier
+                    )}`}
+                  >
+                    {BookerData?.tier} Tier
+                  </p>
+                </div>
               )}
             </div>
           </div>
@@ -251,7 +184,7 @@ const TrainerBookingInfoModal = ({
               <strong>Booked At:</strong>
               <span>
                 {selectedBooking?.bookedAt
-                  ? formatDate(fixDateFormat(selectedBooking?.bookedAt))
+                  ? formatDate(selectedBooking?.bookedAt)
                   : "N/A"}
               </span>
             </div>
@@ -330,35 +263,44 @@ const TrainerBookingInfoModal = ({
             </div>
 
             {/* Mobile View */}
-            <div className="flex md:hidden flex-col mb-6">
+            <div className="flex md:hidden flex-col gap-4 mb-6">
               {ScheduleByIDData.map((s, idx) => (
                 <div
                   key={`${s.id}-${idx}`}
-                  className={`border border-gray-300 cursor-pointer ${
+                  className={`rounded-xl shadow-md transition-all duration-200 border ${
                     invalidSessionIds.includes(s.id)
-                      ? "bg-red-100 hover:bg-red-200 text-red-600 font-semibold"
-                      : "bg-gray-50 hover:bg-gray-200"
-                  }`}
+                      ? "bg-red-50 border-red-300 text-red-700"
+                      : "bg-white border-gray-200 text-gray-800"
+                  } p-4`}
                 >
-                  {/* Day */}
-                  <h4>{s.day}</h4>
+                  {/* Top Row: Day & ID */}
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-semibold">
+                      {s.day} : {formatTimeTo12Hour(s.time)}
+                    </span>
+                  </div>
 
                   {/* Class Type */}
-                  <p className="text-xl font-semibold">{s.classType}</p>
+                  <p className="text-lg font-bold mb-1">{s.classType}</p>
 
                   {/* Time */}
-                  <div className="flex justify-center gap-2">
-                    <p>{formatTimeTo12Hour(s.start)}</p>
-                    <span>-</span>
-                    <p>{formatTimeTo12Hour(s.end)}</p>
+                  <div className="flex justify-between items-center mb-2 text-sm">
+                    <span className="font-medium">Time:</span>
+                    <span>
+                      {formatTimeTo12Hour(s.start)} -{" "}
+                      {formatTimeTo12Hour(s.end)}
+                    </span>
                   </div>
 
                   {/* Price */}
-                  <p className="font-bold text-lg">
-                    {s.classPrice === "free" || s.classPrice === "Free"
-                      ? "Free"
-                      : `$ ${s.classPrice}`}
-                  </p>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="font-medium">Price:</span>
+                    <span className="font-bold">
+                      {s.classPrice === "free" || s.classPrice === "Free"
+                        ? "Free"
+                        : `$${s.classPrice}`}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -368,7 +310,6 @@ const TrainerBookingInfoModal = ({
           <p className="text-center text-xl font-bold">No sessions available</p>
         )}
       </div>
-
     </div>
   );
 };
@@ -382,7 +323,7 @@ TrainerBookingInfoModal.propTypes = {
     totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     status: PropTypes.string,
     bookedAt: PropTypes.string,
-  }),  
+  }),
   bookingValidity: PropTypes.bool,
   bookingInvalidReason: PropTypes.string,
 };
