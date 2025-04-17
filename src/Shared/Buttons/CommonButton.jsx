@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { ImSpinner9 } from "react-icons/im";
 
 const CommonButton = ({
   clickEvent,
@@ -60,7 +61,7 @@ const CommonButton = ({
       {isLoading ? (
         // Show loading state with spinner
         <span className="flex items-center">
-          <span className="animate-spin mr-2">🔄</span> {loadingText}
+          <span className="animate-spin mr-2"><ImSpinner9 /></span> {loadingText}
         </span>
       ) : (
         <>

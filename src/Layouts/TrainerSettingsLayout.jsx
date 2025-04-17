@@ -150,7 +150,7 @@ const TrainerSettingsLayout = () => {
       axiosPublic
         .get(`/Trainer_Booking_History/Trainer/${TrainerProfileData?._id}`)
         .then((res) => res.data),
-    enabled: !!TrainerProfileData?.name,
+    enabled: !!TrainerProfileData?._id,
   });
 
   // Unified refetch function
