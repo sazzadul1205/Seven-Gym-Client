@@ -183,6 +183,7 @@ const TrainersBookings = () => {
       {/* Payment Component */}
       <BookedSessionTable
         name={name}
+        trainer={trainer}
         listedSessions={listedSessions}
         setListedSessions={setListedSessions}
       />

@@ -80,7 +80,6 @@ createRoot(document.getElementById("root")).render(
 
             {/* Public Page Layouts */}
             <Route element={<PublicPageLayout />}>
-              {/* Public Pages Link */}
               <Route path="/Gallery" element={<Gallery />} />
               <Route path="/Trainers" element={<Trainers />} />
               <Route path="/Trainers/:name" element={<TrainersDetails />} />

@@ -4,7 +4,6 @@ import { useParams } from "react-router";
 import UserTrainerManagementBackground from "../../../assets/User-Trainer-Management-Background/UserTrainerManagementBackground.jpg";
 
 // Import Hooks
-
 import Loading from "../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
@@ -19,6 +18,8 @@ import BookedSessionTable from "../UserTrainerManagement/UserTrainerBookingSessi
 
 // Import Utility
 import { formatDate } from "../../../Utility/formatDate";
+
+// Import Form
 import UserTrainerSessionPaymentForm from "./UserTrainerSessionPaymentForm/UserTrainerSessionPaymentForm";
 
 // Stripe promise
@@ -38,9 +39,7 @@ const UserTrainerSessionPayment = () => {
   } = useQuery({
     queryKey: ["TrainerBookingRequestByID", id],
     queryFn: () =>
-      axiosPublic
-        .get(`/Trainer_Booking_Request/${id}`)
-        .then((res) => res.data),
+      axiosPublic.get(`/Trainer_Booking_Request/${id}`).then((res) => res.data),
   });
 
   // Use selectedBooking.sessions directly
@@ -176,13 +175,14 @@ const UserTrainerSessionPayment = () => {
             </div>
 
             {/* Payment */}
-            <div className="w-full sm:w-3/5 bg-white">
-              <Elements stripe={stripePromise}>
-                <UserTrainerSessionPaymentForm
-                  TrainerBookingRequestByIDData={TrainerBookingRequestByIDData}
-                />
-              </Elements>
-            </div>
+            <Elements
+              stripe={stripePromise}
+             
+            >
+              <UserTrainerSessionPaymentForm
+                TrainerBookingRequestByIDData={TrainerBookingRequestByIDData}
+              />
+            </Elements>
           </div>
 
           {/* Sessions Table */}
