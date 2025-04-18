@@ -154,12 +154,28 @@ const TrainerSettingsLayout = () => {
     enabled: !!TrainerProfileData?._id,
   });
 
+  // Fetch Trainer Booking Accepted Data
+  const {
+    data: TrainerStudentHistoryData = [],
+    isLoading: TrainerStudentHistoryIsLoading,
+    error: TrainerStudentHistoryError,
+    refetch: TrainerStudentHistoryRefetch,
+  } = useQuery({
+    queryKey: ["TrainerStudentHistory", TrainerProfileData?._id],
+    queryFn: () =>
+      axiosPublic
+        .get(`/Trainer_Student_History?trainerId=${TrainerProfileData?._id}`)
+        .then((res) => res.data),
+    enabled: !!TrainerProfileData?._id,
+  });
+
   // Unified refetch function
   const refetchAll = async () => {
     await TrainerRefetch();
     await TrainerScheduleRefetch();
     await TrainerBookingRequestRefetch();
     await TrainerBookingHistoryRefetch();
+    await TrainerStudentHistoryRefetch();
     await TrainerBookingAcceptedRefetch();
   };
 
@@ -244,7 +260,7 @@ const TrainerSettingsLayout = () => {
       id: "Students_History",
       Icon: "https://i.ibb.co.com/RTpsgqvH/user.png ",
       title: "Students History",
-      content: <TrainerStudentHistory />,
+      content: <TrainerStudentHistory TrainerStudentHistoryData={TrainerStudentHistoryData} />,
     },
     // Add more tabs as needed
   ];
@@ -255,8 +271,9 @@ const TrainerSettingsLayout = () => {
     ClassTypesDataIsLoading ||
     TrainerScheduleIsLoading ||
     TrainerBookingRequestIsLoading ||
-    TrainerBookingAcceptedIsLoading ||
-    TrainerBookingHistoryIsLoading
+    TrainerBookingHistoryIsLoading ||
+    TrainerStudentHistoryIsLoading ||
+    TrainerBookingAcceptedIsLoading
   )
     return <Loading />;
 
@@ -266,8 +283,9 @@ const TrainerSettingsLayout = () => {
     ClassTypesDataError ||
     TrainerScheduleError ||
     TrainerBookingRequestError ||
-    TrainerBookingAcceptedError ||
-    TrainerBookingHistoryError
+    TrainerBookingHistoryError ||
+    TrainerStudentHistoryError ||
+    TrainerBookingAcceptedError
   )
     return <FetchingError />;
 

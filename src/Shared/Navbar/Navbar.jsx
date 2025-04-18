@@ -93,16 +93,22 @@ const Navbar = () => {
           : "bg-transparent"
       }`}
     >
-      <div className="navbar flex-none w-full justify-between items-center px-0 lg:px-24">
+      <div className="navbar flex-none w-full justify-between items-center px-0 py-0 lg:px-24">
         {/* Navbar Start - Logo & Mobile Menu */}
-        <div className="navbar-start flex items-center">
+        <div className="navbar-start flex items-center py-0">
+          {/* Mobile Menu Toggle */}
           <label
             htmlFor="my-drawer-4"
-            className="btn btn-ghost lg:hidden drawer-button"
+            className="btn btn-ghost lg:hidden p-2 rounded-md hover:bg-white/10 transition-colors duration-200"
           >
-            <IoMenu className="text-4xl text-white" />
+            <IoMenu className="text-3xl text-white" />
           </label>
-          <NavLink to="/" className="ml-2">
+
+          {/* Logo Link */}
+          <NavLink
+            to="/"
+            className={`ml-2 rounded-md transition-all duration-200`}
+          >
             <img src={icon} alt="icon" className="w-28" />
           </NavLink>
         </div>

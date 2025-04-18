@@ -34,8 +34,6 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  console.log(TrainerBookingRequestByIDData);
-
   // Format the current date and time as "dd-mm-yyyyThh:mm"
   const date = new Date();
   const formattedDateAndTime = `${date
@@ -296,7 +294,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
   };
 
   return (
-    <div className="m-2 p-2 rounded-xl border border-gray-400 w-full sm:w-3/5 bg-white">
+    <div className="p-2 rounded-xl border border-gray-400 w-full sm:w-3/5 bg-white">
       {/* Title Section */}
       <h2 className="text-xl text-center text-white font-semibold bg-linear-to-bl from-blue-200 to-blue-500 rounded-2xl py-3 mb-5">
         Payment Information
