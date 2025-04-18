@@ -13,6 +13,15 @@ import { FaTriangleExclamation } from "react-icons/fa6";
 import UserTrainerBookingHistoryInfoModal from "./UserTrainerBookingHistoryInfoModal/UserTrainerBookingHistoryInfoModal";
 import { formatDate } from "../../../../Utility/formatDate";
 
+const parseCustomDate = (dateStr) => {
+  // Example: 16-04-2025T19:43
+  const [datePart, timePart] = dateStr.split("T");
+  const [day, month, year] = datePart.split("-");
+  const [hours, minutes] = timePart.split(":");
+
+  return new Date(year, month - 1, day, hours, minutes);
+};
+
 const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
   // Initializes a state variable for the selected booking.
   const [selectedBooking, setSelectedBooking] = useState(null);
@@ -20,19 +29,9 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
   // Create a ref for the modal
   const modalRef = useRef(null);
 
-  // Function to determine background color based on status
-  const getStatusBackgroundColor = (status) => {
-    switch (status) {
-      case "Accepted":
-        return "bg-linear-to-bl from-yellow-400 to-yellow-200";
-      case "Rejected":
-        return "bg-linear-to-bl from-red-400 to-red-200";
-      case "Expired":
-        return "bg-linear-to-bl from-gray-400 to-gray-200";
-      default:
-        return "bg-white"; // Default background (for Pending)
-    }
-  };
+  const sortedBookingHistory = [...TrainersBookingHistoryData].sort(
+    (a, b) => parseCustomDate(b.bookedAt) - parseCustomDate(a.bookedAt)
+  );
 
   // Create a close handler
   const closeModal = () => {
@@ -64,39 +63,67 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                 {/* Table Header */}
                 <thead>
                   <tr className="bg-[#A1662F] text-white">
-                    <th className="px-4 py-2 text-left">Trainer</th>
-                    <th className="px-4 py-2 text-left">Booked At</th>
-                    <th className="px-4 py-2 text-left">Total Price</th>
-                    <th className="px-4 py-2 text-left">Duration</th>
-                    <th className="px-4 py-2 text-left">Status</th>
-                    <th className="px-4 py-2 text-center">Reason</th>
-                    <th className="px-4 py-2 text-left">Action</th>
+                    {[
+                      "No",
+                      "Trainer",
+                      "Booked At",
+                      "Total Price",
+                      "Duration",
+                      "Status",
+                      "Reason",
+                      "Action",
+                    ].map((heading) => (
+                      <th
+                        key={heading}
+                        className={`px-4 py-2 border border-gray-200 ${
+                          heading === "Reason" ? "text-center" : "text-left"
+                        }`}
+                      >
+                        {heading}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
 
                 {/* Table Body */}
                 <tbody>
-                  {TrainersBookingHistoryData.map((booking) => (
+                  {sortedBookingHistory.map((booking, index) => (
                     <tr
                       key={booking._id}
-                      className={`border-b bg-white hover:bg-gray-100 ${getStatusBackgroundColor(
-                        booking.status
-                      )}`}
+                      className={`border-b bg-white hover:bg-gray-100 cursor-default`}
                     >
                       {/* Table : Trainer */}
+                      <td className="px-4 py-2 border-r border-b border-gray-400">
+                        {index + 1}
+                      </td>
+
+                      {/* Table : Trainer */}
                       <td className="px-4 py-2">{booking.trainer}</td>
+
                       {/* Table : Booked At */}
                       <td className="px-4 py-2">
                         {formatDate(booking.bookedAt)}
                       </td>
+
                       {/* Table : Total Price */}
                       <td className="px-4 py-2">$ {booking.totalPrice}</td>
+
                       {/* Table : Duration Weeks */}
                       <td className="px-4 py-2">
                         {booking.durationWeeks} Weeks
                       </td>
+
                       {/* Table : Status */}
-                      <td className="px-4 py-2">{booking.status}</td>
+                      <td className="px-4 py-2">
+                        {booking.status === "Ended" ? (
+                          <p className="text-green-500 font-semibold">
+                            Completed
+                          </p>
+                        ) : (
+                          booking.status
+                        )}
+                      </td>
+
                       {/* Table : Remaining Time */}
                       <td className="px-4 py-2 font-semibold text-sm text-center">
                         {booking?.reason && <span>{booking.reason}</span>}
@@ -106,7 +133,7 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                       <td className="flex px-4 py-2 gap-2">
                         <button
                           id={`view-details-btn-${booking._id}`} // Unique ID for each button
-                          className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                          className="border-2 border-yellow-500 bg-yellow-100 hover:bg-yellow-200 rounded-full p-2 cursor-pointer hover:scale-105"
                           onClick={() => {
                             setSelectedBooking(booking);
                             document
@@ -131,12 +158,10 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
 
             {/* Mobile View */}
             <div className="flex md:hidden flex-col space-y-4 mb-6">
-              {TrainersBookingHistoryData.map((booking) => (
+              {sortedBookingHistory.map((booking) => (
                 <div
                   key={booking._id}
-                  className={`text-black text-center ${getStatusBackgroundColor(
-                    booking.status
-                  )} mb-4 p-4 border-b`}
+                  className={`text-black text-center bg-white  mb-4 p-4 border-b`}
                 >
                   <div className="flex flex-col space-y-1">
                     {/* Trainer */}
@@ -165,7 +190,15 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                     {/* Status */}
                     <div className="flex justify-between items-center">
                       <p className="font-bold">Status:</p>
-                      <span>{booking.status}</span>
+                      <span>
+                        {booking.status === "Ended" ? (
+                          <p className="text-green-500 font-semibold">
+                            Completed
+                          </p>
+                        ) : (
+                          booking.status
+                        )}
+                      </span>
                     </div>
 
                     {/* Remaining Time */}
@@ -228,13 +261,22 @@ UserTrainerSessionHistory.propTypes = {
       _id: PropTypes.string.isRequired,
       trainer: PropTypes.string.isRequired,
       bookedAt: PropTypes.string.isRequired, // assuming ISO string date
-      totalPrice: PropTypes.number.isRequired,
+      totalPrice: PropTypes.string.isRequired,
       durationWeeks: PropTypes.number.isRequired,
-      status: PropTypes.oneOf(["Accepted", "Rejected", "Expired", "Pending"]).isRequired,
+      status: PropTypes.oneOf([
+        "Expired",
+        "Pending",
+        "Deleted",
+        "Dropped",
+        "Accepted",
+        "Rejected",
+        "Cancelled",
+        "Unavailable",
+        "Ended",
+      ]).isRequired,
       reason: PropTypes.string, // optional
     })
   ).isRequired,
 };
-
 
 export default UserTrainerSessionHistory;

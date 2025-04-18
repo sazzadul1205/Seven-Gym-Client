@@ -1,13 +1,23 @@
-import { FaTriangleExclamation } from "react-icons/fa6";
-import { useQuery } from "@tanstack/react-query";
-import useAxiosPublic from "../../../Hooks/useAxiosPublic";
-import { fetchTierBadge } from "../../../Utility/fetchTierBadge";
-import { formatDate } from "../../../Utility/formatDate";
+// import Packages
+import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
-import { MdRateReview } from "react-icons/md";
 
-/* eslint-disable react/prop-types */
+import { useQuery } from "@tanstack/react-query";
+
+// Import Hooks
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
+
+// Import Utility
+import { formatDate } from "../../../Utility/formatDate";
+import { fetchTierBadge } from "../../../Utility/fetchTierBadge";
+
+// import Icons
+import { MdRateReview } from "react-icons/md";
+import { FaTriangleExclamation } from "react-icons/fa6";
+
+// Main component that displays trainer's student history
 const TrainerStudentHistory = ({ TrainerStudentHistoryData }) => {
+  // Extract student booking history (array of objects)
   const students = TrainerStudentHistoryData?.StudentsHistory || [];
 
   return (
@@ -20,19 +30,21 @@ const TrainerStudentHistory = ({ TrainerStudentHistoryData }) => {
       {/* Divider */}
       <div className="mx-auto bg-white w-1/3 p-[1px]" />
 
-      {/* Students List */}
+      {/* Students Box */}
       <div className="py-4 px-4 md:px-10">
         {students.length > 0 ? (
+          // Display list of student cards in responsive grid
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {students.map((booking) => (
+            {students.map((booking, index) => (
               <StudentCard
-                key={booking._id}
+                key={booking?._id || index} // Fallback to index if _id is missing
                 email={booking.bookerEmail}
                 booking={booking}
               />
             ))}
           </div>
         ) : (
+          // Empty state when no students are found
           <div className="flex flex-col items-center bg-gray-100 py-5 text-black italic">
             <FaTriangleExclamation className="text-xl text-red-500 mb-2" />
             No Students
@@ -43,9 +55,42 @@ const TrainerStudentHistory = ({ TrainerStudentHistoryData }) => {
   );
 };
 
+TrainerStudentHistory.propTypes = {
+  TrainerStudentHistoryData: PropTypes.oneOfType([
+    // Case for a single object
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      trainerId: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      StudentsHistory: PropTypes.arrayOf(
+        PropTypes.shape({
+          bookerEmail: PropTypes.string.isRequired,
+          ActiveTime: PropTypes.string.isRequired,
+        })
+      ).isRequired,
+    }),
+    // Case for an array of objects
+    PropTypes.arrayOf(
+      PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        trainerId: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        StudentsHistory: PropTypes.arrayOf(
+          PropTypes.shape({
+            bookerEmail: PropTypes.string.isRequired,
+            ActiveTime: PropTypes.string.isRequired,
+          })
+        ).isRequired,
+      })
+    ),
+  ]).isRequired,
+};
+
+// Component to render individual student cards
 const StudentCard = ({ email, booking }) => {
   const axiosPublic = useAxiosPublic();
 
+  // Fetch student's basic info using their email
   const { data, isLoading, error } = useQuery({
     queryKey: ["UserBasicInfo", email],
     queryFn: () =>
@@ -53,10 +98,12 @@ const StudentCard = ({ email, booking }) => {
     enabled: !!email,
   });
 
+  // Loading state
   if (isLoading) {
     return <span className="text-xs text-gray-500">Loading...</span>;
   }
 
+  // Error state
   if (error || !data) {
     return (
       <span className="text-xs text-red-500">
@@ -67,25 +114,25 @@ const StudentCard = ({ email, booking }) => {
 
   return (
     <div
-      className={`p-4 flex flex-col gap-2 transition-colors duration-200 hover:bg-gray-100 border border-gray-300 rounded-lg text-black shadow-sm cursor-default ${
-        !booking.startAt ? "bg-green-100 hover:bg-green-50" : ""
-      }`}
+      className={`p-4 flex flex-col gap-2 transition-colors duration-200 hover:bg-gray-100 border border-gray-300 rounded-lg text-black shadow-sm cursor-default
+        ${!booking.startAt ? "bg-green-100 hover:bg-green-50" : ""}`}
     >
+      {/* Top Row: Avatar, Info, Tier Badge */}
       <div className="flex items-center gap-4">
-        {/* Avatar */}
+        {/* Student Avatar */}
         <img
           src={data.profileImage}
           alt={data.fullName || "Student"}
           className="w-16 h-16 rounded-full object-cover border"
         />
 
-        {/* User Info */}
+        {/* Student Info */}
         <div className="flex-1">
           <p className="font-semibold">{data.fullName}</p>
           <p className="text-xs text-gray-600 italic">{email}</p>
         </div>
 
-        {/* Tier Badge */}
+        {/* Tier Badge based on user tier */}
         <span
           className={`${fetchTierBadge(
             data?.tier
@@ -95,8 +142,9 @@ const StudentCard = ({ email, booking }) => {
         </span>
       </div>
 
-      {/* Booking Info */}
+      {/* Bottom Row: Last Booking Info & Review Button */}
       <div className="flex items-center justify-between">
+        {/* Last Booking Info */}
         <div className="space-y-1">
           <p className="font-bold text-sm">Last Booking:</p>
           <p className="text-sm font-normal">
@@ -104,16 +152,16 @@ const StudentCard = ({ email, booking }) => {
           </p>
         </div>
 
-        {/* Info Button with Tooltip */}
+        {/* Review/Info Button with Tooltip */}
         <div>
           <button
             id={`view-details-btn-${booking._id}`}
-            className="border-2 border-yellow-500 bg-yellow-100 hover:bg-yellow-200 rounded-full p-2 hover:scale-105 transition-transform duration-200 cursor-pointer "
+            className="border-2 border-green-500 bg-green-200 hover:bg-green-300 rounded-full p-2 hover:scale-105 transition-transform duration-200 cursor-pointer "
           >
-            <MdRateReview className="text-yellow-500" />
+            <MdRateReview className="text-green-500" />
           </button>
 
-          {/* Tooltip (assuming react-tooltip v5+) */}
+          {/* Tooltip for Review button */}
           <Tooltip
             anchorSelect={`#view-details-btn-${booking._id}`}
             content="View Review"
@@ -122,6 +170,16 @@ const StudentCard = ({ email, booking }) => {
       </div>
     </div>
   );
+};
+
+StudentCard.propTypes = {
+  email: PropTypes.string.isRequired,
+  booking: PropTypes.shape({
+    _id: PropTypes.string,
+    bookerEmail: PropTypes.string.isRequired,
+    startAt: PropTypes.string,
+    ActiveTime: PropTypes.string,
+  }).isRequired,
 };
 
 export default TrainerStudentHistory;

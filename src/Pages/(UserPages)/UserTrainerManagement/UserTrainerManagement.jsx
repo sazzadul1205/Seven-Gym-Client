@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import UserTrainerManagementBackground from "../../../assets/User-Trainer-Management-Background/UserTrainerManagementBackground.jpg";
 
 // Import Tab Content
+import UserTrainerReview from "./UserTrainerReview/UserTrainerReview";
 import UserTrainerActiveSession from "./UserTrainerActiveSession/UserTrainerActiveSession";
 import UserTrainerSessionHistory from "./UserTrainerSessionHistory/UserTrainerSessionHistory";
 import UserTrainerBookingSession from "./UserTrainerBookingSession/UserTrainerBookingSession";
@@ -39,6 +40,12 @@ const icons = [
     alt: "History",
     id: "User-Session-History",
     label: "Session's History",
+  },
+  {
+    src: "https://i.ibb.co.com/w2GjrCs/customer-satisfaction.png",
+    alt: "Review",
+    id: "User-Trainer-Review",
+    label: "Trainer's Review",
   },
 ];
 
@@ -141,18 +148,45 @@ const UserTrainerManagement = () => {
     },
   });
 
+  // Fetch User Trainer Profile
+  const {
+    data: TrainerStudentHistoryData = [],
+    isLoading: TrainerStudentHistoryIsLoading,
+    error: TrainerStudentHistoryError,
+    refetch: TrainerStudentHistoryRefetch,
+  } = useQuery({
+    enabled: !!user?.email,
+    queryKey: ["TrainerStudentHistoryData", user?.email],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainer_Student_History/ByBooker?bookerEmail=${user?.email}`
+        );
+        return res.data;
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          // No bookings found — not a real error
+          return [];
+        }
+        throw err; // Re-throw other errors (e.g., 500, 401, etc.)
+      }
+    },
+  });
+
   // Refetch Everything
-  const refetch = () => {
-    TrainersBookingRequestRefetch?.();
-    TrainersBookingHistoryRefetch?.();
-    TrainersBookingAcceptedRefetch?.();
+  const refetch = async () => {
+    await TrainersBookingRequestRefetch?.();
+    await TrainersBookingHistoryRefetch?.();
+    await TrainersBookingAcceptedRefetch?.();
+    await TrainerStudentHistoryRefetch?.();
   };
 
   // Load State
   if (
     TrainersBookingRequestIsLoading ||
     TrainersBookingHistoryIsLoading ||
-    TrainersBookingAcceptedIsLoading
+    TrainersBookingAcceptedIsLoading ||
+    TrainerStudentHistoryIsLoading
   )
     return <Loading />;
 
@@ -160,7 +194,8 @@ const UserTrainerManagement = () => {
   if (
     TrainersBookingRequestError ||
     TrainersBookingHistoryError ||
-    TrainersBookingAcceptedError
+    TrainersBookingAcceptedError ||
+    TrainerStudentHistoryError
   )
     return <FetchingError />;
 
@@ -207,6 +242,12 @@ const UserTrainerManagement = () => {
             {activeTab === "User-Session-History" && (
               <UserTrainerSessionHistory
                 TrainersBookingHistoryData={TrainersBookingHistoryData || {}}
+              />
+            )}
+            {/* User Trainer Review Tab */}
+            {activeTab === "User-Trainer-Review" && (
+              <UserTrainerReview
+                TrainerStudentHistoryData={TrainerStudentHistoryData}
               />
             )}
           </div>

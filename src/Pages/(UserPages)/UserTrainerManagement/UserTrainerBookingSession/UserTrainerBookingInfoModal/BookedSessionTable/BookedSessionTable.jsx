@@ -6,9 +6,9 @@ import { formatTimeTo12Hour } from "../../../../../../Utility/formatTimeTo12Hour
 
 const BookedSessionTable = ({ ScheduleByIDData }) => {
   return (
-    <>
+    <div className="px-5" >
       {/* Title */}
-      <h3 className="text-lg font-bold py-2">Session Bookings</h3>
+      <h3 className="text-lg font-bold p-2">Session Bookings</h3>
 
       {/* Schedule By Id  */}
       {ScheduleByIDData?.length > 0 ? (
@@ -106,7 +106,7 @@ const BookedSessionTable = ({ ScheduleByIDData }) => {
         // If No Session Available
         <p className="text-center text-xl">No sessions available</p>
       )}
-    </>
+    </div>
   );
 };
 
