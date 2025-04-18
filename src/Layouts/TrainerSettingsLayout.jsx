@@ -9,6 +9,10 @@ import { useQuery } from "@tanstack/react-query";
 import TrainerProfile from "../Pages/(TrainerPages)/TrainerProfile/TrainerProfile";
 import TrainerSchedule from "../Pages/(TrainerPages)/TrainerSchedule/TrainerSchedule";
 import TrainerDashboard from "../Pages/(TrainerPages)/TrainerDashboard/TrainerDashboard";
+import TrainerStudentHistory from "../Pages/(TrainerPages)/TrainerStudentHistory/TrainerStudentHistory";
+import TrainerBookingRequest from "../Pages/(TrainerPages)/TrainerBookingRequest/TrainerBookingRequest";
+import TrainerScheduleHistory from "../Pages/(TrainerPages)/TrainerScheduleHistory/TrainerScheduleHistory";
+import TrainerScheduleParticipant from "../Pages/(TrainerPages)/TrainerScheduleParticipant/TrainerScheduleParticipant";
 
 // Import Icons
 import { FaPowerOff } from "react-icons/fa";
@@ -22,13 +26,10 @@ import FetchingError from "../Shared/Component/FetchingError";
 
 // Import Button
 import CommonButton from "../Shared/Buttons/CommonButton";
-import TrainerBookingRequest from "../Pages/(TrainerPages)/TrainerBookingRequest/TrainerBookingRequest";
-import TrainerScheduleParticipant from "../Pages/(TrainerPages)/TrainerScheduleParticipant/TrainerScheduleParticipant";
 
 // Import Utility
-import { fetchTierBadge } from "../Utility/fetchTierBadge";
 import { getGenderIcon } from "../Utility/getGenderIcon";
-import TrainerScheduleHistory from "../Pages/(TrainerPages)/TrainerScheduleHistory/TrainerScheduleHistory";
+import { fetchTierBadge } from "../Utility/fetchTierBadge";
 
 const TrainerSettingsLayout = () => {
   const { user, logOut } = useAuth();
@@ -237,6 +238,13 @@ const TrainerSettingsLayout = () => {
           TrainerBookingAcceptedData={TrainerBookingAcceptedData}
         />
       ),
+    },
+    // Schedule Participant Tab
+    {
+      id: "Students_History",
+      Icon: "https://i.ibb.co.com/RTpsgqvH/user.png ",
+      title: "Students History",
+      content: <TrainerStudentHistory />,
     },
     // Add more tabs as needed
   ];
