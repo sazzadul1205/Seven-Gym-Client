@@ -34,6 +34,10 @@ const CommonButton = ({
       from: "from-purple-300",
       to: "to-purple-600",
     },
+    TestimonialColor: {
+      from: "from-[#A1662F]",
+      to: "to-[#CC6300C8]",
+    },
     // add other colors as needed
   };
 

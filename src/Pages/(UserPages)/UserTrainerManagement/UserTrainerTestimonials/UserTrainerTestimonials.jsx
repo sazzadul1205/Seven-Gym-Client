@@ -7,9 +7,16 @@ import { ImCross } from "react-icons/im";
 import InputField from "../../../../Shared/InputField/InputField";
 import { useForm } from "react-hook-form";
 
+import { Rating } from "@smastrom/react-rating";
+import "@smastrom/react-rating/style.css";
+import { useState } from "react";
+
 /* eslint-disable react/prop-types */
 const UserTrainerTestimonials = ({ UserEmail, TrainerStudentHistoryData }) => {
   const axiosPublic = useAxiosPublic();
+
+  // Rating State
+  const [rating, setRating] = useState(0);
 
   // UseForm Utility
   const {
@@ -21,14 +28,14 @@ const UserTrainerTestimonials = ({ UserEmail, TrainerStudentHistoryData }) => {
   const trainerNames = TrainerStudentHistoryData.map((item) => item.name);
 
   const {
-    data: dddd,
-    isLoading,
-    error,
+    data: UserBasicData,
+    isLoading: UserBasicIsLoading,
+    error: UserBasicError,
   } = useQuery({
-    queryKey: ["TrainersData", trainerNames],
+    queryKey: ["TrainersData", UserEmail],
     queryFn: async () => {
       const response = await axiosPublic.get(
-        `/Trainers/SearchTrainersByNames?names=${trainerNames.join(",")}`
+        `/Users/BasicProfile?email=${UserEmail}`
       );
       return response.data;
     },
@@ -50,8 +57,8 @@ const UserTrainerTestimonials = ({ UserEmail, TrainerStudentHistoryData }) => {
     enabled: trainerNames.length > 0,
   });
 
-  if (TrainerIsLoading) return <Loading />;
-  if (TrainerError) return <FetchingError />;
+  if (TrainerIsLoading || UserBasicIsLoading) return <Loading />;
+  if (TrainerError || UserBasicError) return <FetchingError />;
 
   // Filter out trainers that already have a testimonial from the user
   const trainersWithoutUserTestimonial = TrainersData.filter((trainer) => {
@@ -62,10 +69,16 @@ const UserTrainerTestimonials = ({ UserEmail, TrainerStudentHistoryData }) => {
 
   // Handle form submission
   const onSubmit = async (data) => {
-    console.log(data);
-  };
+    const TestimonialPayload = {
+      clientAvatar: UserBasicData.profileImage,
+      clientName: UserBasicData.fullName,
+      testimonial: data.testimonial,
+      email: UserBasicData.email,
+      rating: rating,
+    };
 
-  console.log("Trainers Data :", TrainersData[0]?.testimonials);
+    console.log("Testimonial Payload :", TestimonialPayload);
+  };
 
   return (
     <div>
@@ -101,6 +114,7 @@ const UserTrainerTestimonials = ({ UserEmail, TrainerStudentHistoryData }) => {
                 <CommonButton
                   text="Leave a Testimonial"
                   py="py-2"
+                  bgColor="TestimonialColor"
                   clickEvent={() =>
                     document
                       .getElementById("Add_Trainer_Testimonials")
@@ -114,10 +128,10 @@ const UserTrainerTestimonials = ({ UserEmail, TrainerStudentHistoryData }) => {
       </div>
 
       <dialog id="Add_Trainer_Testimonials" className="modal">
-        <div className="modal-box max-w-2xl p-0 bg-linear-to-b from-white to-gray-300 text-black">
-          {/* Header with title and close button */}
+        <div className="modal-box max-w-2xl p-0 bg-gradient-to-b from-white to-gray-100 text-black">
+          {/* Header */}
           <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
-            <h3 className="font-bold text-lg">Add New To-Do</h3>
+            <h3 className="font-bold text-lg">Leave a Testimonial</h3>
             <ImCross
               className="text-xl hover:text-[#F72C5B] cursor-pointer"
               onClick={() =>
@@ -132,11 +146,33 @@ const UserTrainerTestimonials = ({ UserEmail, TrainerStudentHistoryData }) => {
               id="testimonial"
               type="textarea"
               hight="30"
-              placeholder="Enter task testimonial"
+              placeholder="Write your feedback here..."
               register={register}
               errors={errors}
-              options={{ required: "testimonial is required" }}
+              options={{ required: "Testimonial is required" }}
             />
+
+            {/* Star Rating */}
+            <div className="flex items-center gap-4">
+              <label htmlFor="rating" className="font-medium">
+                Your Rating :
+              </label>
+              <Rating
+                style={{ maxWidth: 150 }}
+                value={rating}
+                onChange={setRating}
+                isRequired
+              />
+            </div>
+
+            <div className="flex justify-end mt-4">
+              <CommonButton
+                text="Leave a Testimonial"
+                py="py-2"
+                bgColor="TestimonialColor"
+                type="submit"
+              />
+            </div>
           </form>
         </div>
       </dialog>
