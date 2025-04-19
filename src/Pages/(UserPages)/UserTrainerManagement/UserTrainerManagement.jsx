@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import UserTrainerManagementBackground from "../../../assets/User-Trainer-Management-Background/UserTrainerManagementBackground.jpg";
 
 // Import Tab Content
-import UserTrainerReview from "./UserTrainerReview/UserTrainerReview";
+import UserTrainerTestimonials from "./UserTrainerTestimonials/UserTrainerTestimonials";
 import UserTrainerActiveSession from "./UserTrainerActiveSession/UserTrainerActiveSession";
 import UserTrainerSessionHistory from "./UserTrainerSessionHistory/UserTrainerSessionHistory";
 import UserTrainerBookingSession from "./UserTrainerBookingSession/UserTrainerBookingSession";
@@ -71,6 +71,29 @@ const UserTrainerManagement = () => {
     navigate({ search: params.toString() }, { replace: true });
     window.scrollTo(0, 0); // Scroll to top
   }, [activeTab, navigate]);
+
+  // Fetch all User Data
+  const {
+    // data: UserData = [],
+    isLoading: UserIsLoading,
+    error: UserError,
+  } = useQuery({
+    enabled: !!user?.email,
+    queryKey: ["TrainerData", user?.email],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(`/Users?email=${user.email}`);
+        return res.data;
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          // No bookings found — not a real error
+          return [];
+        }
+
+        throw err;
+      }
+    },
+  });
 
   // Fetch all Trainer Booking Request Request
   const {
@@ -183,19 +206,21 @@ const UserTrainerManagement = () => {
 
   // Load State
   if (
+    UserIsLoading ||
+    TrainerStudentHistoryIsLoading ||
     TrainersBookingRequestIsLoading ||
     TrainersBookingHistoryIsLoading ||
-    TrainersBookingAcceptedIsLoading ||
-    TrainerStudentHistoryIsLoading
+    TrainersBookingAcceptedIsLoading
   )
     return <Loading />;
 
   // Error State
   if (
+    UserError ||
+    TrainerStudentHistoryError ||
     TrainersBookingRequestError ||
     TrainersBookingHistoryError ||
-    TrainersBookingAcceptedError ||
-    TrainerStudentHistoryError
+    TrainersBookingAcceptedError
   )
     return <FetchingError />;
 
@@ -246,7 +271,8 @@ const UserTrainerManagement = () => {
             )}
             {/* User Trainer Review Tab */}
             {activeTab === "User-Trainer-Review" && (
-              <UserTrainerReview
+              <UserTrainerTestimonials
+                UserEmail={user?.email}
                 TrainerStudentHistoryData={TrainerStudentHistoryData}
               />
             )}

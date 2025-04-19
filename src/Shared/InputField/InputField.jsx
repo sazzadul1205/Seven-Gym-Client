@@ -8,6 +8,7 @@ const InputField = ({
   placeholder,
   register,
   errors,
+  hight = "20",
   options = [], // default to empty array
 }) => (
   <div>
@@ -18,7 +19,7 @@ const InputField = ({
       <textarea
         {...register(id)}
         id={id}
-        className="textarea textarea-bordered w-full rounded-lg bg-white border-gray-600"
+        className={`textarea textarea-bordered w-full rounded-lg bg-white border-gray-600 h-${hight}`}
         placeholder={placeholder}
       />
     ) : type === "select" ? (
@@ -69,6 +70,7 @@ InputField.propTypes = {
     "time", // Add "time" here
   ]),
   placeholder: PropTypes.string,
+  hight: PropTypes.string,
   register: PropTypes.func,
   errors: PropTypes.object,
   validation: PropTypes.object,
