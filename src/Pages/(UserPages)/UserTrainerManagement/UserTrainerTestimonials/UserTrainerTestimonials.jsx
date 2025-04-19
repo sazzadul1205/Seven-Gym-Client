@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 /* eslint-disable react/prop-types */
 const UserTrainerTestimonials = ({ UserEmail, TrainerStudentHistoryData }) => {
@@ -23,6 +24,7 @@ const UserTrainerTestimonials = ({ UserEmail, TrainerStudentHistoryData }) => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
 
   const trainerNames = TrainerStudentHistoryData.map((item) => item.name);
@@ -78,6 +80,36 @@ const UserTrainerTestimonials = ({ UserEmail, TrainerStudentHistoryData }) => {
     };
 
     console.log("Testimonial Payload :", TestimonialPayload);
+
+    console.log("trainer ID :", trainerId);
+
+    try {
+      const response = await axiosPublic.patch(
+        `/AddTestimonials/${trainerId}`, // Make sure trainerId is available
+        TestimonialPayload
+      );
+
+      if (response.data?.message === "Testimonial added successfully!") {
+        Swal.fire({
+          icon: "success",
+          title: "Thank you!",
+          text: "Your testimonial has been submitted.",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        // Optionally reset the form
+        reset(); // If you're using react-hook-form
+        setRating(0); // Reset rating if needed
+      }
+    } catch (error) {
+      console.error("Testimonial submission error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.response?.data?.error || "Something went wrong.",
+      });
+    }
   };
 
   return (
