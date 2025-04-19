@@ -251,16 +251,16 @@ const UserTrainerManagement = () => {
             {/* User Active Session Tab */}
             {activeTab === "User-Active-Session" && (
               <UserTrainerActiveSession
-                TrainersBookingAcceptedData={TrainersBookingAcceptedData}
                 refetch={refetch}
+                TrainersBookingAcceptedData={TrainersBookingAcceptedData}
               />
             )}
 
             {/* User Booking Session Tab */}
             {activeTab === "User-Booking-Session" && (
               <UserTrainerBookingSession
-                TrainersBookingRequestData={TrainersBookingRequestData}
                 refetch={refetch}
+                TrainersBookingRequestData={TrainersBookingRequestData}
               />
             )}
             {/* User Session History Tab */}
@@ -272,6 +272,7 @@ const UserTrainerManagement = () => {
             {/* User Trainer Review Tab */}
             {activeTab === "User-Trainer-Review" && (
               <UserTrainerTestimonials
+                refetch={refetch}
                 UserEmail={user?.email}
                 TrainerStudentHistoryData={TrainerStudentHistoryData}
               />
