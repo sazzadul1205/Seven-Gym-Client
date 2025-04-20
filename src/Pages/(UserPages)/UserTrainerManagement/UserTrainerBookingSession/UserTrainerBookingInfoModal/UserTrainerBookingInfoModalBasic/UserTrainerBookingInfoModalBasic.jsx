@@ -1,43 +1,9 @@
 import PropTypes from "prop-types";
+
+// Import Utility
 import { formatDate } from "../../../../../../Utility/formatDate";
 import { fetchTierBadge } from "../../../../../../Utility/fetchTierBadge";
-import { MdOutlinePeopleAlt } from "react-icons/md";
-import { IoMdFemale, IoMdMale } from "react-icons/io";
-
-// Return gender icon and label
-const getGenderIcon = (gender) => {
-  if (!gender) {
-    return {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 text-3xl" />,
-      label: "Not specified",
-    };
-  }
-
-  const normalizedGender =
-    gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase();
-
-  const genderData = {
-    Male: {
-      icon: <IoMdMale className="text-blue-500 text-3xl font-bold" />,
-      label: "Male",
-    },
-    Female: {
-      icon: <IoMdFemale className="text-pink-500 text-3xl font-bold" />,
-      label: "Female",
-    },
-    Other: {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 text-3xl font-bold" />,
-      label: "Other",
-    },
-  };
-
-  return (
-    genderData[normalizedGender] || {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 text-3xl" />,
-      label: "Not specified",
-    }
-  );
-};
+import { getGenderIcon } from "../../../../../../Utility/getGenderIcon";
 
 const UserTrainerBookingInfoModalBasic = ({
   SelectedTrainerData,

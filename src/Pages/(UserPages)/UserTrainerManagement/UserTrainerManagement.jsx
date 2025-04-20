@@ -72,29 +72,6 @@ const UserTrainerManagement = () => {
     window.scrollTo(0, 0); // Scroll to top
   }, [activeTab, navigate]);
 
-  // Fetch all User Data
-  const {
-    // data: UserData = [],
-    isLoading: UserIsLoading,
-    error: UserError,
-  } = useQuery({
-    enabled: !!user?.email,
-    queryKey: ["TrainerData", user?.email],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Users?email=${user.email}`);
-        return res.data;
-      } catch (err) {
-        if (err.response && err.response.status === 404) {
-          // No bookings found — not a real error
-          return [];
-        }
-
-        throw err;
-      }
-    },
-  });
-
   // Fetch all Trainer Booking Request Request
   const {
     data: TrainersBookingRequestData = [],
@@ -196,17 +173,34 @@ const UserTrainerManagement = () => {
     },
   });
 
+  // Fetch user basic data
+  const {
+    data: UserBasicData,
+    isLoading: UserBasicIsLoading,
+    error: UserBasicError,
+    refetch: UserBasicRefetch,
+  } = useQuery({
+    queryKey: ["UserBasicData", user?.email],
+    queryFn: async () => {
+      const res = await axiosPublic.get(
+        `/Users/BasicProfile?email=${user?.email}`
+      );
+      return res.data;
+    },
+  });
+
   // Refetch Everything
   const refetch = async () => {
-    await TrainersBookingRequestRefetch?.();
-    await TrainersBookingHistoryRefetch?.();
-    await TrainersBookingAcceptedRefetch?.();
+    await UserBasicRefetch?.();
     await TrainerStudentHistoryRefetch?.();
+    await TrainersBookingHistoryRefetch?.();
+    await TrainersBookingRequestRefetch?.();
+    await TrainersBookingAcceptedRefetch?.();
   };
 
   // Load State
   if (
-    UserIsLoading ||
+    UserBasicIsLoading ||
     TrainerStudentHistoryIsLoading ||
     TrainersBookingRequestIsLoading ||
     TrainersBookingHistoryIsLoading ||
@@ -216,7 +210,7 @@ const UserTrainerManagement = () => {
 
   // Error State
   if (
-    UserError ||
+    UserBasicError ||
     TrainerStudentHistoryError ||
     TrainersBookingRequestError ||
     TrainersBookingHistoryError ||
@@ -274,6 +268,7 @@ const UserTrainerManagement = () => {
               <UserTrainerTestimonials
                 refetch={refetch}
                 UserEmail={user?.email}
+                UserBasicData={UserBasicData}
                 TrainerStudentHistoryData={TrainerStudentHistoryData}
               />
             )}

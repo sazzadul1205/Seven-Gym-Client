@@ -34,9 +34,6 @@ const UserTrainerBookingHistoryInfoModal = ({
     enabled: !!selectedBooking?.trainerId,
   });
 
-  // Unpack trainer data
-  const SelectedTrainerData = TrainerData?.[0] || {};
-
   // Use selectedBooking.sessions directly
   const sessionQuery =
     selectedBooking?.sessions
@@ -86,7 +83,7 @@ const UserTrainerBookingHistoryInfoModal = ({
       {/* Basic Information : Trainer Info , Booking Details */}
       <UserTrainerBookingInfoModalBasic
         selectedBooking={selectedBooking}
-        SelectedTrainerData={SelectedTrainerData}
+        SelectedTrainerData={TrainerData}
       />
 
       {/* Sessions Table */}

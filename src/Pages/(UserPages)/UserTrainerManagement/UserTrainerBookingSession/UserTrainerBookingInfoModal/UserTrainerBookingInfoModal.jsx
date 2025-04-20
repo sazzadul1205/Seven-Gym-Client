@@ -34,9 +34,6 @@ const UserTrainerBookingInfoModal = ({ selectedBooking, closeModal }) => {
     enabled: !!selectedBooking?.trainerId,
   });
 
-  // Unpack trainer data
-  const SelectedTrainerData = TrainerData?.[0] || {};
-
   // Use selectedBooking.sessions directly
   const sessionQuery =
     selectedBooking?.sessions
@@ -86,7 +83,7 @@ const UserTrainerBookingInfoModal = ({ selectedBooking, closeModal }) => {
       {/* Basic Information : Trainer Info , Booking Details */}
       <UserTrainerBookingInfoModalBasic
         selectedBooking={selectedBooking}
-        SelectedTrainerData={SelectedTrainerData}
+        SelectedTrainerData={TrainerData}
       />
 
       {/* Sessions Table */}
@@ -238,7 +235,7 @@ UserTrainerBookingInfoModal.propTypes = {
     trainerId: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object, // accept anything — safely handle inside the component
-    ]),    
+    ]),
     sessions: PropTypes.arrayOf(PropTypes.string),
     durationWeeks: PropTypes.number,
     totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
