@@ -167,9 +167,9 @@ const UserTrainerTestimonials = ({
       title: "Are you sure?",
       text: `This will permanently delete the testimonial from ${item.email}.`,
       icon: "warning",
-      showCancelButton: true, // Give user a cancel option
-      confirmButtonColor: "#d33", // Red for delete
-      cancelButtonColor: "#3085d6", // Blue for cancel
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
       confirmButtonText: "Yes, delete it!",
     });
 
@@ -206,42 +206,56 @@ const UserTrainerTestimonials = ({
         icon: "error",
         title: "Failed to Delete",
         text:
-          error.response?.data?.error || // Prefer server error message
-          "Something went wrong while deleting testimonial.", // Fallback error
+          error.response?.data?.error ||
+          "Something went wrong while deleting testimonial.",
       });
     }
   };
 
   return (
-    <div>
+    <>
       {/* Section: Leave a Testimonial */}
-      <div>
+      <div className="py-1">
         {/* Testimonials Header */}
-        <div className="bg-[#A1662F] py-3 border border-white">
-          <h4 className="text-2xl font-bold text-center text-white">
+        <div className="bg-[#A1662F] py-4 border border-white rounded-t-lg">
+          {/* Title */}
+          <h4 className="text-xl sm:text-2xl font-bold text-center text-white">
             Leave a Testimonial
           </h4>
-          <p className="text-white text-sm text-center">
+          {/* Sub-Title */}
+          <p className="text-white text-sm sm:text-base text-center">
             Share your experience with your trainer to help others.
           </p>
         </div>
 
-        {/* Show a message if all testimonials are already submitted */}
+        {/* Check if the user has submitted testimonials for all trainers */}
         {trainersWithoutUserTestimonial.length === 0 ? (
+          // If no trainers are left to review, show this message
           <p className="text-center text-gray-800 py-5 bg-white">
             You’ve already submitted testimonials for all your trainers.
           </p>
         ) : (
-          // Otherwise, loop through each trainer without a testimonial
+          // Otherwise, iterate over each trainer who hasn't received a testimonial
           trainersWithoutUserTestimonial.map((trainer, index) => (
-            <div key={trainer._id}>
-              <div className="flex items-center justify-between bg-white border-b-2 border-gray-800 px-5 py-3">
+            // Outer container for each trainer card
+            <div
+              key={trainer._id}
+              className="bg-white border-b border-gray-300"
+            >
+              {/* Inner container for layout and spacing */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-4">
+                {/* Left side: Trainer index and name */}
                 <div className="flex gap-2 items-center">
+                  {/* Display trainer's position in the list */}
                   <p className="font-bold">{index + 1}.</p>
-                  <h4 className="text-lg font-semibold">{trainer.name}</h4>
+
+                  {/* Display trainer's name with responsive font size */}
+                  <h4 className="text-base sm:text-lg font-semibold">
+                    {trainer.name}
+                  </h4>
                 </div>
 
-                {/* Button to open modal and submit a testimonial */}
+                {/* Right side: Button to open the testimonial modal for this trainer */}
                 <CommonButton
                   text="Leave a Testimonial"
                   py="py-2"
@@ -256,33 +270,37 @@ const UserTrainerTestimonials = ({
 
       {/* Section: My Testimonials */}
       <div className="pt-10">
-        
         {/* Testimonials Header */}
-        <div className="bg-[#A1662F] py-3 border border-white">
-          <h4 className="text-2xl font-bold text-center text-white">
+        <div className="bg-[#A1662F] py-4 border border-white rounded-t-lg">
+          {/* Title */}
+          <h4 className="text-xl sm:text-2xl font-bold text-center text-white">
             My Testimonials
           </h4>
         </div>
 
-        {/* If the user hasn't submitted any testimonials yet */}
+        {/* Check if the user has submitted any testimonials at all */}
         {enrichedTestimonials.length === 0 ? (
+          // If no testimonials submitted, show this fallback message
           <p className="text-center text-gray-800 py-5 bg-white">
             You haven’t submitted any testimonials yet.
           </p>
         ) : (
-          // Otherwise, loop through and show each testimonial
+          // Otherwise, map over each testimonial submitted by the user
           enrichedTestimonials.map((item, index) => {
+            // Destructure to get gender icon component (♂️, ♀️, etc.)
             const { icon } = getGenderIcon(item.trainerGender);
 
             return (
+              // Wrapper for each testimonial card
               <div
                 key={`${item.trainerId}-${index}`}
-                className="bg-white border border-gray-300 rounded-lg shadow p-4"
+                className="bg-white border border-gray-300 rounded-lg shadow p-4 mb-4"
               >
-                {/* Testimonial Header */}
-                <div className="flex justify-between items-center border-b pb-2 mb-2">
+                {/* Header section of testimonial: image, name, tier, rating, and delete */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 mb-3 gap-3">
+                  {/* Left Side: Trainer Image + Name + Tier */}
                   <div className="flex items-center gap-3">
-                    {/* Trainer Image */}
+                    {/* Trainer's Profile Picture if available */}
                     {item.trainerImage && (
                       <img
                         src={item.trainerImage}
@@ -291,19 +309,21 @@ const UserTrainerTestimonials = ({
                       />
                     )}
 
-                    {/* Trainer Name & Tier Info */}
+                    {/* Trainer Info Block */}
                     <div>
+                      {/* Trainer Name with gender icon */}
                       <div className="flex items-center gap-2">
-                        <h4 className="text-lg font-semibold">
+                        <h4 className="text-base sm:text-lg font-semibold">
                           {item.trainerName}
                         </h4>
-                        {icon} {/* Gender Icon */}
+                        {/* Gender icon displayed beside name */}
+                        {icon}
                       </div>
 
-                      {/* Show Tier badge if available */}
+                      {/* Tier badge, styled based on the tier */}
                       {item?.trainerTier && (
                         <span
-                          className={`inline-block px-2 py-[2px] rounded-full text-xs sm:text-sm font-semibold ${fetchTierBadge(
+                          className={`inline-block mt-1 sm:mt-0 px-2 py-[2px] rounded-full text-xs sm:text-sm font-semibold ${fetchTierBadge(
                             item?.trainerTier
                           )}`}
                         >
@@ -313,34 +333,41 @@ const UserTrainerTestimonials = ({
                     </div>
                   </div>
 
-                  {/* Rating Stars */}
-                  <div className="text-sm text-yellow-600 font-semibold flex items-center gap-1">
-                    {/* Show filled stars based on rating */}
-                    {[...Array(Math.floor(item.rating))].map((_, i) => (
-                      <span key={i}>⭐</span>
-                    ))}
-                    <span className="text-gray-600">({item.rating}/5)</span>
+                  {/* Right Side: Star Rating + Delete Button */}
+                  <div className="flex items-center gap-3">
+                    {/* Show rating stars based on numeric rating */}
+                    <div className="text-sm text-yellow-600 font-semibold flex items-center gap-1">
+                      {[...Array(Math.floor(item.rating))].map((_, i) => (
+                        <span key={i}>⭐</span> // One star per rating point
+                      ))}
+                      <span className="text-gray-600">({item.rating}/5)</span>{" "}
+                      {/* Numeric rating */}
+                    </div>
+
+                    {/* Delete testimonial button with icon and tooltip */}
+                    <div className="relative">
+                      <button
+                        id={`view-details-btn-${item._id}`} // Unique ID for tooltip anchor
+                        className="border-2 border-red-500 bg-red-100 rounded-full p-2 hover:scale-105 transition-transform"
+                        onClick={() => handleDeleteTestimonials(item)} // Delete handler
+                      >
+                        <FaRegTrashAlt className="text-red-500" />
+                      </button>
+
+                      {/* Tooltip for the delete button */}
+                      <Tooltip
+                        anchorSelect={`#view-details-btn-${item._id}`}
+                        content="Delete Testimonial"
+                      />
+                    </div>
                   </div>
-
-                  {/* Delete Testimonial Button */}
-                  <button
-                    id={`view-details-btn-${item._id}`}
-                    className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                    onClick={() => handleDeleteTestimonials(item)}
-                  >
-                    <FaRegTrashAlt className="text-red-500" />
-                  </button>
-
-                  {/* Tooltip for Delete Button */}
-                  <Tooltip
-                    anchorSelect={`#view-details-btn-${item._id}`}
-                    content="Delete Testimonials"
-                  />
                 </div>
 
-                {/* Testimonial Body */}
+                {/* Body section of testimonial: actual review text */}
                 <div>
-                  <p className="mt-2 text-gray-800">{item.testimonial}</p>
+                  <p className="text-sm sm:text-base text-gray-800">
+                    {item.testimonial}
+                  </p>
                 </div>
               </div>
             );
@@ -357,7 +384,7 @@ const UserTrainerTestimonials = ({
           setSelectedTrainerId={setSelectedTrainerId}
         />
       </dialog>
-    </div>
+    </>
   );
 };
 

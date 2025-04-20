@@ -119,6 +119,11 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
                                   {formatTimeTo12Hour(s.start)} –{" "}
                                   {formatTimeTo12Hour(s.end)}
                                 </p>
+
+                                {/* Duration Weeks  */}
+                                <p className="text-xs font-semibold">
+                                  {s.durationWeeks}
+                                </p>
                               </div>
                             </div>
                           ))}

@@ -92,7 +92,7 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                       key={booking._id}
                       className={`border-b bg-white hover:bg-gray-100 cursor-default`}
                     >
-                      {/* Table : Trainer */}
+                      {/* Table : Number */}
                       <td className="px-4 py-2 border-r border-b border-gray-400">
                         {index + 1}
                       </td>

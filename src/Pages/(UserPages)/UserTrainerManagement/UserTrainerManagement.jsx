@@ -20,6 +20,7 @@ import useAuth from "../../../Hooks/useAuth";
 import Loading from "../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
+import UserSessionInvoice from "./UserSessionInvoice/UserSessionInvoice";
 
 // Tab Icons
 const icons = [
@@ -46,6 +47,12 @@ const icons = [
     alt: "Review",
     id: "User-Trainer-Review",
     label: "Trainer's Review",
+  },
+  {
+    src: "https://i.ibb.co.com/LD1shHFP/invoice.png",
+    alt: "Invoice",
+    id: "User-Session-Invoice",
+    label: "Session's Invoice",
   },
 ];
 
@@ -189,21 +196,57 @@ const UserTrainerManagement = () => {
     },
   });
 
+  // Fetch Session Payment Invoice
+  const {
+    data: SessionPaymentInvoicesData,
+    isLoading: SessionPaymentInvoicesIsLoading,
+    error: SessionPaymentInvoicesError,
+    refetch: SessionPaymentInvoicesRefetch,
+  } = useQuery({
+    queryKey: ["SessionPaymentInvoices", user?.email],
+    queryFn: async () => {
+      const res = await axiosPublic.get(
+        `/Trainer_Session_Payment?bookerEmail=${user?.email}`
+      );
+      return res.data;
+    },
+  });
+
+  // Fetch Session Refund Invoices Data
+  const {
+    data: SessionRefundInvoicesData,
+    isLoading: SessionRefundInvoicesIsLoading,
+    error: SessionRefundInvoicesError,
+    refetch: SessionRefundInvoicesRefetch,
+  } = useQuery({
+    queryKey: ["SessionPaymentInvoices", user?.email],
+    queryFn: async () => {
+      const res = await axiosPublic.get(
+        `/Trainer_Session_Payment?bookerEmail=${user?.email}`
+      );
+      return res.data;
+    },
+  });
+
   // Refetch Everything
   const refetch = async () => {
     await UserBasicRefetch?.();
     await TrainerStudentHistoryRefetch?.();
+    await SessionRefundInvoicesRefetch?.();
     await TrainersBookingHistoryRefetch?.();
     await TrainersBookingRequestRefetch?.();
+    await SessionPaymentInvoicesRefetch?.();
     await TrainersBookingAcceptedRefetch?.();
   };
 
   // Load State
   if (
     UserBasicIsLoading ||
+    SessionRefundInvoicesIsLoading ||
     TrainerStudentHistoryIsLoading ||
     TrainersBookingRequestIsLoading ||
     TrainersBookingHistoryIsLoading ||
+    SessionPaymentInvoicesIsLoading ||
     TrainersBookingAcceptedIsLoading
   )
     return <Loading />;
@@ -211,9 +254,11 @@ const UserTrainerManagement = () => {
   // Error State
   if (
     UserBasicError ||
+    SessionRefundInvoicesError ||
     TrainerStudentHistoryError ||
     TrainersBookingRequestError ||
     TrainersBookingHistoryError ||
+    SessionPaymentInvoicesError ||
     TrainersBookingAcceptedError
   )
     return <FetchingError />;
@@ -270,6 +315,13 @@ const UserTrainerManagement = () => {
                 UserEmail={user?.email}
                 UserBasicData={UserBasicData}
                 TrainerStudentHistoryData={TrainerStudentHistoryData}
+              />
+            )}
+            {/* User Trainer Review Tab */}
+            {activeTab === "User-Session-Invoice" && (
+              <UserSessionInvoice
+                SessionRefundInvoicesData={SessionRefundInvoicesData}
+                SessionPaymentInvoicesData={SessionPaymentInvoicesData}
               />
             )}
           </div>
