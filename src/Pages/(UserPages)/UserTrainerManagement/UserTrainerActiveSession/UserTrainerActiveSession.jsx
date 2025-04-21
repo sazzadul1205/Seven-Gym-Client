@@ -70,15 +70,15 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
       <div className="mx-auto bg-black w-1/3 p-[1px]" />
 
       {/* Weekly Session Section */}
-      <div className="mt-2 p-2 bg-white">
+      <div className="py-2">
         {/* Section Title */}
-        <h3 className="flex items-center gap-2 text-lg font-semibold pb-4 px-5">
+        <h3 className="bg-[#A1662F] text-white flex items-center gap-2 text-lg font-semibold px-5 py-2 ">
           <FaDotCircle />
           Weekly Session Table
         </h3>
 
         {/* Weekly Session : Desktop View */}
-        <div className="overflow-x-auto hidden md:block">
+        <div className="overflow-x-auto hidden md:block bg-white">
           {TrainersBookingAcceptedData.length > 0 ? (
             <table className="table-auto border-collapse w-full text-sm text-center text-black shadow-md">
               {/* Table Header */}
@@ -132,7 +132,7 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
                         // No sessions message
                         <div className="flex justify-center items-center h-full py-6">
                           <p className="text-red-500 font-bold italic">
-                            No sessions
+                            No Sessions Scheduled This Far This Far
                           </p>
                         </div>
                       )}
@@ -145,7 +145,7 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
             // Fallback message for desktop view when no sessions exist
             <div className="flex justify-center items-center py-8">
               <p className="text-red-500 font-bold italic">
-                No sessions scheduled
+                No Sessions Scheduled This Far
               </p>
             </div>
           )}
@@ -182,7 +182,7 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
             // Fallback message for mobile view when no sessions exist
             <div className="flex justify-center items-center py-8">
               <p className="text-red-500 font-bold italic">
-                No sessions scheduled
+                No Sessions Scheduled This Far
               </p>
             </div>
           )}
@@ -190,9 +190,9 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
       </div>
 
       {/* Attending Trainer Table */}
-      <div className="mt-2 p-2">
+      <div className="py-3">
         {/* Section Title */}
-        <h3 className="text-lg font-semibold text-center mb-4">
+        <h3 className="bg-[#A1662F] text-white text-lg border border-white font-semibold text-center py-2">
           Attending Trainer Table
         </h3>
 
@@ -203,12 +203,24 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
               {/* Table Header */}
               <thead>
                 <tr className="bg-[#A1662F] text-white">
-                  <th className="px-4 py-2 text-left">Trainer</th>
-                  <th className="px-4 py-2 text-left">Start At</th>
-                  <th className="px-4 py-2 text-left">Total Price</th>
-                  <th className="px-4 py-2 text-left">Duration</th>
-                  <th className="px-4 py-2 text-left">Session End</th>
-                  <th className="px-4 py-2 text-left">Action</th>
+                  <th className="px-4 py-2 text-left border border-white">
+                    Trainer
+                  </th>
+                  <th className="px-4 py-2 text-left border border-white">
+                    Start At
+                  </th>
+                  <th className="px-4 py-2 text-left border border-white">
+                    Total Price
+                  </th>
+                  <th className="px-4 py-2 text-left border border-white">
+                    Duration
+                  </th>
+                  <th className="px-4 py-2 text-left border border-white">
+                    Session End
+                  </th>
+                  <th className="px-4 py-2 text-center border border-white">
+                    Action
+                  </th>
                 </tr>
               </thead>
               {/* Table Body */}
@@ -219,28 +231,30 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
                     className="border-b bg-white hover:bg-gray-100 cursor-default"
                   >
                     {/* Trainer Name */}
-                    <td className="px-4 py-2 text-left">{booking.trainer}</td>
+                    <td className="px-4 py-2 text-left border border-gray-600">
+                      {booking.trainer}
+                    </td>
 
                     {/* Start At */}
-                    <td className="px-4 py-2 text-left">
+                    <td className="px-4 py-2 text-left border border-gray-600">
                       {booking.startAt ? booking.startAt : "Not started yet"}
                     </td>
 
                     {/* Total Price */}
-                    <td className="px-4 py-2 text-left">
+                    <td className="px-4 py-2 text-left border border-gray-600">
                       {String(booking.totalPrice).toLowerCase() === "free"
                         ? "Free"
                         : `$ ${booking.totalPrice}`}
                     </td>
 
                     {/* Duration */}
-                    <td className="px-4 py-2 text-left">
+                    <td className="px-4 py-2 text-left border border-gray-600">
                       {booking.durationWeeks}{" "}
                       {booking.durationWeeks === 1 ? "Week" : "Weeks"}
                     </td>
 
                     {/* Session End (calculated using startAt + duration weeks) */}
-                    <td className="px-4 py-2 text-left">
+                    <td className="px-4 py-2 text-left border border-gray-600">
                       {booking.startAt
                         ? new Date(
                             new Date(booking.startAt).setDate(
@@ -252,21 +266,23 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
                     </td>
 
                     {/* Action Button */}
-                    <td className="px-4 py-2 text-left">
-                      <button
-                        id={`view-details-btn-${booking._id}`}
-                        className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
-                        onClick={() => {
-                          setSelectedBooking(booking);
-                          modalRef.current?.showModal();
-                        }}
-                      >
-                        <FaInfo className="text-yellow-500" />
-                      </button>
-                      <Tooltip
-                        anchorSelect={`#view-details-btn-${booking._id}`}
-                        content="View Detailed Booking Data"
-                      />
+                    <td className="px-4 py-2 border border-gray-600">
+                      <div className="flex justify-center items-center">
+                        <button
+                          id={`view-details-btn-${booking._id}`}
+                          className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
+                          onClick={() => {
+                            setSelectedBooking(booking);
+                            modalRef.current?.showModal();
+                          }}
+                        >
+                          <FaInfo className="text-yellow-500" />
+                        </button>
+                        <Tooltip
+                          anchorSelect={`#view-details-btn-${booking._id}`}
+                          content="View Detailed Booking Data"
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -274,9 +290,9 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
             </table>
           ) : (
             // Fallback message for desktop view when no sessions exist
-            <div className="flex justify-center items-center py-8">
+            <div className="bg-white flex justify-center items-center py-8">
               <p className="text-red-500 font-bold italic">
-                No sessions scheduled
+                No Sessions Scheduled This Far
               </p>
             </div>
           )}

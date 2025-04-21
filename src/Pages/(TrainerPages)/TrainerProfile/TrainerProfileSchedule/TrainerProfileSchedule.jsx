@@ -173,7 +173,7 @@ TrainerProfileSchedule.propTypes = {
           start: PropTypes.string.isRequired,
           end: PropTypes.string.isRequired,
           classType: PropTypes.string.isRequired,
-          participant: PropTypes.array, // <- FIXED THIS LINE
+          participant: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
           participantLimit: PropTypes.oneOfType([
             PropTypes.number,
             PropTypes.string,

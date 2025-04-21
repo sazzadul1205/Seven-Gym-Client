@@ -219,10 +219,10 @@ const UserTrainerManagement = () => {
     error: SessionRefundInvoicesError,
     refetch: SessionRefundInvoicesRefetch,
   } = useQuery({
-    queryKey: ["SessionPaymentInvoices", user?.email],
+    queryKey: ["SessionRefundInvoices", user?.email],
     queryFn: async () => {
       const res = await axiosPublic.get(
-        `/Trainer_Session_Payment?bookerEmail=${user?.email}`
+        `/Trainer_Session_Refund?bookerEmail=${user?.email}`
       );
       return res.data;
     },

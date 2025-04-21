@@ -147,10 +147,19 @@ const TrainerSettingsLayout = () => {
     refetch: TrainerBookingHistoryRefetch,
   } = useQuery({
     queryKey: ["TrainerBookingHistoryData", TrainerProfileData?._id],
-    queryFn: () =>
-      axiosPublic
-        .get(`/Trainer_Booking_History/Trainer/${TrainerProfileData?._id}`)
-        .then((res) => res.data),
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainer_Booking_History/Trainer/${TrainerProfileData?._id}`
+        );
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) {
+          return []; // return empty array if not found
+        }
+        throw err; // rethrow other errors
+      }
+    },
     enabled: !!TrainerProfileData?._id,
   });
 
@@ -260,7 +269,11 @@ const TrainerSettingsLayout = () => {
       id: "Students_History",
       Icon: "https://i.ibb.co.com/RTpsgqvH/user.png ",
       title: "Students History",
-      content: <TrainerStudentHistory TrainerStudentHistoryData={TrainerStudentHistoryData} />,
+      content: (
+        <TrainerStudentHistory
+          TrainerStudentHistoryData={TrainerStudentHistoryData}
+        />
+      ),
     },
     // Add more tabs as needed
   ];

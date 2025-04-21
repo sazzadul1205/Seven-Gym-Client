@@ -185,9 +185,9 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
       // ✅ Session refund metadata
       const SessionRefundData = {
         bookingDataForHistory,
+        refundedAt: todayDateTime,
         PaymentRefund,
         refundID,
-        todayDateTime,
       };
 
       // ✅ Reset trainer schedule (remove participant)

@@ -516,11 +516,9 @@ const TrainerScheduleHistory = ({
           </>
         ) : (
           // Fallback display when no Completed bookings exist
-          <div className="flex items-center bg-gray-100 py-5 text-black italic">
-            <div className="flex gap-4 mx-auto items-center">
-              <FaTriangleExclamation className="text-xl text-red-500" />
-              No Booking Completed Found.
-            </div>
+          <div className="flex flex-col items-center bg-gray-100 py-5 text-black italic">
+            <FaTriangleExclamation className="text-xl text-red-500" />
+            No Booking Completed Found.
           </div>
         )}
       </div>
@@ -692,11 +690,9 @@ const TrainerScheduleHistory = ({
             </div>
           </>
         ) : (
-          <div className="flex items-center bg-gray-100 py-5 text-black italic">
-            <div className="flex gap-4 mx-auto items-center">
-              <FaTriangleExclamation className="text-xl text-red-500" />
-              No Booking Canceled History Found.
-            </div>
+          <div className="flex flex-col items-center bg-gray-100 py-5 text-black italic">
+            <FaTriangleExclamation className="text-xl text-red-500" />
+            No Booking Canceled History Found.
           </div>
         )}
       </div>

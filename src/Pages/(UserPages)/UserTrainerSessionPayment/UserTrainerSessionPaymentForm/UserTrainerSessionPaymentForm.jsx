@@ -119,6 +119,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         paid: true,
         paidAt: formattedDateAndTime,
         paymentID: stripePaymentID,
+
       };
 
       const { data: updatedBooking } = await axiosPublic.post(
@@ -300,8 +301,8 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         Payment Information
       </h2>
 
+      {/* Paid session form */}
       {Number(TrainerBookingRequestByIDData?.totalPrice) > 0 ? (
-        // Paid session form
         <form
           className="flex flex-col space-y-4"
           onSubmit={handleSubmit(onSubmit)}
@@ -385,6 +386,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
           className="text-green-600 font-semibold py-4 px-4 sm:px-6 md:px-8 max-w-xl mx-auto"
           onSubmit={handleSubmit(onSubmitWithoutPayment)}
         >
+          {/* Free Text */}
           <p className="text-center mb-4 ">
             No payment required. This session is free.
           </p>
@@ -409,6 +411,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
             )}
           </div>
 
+          {/* Confirm Checkbox and Button */}
           <div className="pt-10 flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Payment Confirmation Checkbox */}
             <div className="flex items-center gap-2 w-full md:w-2/3">
@@ -423,6 +426,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
               </label>
             </div>
 
+            {/* Buttons */}
             <div className="w-full">
               <CommonButton
                 type="submit"
