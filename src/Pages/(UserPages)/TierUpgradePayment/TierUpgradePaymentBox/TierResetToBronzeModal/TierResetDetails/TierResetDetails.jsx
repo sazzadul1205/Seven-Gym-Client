@@ -1,12 +1,13 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
+import CommonButton from "../../../../../../Shared/Buttons/CommonButton";
 
 const TierResetDetails = ({
   amountUsed,
   daysPassed,
   paymentData,
-  setRefundID, 
+  setRefundID,
   refundAmount,
   refundReason,
   linkedReceptID,
@@ -115,21 +116,26 @@ const TierResetDetails = ({
             <p className="mb-2 font-semibold text-center">
               Are you sure you want to request a refund?
             </p>
-            <div className="flex justify-between space-x-2">
-              <button
-                onClick={processRefund}
-                className="bg-linear-to-bl hover:bg-linear-to-tr from-green-400 to-green-600 text-white px-8 py-2 rounded-xl cursor-pointer"
+            <div className="flex justify-between space-x-2 pt-3">
+              <CommonButton
+                clickEvent={processRefund}
+                text="Yes"
+                bgColor="green"
+                textColor="text-white"
+                px="px-8"
+                py="py-2"
                 disabled={isProcessing}
-              >
-                Yes
-              </button>
-              <button
-                onClick={() => setShowConfirmPrompt(false)}
-                className="bg-linear-to-bl hover:bg-linear-to-tr from-red-400 to-red-600 text-white px-8 py-2 rounded-xl cursor-pointer"
+              />
+
+              <CommonButton
+                clickEvent={() => setShowConfirmPrompt(false)}
+                text="No"
+                bgColor="red"
+                textColor="text-white"
+                px="px-8"
+                py="py-2"
                 disabled={isProcessing}
-              >
-                No
-              </button>
+              />
             </div>
           </div>
         )}
@@ -141,8 +147,9 @@ const TierResetDetails = ({
 
         {/* Penalty Status Message */}
         {hasPenalty ? (
-          <div className="mt-2 text-center text-sm bg-red-500 py-2 text-white">
-            3 days have passed, so penalties will apply.
+          <div className="block mt-2 text-center text-sm bg-red-500 py-2 text-white">
+            <p> 3 Days have passed, so penalties will apply. </p>
+            <p> Time Passed : {daysPassed} Days </p>
           </div>
         ) : (
           <div className="mt-2 text-center text-sm bg-green-500 py-2 text-white">
@@ -212,13 +219,19 @@ const TierResetDetails = ({
 
         {/* Confirm Refund Button */}
         <div className="flex justify-center mt-6">
-          <button
-            className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-3 rounded-lg shadow-md transition-all cursor-pointer"
-            onClick={() => setShowConfirmPrompt(true)}
+          <CommonButton
+            clickEvent={() => setShowConfirmPrompt(true)}
+            text="Confirm & Submit"
+            bgColor="DarkRed"
+            textColor="text-white font-bold"
+            px="px-8"
+            py="py-3"
+            borderRadius="rounded-lg"
+            width="auto"
+            isLoading={isProcessing}
+            loadingText="Processing..."
             disabled={isProcessing}
-          >
-            {isProcessing ? "Processing..." : "Confirm & Submit"}
-          </button>
+          />
         </div>
       </div>
     </div>
@@ -229,7 +242,7 @@ TierResetDetails.propTypes = {
   paymentData: PropTypes.array.isRequired,
   daysPassed: PropTypes.number.isRequired,
   amountUsed: PropTypes.number.isRequired,
-  setRefundID: PropTypes.func.isRequired, 
+  setRefundID: PropTypes.func.isRequired,
   refundReason: PropTypes.string.isRequired,
   remainingAmount: PropTypes.number.isRequired,
   refundAmount: PropTypes.oneOfType([PropTypes.string, PropTypes.number])

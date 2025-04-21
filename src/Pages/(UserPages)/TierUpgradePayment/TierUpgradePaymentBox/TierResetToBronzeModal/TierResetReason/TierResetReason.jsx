@@ -1,5 +1,6 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
+import CommonButton from "../../../../../../Shared/Buttons/CommonButton";
 
 const TierResetReason = ({ setRefundReason }) => {
   // State for storing selected reason and custom complaint
@@ -76,19 +77,18 @@ const TierResetReason = ({ setRefundReason }) => {
         </div>
 
         {/* Next Button */}
-        <div className="flex justify-end py-4">
-          <button
+        <div className="flex justify-end">
+          <CommonButton
             type="button"
-            className={`rounded-xl text-xl font-semibold px-10 py-2 cursor-pointer transition-all duration-200 ${
-              selectedReason || customComplaint.trim()
-                ? "bg-gradient-to-bl hover:bg-gradient-to-tr from-emerald-300 to-emerald-600"
-                : "bg-gray-300 cursor-not-allowed"
-            }`}
-            onClick={handleNext}
+            clickEvent={handleNext}
+            text="Next"
+            bgColor="emerald"
+            textColor="text-xl font-semibold"
+            px="px-10"
+            py="py-2"
+            width="auto"
             disabled={!selectedReason && !customComplaint.trim()}
-          >
-            Next
-          </button>
+          />
         </div>
       </form>
     </div>

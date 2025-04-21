@@ -1,9 +1,9 @@
-/* eslint-disable react/prop-types */
 import { useRef } from "react";
 import { Link, useParams } from "react-router";
 
 // Import Package
 import { jsPDF } from "jspdf";
+import PropTypes from "prop-types";
 import domToImage from "dom-to-image";
 import { useQuery } from "@tanstack/react-query";
 
@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../../Shared/Component/FetchingError";
+import { formatDate } from "../../../../../Utility/formatDate";
 
 const TierUpgradePaymentModal = ({ PaymentID }) => {
   const axiosPublic = useAxiosPublic();
@@ -80,7 +81,7 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
           {/* Top Part */}
           <div className="pb-1 text-center border-b">
             <p className="text-sm text-[#6b7280]">
-              Receipt #: SG-TUPR-<span>{payment?.paymentID}</span>
+              Receipt : SG-TUPR-<span>{payment?.paymentID}</span>
             </p>
             <p className="text-sm font-semibold text-[#6b7280]">
               Customer: <span>{payment?.email}</span>
@@ -89,7 +90,7 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
               Transaction ID: TX- <span>{payment?.paymentID.slice(-6)}</span>
             </p>
             <p className="text-sm text-[#6b7280]">
-              Date & Time : <span>{payment?.dateTime}</span>
+              Date & Time : <span>{formatDate(payment?.dateTime)}</span>
             </p>
           </div>
 
@@ -177,6 +178,11 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
       </div>
     </div>
   );
+};
+
+// Prop Validation
+TierUpgradePaymentModal.propTypes = {
+  PaymentID: PropTypes.string.isRequired,
 };
 
 export default TierUpgradePaymentModal;

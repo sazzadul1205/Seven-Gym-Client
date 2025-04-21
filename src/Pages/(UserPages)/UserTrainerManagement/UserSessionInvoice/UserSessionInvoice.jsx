@@ -1,15 +1,37 @@
-import { FaFileInvoiceDollar } from "react-icons/fa";
+import { useRef, useState } from "react";
+
+// Import Icons
 import { LuCircleDotDashed } from "react-icons/lu";
+import { FaFileInvoiceDollar } from "react-icons/fa";
+
+// Import Utility
 import { formatDate } from "../../../../Utility/formatDate";
+
+// import Packages
+import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
 
-/* eslint-disable react/prop-types */
+// Import Modal
+import UserSessionPaymentInvoiceModal from "./UserSessionPaymentInvoiceModal/UserSessionPaymentInvoiceModal";
+
 const UserSessionInvoice = ({
   SessionRefundInvoicesData,
   SessionPaymentInvoicesData,
 }) => {
+  // Initializes a state variable for the selected booking.
+  const [selectedPaymentInvoice, setSelectedPaymentInvoice] = useState(null);
+
+  // Create a ref for the modal
+  const modalRef = useRef(null);
   console.log("Session Refund Invoices Data : ", SessionRefundInvoicesData);
   console.log("Session Payment Invoices Data : ", SessionPaymentInvoicesData);
+
+  // Close Modal Handler
+  const closeModal = () => {
+    modalRef.current?.close();
+    // Optionally, clear the selected booking if needed:
+    setSelectedPaymentInvoice(null);
+  };
 
   return (
     <div>
@@ -102,6 +124,10 @@ const UserSessionInvoice = ({
                           <button
                             id={`view-details-btn-${item._id}`} // Unique ID for each button
                             className="border-2 border-green-500 bg-green-100 hover:bg-green-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform"
+                            onClick={() => {
+                              setSelectedPaymentInvoice(item);
+                              modalRef.current?.showModal();
+                            }}
                           >
                             <FaFileInvoiceDollar className="text-green-500" />
                           </button>
@@ -124,8 +150,56 @@ const UserSessionInvoice = ({
           </p>
         )}
       </div>
+
+      {/* User Trainer Booking Info Modal */}
+      <dialog
+        ref={modalRef}
+        id="User_Trainer_Booking_Info_Sessions_Modal"
+        className="modal"
+      >
+        <UserSessionPaymentInvoiceModal
+          closeModal={closeModal}
+          selectedPaymentInvoice={selectedPaymentInvoice}
+        />
+      </dialog>
     </div>
   );
+};
+
+// Payment and Refund Prop Validation
+UserSessionInvoice.propTypes = {
+  SessionRefundInvoicesData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      stripePaymentID: PropTypes.string,
+      cardHolder: PropTypes.string,
+      paymentMethod: PropTypes.string,
+      sessionInfo: PropTypes.shape({
+        _id: PropTypes.string,
+        trainer: PropTypes.string,
+        trainerId: PropTypes.string,
+        totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        paidAt: PropTypes.string,
+        sessions: PropTypes.arrayOf(PropTypes.string),
+      }),
+    })
+  ).isRequired,
+  SessionPaymentInvoicesData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      stripePaymentID: PropTypes.string,
+      cardHolder: PropTypes.string,
+      paymentMethod: PropTypes.string,
+      sessionInfo: PropTypes.shape({
+        _id: PropTypes.string,
+        trainer: PropTypes.string,
+        trainerId: PropTypes.string,
+        totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        paidAt: PropTypes.string,
+        sessions: PropTypes.arrayOf(PropTypes.string),
+      }),
+    })
+  ).isRequired,
 };
 
 export default UserSessionInvoice;

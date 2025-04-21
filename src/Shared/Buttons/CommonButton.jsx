@@ -38,6 +38,10 @@ const CommonButton = ({
       from: "from-[#A1662F]",
       to: "to-[#CC6300C8]",
     },
+    DarkRed: {
+      from: "from-red-600",
+      to: "to-red-700",
+    },
     // add other colors as needed
   };
 

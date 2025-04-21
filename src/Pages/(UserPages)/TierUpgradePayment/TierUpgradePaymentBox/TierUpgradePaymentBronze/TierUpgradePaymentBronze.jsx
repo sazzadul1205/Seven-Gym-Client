@@ -14,6 +14,9 @@ import FetchingError from "../../../../../Shared/Component/FetchingError";
 import TierResetRecept from "../TierResetRecept/TierResetRecept";
 import TearResetToBronzeModal from "../TierResetToBronzeModal/TierResetToBronzeModal";
 
+// Import Buttons
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+
 const TierUpgradePaymentBronze = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -91,23 +94,23 @@ const TierUpgradePaymentBronze = () => {
         {/* Buttons */}
         <div className="flex justify-center gap-4">
           {userTier !== "Bronze" && (
-            <button
-              onClick={() =>
+            <CommonButton
+              clickEvent={() =>
                 document
                   .getElementById("Tear_Reset_To_Bronze_Modal")
                   .showModal()
               }
-              className="bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-700 text-white font-medium py-3 w-[200px] rounded-lg transition-all duration-200 shadow-md hover:shadow-2xl cursor-pointer "
-            >
-              Reset
-            </button>
+              text="Reset"
+              bgColor="OriginalRed"
+              width="[200px]"
+            />
           )}
-          <button
-            onClick={() => navigate(-1)}
-            className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-300 to-gray-700 text-white font-medium py-3 w-[200px] rounded-lg transition-all duration-200 shadow-md hover:shadow-2xl cursor-pointer "
-          >
-            Go Back
-          </button>
+          <CommonButton
+            clickEvent={() => navigate(-1)}
+            text="Go Back"
+            bgColor="gray"
+            width="[200px]"
+          />
         </div>
       </div>
 
