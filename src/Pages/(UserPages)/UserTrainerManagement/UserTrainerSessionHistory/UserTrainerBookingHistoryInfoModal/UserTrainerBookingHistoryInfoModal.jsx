@@ -68,7 +68,6 @@ const UserTrainerBookingHistoryInfoModal = ({
         <ImCross
           className="text-xl hover:text-[#F72C5B] cursor-pointer"
           onClick={() =>
-            // document.getElementById("User_Trainer_Booking_History_Info_Modal")?.close()
             closeModal()
           }
         />

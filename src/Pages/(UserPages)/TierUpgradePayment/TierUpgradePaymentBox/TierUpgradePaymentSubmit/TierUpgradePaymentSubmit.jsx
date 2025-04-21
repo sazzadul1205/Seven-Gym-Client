@@ -10,6 +10,9 @@ import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 // Import Utility
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
+// import Button
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+
 const TierUpgradePaymentSubmit = ({
   setIsPaymentID,
   CurrentTierData,
@@ -75,7 +78,7 @@ const TierUpgradePaymentSubmit = ({
       );
       return;
     }
-    
+
     // This code checks if a plan duration has been selected. If not, it displays an error message using SweetAlert and exits the function.
     if (!selectedDuration) {
       Swal.fire("Error", "Please select a plan.", "error");
@@ -256,13 +259,16 @@ const TierUpgradePaymentSubmit = ({
 
         {/* Submit Button */}
         <div className="flex justify-end">
-          <button
+          <CommonButton
             type="submit"
-            className={`w-1/3 py-3 text-white font-bold rounded-lg transition-all duration-300 cursor-pointer ${
-              isProcessing
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-linear-to-bl hover:bg-linear-to-tr from-blue-300 to-blue-600"
-            }`}
+            text="Pay Now"
+            isLoading={isProcessing} // Shows spinner + loadingText if true
+            loadingText="Processing..."
+            bgColor="blue" // Or any color in your colorMap (e.g., "indigo", "purple", etc.)
+            width="1/3" // Tailwind w-1/3
+            borderRadius="rounded-lg"
+            py="py-3"
+            textColor="text-white"
             disabled={
               !stripe ||
               !elements ||
@@ -270,9 +276,7 @@ const TierUpgradePaymentSubmit = ({
               !isConfirmed ||
               isProcessing
             }
-          >
-            {isProcessing ? "Processing..." : "Pay Now"}
-          </button>
+          />
         </div>
       </form>
     </div>

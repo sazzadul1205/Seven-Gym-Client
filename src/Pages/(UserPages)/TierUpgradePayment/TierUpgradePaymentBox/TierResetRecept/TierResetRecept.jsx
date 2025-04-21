@@ -115,19 +115,27 @@ const TierResetRecept = ({ refundID }) => {
       const blob = await domToImage.toBlob(refundRef.current);
       const imgData = URL.createObjectURL(blob);
 
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-
       const img = new Image();
       img.src = imgData;
       img.onload = () => {
+        // Measure image size
+        const pxToMm = (px) => px * 0.264583; // convert px to mm (1px = 0.264583mm)
+
+        const imgWidthPx = img.width;
+        const imgHeightPx = img.height;
+
+        const pdfWidth = 80; // POS paper width in mm (commonly 58 or 80)
+        const pdfHeight = pxToMm(imgHeightPx) * (pdfWidth / pxToMm(imgWidthPx)); // maintain aspect ratio
+
+        const pdf = new jsPDF("p", "mm", [pdfWidth, pdfHeight]);
+
         pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`PaymentReceipt_${payment.paymentID}.pdf`);
-        URL.revokeObjectURL(imgData); // Cleanup
+        pdf.save(`RefundSessionReceipt_${payment?.paymentID}.pdf`);
+
+        URL.revokeObjectURL(imgData); // Clean up
       };
     } catch (error) {
-      console.error("Error generating PDF:", error);
+      console.error("Error generating POS PDF:", error);
     }
   };
 

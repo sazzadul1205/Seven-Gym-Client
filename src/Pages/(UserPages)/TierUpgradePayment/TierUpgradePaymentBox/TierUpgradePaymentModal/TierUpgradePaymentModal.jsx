@@ -7,11 +7,13 @@ import PropTypes from "prop-types";
 import domToImage from "dom-to-image";
 import { useQuery } from "@tanstack/react-query";
 
-// Import Utility
+// Import Hooks
 import Loading from "../../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../../Shared/Component/FetchingError";
-import { formatDate } from "../../../../../Utility/formatDate";
+
+// import Common Button
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
 const TierUpgradePaymentModal = ({ PaymentID }) => {
   const axiosPublic = useAxiosPublic();
@@ -29,16 +31,19 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
       axiosPublic
         .get(`/Tier_Upgrade_Payment/search?paymentID=${PaymentID}`)
         .then((res) => res.data),
-    enabled: !!PaymentID,
+    enabled: !!PaymentID, // Only fetch if PaymentID is defined
   });
 
-  // Loading & Error handling
+  // Show loading screen while fetching
   if (PaymentIDDataLoading) return <Loading />;
-  if (PaymentIDDataError) {
-    return <FetchingError />;
-  }
 
-  const payment = PaymentIDData ? PaymentIDData[0] : null;
+  // Show error if fetching fails
+  if (PaymentIDDataError) return <FetchingError />;
+
+  // Return nothing if data exists but empty or malformed
+  if (!PaymentIDData || PaymentIDData.length === 0) return null;
+
+  const payment = PaymentIDData[0]; // Extract first record
 
   // PDF generation function
   const generatePDF = async () => {
@@ -48,19 +53,27 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
       const blob = await domToImage.toBlob(receiptRef.current);
       const imgData = URL.createObjectURL(blob);
 
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-
       const img = new Image();
       img.src = imgData;
       img.onload = () => {
+        // Measure image size
+        const pxToMm = (px) => px * 0.264583; // convert px to mm (1px = 0.264583mm)
+
+        const imgWidthPx = img.width;
+        const imgHeightPx = img.height;
+
+        const pdfWidth = 80; // POS paper width in mm (commonly 58 or 80)
+        const pdfHeight = pxToMm(imgHeightPx) * (pdfWidth / pxToMm(imgWidthPx)); // maintain aspect ratio
+
+        const pdf = new jsPDF("p", "mm", [pdfWidth, pdfHeight]);
+
         pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`PaymentReceipt_${payment.paymentID}.pdf`);
-        URL.revokeObjectURL(imgData); // Cleanup
+        pdf.save(`PaymentSessionReceipt_${payment?.paymentID}.pdf`);
+
+        URL.revokeObjectURL(imgData); // Clean up
       };
     } catch (error) {
-      console.error("Error generating PDF:", error);
+      console.error("Error generating POS PDF:", error);
     }
   };
 
@@ -90,7 +103,7 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
               Transaction ID: TX- <span>{payment?.paymentID.slice(-6)}</span>
             </p>
             <p className="text-sm text-[#6b7280]">
-              Date & Time : <span>{formatDate(payment?.dateTime)}</span>
+              Date & Time : <span>{payment?.dateTime}</span>
             </p>
           </div>
 
@@ -158,22 +171,25 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
 
       {/* Close Button and PDF Generation Button */}
       <div className="modal-action mt-6 flex justify-between">
-        <form method="dialog">
-          <Link to={`/User/UserProfile/${email}`}>
-            <button className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-400 to-blue-600 rounded-xl py-3 w-[150px] font-semibold cursor-pointer">
-              Close
-            </button>
-          </Link>
-        </form>
+        {/* Close Button */}
+        <Link to={`/User/UserProfile/${email}`}>
+          <CommonButton
+            text="Close"
+            bgColor="blue"
+            width="[150px]"
+            type="button"
+          />
+        </Link>
 
-        {/* Conditional render: Only show "Download PDF" after data is loaded */}
+        {/* Download PDF Button - Conditional render */}
         {payment && (
-          <button
-            onClick={generatePDF}
-            className="bg-linear-to-bl hover:bg-linear-to-tr from-green-400 to-green-600 rounded-xl py-3 w-[150px] font-semibold cursor-pointer"
-          >
-            Download PDF
-          </button>
+          <CommonButton
+            clickEvent={generatePDF}
+            text="Download PDF"
+            bgColor="green"
+            width="[150px]"
+            type="button"
+          />
         )}
       </div>
     </div>
@@ -182,7 +198,7 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
 
 // Prop Validation
 TierUpgradePaymentModal.propTypes = {
-  PaymentID: PropTypes.string.isRequired,
+  PaymentID: PropTypes.string,
 };
 
 export default TierUpgradePaymentModal;
