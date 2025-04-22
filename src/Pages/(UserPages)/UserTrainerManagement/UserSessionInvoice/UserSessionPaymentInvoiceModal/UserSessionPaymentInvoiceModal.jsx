@@ -1,10 +1,4 @@
-/* eslint-disable react/prop-types */
 import { useRef } from "react";
-
-// import Hooks
-import Loading from "../../../../../Shared/Loading/Loading";
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
-import FetchingError from "../../../../../Shared/Component/FetchingError";
 
 // Import Utility
 import { formatDate } from "../../../../../Utility/formatDate";
@@ -12,8 +6,8 @@ import { formatTimeTo12Hour } from "../../../../../Utility/formatTimeTo12Hour";
 
 // Import Packages
 import jsPDF from "jspdf";
+import PropTypes from "prop-types";
 import domToImage from "dom-to-image";
-import { useQuery } from "@tanstack/react-query";
 
 // import Common Button
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
@@ -22,39 +16,8 @@ const UserSessionPaymentInvoiceModal = ({
   closeModal,
   selectedPaymentInvoice,
 }) => {
-  const axiosPublic = useAxiosPublic();
-
   // Ref for Recept Ref
   const receiptRef = useRef();
-
-  // Use selectedBooking.sessions directly
-  const sessionQuery =
-    selectedPaymentInvoice?.sessionInfo?.sessions
-      ?.map((id) => `ids=${encodeURIComponent(id)}`)
-      .join("&") || "";
-
-  // Fetch session details by ID
-  const {
-    data: ScheduleByIDData,
-    isLoading: ScheduleByIDDataIsLoading,
-    error: ScheduleByIDDataError,
-  } = useQuery({
-    queryKey: [
-      "ScheduleByIDData",
-      selectedPaymentInvoice?.sessionInfo?.sessions,
-    ],
-    enabled: !!selectedPaymentInvoice?.sessionInfo?.sessions?.length,
-    queryFn: () =>
-      axiosPublic
-        .get(`/Trainers_Schedule/ByID?${sessionQuery}`)
-        .then((res) => res.data),
-  });
-
-  // Load management
-  if (ScheduleByIDDataIsLoading) return <Loading />;
-
-  // Error Management
-  if (ScheduleByIDDataError) return <FetchingError />;
 
   // PDF generation function
   const generatePDF = async () => {
@@ -106,22 +69,29 @@ const UserSessionPaymentInvoiceModal = ({
         <div className="p-4 bg-[#f9fafb] border text-black">
           {/* -------- Header Part -------- */}
           <div className="pb-1 text-center border-b">
+            {/* Header Part : Stripe Payment ID */}
             <p className="text-sm text-[#6b7280]">
               Receipt :{" "}
               <span>SG-SPR-{selectedPaymentInvoice?.stripePaymentID}</span>
             </p>
+
+            {/* Header Part : Booker Email */}
             <p className="text-sm text-[#6b7280]">
               Customer:{" "}
-              <span>{selectedPaymentInvoice?.sessionInfo?.bookerEmail}</span>
+              <span>{selectedPaymentInvoice?.BookingInfo?.bookerEmail}</span>
             </p>
+
+            {/* Header Part : Transaction ID */}
             <p className="text-sm text-[#6b7280]">
               Transaction ID: TX-{" "}
               <span>{selectedPaymentInvoice?.stripePaymentID.slice(-6)}</span>
             </p>
+
+            {/* Header Part : Paid At */}
             <p className="text-sm text-[#6b7280]">
               Date & Time :{" "}
               <span>
-                {formatDate(selectedPaymentInvoice?.sessionInfo?.paidAt)}
+                {formatDate(selectedPaymentInvoice?.BookingInfo?.paidAt)}
               </span>
             </p>
           </div>
@@ -132,12 +102,12 @@ const UserSessionPaymentInvoiceModal = ({
               <p className="text-sm font-semibold">Payment Status:</p>
               <p
                 className={`${
-                  selectedPaymentInvoice?.sessionInfo?.paid
+                  selectedPaymentInvoice?.BookingInfo?.paid
                     ? "text-[#22c55e]"
                     : "text-[#ef4444]"
                 } font-bold`}
               >
-                {selectedPaymentInvoice?.sessionInfo?.paid
+                {selectedPaymentInvoice?.BookingInfo?.paid
                   ? "Successful"
                   : "Failed"}
               </p>
@@ -145,8 +115,8 @@ const UserSessionPaymentInvoiceModal = ({
             <div className="flex justify-between">
               <p className="text-sm font-semibold">Duration:</p>
               <p className="text-[#374151]">
-                {selectedPaymentInvoice?.sessionInfo?.durationWeeks}{" "}
-                {selectedPaymentInvoice?.sessionInfo?.durationWeeks === 1
+                {selectedPaymentInvoice?.BookingInfo?.durationWeeks}{" "}
+                {selectedPaymentInvoice?.BookingInfo?.durationWeeks === 1
                   ? "Week"
                   : "Weeks"}
               </p>
@@ -160,7 +130,7 @@ const UserSessionPaymentInvoiceModal = ({
             <div className="flex justify-between">
               <p className="text-sm font-semibold">Paid At :</p>
               <p className="text-[#374151]">
-                {formatDate(selectedPaymentInvoice?.sessionInfo?.paidAt)}
+                {formatDate(selectedPaymentInvoice?.BookingInfo?.paidAt)}
               </p>
             </div>
           </div>
@@ -171,7 +141,7 @@ const UserSessionPaymentInvoiceModal = ({
               Session Summary
             </h3>
             <div className="space-y-4">
-              {ScheduleByIDData?.map((session, index) => (
+              {selectedPaymentInvoice?.sessionInfo?.map((session, index) => (
                 <div
                   key={session._id || index}
                   className="p-3 rounded-md border border-gray-200 bg-white"
@@ -180,22 +150,21 @@ const UserSessionPaymentInvoiceModal = ({
                   <div className="flex justify-between items-center text-sm text-gray-600 mb-1">
                     <span className="font-medium">{session?.day}</span>
                     <span>
-                      {formatTimeTo12Hour(session?.start)} -{" "}
-                      {formatTimeTo12Hour(session?.end)}
+                      {formatTimeTo12Hour(session?.time)} -{" "}
+                      {addMinutesToTime(session?.time, 59)}
                     </span>
                   </div>
 
                   {/* Session ID and Price Row */}
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-500">
-                      Session ID:{" "}
                       <span className="text-gray-800">{session?.id}</span>
                     </span>
                     <span className="text-gray-800 font-semibold">
                       {parseFloat(session?.classPrice) > 0
                         ? `${parseFloat(session?.classPrice).toFixed(2)} $`
                         : "Free"}{" "}
-                      X {selectedPaymentInvoice?.sessionInfo?.durationWeeks}
+                      X {selectedPaymentInvoice?.BookingInfo?.durationWeeks}
                     </span>
                   </div>
                 </div>
@@ -208,9 +177,9 @@ const UserSessionPaymentInvoiceModal = ({
             <div className="flex justify-between font-semibold px-2">
               <p className="text-md">Total Price</p>
               <p className="text-md">
-                {parseFloat(selectedPaymentInvoice?.sessionInfo?.totalPrice) > 0
+                {parseFloat(selectedPaymentInvoice?.BookingInfo?.totalPrice) > 0
                   ? `${parseFloat(
-                      selectedPaymentInvoice?.sessionInfo?.totalPrice
+                      selectedPaymentInvoice?.BookingInfo?.totalPrice
                     ).toFixed(2)} $`
                   : "Free"}
               </p>
@@ -253,4 +222,42 @@ const UserSessionPaymentInvoiceModal = ({
   );
 };
 
+// Prop Validation
+UserSessionPaymentInvoiceModal.propTypes = {
+  closeModal: PropTypes.func.isRequired,
+  selectedPaymentInvoice: PropTypes.shape({
+    stripePaymentID: PropTypes.string,
+    paymentMethod: PropTypes.string,
+    sessionInfo: PropTypes.arrayOf(
+      PropTypes.shape({
+        _id: PropTypes.string,
+        day: PropTypes.string,
+        time: PropTypes.string,
+        id: PropTypes.string,
+        classPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      })
+    ),
+    BookingInfo: PropTypes.shape({
+      bookerEmail: PropTypes.string,
+      durationWeeks: PropTypes.number,
+      paid: PropTypes.bool,
+      paidAt: PropTypes.string,
+      totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    }),
+  }),
+};
+
 export default UserSessionPaymentInvoiceModal;
+
+function addMinutesToTime(timeString, minutesToAdd) {
+  const [hours, minutes] = timeString.split(":").map(Number);
+  const date = new Date();
+  date.setHours(hours);
+  date.setMinutes(minutes + minutesToAdd);
+
+  const hours12 = date.getHours() % 12 || 12;
+  const minutesFormatted = String(date.getMinutes()).padStart(2, "0");
+  const AMP = date.getHours() >= 12 ? "PM" : "AM";
+
+  return `${hours12}:${minutesFormatted} ${AMP}`;
+}

@@ -20,17 +20,29 @@ const UserSessionInvoice = ({
 }) => {
   // Initializes a state variable for the selected booking.
   const [selectedPaymentInvoice, setSelectedPaymentInvoice] = useState(null);
+  const [selectedRefundInvoice, setSelectedRefundInvoice] = useState(null);
 
   // Create a ref for the modal
-  const modalRef = useRef(null);
+  const modalPaymentRef = useRef(null);
+
+  const modalRefundRef = useRef(null);
+
+  // console.log("Session Payment Invoices Data : ", SessionPaymentInvoicesData);
+
   console.log("Session Refund Invoices Data : ", SessionRefundInvoicesData);
-  console.log("Session Payment Invoices Data : ", SessionPaymentInvoicesData);
 
   // Close Modal Handler
-  const closeModal = () => {
-    modalRef.current?.close();
+  const closePaymentInvoiceModal = () => {
+    modalPaymentRef.current?.close();
     // Optionally, clear the selected booking if needed:
     setSelectedPaymentInvoice(null);
+  };
+
+  // Close Modal Handler
+  const closeRefundInvoiceModal = () => {
+    modalRefundRef.current?.close();
+    // Optionally, clear the selected booking if needed:
+    setSelectedRefundInvoice(null);
   };
 
   return (
@@ -63,9 +75,10 @@ const UserSessionInvoice = ({
                       "No",
                       "Payment ID",
                       "Trainer",
-                      "Total Price",
                       "Paid At",
+                      "Total Price",
                       "Sessions",
+                      "Durations",
                       "Action",
                     ].map((heading) => (
                       <th
@@ -87,7 +100,7 @@ const UserSessionInvoice = ({
                     >
                       {/* Number */}
                       <td className="px-4 py-2 border-r border-b border-gray-300">
-                        {index + 1}
+                        {index + 1} .
                       </td>
 
                       {/* Session Payment Id */}
@@ -97,25 +110,33 @@ const UserSessionInvoice = ({
 
                       {/* Session Trainer Name */}
                       <td className="px-4 py-2 border-r border-b border-gray-300">
-                        {item?.sessionInfo?.trainer}
+                        {item?.BookingInfo?.trainer}
                       </td>
 
                       {/* Session Paid At */}
                       <td className="px-4 py-2 border-r border-b border-gray-300">
-                        {formatDate(item?.sessionInfo?.paidAt)}
+                        {formatDate(item?.BookingInfo?.paidAt)}
                       </td>
 
                       {/* Session Price */}
                       <td className="px-4 py-2 text-center border-r border-b border-gray-300">
-                        {item?.sessionInfo?.totalPrice === "0.00" ||
-                        item?.sessionInfo?.totalPrice === 0.0
+                        {item?.BookingInfo?.totalPrice === "0.00" ||
+                        item?.BookingInfo?.totalPrice === 0.0
                           ? "Free"
-                          : `$ ${item?.sessionInfo?.totalPrice}`}
+                          : `$ ${item?.BookingInfo?.totalPrice}`}
                       </td>
 
                       {/* Session Length */}
                       <td className="px-4 py-2 text-center border-r border-b border-gray-300">
-                        {item?.sessionInfo?.sessions?.length}
+                        {item?.BookingInfo?.sessions?.length}
+                      </td>
+
+                      {/* Session Length */}
+                      <td className="px-4 py-2 text-center border-r border-b border-gray-300">
+                        {item?.BookingInfo?.durationWeeks}{" "}
+                        {item?.BookingInfo?.durationWeeks > 1
+                          ? "Weeks"
+                          : "Week"}
                       </td>
 
                       {/* Invoice Button */}
@@ -126,7 +147,7 @@ const UserSessionInvoice = ({
                             className="border-2 border-green-500 bg-green-100 hover:bg-green-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform"
                             onClick={() => {
                               setSelectedPaymentInvoice(item);
-                              modalRef.current?.showModal();
+                              modalPaymentRef.current?.showModal();
                             }}
                           >
                             <FaFileInvoiceDollar className="text-green-500" />
@@ -172,11 +193,12 @@ const UserSessionInvoice = ({
                   <tr className="bg-[#A1662F] text-white">
                     {[
                       "No",
-                      "Payment ID",
+                      "Refund ID",
                       "Trainer",
-                      "Total Price",
-                      "Paid At",
+                      "Refund Amount",
+                      "Refund At",
                       "Sessions",
+                      "Duration",
                       "Action",
                     ].map((heading) => (
                       <th
@@ -198,35 +220,50 @@ const UserSessionInvoice = ({
                     >
                       {/* Number */}
                       <td className="px-4 py-2 border-r border-b border-gray-300">
-                        {index + 1}
+                        {index + 1} .
                       </td>
 
                       {/* Session Payment Id */}
                       <td className="px-4 py-2 border-r border-b border-gray-300">
-                        {item?.stripePaymentID}
+                        {item?.refundID}
                       </td>
 
                       {/* Session Trainer Name */}
                       <td className="px-4 py-2 border-r border-b border-gray-300">
-                        {item?.sessionInfo?.trainer}
+                        {item?.bookingDataForHistory?.trainer}
                       </td>
 
-                      {/* Session Paid At */}
+                      {/* Session Refund Amount */}
                       <td className="px-4 py-2 border-r border-b border-gray-300">
-                        {formatDate(item?.sessionInfo?.paidAt)}
+                        {item?.bookingDataForHistory?.RefundPercentage} (
+                        {item?.bookingDataForHistory?.RefundAmount !==
+                          undefined && (
+                          <span>
+                            {Number(
+                              item.bookingDataForHistory.RefundAmount
+                            ).toFixed(2)}{" "}
+                            $
+                          </span>
+                        )}
+                        )
                       </td>
 
                       {/* Session Price */}
                       <td className="px-4 py-2 text-center border-r border-b border-gray-300">
-                        {item?.sessionInfo?.totalPrice === "0.00" ||
-                        item?.sessionInfo?.totalPrice === 0.0
-                          ? "Free"
-                          : `$ ${item?.sessionInfo?.totalPrice}`}
+                        {formatDate(item?.refundedAt)}
                       </td>
 
                       {/* Session Length */}
                       <td className="px-4 py-2 text-center border-r border-b border-gray-300">
-                        {item?.sessionInfo?.sessions?.length}
+                        {item?.bookingDataForHistory?.sessions?.length}
+                      </td>
+
+                      {/* Session Duration */}
+                      <td className="px-4 py-2 text-center border-r border-b border-gray-300">
+                        {item?.bookingDataForHistory?.durationWeeks}{" "}
+                        {item?.bookingDataForHistory?.durationWeeks === 1
+                          ? "Week"
+                          : "Weeks"}
                       </td>
 
                       {/* Invoice Button */}
@@ -236,8 +273,8 @@ const UserSessionInvoice = ({
                             id={`view-details-btn-${item._id}`} // Unique ID for each button
                             className="border-2 border-green-500 bg-green-100 hover:bg-green-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform"
                             onClick={() => {
-                              setSelectedPaymentInvoice(item);
-                              modalRef.current?.showModal();
+                              setSelectedRefundInvoice(item);
+                              modalPaymentRef.current?.showModal();
                             }}
                           >
                             <FaFileInvoiceDollar className="text-green-500" />
@@ -266,13 +303,17 @@ const UserSessionInvoice = ({
       </div>
 
       {/* User Trainer Booking Info Modal */}
-      <dialog
-        ref={modalRef}
-        id="User_Trainer_Booking_Info_Sessions_Modal"
-        className="modal"
-      >
+      <dialog ref={modalPaymentRef} className="modal">
         <UserSessionPaymentInvoiceModal
-          closeModal={closeModal}
+          closeModal={closePaymentInvoiceModal}
+          selectedPaymentInvoice={selectedPaymentInvoice}
+        />
+      </dialog>
+
+      {/* User Trainer Booking Info Modal */}
+      <dialog ref={modalPaymentRef} className="modal">
+        <UserSessionPaymentInvoiceModal
+          closeModal={closePaymentInvoiceModal}
           selectedPaymentInvoice={selectedPaymentInvoice}
         />
       </dialog>

@@ -2,8 +2,7 @@ import { useRef, useState } from "react";
 
 // Import Icons
 import { ImCross } from "react-icons/im";
-import { MdDelete } from "react-icons/md";
-import { FaInfo, FaRegClock } from "react-icons/fa";
+import { FaInfo, FaRegClock, FaRegTrashAlt } from "react-icons/fa";
 
 // Import Packages
 import Swal from "sweetalert2";
@@ -56,6 +55,9 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
   // State to track which booking is selected for modal view
   const [selectedAcceptedBooking, setSelectedAcceptedBooking] = useState(null);
 
+  // Processing Sate
+  const [isProcessing, setIsProcessing] = useState(false);
+
   // Modal close handler
   const closeModal = () => {
     modalRef.current?.close();
@@ -87,6 +89,7 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
     if (!confirm.isConfirmed) return;
 
     try {
+      setIsProcessing(true);
       // Step 2: Remove _id from object before sending to history
       // eslint-disable-next-line no-unused-vars
       const { _id, ...bookingDataForHistory } = booking;
@@ -115,6 +118,8 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
         text: "Failed to clear the booking. Try again.",
         icon: "error",
       });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -124,6 +129,7 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
     if (!id) return console.warn("No booking ID found.");
 
     try {
+      setIsProcessing(true);
       // ===========================
       // 🔸 STEP 1: Confirm Drop Intent
       // ===========================
@@ -151,18 +157,20 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
       const totalPrice = booking?.totalPrice || 0;
 
       // Passing reason and price to refund selector modal
-      const selectedRefund = await getSelectedRefundPercentage({
+      const selectedRefundPercentage = await getSelectedRefundPercentage({
         reason,
         totalPrice,
       });
 
-      if (selectedRefund === undefined) return;
+      // console.log(selectedRefundPercentage);
+
+      if (selectedRefundPercentage === undefined) return;
 
       // ====================================
       // 🔸 STEP 4: Prepare Data for Insertion
       // ====================================
       const refundAmount = Number(
-        ((selectedRefund / 100) * totalPrice).toFixed(2)
+        ((selectedRefundPercentage / 100) * totalPrice).toFixed(2)
       );
       const refundID = generateRefundID(booking?.bookerEmail);
       const todayDateTime = getCurrentDateTime(); // Ex: "15-04-2025T12:34"
@@ -175,6 +183,7 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
       bookingDataForHistory.status = "Dropped";
       bookingDataForHistory.reason = reason;
       bookingDataForHistory.RefundAmount = refundAmount;
+      bookingDataForHistory.RefundPercentage = `${selectedRefundPercentage}%`;
 
       // ✅ Refund transaction details
       const PaymentRefund = {
@@ -225,7 +234,7 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
       // ========================
       Swal.fire({
         title: "Cleared!",
-        text: `Booking archived with ${selectedRefund}% refund ($${refundAmount}).`,
+        text: `Booking archived with ${selectedRefundPercentage}% refund ($${refundAmount}).`,
         icon: "success",
         timer: 2000,
         showConfirmButton: false,
@@ -241,6 +250,8 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
         text: "Failed to clear the booking. Try again.",
         icon: "error",
       });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -288,14 +299,18 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
       {booking.startAt && booking.status !== "Ended" && (
         <>
           <button
+            disabled={isProcessing}
             id={`drop-details-btn-${booking._id}`}
-            className="border-2 border-red-500 bg-red-100 hover:bg-red-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
+            className={`border-2 border-red-500 bg-red-100 hover:bg-red-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200 ${
+              isProcessing ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             onClick={() => {
               handleDropSession(booking);
             }}
           >
-            <MdDelete className="text-red-500" />
+            <FaRegTrashAlt className="text-red-500" />
           </button>
+
           <Tooltip
             anchorSelect={`#drop-details-btn-${booking._id}`}
             content="Drop Class"
@@ -307,18 +322,17 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
       {booking.status === "Ended" && (
         <>
           <button
+            disabled={isProcessing}
             id={`clear-details-btn-${booking._id}`}
-            className="border-2 border-red-500 bg-red-100 hover:bg-red-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
+            className={`border-2 border-red-500 bg-red-100 hover:bg-red-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200 ${
+              isProcessing ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             onClick={() => {
               handleClearEndedBooking(booking);
             }}
           >
             <ImCross className="text-red-500" />
           </button>
-          <Tooltip
-            anchorSelect={`#clear-details-btn-${booking._id}`}
-            content="Clear Booking"
-          />
         </>
       )}
 

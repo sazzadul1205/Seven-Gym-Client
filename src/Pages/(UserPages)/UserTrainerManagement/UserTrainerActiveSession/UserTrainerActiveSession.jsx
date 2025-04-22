@@ -132,7 +132,7 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
                         // No sessions message
                         <div className="flex justify-center items-center h-full py-6">
                           <p className="text-red-500 font-bold italic">
-                            No Sessions Scheduled This Far This Far
+                            No Scheduled
                           </p>
                         </div>
                       )}
@@ -231,30 +231,30 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
                     className="border-b bg-white hover:bg-gray-100 cursor-default"
                   >
                     {/* Trainer Name */}
-                    <td className="px-4 py-2 text-left border border-gray-600">
+                    <td className="px-4 py-2 text-left">
                       {booking.trainer}
                     </td>
 
                     {/* Start At */}
-                    <td className="px-4 py-2 text-left border border-gray-600">
+                    <td className="px-4 py-2 text-left">
                       {booking.startAt ? booking.startAt : "Not started yet"}
                     </td>
 
                     {/* Total Price */}
-                    <td className="px-4 py-2 text-left border border-gray-600">
+                    <td className="px-4 py-2 text-left">
                       {String(booking.totalPrice).toLowerCase() === "free"
                         ? "Free"
                         : `$ ${booking.totalPrice}`}
                     </td>
 
                     {/* Duration */}
-                    <td className="px-4 py-2 text-left border border-gray-600">
+                    <td className="px-4 py-2 text-left">
                       {booking.durationWeeks}{" "}
                       {booking.durationWeeks === 1 ? "Week" : "Weeks"}
                     </td>
 
                     {/* Session End (calculated using startAt + duration weeks) */}
-                    <td className="px-4 py-2 text-left border border-gray-600">
+                    <td className="px-4 py-2 text-left">
                       {booking.startAt
                         ? new Date(
                             new Date(booking.startAt).setDate(
@@ -266,7 +266,7 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
                     </td>
 
                     {/* Action Button */}
-                    <td className="px-4 py-2 border border-gray-600">
+                    <td className="px-4 py-2">
                       <div className="flex justify-center items-center">
                         <button
                           id={`view-details-btn-${booking._id}`}
