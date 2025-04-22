@@ -79,16 +79,39 @@ const UserProfile = () => {
     enabled: classesName.length > 0,
   });
 
+  // Fetch all Trainer Booking Request Request
+  const {
+    data: TrainersBookingAcceptedData = [],
+    isLoading: TrainersBookingAcceptedIsLoading,
+    error: TrainersBookingAcceptedError,
+  } = useQuery({
+    queryKey: ["TrainersBookingRequestData", user?.email],
+    queryFn: async () => {
+      if (classesName.length === 0) return [];
+      const res = await axiosPublic.get(
+        `/Trainer_Booking_Accepted/Booker/${user?.email}`
+      );
+      return res.data;
+    },
+    enabled: classesName.length > 0,
+  });
+
   // Load States
-  if (UsersLoading || BookedTrainerLoading || ClassesIsLoading)
+  if (
+    UsersLoading ||
+    BookedTrainerLoading ||
+    ClassesIsLoading ||
+    TrainersBookingAcceptedIsLoading
+  )
     return <Loading />;
 
   // Error States
-  if (UsersError || BookedTrainerError || ClassesError) {
-    console.error(
-      "Error fetching data:",
-      UsersError || BookedTrainerError || ClassesError
-    );
+  if (
+    UsersError ||
+    BookedTrainerError ||
+    ClassesError ||
+    TrainersBookingAcceptedError
+  ) {
     return <FetchingError />;
   }
 
@@ -119,7 +142,10 @@ const UserProfile = () => {
             <UserProfileGoals usersData={UsersData} />
 
             {/* Current Teacher */}
-            <UserProfileTrainers BookedTrainerData={BookedTrainerData} />
+            <UserProfileTrainers
+              BookedTrainerData={BookedTrainerData}
+              TrainersBookingAcceptedData={TrainersBookingAcceptedData}
+            />
 
             {/* Current Attending Classes */}
             <UserProfileAttendingClasses ClassesData={ClassesData} />

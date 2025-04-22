@@ -54,7 +54,7 @@ const UserSessionPaymentInvoiceModal = ({
   };
 
   return (
-    <div className="modal-box bg-[#ffffff] shadow-lg rounded-lg max-w-md mx-auto">
+    <div className="modal-box p-0 md:p-4 bg-[#ffffff] shadow-lg rounded-lg max-w-md mx-auto">
       {/* Receipt Section */}
       <div ref={receiptRef} id="receipt">
         {/* Receipt Header */}
@@ -198,7 +198,6 @@ const UserSessionPaymentInvoiceModal = ({
       {/* Close Button and PDF Generation Button */}
       <div className="modal-action mt-6 flex justify-between">
         {/* Close Button */}
-
         <CommonButton
           text="Close"
           type="button"
@@ -211,7 +210,7 @@ const UserSessionPaymentInvoiceModal = ({
         {selectedPaymentInvoice && (
           <CommonButton
             clickEvent={generatePDF}
-            text="Download PDF"
+            text="Download"
             bgColor="green"
             width="[150px]"
             type="button"

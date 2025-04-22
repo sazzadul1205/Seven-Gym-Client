@@ -7,14 +7,19 @@ import USTrainer from "../../../../assets/UserProfile/USTrainer.png";
 // Component Import
 import TrainerPublicIdCard from "../../../../Shared/Component/TrainerPublicIdCard";
 
-const UserProfileTrainers = ({ BookedTrainerData }) => {
+const UserProfileTrainers = ({
+  BookedTrainerData,
+  TrainersBookingAcceptedData,
+}) => {
+  console.log("Trainers Booking Accepted Data :", TrainersBookingAcceptedData);
+
   return (
     <div className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-300 p-5 shadow-xl rounded-xl">
       {/* Header Section */}
       <div className="flex items-center space-x-2 border-b pb-2">
         <img src={USTrainer} alt="Trainer Icon" className="w-6 h-6" />
         <h2 className="text-xl font-semibold text-black">
-          My Current Trainers
+          My Pending Trainers
         </h2>
       </div>
       <div className="bg-black p-[1px]"></div>

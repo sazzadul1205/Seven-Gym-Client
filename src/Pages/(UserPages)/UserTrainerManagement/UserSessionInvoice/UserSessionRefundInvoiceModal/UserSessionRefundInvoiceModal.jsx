@@ -85,7 +85,7 @@ const UserSessionRefundInvoiceModal = ({
   };
 
   return (
-    <div className="modal-box bg-[#ffffff] shadow-lg rounded-lg max-w-md mx-auto">
+    <div className="modal-box p-0 md:p-4 bg-[#ffffff] shadow-lg rounded-lg max-w-md mx-auto">
       {/* Receipt Section */}
       <div ref={receiptRef} id="receipt">
         {/* Receipt Header */}
@@ -307,7 +307,7 @@ const UserSessionRefundInvoiceModal = ({
         {selectedRefundInvoice && (
           <CommonButton
             clickEvent={generatePDF}
-            text="Download PDF"
+            text="Download"
             bgColor="green"
             width="[150px]"
             type="button"

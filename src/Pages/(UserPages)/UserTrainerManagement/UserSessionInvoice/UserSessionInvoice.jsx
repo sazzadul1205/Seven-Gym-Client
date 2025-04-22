@@ -41,6 +41,14 @@ const UserSessionInvoice = ({
     setSelectedRefundInvoice(null);
   };
 
+  const sortedPaymentInvoices = [...SessionPaymentInvoicesData].sort((a, b) => {
+    return new Date(b?.BookingInfo?.paidAt) - new Date(a?.BookingInfo?.paidAt);
+  });
+
+  const sortedRefundInvoices = [...SessionRefundInvoicesData].sort(
+    (a, b) => new Date(b.refundedAt) - new Date(a.refundedAt)
+  );
+
   return (
     <div>
       {/* Header */}
@@ -59,7 +67,7 @@ const UserSessionInvoice = ({
         </div>
 
         {/* Content */}
-        {SessionPaymentInvoicesData.length > 0 ? (
+        {sortedPaymentInvoices?.length > 0 ? (
           <>
             {/* Desktop View */}
             <div className="overflow-x-auto hidden md:block">
@@ -89,7 +97,7 @@ const UserSessionInvoice = ({
 
                 {/* Table Body */}
                 <tbody>
-                  {SessionPaymentInvoicesData?.map((item, index) => (
+                  {sortedPaymentInvoices?.map((item, index) => (
                     <tr
                       key={`List_No_${item?._id}_${index}`}
                       className={`border-b bg-white hover:bg-gray-200 cursor-default`}
@@ -159,6 +167,78 @@ const UserSessionInvoice = ({
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile view */}
+            <div className="md:hidden space-y-4">
+              {sortedPaymentInvoices?.map((item, index) => (
+                <div
+                  key={`mobile_List_No_${item?._id}_${index}`}
+                  className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-green-500"
+                >
+                  {/* Card Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-semibold text-gray-800">
+                        #{index + 1}
+                      </span>
+                      <FaFileInvoiceDollar className="text-green-500 text-xl" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-500">
+                      {formatDate(item?.BookingInfo?.paidAt)}
+                    </span>
+                  </div>
+
+                  {/* Details Grid */}
+                  <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-700">
+                    <div>
+                      <dt className="font-medium">Payment ID</dt>
+                      <dd className="truncate">{item?.stripePaymentID}</dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium">Trainer</dt>
+                      <dd>{item?.BookingInfo?.trainer}</dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium">Price</dt>
+                      <dd>
+                        {item?.BookingInfo?.totalPrice === "0.00" ||
+                        item?.BookingInfo?.totalPrice === 0.0
+                          ? "Free"
+                          : `$ ${item?.BookingInfo?.totalPrice}`}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium">Sessions</dt>
+                      <dd>{item?.BookingInfo?.sessions?.length}</dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium">Duration</dt>
+                      <dd>
+                        {item?.BookingInfo?.durationWeeks}{" "}
+                        {item?.BookingInfo?.durationWeeks > 1
+                          ? "Weeks"
+                          : "Week"}
+                      </dd>
+                    </div>
+                  </dl>
+
+                  {/* Action */}
+                  <div className="mt-6 flex justify-center">
+                    <button
+                      id={`view-details-btn-mobile-${item._id}`}
+                      className="flex items-center gap-2 border-2 border-green-500 bg-green-50 hover:bg-green-100 rounded-full px-4 py-2 font-medium transition-transform transform hover:scale-105"
+                      onClick={() => {
+                        setSelectedPaymentInvoice(item);
+                        modalPaymentRef.current?.showModal();
+                      }}
+                    >
+                      <FaFileInvoiceDollar className="text-green-500" />
+                      <span className="text-green-700">Details</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </>
         ) : (
           // If No Payment are fetched then show this
@@ -179,7 +259,7 @@ const UserSessionInvoice = ({
         </div>
 
         {/* Content */}
-        {SessionRefundInvoicesData.length > 0 ? (
+        {sortedRefundInvoices.length > 0 ? (
           <>
             {/* Desktop View */}
             <div className="overflow-x-auto hidden md:block">
@@ -209,7 +289,7 @@ const UserSessionInvoice = ({
 
                 {/* Table Body */}
                 <tbody>
-                  {SessionRefundInvoicesData?.map((item, index) => (
+                  {sortedRefundInvoices?.map((item, index) => (
                     <tr
                       key={`List_No_${item?._id}_${index}`}
                       className={`border-b bg-white hover:bg-gray-200 cursor-default`}
@@ -267,13 +347,13 @@ const UserSessionInvoice = ({
                         <div className="flex justify-center items-center gap-2">
                           <button
                             id={`view-details-btn-${item._id}`} // Unique ID for each button
-                            className="border-2 border-green-500 bg-green-100 hover:bg-green-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform"
+                            className="border-2 border-red-500 bg-red-100 hover:bg-red-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform"
                             onClick={() => {
                               setSelectedRefundInvoice(item);
                               modalRefundRef.current?.showModal();
                             }}
                           >
-                            <FaFileInvoiceDollar className="text-green-500" />
+                            <FaFileInvoiceDollar className="text-red-500" />
                           </button>
                           <Tooltip
                             anchorSelect={`#view-details-btn-${item._id}`}
@@ -285,6 +365,83 @@ const UserSessionInvoice = ({
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile View  */}
+            <div className="md:hidden space-y-4">
+              {sortedRefundInvoices?.map((item, index) => (
+                <div
+                  key={`mobile_refund_List_No_${item?._id}_${index}`}
+                  className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-red-500"
+                >
+                  {/* Card Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-semibold text-gray-800">
+                        #{index + 1}
+                      </span>
+                      <FaFileInvoiceDollar className="text-red-500 text-xl" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-500">
+                      {formatDate(item?.refundedAt)}
+                    </span>
+                  </div>
+
+                  {/* Details Grid */}
+                  <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-700">
+                    <div>
+                      <dt className="font-medium">Refund ID</dt>
+                      <dd className="truncate">{item?.refundID}</dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium">Trainer</dt>
+                      <dd>{item?.bookingDataForHistory?.trainer}</dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium">Refund %</dt>
+                      <dd>{item?.bookingDataForHistory?.RefundPercentage}</dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium">Amount</dt>
+                      <dd>
+                        {item?.bookingDataForHistory?.RefundAmount !== undefined
+                          ? `$ ${Number(
+                              item.bookingDataForHistory.RefundAmount
+                            ).toFixed(2)}`
+                          : "N/A"}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium">Sessions</dt>
+                      <dd>{item?.bookingDataForHistory?.sessions?.length}</dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium">Duration</dt>
+                      <dd>
+                        {item?.bookingDataForHistory?.durationWeeks}{" "}
+                        {item?.bookingDataForHistory?.durationWeeks === 1
+                          ? "Week"
+                          : "Weeks"}
+                      </dd>
+                    </div>
+                  </dl>
+
+                  {/* Action */}
+                  <div className="mt-6 flex justify-center">
+                    <button
+                      id={`view-refund-details-btn-mobile-${item._id}`}
+                      className="flex items-center gap-2 border-2 border-red-500 bg-red-50 hover:bg-red-100 rounded-full px-4 py-2 font-medium transition-transform transform hover:scale-105"
+                      onClick={() => {
+                        setSelectedRefundInvoice(item);
+                        modalRefundRef.current?.showModal();
+                      }}
+                    >
+                      <FaFileInvoiceDollar className="text-red-500" />
+                      <span className="text-red-700">Details</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </>
         ) : (
@@ -317,7 +474,6 @@ const UserSessionInvoice = ({
   );
 };
 
-// Payment and Refund Prop Validation
 // Payment and Refund Prop Validation
 UserSessionInvoice.propTypes = {
   SessionRefundInvoicesData: PropTypes.arrayOf(
