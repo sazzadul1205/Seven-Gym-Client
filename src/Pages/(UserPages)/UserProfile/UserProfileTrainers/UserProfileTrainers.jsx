@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Link } from "react-router";
 
 import PropTypes from "prop-types";
@@ -5,35 +6,43 @@ import PropTypes from "prop-types";
 import USTrainer from "../../../../assets/UserProfile/USTrainer.png";
 
 // Component Import
-import TrainerPublicIdCard from "../../../../Shared/Component/TrainerPublicIdCard";
+import UserProfileTrainerBasicInfo from "./UserProfileTrainerBasicInfo/UserProfileTrainerBasicInfo";
 
-const UserProfileTrainers = ({
-  BookedTrainerData,
-  TrainersBookingAcceptedData,
-}) => {
+const UserProfileTrainers = ({ TrainersBookingAcceptedData }) => {
   console.log("Trainers Booking Accepted Data :", TrainersBookingAcceptedData);
 
   return (
-    <div className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-300 p-5 shadow-xl rounded-xl">
+    <div className="bg-linear-to-bl hover:bg-linear-to-tr from-white to-gray-100 p-5 shadow-xl rounded-xl">
       {/* Header Section */}
       <div className="flex items-center space-x-2 border-b pb-2">
         <img src={USTrainer} alt="Trainer Icon" className="w-6 h-6" />
-        <h2 className="text-xl font-semibold text-black">
-          My Pending Trainers
-        </h2>
+        <h2 className="text-xl font-semibold text-black">My Active Sessions</h2>
       </div>
       <div className="bg-black p-[1px]"></div>
 
       {/* Trainer List */}
-      {BookedTrainerData?.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+      {TrainersBookingAcceptedData?.length > 0 ? (
+        <div className="block gap-4 space-y-2 mt-5">
           {/* Map through each trainer and display their details using TrainerPublicIdCard */}
-          {BookedTrainerData.map((trainer, index) => (
-            <TrainerPublicIdCard
-              key={trainer.trainersID || index} // Use trainer ID or index as key
-              trainer={trainer} // Pass the trainer data
-              role="Trainer" // Pass the role as "Trainer"
-            />
+          {TrainersBookingAcceptedData.map((trainer, index) => (
+            <div
+              key={index}
+              className="flex items-center border border-gray-300 text-black py-3 px-2 "
+            >
+              <UserProfileTrainerBasicInfo Id={trainer?.trainerId} />
+
+              <div className="px-2">
+                <p className="font-semibold">Trainer :</p>
+                <p>{trainer?.trainer}</p>
+              </div>
+
+              <div>
+                <p>
+                  {trainer.durationWeeks}{" "}
+                  {trainer.durationWeeks === 1 ? "Week" : "Weeks"}
+                </p>
+              </div>
+            </div>
           ))}
         </div>
       ) : (
