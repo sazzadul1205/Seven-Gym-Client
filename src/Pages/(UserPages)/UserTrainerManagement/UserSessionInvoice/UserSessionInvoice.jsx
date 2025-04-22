@@ -13,6 +13,7 @@ import { Tooltip } from "react-tooltip";
 // Import Modal
 import UserSessionPaymentInvoiceModal from "./UserSessionPaymentInvoiceModal/UserSessionPaymentInvoiceModal";
 import { FaTriangleExclamation } from "react-icons/fa6";
+import UserSessionRefundInvoiceModal from "./UserSessionRefundInvoiceModal/UserSessionRefundInvoiceModal";
 
 const UserSessionInvoice = ({
   SessionRefundInvoicesData,
@@ -24,12 +25,7 @@ const UserSessionInvoice = ({
 
   // Create a ref for the modal
   const modalPaymentRef = useRef(null);
-
   const modalRefundRef = useRef(null);
-
-  // console.log("Session Payment Invoices Data : ", SessionPaymentInvoicesData);
-
-  console.log("Session Refund Invoices Data : ", SessionRefundInvoicesData);
 
   // Close Modal Handler
   const closePaymentInvoiceModal = () => {
@@ -274,7 +270,7 @@ const UserSessionInvoice = ({
                             className="border-2 border-green-500 bg-green-100 hover:bg-green-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform"
                             onClick={() => {
                               setSelectedRefundInvoice(item);
-                              modalPaymentRef.current?.showModal();
+                              modalRefundRef.current?.showModal();
                             }}
                           >
                             <FaFileInvoiceDollar className="text-green-500" />
@@ -311,16 +307,17 @@ const UserSessionInvoice = ({
       </dialog>
 
       {/* User Trainer Booking Info Modal */}
-      <dialog ref={modalPaymentRef} className="modal">
-        <UserSessionPaymentInvoiceModal
-          closeModal={closePaymentInvoiceModal}
-          selectedPaymentInvoice={selectedPaymentInvoice}
+      <dialog ref={modalRefundRef} className="modal">
+        <UserSessionRefundInvoiceModal
+          closeModal={closeRefundInvoiceModal}
+          selectedRefundInvoice={selectedRefundInvoice}
         />
       </dialog>
     </div>
   );
 };
 
+// Payment and Refund Prop Validation
 // Payment and Refund Prop Validation
 UserSessionInvoice.propTypes = {
   SessionRefundInvoicesData: PropTypes.arrayOf(
@@ -329,30 +326,35 @@ UserSessionInvoice.propTypes = {
       stripePaymentID: PropTypes.string,
       cardHolder: PropTypes.string,
       paymentMethod: PropTypes.string,
-      sessionInfo: PropTypes.shape({
-        _id: PropTypes.string,
-        trainer: PropTypes.string,
-        trainerId: PropTypes.string,
-        totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        paidAt: PropTypes.string,
-        sessions: PropTypes.arrayOf(PropTypes.string),
-      }),
+      sessionInfo: PropTypes.arrayOf(
+        PropTypes.shape({
+          _id: PropTypes.string,
+          trainer: PropTypes.string,
+          trainerId: PropTypes.string,
+          totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+          paidAt: PropTypes.string,
+          sessions: PropTypes.arrayOf(PropTypes.string),
+        })
+      ),
     })
   ).isRequired,
+
   SessionPaymentInvoicesData: PropTypes.arrayOf(
     PropTypes.shape({
       _id: PropTypes.string.isRequired,
       stripePaymentID: PropTypes.string,
       cardHolder: PropTypes.string,
       paymentMethod: PropTypes.string,
-      sessionInfo: PropTypes.shape({
-        _id: PropTypes.string,
-        trainer: PropTypes.string,
-        trainerId: PropTypes.string,
-        totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        paidAt: PropTypes.string,
-        sessions: PropTypes.arrayOf(PropTypes.string),
-      }),
+      sessionInfo: PropTypes.arrayOf(
+        PropTypes.shape({
+          _id: PropTypes.string,
+          trainer: PropTypes.string,
+          trainerId: PropTypes.string,
+          totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+          paidAt: PropTypes.string,
+          sessions: PropTypes.arrayOf(PropTypes.string),
+        })
+      ),
     })
   ).isRequired,
 };
