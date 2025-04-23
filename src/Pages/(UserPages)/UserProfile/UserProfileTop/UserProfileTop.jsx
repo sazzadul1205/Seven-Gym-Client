@@ -9,7 +9,8 @@ import { IoSettings } from "react-icons/io5";
 // Import Badge
 import { fetchTierBadge } from "../../../../Utility/fetchTierBadge";
 
-
+// Import Background
+import Default_Background from "../../../../assets/UserProfile/Wood_Background.jpg";
 
 const UserProfileTop = ({ usersData, user, confEmail }) => {
   // Check if the current user is viewing their own profile
@@ -19,9 +20,7 @@ const UserProfileTop = ({ usersData, user, confEmail }) => {
     <div className="relative pb-24">
       {/* Background Image Section */}
       <img
-        src={
-          usersData?.backgroundImage || "https://via.placeholder.com/1200x400"
-        }
+        src={usersData?.backgroundImage || Default_Background}
         alt="User Background"
         className="w-full h-[300px] sm:h-[400px] object-cover"
       />
@@ -71,7 +70,9 @@ const UserProfileTop = ({ usersData, user, confEmail }) => {
                 ) : (
                   // Non-clickable badge for other users
                   <button
-                    className={`${fetchTierBadge(usersData.tier)} cursor-default`}
+                    className={`${fetchTierBadge(
+                      usersData.tier
+                    )} cursor-default`}
                   >
                     {usersData.tier} Tier
                   </button>

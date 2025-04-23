@@ -104,12 +104,14 @@ const Login = () => {
       }}
     >
       {/* Login card container */}
-      <div className="w-full max-w-lg shadow-md rounded-tl-[50px] rounded-br-[50px] p-10 bg-white/80 ">
+      <div className="w-full max-w-lg shadow-md rounded-tl-[50px] rounded-br-[50px] p-10 bg-linear-to-bl from-gray-100 to-gray-400">
         {/* Heading section */}
         <div className="pb-5">
           <h4 className="text-3xl font-bold text-center text-[#F72C5B]">
             Welcome Back
           </h4>
+
+          {/* Please Login */}
           <p className="text-lg text-black italic text-center font-semibold">
             Please Login
           </p>
@@ -125,7 +127,7 @@ const Login = () => {
             <input
               type="email"
               placeholder="Example@gmail.com"
-              className="input w-full text-black bg-white rounded-2xl shadow-lg hover:shadow-xl focus:shadow-xl"
+              className="input w-full text-black bg-white rounded-xl shadow-lg hover:shadow-xl focus:shadow-xl"
               {...register("email", {
                 required: "Email is required",
                 pattern: {
@@ -149,7 +151,7 @@ const Login = () => {
             <input
               type="password"
               placeholder="********"
-              className="input w-full text-black bg-white rounded-2xl shadow-lg hover:shadow-xl focus:shadow-xl"
+              className="input w-full text-black bg-white rounded-xl shadow-lg hover:shadow-xl focus:shadow-xl"
               {...register("password", {
                 required: "Password is required",
                 minLength: {

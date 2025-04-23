@@ -68,7 +68,7 @@ const SignUp = () => {
       >
         {/* Sign-up card container */}
         <div
-          className="w-full max-w-lg shadow-md rounded-tl-[50px] rounded-br-[50px] p-10"
+          className="w-full max-w-lg shadow-md rounded-tl-[50px] rounded-br-[50px] p-10 bg-linear-to-bl from-gray-100 to-gray-400"
           style={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
         >
           {/* Form title */}
@@ -88,7 +88,7 @@ const SignUp = () => {
               <input
                 type="email"
                 placeholder="name@mail.com"
-                className="input w-full text-black bg-white rounded-2xl shadow-lg hover:shadow-xl focus:shadow-xl"
+                className="input w-full text-black bg-white rounded-xl shadow-lg hover:shadow-xl focus:shadow-xl"
                 {...register("email", {
                   required: "Email is required",
                   pattern: {
@@ -112,7 +112,7 @@ const SignUp = () => {
               <input
                 type="password"
                 placeholder="********"
-                className="input w-full text-black bg-white rounded-2xl shadow-lg hover:shadow-xl focus:shadow-xl"
+                className="input w-full text-black bg-white rounded-xl shadow-lg hover:shadow-xl focus:shadow-xl"
                 {...register("password", {
                   required: "Password is required",
                   minLength: {
@@ -136,7 +136,7 @@ const SignUp = () => {
               <input
                 type="password"
                 placeholder="********"
-                className="input w-full text-black bg-white rounded-2xl shadow-lg hover:shadow-xl focus:shadow-xl"
+                className="input w-full text-black bg-white rounded-xl shadow-lg hover:shadow-xl focus:shadow-xl"
                 {...register("confirmPassword", {
                   required: "Confirm Password is required",
                   validate: (value) =>
@@ -156,7 +156,7 @@ const SignUp = () => {
               text="Sign Up"
               bgColor="OriginalRed"
               textColor="text-white"
-              py="py-4"
+              py="py-3"
               px="px-6"
               width="full"
               borderRadius="rounded-xl"

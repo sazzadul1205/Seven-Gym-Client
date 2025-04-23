@@ -1,21 +1,33 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
+// Import Packages
 import Swal from "sweetalert2";
 import PropTypes from "prop-types";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 
+// import Hooks
 import useAuth from "../../../Hooks/useAuth";
 import Loading from "../../../Shared/Loading/Loading";
-import ImageCropper from "./ImageCropper/ImageCropper";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
+import FetchingError from "../../../Shared/Component/FetchingError";
+
+// import Cropper
+import ImageCropper from "./ImageCropper/ImageCropper";
+
+// Import Selector
 import FitnessGoalsSelector from "./FitnessGoalsSelector/FitnessGoalsSelector";
 
-// Background Image
+// Import Background
 import LoginBack from "../../../assets/Background-Auth/LoginBack.jpeg";
-import FetchingError from "../../../Shared/Component/FetchingError";
+
+// Import Button
 import CommonButton from "../../../Shared/Buttons/CommonButton";
+
+// import Phone
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 // Constants for image hosting API
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
@@ -29,6 +41,7 @@ const SignUpDetails = () => {
   // State hooks for form data and image
   const [selectedGoals, setSelectedGoals] = useState([]);
   const [profileImage, setProfileImage] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [loading, setLoading] = useState(false);
 
   console.log(profileImage);
@@ -116,6 +129,7 @@ const SignUpDetails = () => {
 
     const formDataWithImage = {
       email: user.email,
+      phone: phoneNumber,
       ...data,
       profileImage: uploadedImageUrl,
       selectedGoals,
@@ -124,12 +138,7 @@ const SignUpDetails = () => {
       tier: "Bronze",
       description: "No description provided.",
       backgroundImage: "https://via.placeholder.com/1920x1080",
-      socialLinks: {
-        facebook: "",
-        instagram: "",
-        twitter: "",
-        telegram: "",
-      },
+      socialLinks: {},
       badges: [],
       attendingTrainer: [],
       attendingClasses: [],
@@ -194,21 +203,33 @@ const SignUpDetails = () => {
         backgroundImage: `url(${LoginBack})`,
       }}
     >
-      <div className="w-full max-w-7xl shadow-md rounded-tl-[50px] rounded-br-[50px] p-6 sm:p-8 md:p-10 pt-24 md:pt-6 bg-white/90">
+      <div className="w-full max-w-7xl shadow-md rounded-tl-[50px] rounded-br-[50px] px-10 py-5 bg-linear-to-bl from-gray-100 to-gray-400">
+        {/* Header */}
+        <div className="py-3">
+          <h4 className="text-3xl font-bold text-center text-[#F72C5B]">
+            Trainer Details
+          </h4>
+        </div>
+
         {/* Forms */}
         <form onSubmit={handleSubmit(confirmAndSubmit)}>
           {/* Content */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-10 items-center">
             {/* Left Side Data */}
             <div className="space-y-4">
-              <h3 className="text-black font-semibold text-xl">
-                Trainer Profile
-              </h3>
-              <ImageCropper
-                onImageCropped={setProfileImage}
-                register={register}
-                errors={errors}
-              />
+              <div className="bg-white py-2 px-1 bg-linear-to-bl from-gray-100 to-gray-400">
+                {/* Title */}
+                <h3 className="text-black font-semibold text-xl">
+                  Trainer Profile
+                </h3>
+
+                {/* Cropper Component */}
+                <ImageCropper
+                  onImageCropped={setProfileImage}
+                  register={register}
+                  errors={errors}
+                />
+              </div>
               <InputField
                 label="Full Name"
                 placeholder="John Doe"
@@ -221,14 +242,14 @@ const SignUpDetails = () => {
 
             {/* Right Side Data */}
             <div className="space-y-4">
-              <InputField
-                label="Phone Number"
-                placeholder="+8801234567890"
-                register={register}
-                errors={errors}
-                name="phone"
-                type="tel"
+              <PhoneInput
+                country={"bd"}
+                value={phoneNumber}
+                onChange={setPhoneNumber}
+                inputClass="!w-full !bg-white !text-black !rounded-lg !shadow-lg "
+                inputStyle={{ width: "100%", height: "40px" }}
               />
+
               <InputField
                 label="Date of Birth"
                 placeholder=""
