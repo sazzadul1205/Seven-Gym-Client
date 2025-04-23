@@ -9,8 +9,6 @@ import USTrainer from "../../../../assets/UserProfile/USTrainer.png";
 import UserProfileTrainerBasicInfo from "./UserProfileTrainerBasicInfo/UserProfileTrainerBasicInfo";
 
 const UserProfileTrainers = ({ TrainersBookingAcceptedData }) => {
-  console.log("Trainers Booking Accepted Data :", TrainersBookingAcceptedData);
-
   return (
     <div className="bg-linear-to-bl hover:bg-linear-to-tr from-white to-gray-100 p-5 shadow-xl rounded-xl">
       {/* Header Section */}
@@ -27,21 +25,52 @@ const UserProfileTrainers = ({ TrainersBookingAcceptedData }) => {
           {TrainersBookingAcceptedData.map((trainer, index) => (
             <div
               key={index}
-              className="flex items-center border border-gray-300 text-black py-3 px-2 "
+              className="bg-white rounded-2xl shadow-md p-5 mb-6 hover:shadow-lg transition-shadow duration-300"
             >
-              <UserProfileTrainerBasicInfo Id={trainer?.trainerId} />
+              <Link to={`/Trainers/${trainer?.trainer}`}>
+                <div className="flex flex-col sm:flex-row items-center sm:items-start">
+                  {/* Trainer avatar / name */}
+                  <UserProfileTrainerBasicInfo
+                    Id={trainer?.trainerId}
+                    className="w-16 h-16 rounded-full"
+                  />
 
-              <div className="px-2">
-                <p className="font-semibold">Trainer :</p>
-                <p>{trainer?.trainer}</p>
-              </div>
+                  {/* Details */}
+                  <div className="mt-4 sm:mt-0 sm:ml-6 flex flex-col md:flex-row gap-1 md:gap-9 text-center md:text-left  text-black">
+                    {/* trainer & Start */}
+                    <div>
+                      {/* trainer */}
+                      <h3 className="text-xl font-semibold text-gray-900">
+                        {trainer?.trainer || "Unknown Trainer"}
+                      </h3>
 
-              <div>
-                <p>
-                  {trainer.durationWeeks}{" "}
-                  {trainer.durationWeeks === 1 ? "Week" : "Weeks"}
-                </p>
-              </div>
+                      {/* Start Date */}
+                      <p>
+                        <span className="font-medium">Start Date:</span>{" "}
+                        <span>{trainer?.startAt}</span>
+                      </p>
+                    </div>
+
+                    {/* Duration & Sessions */}
+                    <div>
+                      {/* Duration */}
+                      <p>
+                        <span className="font-medium">Duration:</span>{" "}
+                        <span>
+                          {trainer?.durationWeeks}{" "}
+                          {trainer?.durationWeeks === 1 ? "Week" : "Weeks"}
+                        </span>
+                      </p>
+
+                      {/* Sessions */}
+                      <p>
+                        <span className="font-medium">Sessions:</span>{" "}
+                        <span>{trainer?.sessions.length}</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Link>
             </div>
           ))}
         </div>

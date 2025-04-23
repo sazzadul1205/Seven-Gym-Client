@@ -14,7 +14,6 @@ import { ImCross } from "react-icons/im";
 import useAuth from "../../../../../Hooks/useAuth";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
-
 // Import Import Field
 import InputField from "../../../../../Shared/InputField/InputField";
 
@@ -228,8 +227,6 @@ const AddWorkoutModal = ({ refetch }) => {
             isLoading={loading}
             loadingText="Adding..."
             bgColor="green"
-            bgFromColor="green-300"
-            bgToColor="green-600"
           />
         </div>
       </form>

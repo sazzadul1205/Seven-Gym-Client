@@ -125,11 +125,13 @@ const UserProfile = () => {
         {/* Info Section */}
         <div className="w-full lg:w-1/2 ">
           {/* Title */}
-          <h2 className="text-2xl text-black font-semibold">
+          <h2 className="text-2xl text-center md:text-left text-black font-semibold">
             {UsersData?.fullName || "Default Name"} Information
           </h2>
+
           {/* Border */}
-          <div className="bg-black p-[1px] my-2"></div>
+          <div className="bg-black p-[1px] my-2" />
+
           {/* Content */}
           <div className="space-y-6 pt-2">
             {/* About Me */}

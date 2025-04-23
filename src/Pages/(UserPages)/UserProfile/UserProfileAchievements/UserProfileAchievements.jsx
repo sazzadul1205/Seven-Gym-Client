@@ -53,16 +53,18 @@ const UserProfileAchievements = ({ usersData, refetch }) => {
 
         {/* View More Button */}
         <button
-          className="flex items-center space-x-2 bg-linear-to-l hover:bg-linear-to-r text-black hover:text-gray-800 cursor-pointer"
+          className="flex items-center space-x-2 bg-linear-to-l hover:bg-linear-to-r text-black hover:text-gray-500 cursor-pointer"
           onClick={() =>
             document.getElementById("Award_View_More_Modal").showModal()
           }
         >
-          <h2 className="text-xl font-semibold">View More</h2>
+          <h2 className="text-xl font-semibold">More</h2>
           <FaChevronRight className="text-xl" />
         </button>
       </div>
-      <div className="bg-black p-[1px]"></div>
+
+      {/* Breaker */}
+      <div className="bg-black p-[1px]" />
 
       {/* Favorite Awards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">

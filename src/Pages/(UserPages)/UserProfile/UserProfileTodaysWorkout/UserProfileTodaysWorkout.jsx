@@ -17,6 +17,7 @@ import {
 import ViewAllTodaysWorkoutModal from "./ViewAllTodaysWorkoutModal/ViewAllTodaysWorkoutModal";
 import SelectedWorkoutDetailsModal from "./SelectedWorkoutDetailsModal/SelectedWorkoutDetailsModal";
 import AddWorkoutModal from "../../UserSettings/UserSettingsWorkout/AddWorkoutModal/AddWorkoutModal";
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 // Reusable component for workout details
 const WorkoutDetailItem = ({ icon, label, value, iconColor }) => (
@@ -89,37 +90,37 @@ const UserProfileTodaysWorkout = ({ recentWorkouts, refetch }) => {
         {/* More Btns */}
         <div className="flex gap-4">
           {/* Add New Workout Button */}
-          <div className="bg-white p-1 rounded-full">
-            <MdOutlineLibraryAdd
-              className="text-3xl text-red-500 hover:text-red-400 transition-all duration-300 hover:scale-105 cursor-pointer"
-              data-tooltip-id="Add_Modal_Button_Tooltip_Workout"
-              onClick={() =>
-                document.getElementById("Add_Workout_Modal").showModal()
-              }
-            />
-            <Tooltip
-              id="Add_Modal_Button_Tooltip_Workout"
-              place="top"
-              content="Add Workout"
-            />
-          </div>
+          <button
+            className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
+            data-tooltip-id="Add_Modal_Button_Tooltip_Workout"
+            onClick={() =>
+              document.getElementById("Add_Workout_Modal").showModal()
+            }
+          >
+            <MdOutlineLibraryAdd className="text-red-500 text-xl" />
+          </button>
+          <Tooltip
+            id="Add_Modal_Button_Tooltip_Workout"
+            place="top"
+            content="Add Workout"
+          />
           {/* Show All Recent Workouts Button */}
-          <div className="bg-white p-1 rounded-full">
-            <FcViewDetails
-              className="text-3xl transition-all duration-300 hover:scale-105 cursor-pointer"
-              data-tooltip-id="view_Modal_Button_Tooltip_All_Workout"
-              onClick={() =>
-                document
-                  .getElementById("View_All_Recent_Workout_Modal")
-                  .showModal()
-              }
-            />
-            <Tooltip
-              id="view_Modal_Button_Tooltip_All_Workout"
-              place="top"
-              content="view All Workout"
-            />
-          </div>
+          <button
+            className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"
+            data-tooltip-id="view_Modal_Button_Tooltip_All_Workout"
+            onClick={() =>
+              document
+                .getElementById("View_All_Recent_Workout_Modal")
+                .showModal()
+            }
+          >
+            <FcViewDetails className="text-xl" />
+          </button>
+          <Tooltip
+            id="view_Modal_Button_Tooltip_All_Workout"
+            place="top"
+            content="View All Workout"
+          />
         </div>
       </div>
 
@@ -174,18 +175,23 @@ const UserProfileTodaysWorkout = ({ recentWorkouts, refetch }) => {
           })
         ) : (
           // No Workouts Message
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center bg-linear-to-bl from-gray-200 to-gray-400 border border-gray-300 py-2">
             <p className="text-black italic text-center text-sm sm:text-base font-semibold mb-5">
               No Today&apos;s workouts to display.
             </p>
-            <button
-              className="bg-linear-to-bl hover:bg-linear-to-tr from-green-400 to-green-600 rounded-xl shadow-xl hover:shadow-2xl text-white font-semibold py-2 px-10 cursor-pointer"
-              onClick={() =>
+
+            {/* Button to Add Workout */}
+            <CommonButton
+              text="+ Add Workout"
+              bgColor="green"
+              px="px-10"
+              py="py-2"
+              borderRadius="rounded-xl"
+              textColor="text-white"
+              clickEvent={() =>
                 document.getElementById("Add_Workout_Modal").showModal()
               }
-            >
-              + Add Workout
-            </button>
+            />
           </div>
         )}
       </div>
