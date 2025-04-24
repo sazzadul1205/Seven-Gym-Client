@@ -127,12 +127,12 @@ const UserTrainerTestimonials = ({
     return <FetchingError />;
 
   // Filter out trainers already reviewed
-  const trainersWithoutUserTestimonial = TrainersData.filter(
-    (trainer) =>
-      !trainer.testimonials?.some(
-        (testimonial) => testimonial.email === UserEmail
-      )
-  );
+  const trainersWithoutUserTestimonial = TrainersData?.filter((trainer) => {
+    const testimonials = Array.isArray(trainer.testimonials)
+      ? trainer.testimonials
+      : [];
+    return !testimonials.some((testimonial) => testimonial.email === UserEmail);
+  });
 
   // Show modal to submit testimonial
   const handleTestimonialModal = (trainerId) => {
@@ -229,7 +229,7 @@ const UserTrainerTestimonials = ({
         </div>
 
         {/* Check if the user has submitted testimonials for all trainers */}
-        {trainersWithoutUserTestimonial.length === 0 ? (
+        {!TrainersData || trainersWithoutUserTestimonial.length === 0 ? (
           // If no trainers are left to review, show this message
           <p className="text-center text-gray-800 py-5 bg-white">
             You’ve already submitted testimonials for all your trainers.

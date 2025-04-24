@@ -151,93 +151,95 @@ const UserSettingsSchedule = ({ userSchedule, refetch }) => {
   // Return "Empty" if userSchedule is missing
   if (!userSchedule) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="bg-linear-to-bl from-gray-200 to-gray-400 p-5 rounded-lg shadow-lg text-center max-w-md w-full">
-          {!showTimeSelection ? (
-            <div>
-              <h3 className="font-bold text-2xl text-gray-800">
-                Create Your Schedule
-              </h3>
-              <p className="py-4 text-gray-600 text-lg">
-                You don&apos;t have a schedule yet. Would you like to create
-                one?
-              </p>
-              <div className="flex justify-center gap-4 mt-6">
-                <button
-                  onClick={handleCreateSchedule}
-                  className="bg-gradient-to-bl hover:bg-gradient-to-tr from-blue-300 to-blue-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg py-3 w-[200px] cursor-pointer delay-200"
-                >
-                  Create Schedule
-                </button>
-                <button
-                  onClick={() => navigate(-1)}
-                  className="bg-gradient-to-bl hover:bg-gradient-to-tr from-red-300 to-red-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg py-3 w-[200px] cursor-pointer delay-200"
-                >
-                  Cancel
-                </button>
+      <div className="bg-gradient-to-b from-gray-100 to-gray-200 h-screen">
+        <div className="flex items-center justify-center pt-50">
+          <div className="bg-linear-to-bl from-gray-200 to-gray-400 p-5 rounded-lg shadow-lg hover:shadow-2xl text-center  max-w-md w-full">
+            {!showTimeSelection ? (
+              <div>
+                <h3 className="font-bold text-2xl text-gray-800">
+                  Create Your Schedule
+                </h3>
+                <p className="py-4 text-gray-600 text-lg">
+                  You don&apos;t have a schedule yet. Would you like to create
+                  one?
+                </p>
+                <div className="flex justify-center gap-4 mt-6">
+                  <button
+                    onClick={handleCreateSchedule}
+                    className="bg-gradient-to-bl hover:bg-gradient-to-tr from-blue-300 to-blue-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg py-3 w-[200px] cursor-pointer delay-200"
+                  >
+                    Create Schedule
+                  </button>
+                  <button
+                    onClick={() => navigate(-1)}
+                    className="bg-gradient-to-bl hover:bg-gradient-to-tr from-red-300 to-red-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg py-3 w-[200px] cursor-pointer delay-200"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
-            </div>
-          ) : (
-            // Step 2: Display time range selection UI
-            <div>
-              <h3 className="font-bold text-lg mb-2 text-black">
-                Select Time Range
-              </h3>
-              <p className="text-gray-500 mb-4">
-                Choose a start and end time for your schedule
-              </p>
-              <div className="flex justify-center gap-4 items-center mb-6">
-                {/* Start Time Selector */}
-                <select
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
-                  className="border rounded-lg px-3 py-2 text-gray-700 focus:ring-2 focus:ring-blue-400"
-                >
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
-                    <option key={hour} value={`${hour} AM`}>
-                      {hour} AM
-                    </option>
-                  ))}
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
-                    <option key={hour + 12} value={`${hour} PM`}>
-                      {hour} PM
-                    </option>
-                  ))}
-                </select>
-                {/* End Time Selector */}
-                <select
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
-                  className="border rounded-lg px-3 py-2 text-gray-700 focus:ring-2 focus:ring-blue-400"
-                >
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
-                    <option key={hour} value={`${hour} AM`}>
-                      {hour} AM
-                    </option>
-                  ))}
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
-                    <option key={hour + 12} value={`${hour} PM`}>
-                      {hour} PM
-                    </option>
-                  ))}
-                </select>
+            ) : (
+              // Step 2: Display time range selection UI
+              <div>
+                <h3 className="font-bold text-lg mb-2 text-black">
+                  Select Time Range
+                </h3>
+                <p className="text-gray-500 mb-4">
+                  Choose a start and end time for your schedule
+                </p>
+                <div className="flex justify-center gap-4 items-center mb-6">
+                  {/* Start Time Selector */}
+                  <select
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className="border rounded-lg px-10 py-2 text-gray-700 focus:ring-2 focus:ring-blue-400 bg-white"
+                  >
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
+                      <option key={hour} value={`${hour} AM`}>
+                        {hour} AM
+                      </option>
+                    ))}
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
+                      <option key={hour + 12} value={`${hour} PM`}>
+                        {hour} PM
+                      </option>
+                    ))}
+                  </select>
+                  {/* End Time Selector */}
+                  <select
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className="border rounded-lg px-10 py-2 text-gray-700 focus:ring-2 focus:ring-blue-400 bg-white"
+                  >
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
+                      <option key={hour} value={`${hour} AM`}>
+                        {hour} AM
+                      </option>
+                    ))}
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
+                      <option key={hour + 12} value={`${hour} PM`}>
+                        {hour} PM
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex justify-center gap-4 mt-6">
+                  <button
+                    className="bg-gradient-to-bl hover:bg-gradient-to-tr from-green-300 to-green-600 text-white font-semibold rounded-xl shadow-xl hover:shadow-2xl py-3 w-[200px]  cursor-pointer delay-200"
+                    onClick={generateSchedule}
+                  >
+                    Confirm Time
+                  </button>
+                  <button
+                    onClick={() => navigate(-1)}
+                    className="bg-gradient-to-bl hover:bg-gradient-to-tr from-red-300 to-red-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg py-3 w-[200px] cursor-pointer delay-200"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
-              <div className="flex justify-center gap-4 mt-6">
-                <button
-                  className="bg-gradient-to-bl hover:bg-gradient-to-tr from-green-300 to-green-600 text-white font-semibold rounded-xl shadow-xl hover:shadow-2xl py-3 w-[200px]  cursor-pointer delay-200"
-                  onClick={generateSchedule}
-                >
-                  Confirm Time
-                </button>
-                <button
-                  onClick={() => navigate(-1)}
-                  className="bg-gradient-to-bl hover:bg-gradient-to-tr from-red-300 to-red-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg py-3 w-[200px] cursor-pointer delay-200"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     );

@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import PropTypes from "prop-types";
 
 import groupClass from "../../../../assets/UserProfile/GroupClass.png";
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 const UserProfileAttendingClasses = ({ ClassesData }) => {
   return (
@@ -18,13 +19,17 @@ const UserProfileAttendingClasses = ({ ClassesData }) => {
 
       {/* If No Classes Are Available */}
       {(!ClassesData || ClassesData.length === 0) && (
-        <div className="text-center mt-8">
+        <div className="flex flex-col items-center space-y-4 pt-4">
           <p className="text-gray-500">No classes available at the moment.</p>
-          <Link
-            to="/Classes"
-            className="mt-4 inline-block px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
-          >
-            Join a Class
+
+          <Link to="/Classes">
+            <CommonButton
+              text="Book Classes"
+              bgColor="blue"
+              px="px-10"
+              isLoading={false}
+              width="auto"
+            />
           </Link>
         </div>
       )}

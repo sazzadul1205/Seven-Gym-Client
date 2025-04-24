@@ -18,7 +18,6 @@ import FetchingError from "../../../Shared/Component/FetchingError";
 import UserSettingsAward from "./UserSettingsAward/UserSettingsAward";
 import UserSettingsClass from "./UserSettingsClass/UserSettingsClass";
 import UserSettingsWorkout from "./UserSettingsWorkout/UserSettingsWorkout";
-import UserSettingsTrainer from "./UserSettingsTrainer/UserSettingsTrainer";
 import UserSettingsSchedule from "./UserSettingsSchedule/UserSettingsSchedule";
 import UserSettingsInformation from "./UserSettingsInformation/UserSettingsInformation";
 import UserSettingsTestimonials from "./UserSettingsTestimonials/UserSettingsTestimonials";
@@ -118,17 +117,6 @@ const UserSettings = () => {
       title: "User Schedule Settings",
       content: (
         <UserSettingsSchedule
-          userSchedule={userSchedule}
-          refetch={schedulesDataRefetch}
-        />
-      ),
-    },
-    {
-      id: "User_Trainer_Settings",
-      Icon: "https://i.ibb.co.com/S7Q8NRzz/coach.png",
-      title: "User Trainer Settings",
-      content: (
-        <UserSettingsTrainer
           userSchedule={userSchedule}
           refetch={schedulesDataRefetch}
         />

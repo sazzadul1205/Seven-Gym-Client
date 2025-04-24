@@ -7,6 +7,7 @@ import USTrainer from "../../../../assets/UserProfile/USTrainer.png";
 
 // Component Import
 import UserProfileTrainerBasicInfo from "./UserProfileTrainerBasicInfo/UserProfileTrainerBasicInfo";
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 const UserProfileTrainers = ({ TrainersBookingAcceptedData }) => {
   return (
@@ -78,11 +79,14 @@ const UserProfileTrainers = ({ TrainersBookingAcceptedData }) => {
         // If no trainers are assigned, display a message and provide a link to book a teacher
         <div className="flex flex-col items-center space-y-4 pt-4">
           <p className="text-gray-600 text-lg">No trainers assigned yet.</p>
-          <Link
-            to="/Trainers"
-            className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-400 transition duration-300"
-          >
-            Book Teacher
+          <Link to="/Trainers">
+            <CommonButton
+              text="Book Teacher"
+              bgColor="blue"
+              px="px-10"
+              isLoading={false}
+              width="auto"
+            />
           </Link>
         </div>
       )}
