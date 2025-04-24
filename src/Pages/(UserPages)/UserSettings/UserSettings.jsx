@@ -57,6 +57,7 @@ const UserSettings = () => {
       axiosPublic.get(`/Users?email=${user?.email}`).then((res) => res.data),
   });
 
+  // Fetch User Personal Schedule Data
   const {
     data: schedulesData = [],
     isLoading: scheduleDataIsLoading,
@@ -76,6 +77,20 @@ const UserSettings = () => {
         }
         throw error; // Throw other errors (like network issues)
       }
+    },
+  });
+
+  // Fetch trainer details
+  const {
+    data: UserTestimonialData,
+    isLoading: UserTestimonialsILoading,
+    error: UserTestimonialError,
+    refetch: UserTestimonialRefetch,
+  } = useQuery({
+    queryKey: ["UserTestimonialsData"],
+    queryFn: async () => {
+      const res = await axiosPublic.get(`/Testimonials?email=${user?.email}`);
+      return res.data;
     },
   });
 
@@ -139,8 +154,9 @@ const UserSettings = () => {
       title: "User Testimonials Settings",
       content: (
         <UserSettingsTestimonials
-          userSchedule={userSchedule}
-          refetch={schedulesDataRefetch}
+          UsersData={UsersData}
+          refetch={UserTestimonialRefetch}
+          UserTestimonialData={UserTestimonialData}
         />
       ),
     },
@@ -148,10 +164,11 @@ const UserSettings = () => {
   ];
 
   // Loading state
-  if (UsersIsLoading || scheduleDataIsLoading) return <Loading />;
+  if (UsersIsLoading || scheduleDataIsLoading || UserTestimonialsILoading)
+    return <Loading />;
 
   // Error state
-  if (UsersError || scheduleDataError) {
+  if (UsersError || scheduleDataError || UserTestimonialError) {
     return <FetchingError />;
   }
 
