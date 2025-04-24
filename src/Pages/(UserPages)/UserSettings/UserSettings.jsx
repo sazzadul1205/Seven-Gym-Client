@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from "react-router";
 
 // Import Icons
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { RiArchiveDrawerFill } from "react-icons/ri";
 
 // Import Hooks
 import useAuth from "../../../Hooks/useAuth";
@@ -21,7 +22,6 @@ import UserSettingsTrainer from "./UserSettingsTrainer/UserSettingsTrainer";
 import UserSettingsSchedule from "./UserSettingsSchedule/UserSettingsSchedule";
 import UserSettingsInformation from "./UserSettingsInformation/UserSettingsInformation";
 import UserSettingsTestimonials from "./UserSettingsTestimonials/UserSettingsTestimonials";
-import { RiArchiveDrawerFill } from "react-icons/ri";
 
 const UserSettings = () => {
   const { user } = useAuth();
@@ -202,7 +202,7 @@ const UserSettings = () => {
             className="drawer-overlay"
           ></label>
 
-          <div className="menu bg-gray-300 text-black border-r border-gray-500 min-h-full w-2/3 md:w-80 p-0">
+          <div className="menu bg-gray-300 text-black border-r border-gray-500 min-h-full w-3/4 md:w-80 p-0">
             {/* Title */}
             <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2">
               User Settings Options
@@ -212,10 +212,10 @@ const UserSettings = () => {
               {tabs.map((tab) => (
                 <p
                   key={tab.id}
-                  className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold cursor-pointer ${
+                  className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold mt-2 cursor-pointer ${
                     activeTab === tab.id
-                      ? "bg-blue-500 text-white border border-gray-500"
-                      : "hover:bg-blue-300"
+                      ? "bg-linear-to-br from-blue-500 to-blue-300 text-white border border-gray-500"
+                      : "bg-linear-to-bl border border-gray-400 from-gray-200 to-gray-300 hover:from-blue-400 hover:to-blue-200 hover:text-white"
                   }`}
                   onClick={() => {
                     setActiveTab(tab.id);
@@ -246,10 +246,10 @@ const UserSettings = () => {
             {tabs.map((tab) => (
               <p
                 key={tab.id}
-                className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold cursor-pointer ${
+                className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold mt-2 cursor-pointer ${
                   activeTab === tab.id
-                    ? "bg-blue-500 text-white border border-gray-500"
-                    : "hover:bg-blue-300"
+                    ? "bg-linear-to-br from-blue-500 to-blue-300 text-white border border-gray-500"
+                    : "bg-linear-to-bl border border-gray-400 from-gray-200 to-gray-300 hover:from-blue-400 hover:to-blue-200 hover:text-white"
                 }`}
                 onClick={() => setActiveTab(tab.id)}
               >

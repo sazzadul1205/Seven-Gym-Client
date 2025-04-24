@@ -9,20 +9,24 @@ import { IoSettings } from "react-icons/io5";
 // Import Badge
 import { fetchTierBadge } from "../../../../Utility/fetchTierBadge";
 
-// Import Background
-import Default_Background from "../../../../assets/UserProfile/Wood_Background.jpg";
-
 const UserProfileTop = ({ usersData, user, confEmail }) => {
   // Check if the current user is viewing their own profile
   const isProfileOwner = confEmail === user?.email;
 
   return (
-    <div className="relative pb-24">
+    <div className="relative pb-24 text-black ">
       {/* Background Image Section */}
       <img
-        src={usersData?.backgroundImage || Default_Background}
+        src={
+          usersData?.backgroundImage ||
+          "https://i.ibb.co/Kx8MX6rQ/Wood-Background.jpg"
+        }
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = "https://i.ibb.co/Kx8MX6rQ/Wood-Background.jpg";
+        }}
         alt="User Background"
-        className="w-full h-[300px] sm:h-[400px] object-cover"
+        className="w-full h-[400px] object-cover"
       />
 
       {/* Settings Icon (Visible Only to Profile Owner) */}

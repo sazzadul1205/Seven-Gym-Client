@@ -100,7 +100,7 @@ UserProfileTrainers.propTypes = {
       experience: PropTypes.number,
       photo: PropTypes.string,
     })
-  ).isRequired,
+  ),
 };
 
 export default UserProfileTrainers;

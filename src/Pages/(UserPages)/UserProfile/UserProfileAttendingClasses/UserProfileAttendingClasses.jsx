@@ -71,7 +71,7 @@ UserProfileAttendingClasses.propTypes = {
       module: PropTypes.string.isRequired, // Name of the module
       icon: PropTypes.string, // Optional class icon URL
     })
-  ).isRequired, // ClassesData must be an array and is required
+  ), // ClassesData must be an array and is required
 };
 
 export default UserProfileAttendingClasses;

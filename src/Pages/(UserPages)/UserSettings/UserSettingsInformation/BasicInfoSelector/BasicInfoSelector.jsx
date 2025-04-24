@@ -4,6 +4,10 @@ import PropTypes from "prop-types";
 // Import Component
 import AvatarSelector from "./AvatarSelector/AvatarSelector";
 
+// Import Phone Input
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+
 const BasicInfoSelector = ({
   profileImage,
   setProfileImage,
@@ -34,9 +38,9 @@ const BasicInfoSelector = ({
         </div>
 
         {/* Additional User Information Form */}
-        <div className="w-full md:w-1/2 bg-gray-300 rounded-xl border border-gray-100 px-2 py-2">
+        <div className="w-full md:w-1/2 bg-gray-300 rounded-xl border border-gray-100 px-2 py-2 space-y-4">
           {/* Full Name Input */}
-          <div className="w-full">
+          <div>
             <label className="block font-bold ml-1 mb-2 text-black">
               Full Name
             </label>
@@ -44,36 +48,35 @@ const BasicInfoSelector = ({
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="input input-bordered rounded-lg bg-white border-gray-600 "
+              className="input input-bordered w-full rounded-lg bg-white border-gray-600"
             />
           </div>
 
-          <div className="flex flex-col md:flex-row pt-5 gap-4">
-            {/* Phone Input */}
-            <div className="w-full">
-              <label className="block font-bold ml-1 mb-2 text-black">
-                Phone
-              </label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="input input-bordered w-full rounded-lg bg-white border-gray-600"
-              />
-            </div>
+          {/* Phone Input */}
+          <div>
+            <label className="block font-bold ml-1 mb-2 text-black">
+              Phone
+            </label>
+            <PhoneInput
+              country={"bd"}
+              value={phone}
+              onChange={setPhone}
+              inputClass="!w-full !bg-white !text-black !rounded-lg !shadow-lg"
+              inputStyle={{ width: "100%", height: "40px" }}
+            />
+          </div>
 
-            {/* Date of Birth Input */}
-            <div className="w-full">
-              <label className="block font-bold ml-1 mb-2 text-black">
-                Date of Birth
-              </label>
-              <input
-                type="date"
-                value={dob}
-                onChange={(e) => setDob(e.target.value)}
-                className="input input-bordered w-full rounded-lg bg-white border-gray-600"
-              />
-            </div>
+          {/* Date of Birth Input */}
+          <div>
+            <label className="block font-bold ml-1 mb-2 text-black">
+              Date of Birth
+            </label>
+            <input
+              type="date"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              className="input input-bordered w-full rounded-lg bg-white border-gray-600"
+            />
           </div>
         </div>
       </div>
@@ -81,17 +84,16 @@ const BasicInfoSelector = ({
   );
 };
 
-// PropTypes for type checking the UsersData prop
 BasicInfoSelector.propTypes = {
   profileImage: PropTypes.string.isRequired,
   setProfileImage: PropTypes.func.isRequired,
+  setProfileImageFile: PropTypes.func.isRequired,
   fullName: PropTypes.string.isRequired,
   setFullName: PropTypes.func.isRequired,
   phone: PropTypes.string.isRequired,
   setPhone: PropTypes.func.isRequired,
   dob: PropTypes.string.isRequired,
   setDob: PropTypes.func.isRequired,
-  setProfileImageFile: PropTypes.func.isRequired,
 };
 
 export default BasicInfoSelector;

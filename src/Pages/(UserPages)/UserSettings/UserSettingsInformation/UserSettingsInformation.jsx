@@ -16,6 +16,7 @@ import BannerSelector from "./BannerSelector/BannerSelector";
 import BasicInfoSelector from "./BasicInfoSelector/BasicInfoSelector";
 import SocialLinkSelector from "./SocialLinkSelector/SocialLinkSelector";
 import DetailsInfoSelector from "./DetailsInfoSelector/DetailsInfoSelector";
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 // Image Hosting API
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
@@ -162,8 +163,6 @@ const UserSettingsInformation = ({ UsersData, refetch }) => {
         payload.backgroundImage = backgroundImage;
       }
 
-      console.log("Payload being sent:", payload);
-
       // Send the update request
       await axiosPublic.patch("/Users", payload);
 
@@ -234,19 +233,16 @@ const UserSettingsInformation = ({ UsersData, refetch }) => {
 
         <div className="bg-gray-400/50 p-3 text-black mb-2">
           <div className="flex justify-end">
-            <button
-              className={`font-bold text-xl rounded-lg px-20 py-3 ${
-                isChanged
-                  ? isLoading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-600 text-white cursor-pointer"
-                  : "bg-linear-to-bl from-gray-300 to-gray-600 text-white cursor-not-allowed"
-              }`}
+            <CommonButton
+              clickEvent={handleSave}
+              bgColor="green"
+              px="px-20"
+              isLoading={isLoading}
               disabled={!isChanged || isLoading}
-              onClick={handleSave}
-            >
-              {isLoading ? "Saving..." : "Save"}
-            </button>
+              text="Save"
+              variant="outline" // Use the outline variant
+              loadingText="Saving..."
+            />
           </div>
         </div>
       </div>
