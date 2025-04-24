@@ -11,6 +11,9 @@ import CommonButton from "../../../../Shared/Buttons/CommonButton";
 // Import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
+// Import Icons
+import { FaCommentAlt } from "react-icons/fa";
+
 const UserSettingsTestimonials = ({
   UserTestimonialData,
   UsersData,
@@ -165,91 +168,106 @@ const UserSettingsTestimonials = ({
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-36 px-6 py-8 bg-white rounded-xl shadow-md border border-gray-100">
-      {/* Header of the testimonial section */}
-      <h2 className="text-3xl font-semibold text-gray-800 mb-6">
-        {testimonialData ? "Update Your Testimonial" : "Share Your Experience"}
-      </h2>
+    <div className="bg-gradient-to-b from-gray-100 to-gray-200 min-h-screen">
+      {/* Header */}
+      <div className="bg-gray-400 px-5 py-2">
+        <p className="flex gap-2 items-center text-xl font-semibold italic text-white">
+          <FaCommentAlt /> User Testimonials
+        </p>
+      </div>
 
-      {/* Form for submitting or updating testimonial */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Role Input Field */}
-        <div>
-          <label
-            htmlFor="role"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Your Role (Optional)
-          </label>
-          <input
-            id="role"
-            type="text"
-            placeholder="e.g. Member, Client, Guest"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-            defaultValue={testimonialData?.role || ""}
-            {...register("role")} // Register the role input field for form handling
-          />
-        </div>
+      <div className="max-w-2xl mx-auto mt-36 px-6 py-8 bg-white rounded-xl shadow-md border border-gray-100">
+        {/* Header of the testimonial section */}
+        <h2 className="text-3xl font-semibold text-gray-800 mb-6">
+          {testimonialData
+            ? "Update Your Testimonial"
+            : "Share Your Experience"}
+        </h2>
 
-        {/* Quote Textarea Field */}
-        <div>
-          <label
-            htmlFor="quote"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Your Quote or Testimonial
-          </label>
-          <textarea
-            id="quote"
-            rows="5"
-            placeholder="Tell us what you think..."
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-            defaultValue={testimonialData?.quote || ""}
-            {...register("quote", {
-              required: "Quote is required", // Ensure the quote is not empty
-              minLength: {
-                value: 10,
-                message: "Quote must be at least 10 characters", // Ensure the quote has a minimum length of 10 characters
-              },
-            })}
-          />
-          {errors.quote && (
-            <p className="mt-2 text-sm text-red-600">{errors.quote.message}</p> // Display error message if validation fails
-          )}
-        </div>
+        {/* Form for submitting or updating testimonial */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Role Input Field */}
+          <div>
+            <label
+              htmlFor="role"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Your Role (Optional)
+            </label>
+            <input
+              id="role"
+              type="text"
+              placeholder="e.g. Member, Client, Guest"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+              defaultValue={testimonialData?.role || ""}
+              {...register("role")} // Register the role input field for form handling
+            />
+          </div>
 
-        {/* Buttons for submitting and deleting testimonial */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          {/* Submit/Update Testimonial Button */}
-          <CommonButton
-            type="submit"
-            text={testimonialData ? "Update Testimonial" : "Submit Testimonial"}
-            isLoading={isSubmitting}
-            loadingText={testimonialData ? "Updating..." : "Submitting..."}
-            bgColor="blue"
-            textColor="text-white"
-            px="px-6"
-            py="py-3"
-            borderRadius="rounded-lg"
-            width="full"
-          />
+          {/* Quote Textarea Field */}
+          <div>
+            <label
+              htmlFor="quote"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Your Quote or Testimonial
+            </label>
+            <textarea
+              id="quote"
+              rows="5"
+              placeholder="Tell us what you think..."
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+              defaultValue={testimonialData?.quote || ""}
+              {...register("quote", {
+                required: "Quote is required", // Ensure the quote is not empty
+                minLength: {
+                  value: 10,
+                  message: "Quote must be at least 10 characters", // Ensure the quote has a minimum length of 10 characters
+                },
+              })}
+            />
+            {errors.quote && (
+              <p className="mt-2 text-sm text-red-600">
+                {errors.quote.message}
+              </p> // Display error message if validation fails
+            )}
+          </div>
 
-          {/* Delete Testimonial Button (only visible if testimonialData exists) */}
-          {testimonialData && (
+          {/* Buttons for submitting and deleting testimonial */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            {/* Submit/Update Testimonial Button */}
             <CommonButton
-              type="button"
-              clickEvent={() => handleDelete()}
-              text="Delete"
-              bgColor="red"
+              type="submit"
+              text={
+                testimonialData ? "Update Testimonial" : "Submit Testimonial"
+              }
+              isLoading={isSubmitting}
+              loadingText={testimonialData ? "Updating..." : "Submitting..."}
+              bgColor="blue"
               textColor="text-white"
               px="px-6"
               py="py-3"
               borderRadius="rounded-lg"
-              width="auto"
+              width="full"
             />
-          )}
-        </div>
-      </form>
+
+            {/* Delete Testimonial Button (only visible if testimonialData exists) */}
+            {testimonialData && (
+              <CommonButton
+                type="button"
+                clickEvent={() => handleDelete()}
+                text="Delete"
+                bgColor="red"
+                textColor="text-white"
+                px="px-6"
+                py="py-3"
+                borderRadius="rounded-lg"
+                width="auto"
+              />
+            )}
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

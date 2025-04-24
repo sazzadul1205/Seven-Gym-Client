@@ -17,7 +17,9 @@ import FetchingError from "../../../Shared/Component/FetchingError";
 // Import Tabs Component
 import UserSettingsAward from "./UserSettingsAward/UserSettingsAward";
 import UserSettingsClass from "./UserSettingsClass/UserSettingsClass";
+import UserRefundInvoices from "./UserRefundInvoices/UserRefundInvoices";
 import UserSettingsWorkout from "./UserSettingsWorkout/UserSettingsWorkout";
+import UserPaymentInvoices from "./UserPaymentInvoices/UserPaymentInvoices";
 import UserSettingsSchedule from "./UserSettingsSchedule/UserSettingsSchedule";
 import UserSettingsInformation from "./UserSettingsInformation/UserSettingsInformation";
 import UserSettingsTestimonials from "./UserSettingsTestimonials/UserSettingsTestimonials";
@@ -94,6 +96,36 @@ const UserSettings = () => {
     },
   });
 
+  // Fetch User Tier Upgrade Payment Data
+  const {
+    data: UserTierUpgradePaymentData,
+    isLoading: UserTierUpgradePaymentIsLoading,
+    error: UserTierUpgradePaymentError,
+  } = useQuery({
+    queryKey: ["UserTierUpgradePaymentData"],
+    queryFn: async () => {
+      const res = await axiosPublic.get(
+        `/Tier_Upgrade_Payment?email=${user?.email}`
+      );
+      return res.data;
+    },
+  });
+
+  // Fetch User Tier Upgrade Payment Data
+  const {
+    data: UserTierUpgradeRefundData,
+    isLoading: UserTierUpgradeRefundIsLoading,
+    error: UserTierUpgradeRefundError,
+  } = useQuery({
+    queryKey: ["UserTierUpgradeRefundData"],
+    queryFn: async () => {
+      const res = await axiosPublic.get(
+        `/Tier_Upgrade_Refund?email=${user?.email}`
+      );
+      return res.data;
+    },
+  });
+
   // Ensure safe access
   const userSchedule = schedulesData?.[0] || null;
 
@@ -160,15 +192,47 @@ const UserSettings = () => {
         />
       ),
     },
+    {
+      id: "User_Payment_Invoices",
+      Icon: "https://i.ibb.co.com/PGvSpC7S/Payed-Invoices.png",
+      title: "User Payment Invoices",
+      content: (
+        <UserPaymentInvoices
+          UserTierUpgradePaymentData={UserTierUpgradePaymentData}
+        />
+      ),
+    },
+    {
+      id: "User_Refund_Invoices",
+      Icon: "https://i.ibb.co.com/Q3b578xv/Refund-Invoices.png",
+      title: "User Refund Invoices",
+      content: (
+        <UserRefundInvoices
+          UserTierUpgradeRefundData={UserTierUpgradeRefundData}
+        />
+      ),
+    },
     // Add more tabs as needed
   ];
 
   // Loading state
-  if (UsersIsLoading || scheduleDataIsLoading || UserTestimonialsILoading)
+  if (
+    UsersIsLoading ||
+    scheduleDataIsLoading ||
+    UserTestimonialsILoading ||
+    UserTierUpgradePaymentIsLoading ||
+    UserTierUpgradeRefundIsLoading
+  )
     return <Loading />;
 
   // Error state
-  if (UsersError || scheduleDataError || UserTestimonialError) {
+  if (
+    UsersError ||
+    scheduleDataError ||
+    UserTestimonialError ||
+    UserTierUpgradePaymentError ||
+    UserTierUpgradeRefundError
+  ) {
     return <FetchingError />;
   }
 
