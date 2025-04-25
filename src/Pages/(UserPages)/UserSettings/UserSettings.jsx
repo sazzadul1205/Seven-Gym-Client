@@ -198,7 +198,7 @@ const UserSettings = () => {
       title: "User Payment Invoices",
       content: (
         <UserPaymentInvoices
-          UserTierUpgradePaymentData={UserTierUpgradePaymentData}
+          UserTierUpgradePayment={UserTierUpgradePaymentData}
         />
       ),
     },

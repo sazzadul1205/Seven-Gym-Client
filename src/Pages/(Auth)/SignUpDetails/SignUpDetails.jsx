@@ -203,7 +203,7 @@ const SignUpDetails = () => {
         backgroundImage: `url(${LoginBack})`,
       }}
     >
-      <div className="w-full max-w-7xl shadow-md rounded-tl-[50px] rounded-br-[50px] px-10 py-5 bg-linear-to-bl from-gray-100 to-gray-400">
+      <div className="w-full max-w-7xl shadow-md rounded-tl-[50px] rounded-br-[50px] px-3 py-10 md:px-10 md:py-10 bg-linear-to-bl from-gray-100 to-gray-400 mt-20 md:mt-0">
         {/* Header */}
         <div className="py-3">
           <h4 className="text-3xl font-bold text-center text-[#F72C5B]">

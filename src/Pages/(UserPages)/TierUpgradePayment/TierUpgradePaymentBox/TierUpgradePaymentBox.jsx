@@ -12,7 +12,7 @@ const TierUpgradePaymentBox = ({ CurrentTierData }) => {
   const [PaymentID, setIsPaymentID] = useState(null);
 
   return (
-    <div className="px-4 space-y-5 rounded-lg shadow-xl mt-4">
+    <div className="px-1 md:px-4 space-y-5 rounded-lg shadow-xl">
       <TierUpgradePaymentPlan
         CurrentTierData={CurrentTierData}
         selectedDuration={selectedDuration}

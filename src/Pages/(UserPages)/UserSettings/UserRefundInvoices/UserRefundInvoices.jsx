@@ -6,7 +6,7 @@ const UserRefundInvoices = () => {
       {/* Header */}
       <div className="bg-gray-400 px-5 py-2">
         <p className="flex gap-2 items-center text-xl font-semibold italic text-white">
-          <FaFileInvoiceDollar /> User Payed Invoices
+          <FaFileInvoiceDollar /> User Refund Invoices
         </p>
       </div>
     </div>

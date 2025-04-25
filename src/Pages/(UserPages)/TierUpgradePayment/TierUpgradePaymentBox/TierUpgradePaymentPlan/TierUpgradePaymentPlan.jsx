@@ -5,7 +5,7 @@ import TUPCalender from "../../../../../assets/Tear-Upgrade-Plan/TUPCalendar.png
 import TUPHourglass from "../../../../../assets/Tear-Upgrade-Plan/TUPHourglass.png";
 import TUPTrophy from "../../../../../assets/Tear-Upgrade-Plan/TUPTrophy.png";
 
-// Define the available plans
+// Available plans
 const plans = [
   {
     name: "Basic Plan",
@@ -49,16 +49,17 @@ const TierUpgradePaymentPlan = ({
   };
 
   return (
-    <div className="bg-white/80 px-2">
-      {/* Plan Title */}
-      <h2 className="text-3xl font-bold text-center text-gray-800 py-2">
+    <div className="bg-white/90 px-4 py-6 rounded-md shadow-md">
+      {/* Title */}
+      <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-4">
         Select Your Preferred Plan
       </h2>
 
-      <div className="bg-black p-[1px] w-1/2 mx-auto"></div>
+      {/* Divider */}
+      <div className="h-[2px] bg-gradient-to-r from-blue-500 via-gray-500 to-blue-500 w-2/3 max-w-xs mx-auto mb-6" />
 
-      {/* Plan Selector */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-4">
+      {/* Plan Options */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {plans.map((option, index) => {
           const isSelected = selectedDuration?.duration === option.duration;
           const totalPrice = (CurrentTierData?.price || 0) * option.multiplier;
@@ -67,12 +68,6 @@ const TierUpgradePaymentPlan = ({
           return (
             <div
               key={index}
-              className={`border-4 rounded-xl shadow-lg bg-linear-to-bl hover:bg-linear-to-tr from-white to-gray-400 transition-all duration-300 cursor-pointer py-1 
-              ${
-                isSelected
-                  ? "border-blue-500 shadow-2xl scale-105"
-                  : "border-gray-200 hover:border-blue-300 hover:shadow-xl"
-              }`}
               onClick={() =>
                 setSelectedDuration({
                   duration: option.duration,
@@ -80,38 +75,45 @@ const TierUpgradePaymentPlan = ({
                   totalPrice,
                 })
               }
+              className={`cursor-pointer rounded-xl p-5 shadow transition-all duration-300 hover:scale-[1.02]
+              ${
+                isSelected
+                  ? "border-4 border-blue-600 bg-blue-50 shadow-xl"
+                  : "border border-gray-300 bg-white hover:border-blue-400"
+              }`}
             >
-              {/* Plan Title */}
-              <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
+              {/* Title */}
+              <h3 className="text-xl font-semibold text-center text-gray-800 mb-2">
                 {option.name}
-              </h2>
+              </h3>
 
-              {/* Divider */}
-              <div className="p-[1px] bg-black w-1/2 mx-auto"></div>
-
-              {/* Icon & Plan Details */}
-              <div className="flex flex-col items-center gap-4 py-4">
-                <img src={option.icon} alt={option.name} className="w-16" />
-                <div className="text-center">
-                  <h3 className="text-lg font-semibold text-blue-700">
-                    {option.duration}
-                  </h3>
-                  <p className="text-sm text-gray-800">{option.description}</p>
-                </div>
+              {/* Icon */}
+              <div className="flex justify-center mb-4">
+                <img
+                  src={option.icon}
+                  alt={option.name}
+                  className="w-12 sm:w-16"
+                />
               </div>
 
-              {/* Divider */}
-              <div className="p-[1px] bg-black w-1/2 mx-auto"></div>
+              {/* Duration & Description */}
+              <div className="text-center mb-4">
+                <p className="text-blue-700 font-medium text-sm sm:text-base">
+                  {option.duration}
+                </p>
+                <p className="text-gray-600 text-sm">{option.description}</p>
+              </div>
 
               {/* Price */}
-              <p className="text-lg font-bold text-gray-800 text-center mt-2">
-                Price: ${totalPrice.toFixed(2)}
-              </p>
-
-              {/* Expiration Date */}
-              <p className="text-xs text-black text-center mt-2">
-                Expires on: {expirationDate}
-              </p>
+              <div className="text-center mt-4">
+                <p className="text-lg font-bold text-gray-800">
+                  ${totalPrice.toFixed(2)}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Expires on:{" "}
+                  <span className="font-medium">{expirationDate}</span>
+                </p>
+              </div>
             </div>
           );
         })}

@@ -9,7 +9,6 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useQuery } from "@tanstack/react-query";
 import { Elements } from "@stripe/react-stripe-js";
 
-
 // Import Hooks
 import useAuth from "../../../Hooks/useAuth";
 import Loading from "../../../Shared/Loading/Loading";
@@ -143,70 +142,67 @@ const TearUpgradePayment = () => {
 
       {/* Main Content (Only displayed if user is authorized and not on Bronze tier) */}
       {!showModal && !showBronzeModal && (
-        <div className="min-h-screen bg-gradient-to-t from-black/40 to-black/70 py-5 relative">
-          {/* Back Button at Top Left inside the container */}
+        <div className="min-h-screen bg-gradient-to-t from-black/40 to-black/70 py-10 md:py-6 px-1 md:px-4 relative">
+          {/* Back Button */}
           <div
-            className="absolute top-4 left-4 flex items-center space-x-2 bg-linear-to-bl hover:bg-linear-to-tr from-gray-400 to-gray-700 px-3 py-2 rounded-md cursor-pointer z-50 hover:scale-105"
+            className="absolute top-4 left-4 z-50 flex items-center space-x-2 bg-gradient-to-br from-gray-500 to-gray-700 px-3 py-2 rounded-md cursor-pointer hover:scale-105 transition-transform"
             onClick={() => navigate(-1)}
           >
-            <IoMdArrowRoundBack className="text-white" />
-            <p className="text-white">Back</p>
+            <IoMdArrowRoundBack className="text-white text-xl" />
+            <p className="text-white font-medium">Back</p>
           </div>
 
           {/* Page Header */}
-          <p className="text-3xl font-bold text-center text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold text-center text-white mb-2">
             Payment for {CurrentTierData?.name || "Loading..."} Tier
-          </p>
+          </h1>
 
           {/* Separator Line */}
-          <div className="mx-auto bg-white p-[1px] w-1/3 my-3"></div>
+          <div className="mx-auto bg-white h-[2px] w-2/3 max-w-sm my-3 rounded-full"></div>
 
-          {/* Main Layout: Container for tier details and payment box */}
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-4">
-            {/* Tier Details Box */}
+          {/* Main Container */}
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-stretch lg:items-start justify-center gap-6 pt-5">
+            {/* Tier Info Box */}
             <div
-              className={`flex flex-col items-center p-6 rounded-lg border border-gray-200 ${getTierBackgroundColor(
+              className={`w-full max-w-md mx-auto min-h-[500px] lg:mx-0 p-6 rounded-lg border border-gray-200 shadow-lg flex flex-col ${getTierBackgroundColor(
                 tier
-              )} min-h-[500px] w-[380px] shadow-xl`}
+              )}`}
             >
-              {/* Tier Name Badge */}
+              {/* Tier Badge */}
               <h2
-                className={`text-xl font-semibold text-center rounded-3xl mb-4 py-2 w-full ${getTierBadge(
-                  CurrentTierData.name
+                className={`text-lg sm:text-xl font-semibold text-center rounded-full py-2 mb-4 ${getTierBadge(
+                  CurrentTierData?.name
                 )}`}
               >
-                {CurrentTierData.name}
+                {CurrentTierData?.name}
               </h2>
 
               {/* Perks List */}
-              <ul className="grow mb-4">
-                {CurrentTierData.perks.map((perk, idx) => (
-                  <li
-                    key={idx}
-                    className="text-lg font-semibold text-left mb-2"
-                  >
+              <ul className="space-y-2 mb-6 flex-grow">
+                {CurrentTierData?.perks?.map((perk, idx) => (
+                  <li key={idx} className="text-base text-gray-800 font-medium">
                     <span className="text-green-500 mr-2">✔</span>
                     {perk}
                   </li>
                 ))}
               </ul>
 
-              {/* Pricing and Discount Information */}
-              <div className="text-center">
-                <p className="text-lg font-bold text-gray-800 mb-2">
+              {/* Price & Discount pinned at the bottom */}
+              <div className="mt-auto pt-4 border-t border-gray-300 text-center">
+                <p className="text-lg font-bold text-gray-800">
                   ${CurrentTierData?.price || 0} / month
                 </p>
-                <p className="text-sm text-gray-600 mb-4">
-                  {CurrentTierData?.discount || ""}
-                </p>
+                {CurrentTierData?.discount && (
+                  <p className="text-sm text-gray-200 mt-1">
+                    {CurrentTierData.discount}
+                  </p>
+                )}
               </div>
             </div>
 
-            {/* Payment Form Box */}
-            <div className="w-full lg:w-2/3">
-              {/* Stripe Elements Wrapper */}
+            {/* Payment Box */}
+            <div className="w-full lg:flex-1">
               <Elements stripe={stripePromise}>
-                {/* Payment Component */}
                 <TierUpgradePaymentBox CurrentTierData={CurrentTierData} />
               </Elements>
             </div>

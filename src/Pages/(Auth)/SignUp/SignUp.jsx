@@ -67,10 +67,7 @@ const SignUp = () => {
         }}
       >
         {/* Sign-up card container */}
-        <div
-          className="w-full max-w-lg shadow-md rounded-tl-[50px] rounded-br-[50px] p-10 bg-linear-to-bl from-gray-100 to-gray-400"
-          style={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
-        >
+        <div className="w-full max-w-lg shadow-md rounded-tl-[50px] rounded-br-[50px] px-3 py-10 md:px-10 md:py-10 bg-linear-to-bl from-gray-100 to-gray-400">
           {/* Form title */}
           <div className="pb-5">
             <h4 className="text-3xl font-bold text-center text-[#F72C5B]">

@@ -258,14 +258,14 @@ const TierUpgradePaymentSubmit = ({
         </div>
 
         {/* Submit Button */}
-        <div className="flex justify-end">
+        <div className="flex justify-center sm:justify-end mt-4">
           <CommonButton
             type="submit"
             text="Pay Now"
-            isLoading={isProcessing} // Shows spinner + loadingText if true
+            isLoading={isProcessing}
             loadingText="Processing..."
-            bgColor="blue" // Or any color in your colorMap (e.g., "indigo", "purple", etc.)
-            width="1/3" // Tailwind w-1/3
+            bgColor="blue"
+            width="full sm:w-1/2 md:w-1/3" // Responsive width
             borderRadius="rounded-lg"
             py="py-3"
             textColor="text-white"
