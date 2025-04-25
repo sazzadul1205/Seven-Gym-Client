@@ -44,8 +44,6 @@ const SignUpDetails = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [loading, setLoading] = useState(false);
 
-  console.log(profileImage);
-
   // Query to check if the user already exists
   const {
     data: UserExists,
@@ -104,12 +102,15 @@ const SignUpDetails = () => {
         });
         uploadedImageUrl = res.data.data.display_url; // Get image URL
       } catch (error) {
-        console.error("Failed to upload image:", error);
         setLoading(false); // Stop loading on error
         Swal.fire({
           icon: "error",
           title: "Image Upload Failed",
-          text: "Failed to upload the image. Please try again.",
+          text: `Failed to upload the image. ${
+            error?.response?.data?.message ||
+            error.message ||
+            "Please try again."
+          }`,
         });
         return;
       }
@@ -125,7 +126,6 @@ const SignUpDetails = () => {
       second: "2-digit",
       hour12: true,
     });
-    console.log(uploadedImageUrl);
 
     const formDataWithImage = {
       email: user.email,

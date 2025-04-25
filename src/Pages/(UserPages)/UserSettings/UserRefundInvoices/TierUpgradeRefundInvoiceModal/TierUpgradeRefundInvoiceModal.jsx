@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import { Link, useParams } from "react-router";
 
 // Import Package
 import { jsPDF } from "jspdf";
@@ -7,15 +6,15 @@ import PropTypes from "prop-types";
 import domToImage from "dom-to-image";
 import { useQuery } from "@tanstack/react-query";
 
-// Import Hooks
+// import Hooks
 import Loading from "../../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 import FetchingError from "../../../../../Shared/Component/FetchingError";
 
-const TierResetRecept = ({ refundID }) => {
+const TierUpgradeRefundInvoiceModal = ({ RefundID, Close }) => {
   const axiosPublic = useAxiosPublic();
   const refundRef = useRef();
-  const { email } = useParams();
 
   // Fetch refund data using
   const {
@@ -23,14 +22,14 @@ const TierResetRecept = ({ refundID }) => {
     isLoading: TierUpgradeRefundLoading,
     error: TierUpgradeRefundError,
   } = useQuery({
-    queryKey: ["TierUpgradeRefundData", refundID],
+    queryKey: ["TierUpgradeRefundData", RefundID],
     queryFn: () =>
-      refundID
+      RefundID
         ? axiosPublic
-            .get(`/Tier_Upgrade_Refund/search?refundID=${refundID}`)
+            .get(`/Tier_Upgrade_Refund/search?refundID=${RefundID}`)
             .then((res) => res.data)
         : Promise.reject(new Error("No Refund ID found")),
-    enabled: !!refundID,
+    enabled: !!RefundID,
   });
 
   // Fetch payment data based on linked payment ID
@@ -250,31 +249,32 @@ const TierResetRecept = ({ refundID }) => {
       {/* Close Button and PDF Generation Button */}
       <div className="modal-action mt-6 flex justify-between">
         {/* Close Button */}
-        <form method="dialog">
-          <Link to={`/User/TierUpgrade/${email}`}>
-            <button className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-400 to-blue-600 rounded-xl py-3 w-[150px] font-semibold cursor-pointer">
-              Close
-            </button>
-          </Link>
-        </form>
+        <CommonButton
+          text="Close"
+          clickEvent={Close}
+          bgColor="blue"
+          width="[150px]"
+          type="button"
+        />
 
         {/* PDF Generate Button  */}
         {payment && (
-          <button
-            onClick={generatePDF}
-            className="bg-linear-to-bl hover:bg-linear-to-tr from-green-400 to-green-600 rounded-xl py-3 w-[150px] font-semibold cursor-pointer"
-          >
-            Download PDF
-          </button>
+          <CommonButton
+            clickEvent={generatePDF}
+            text="Download PDF"
+            bgColor="green"
+            width="[150px]"
+            type="button"
+          />
         )}
       </div>
     </div>
   );
 };
 
-// Add PropTypes to validate props
-TierResetRecept.propTypes = {
-  refundID: PropTypes.string,
+// Prop Validation
+TierUpgradeRefundInvoiceModal.propTypes = {
+  RefundID: PropTypes.string.isRequired,
+  Close: PropTypes.func.isRequired,
 };
-
-export default TierResetRecept;
+export default TierUpgradeRefundInvoiceModal;

@@ -136,16 +136,13 @@ const TrainersBookings = () => {
 
   //  Set listedSessions from selected session
   useEffect(() => {
-    // console.log("SelectedSessionData:", SelectedSessionData);
     if (SelectedSessionData?.session) {
       setListedSessions([SelectedSessionData.session]);
     }
   }, [SelectedSessionData]);
 
   // Log when listedSessions updates
-  useEffect(() => {
-    // console.log("Updated listedSessions:", listedSessions);
-  }, [listedSessions]);
+  useEffect(() => {}, [listedSessions]);
 
   if (
     SameTimeDataIsLoading ||

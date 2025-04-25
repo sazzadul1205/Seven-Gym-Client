@@ -162,8 +162,6 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
         totalPrice,
       });
 
-      // console.log(selectedRefundPercentage);
-
       if (selectedRefundPercentage === undefined) return;
 
       // ====================================

@@ -6,16 +6,15 @@ import PropTypes from "prop-types";
 import domToImage from "dom-to-image";
 import { useQuery } from "@tanstack/react-query";
 
+// import Hooks
 import Loading from "../../../../../Shared/Loading/Loading";
-import FetchingError from "../../../../../Shared/Component/FetchingError";
-import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+import FetchingError from "../../../../../Shared/Component/FetchingError";
 
 const TierUpgradePaymentInvoiceModal = ({ PaymentID, Close }) => {
   const axiosPublic = useAxiosPublic();
   const receiptRef = useRef();
-
-  console.log(PaymentID);
 
   // Fetch tier data only when PaymentID is provided
   const {
@@ -190,6 +189,12 @@ const TierUpgradePaymentInvoiceModal = ({ PaymentID, Close }) => {
       </div>
     </div>
   );
+};
+
+// Prop Validation
+TierUpgradePaymentInvoiceModal.propTypes = {
+  PaymentID: PropTypes.string.isRequired,
+  Close: PropTypes.func.isRequired,
 };
 
 export default TierUpgradePaymentInvoiceModal;

@@ -56,7 +56,7 @@ const TrainerScheduleParticipantReserved = ({
   };
 
   // Function: Cancel accepted booking and remove participant
-  const cancelAcceptedBooking = async (booking, simulate = false) => {
+  const cancelAcceptedBooking = async (booking) => {
     // Step 1: Ask user for confirmation to cancel the booking
     const confirmCancel = await Swal.fire({
       title: "Are you sure?",
@@ -135,22 +135,16 @@ const TrainerScheduleParticipantReserved = ({
 
     try {
       // Step 4: Simulate mode (used for testing without real API calls)
-      if (simulate) {
-        console.log("Simulation - Booking Cancel Payload:", bookingCancelData);
-        console.log(
-          "Simulation - Remove Participant Payload:",
-          removeParticipantData
-        );
-        Swal.fire({
-          icon: "success",
-          title: "Cancelled!",
-          text: "Booking cancelled and participant removed (simulation).",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-        refetch(); // Refresh data
-        return;
-      }
+      //   Swal.fire({
+      //     icon: "success",
+      //     title: "Cancelled!",
+      //     text: "Booking cancelled and participant removed (simulation).",
+      //     timer: 1500,
+      //     showConfirmButton: false,
+      //   });
+      //   refetch(); // Refresh data
+      //   return;
+      // }
 
       // Step 5: Send PATCH request to update booking status
       const bookingResponse = await axiosPublic.patch(

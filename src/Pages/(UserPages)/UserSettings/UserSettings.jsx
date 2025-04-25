@@ -102,13 +102,15 @@ const UserSettings = () => {
     isLoading: UserTierUpgradePaymentIsLoading,
     error: UserTierUpgradePaymentError,
   } = useQuery({
-    queryKey: ["UserTierUpgradePaymentData"],
+    queryKey: ["UserTierUpgradePaymentData", user?.email],
     queryFn: async () => {
+      if (!user?.email) return []; // Prevent query if email is undefined
       const res = await axiosPublic.get(
         `/Tier_Upgrade_Payment?email=${user?.email}`
       );
       return res.data;
     },
+    enabled: !!user?.email, // Only run if email exists
   });
 
   // Fetch User Tier Upgrade Payment Data
@@ -119,11 +121,13 @@ const UserSettings = () => {
   } = useQuery({
     queryKey: ["UserTierUpgradeRefundData"],
     queryFn: async () => {
+      if (!user?.email) return []; // Prevent query if email is undefined
       const res = await axiosPublic.get(
         `/Tier_Upgrade_Refund?email=${user?.email}`
       );
       return res.data;
     },
+    enabled: !!user?.email, // Only run if email exists
   });
 
   // Ensure safe access

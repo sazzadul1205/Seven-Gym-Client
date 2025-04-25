@@ -42,7 +42,6 @@ const SignUp = () => {
         navigate("/SignUp/Details"); // Redirect to details page after successful signup
       })
       .catch((error) => {
-        console.error("Error creating user:", error);
         setLoading(false); // Stop loading
 
         // Show error alert

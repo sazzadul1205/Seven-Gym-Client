@@ -81,7 +81,6 @@ const Login = () => {
 
         showAlert("success", "You have successfully logged in!");
       } catch (error) {
-        console.error("Login Error:", error);
         showAlert(
           "error",
           error.response?.data?.message || "Invalid email or password."
