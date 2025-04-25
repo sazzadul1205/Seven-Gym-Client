@@ -143,7 +143,7 @@ const UserPaymentInvoices = ({ UserTierUpgradePayment }) => {
                 className="bg-white rounded-lg shadow border border-gray-200"
               >
                 {/* Invoice index Number */}
-                <div className="text-sm font-semibold mb-2 bg-gray-400 py-1 px-2 text-white">
+                <div className="text-sm font-semibold mb-2 bg-gray-400 py-3 px-2 text-white">
                   Invoice # {index + 1}
                 </div>
 
@@ -247,7 +247,7 @@ UserPaymentInvoices.propTypes = {
       paymentMethod: PropTypes.string.isRequired,
       Payed: PropTypes.bool.isRequired,
     })
-  ).isRequired,
+  ),
 };
 
 export default UserPaymentInvoices;

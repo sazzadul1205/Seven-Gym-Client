@@ -23,8 +23,6 @@ const UserRefundInvoices = ({ UserTierUpgradeRefundData }) => {
     setSelectedRefundInvoice(null);
   };
 
-  console.log("User Tier Upgrade Refund Data :", UserTierUpgradeRefundData);
-
   return (
     <div className="bg-gradient-to-b from-gray-100 to-gray-200 min-h-screen">
       {/* Header */}
@@ -143,7 +141,7 @@ const UserRefundInvoices = ({ UserTierUpgradeRefundData }) => {
                 className="bg-white rounded-lg shadow border border-gray-200"
               >
                 {/* Invoice index Number */}
-                <div className="text-sm font-semibold mb-2 bg-gray-400 py-1 px-2 text-white">
+                <div className="text-sm font-semibold mb-2 bg-gray-400 py-3 px-2 text-white">
                   Invoice # {index + 1}
                 </div>
 
@@ -202,13 +200,13 @@ const UserRefundInvoices = ({ UserTierUpgradeRefundData }) => {
                 <div className="flex justify-center py-4">
                   <button
                     id={`mobile-view-details-btn-${item._id}`}
-                    className="flex items-center gap-2 text-sm text-green-700 border-2 border-green-500 bg-green-100 hover:bg-green-200 px-3 py-2 rounded-full transition-transform hover:scale-105"
+                    className="flex items-center gap-2 text-sm text-red-700 border-2 border-red-500 bg-red-100 hover:bg-red-200 px-3 py-2 rounded-full transition-transform hover:scale-105"
                     onClick={() => {
                       setSelectedRefundInvoice(item?.RefundID);
                       modalRefundInvoiceRef.current?.showModal();
                     }}
                   >
-                    <FaFileInvoiceDollar className="text-green-500" />
+                    <FaFileInvoiceDollar className="text-red-500" />
                     View Invoice
                   </button>
                   <Tooltip
@@ -231,7 +229,7 @@ const UserRefundInvoices = ({ UserTierUpgradeRefundData }) => {
       {/* Payment success modal */}
       <dialog ref={modalRefundInvoiceRef} className="modal">
         <TierUpgradeRefundInvoiceModal
-          PaymentID={selectedRefundInvoice}
+          RefundID={selectedRefundInvoice}
           Close={closeRefundInvoiceModal}
         />
       </dialog>
@@ -246,12 +244,13 @@ UserRefundInvoices.propTypes = {
       _id: PropTypes.string.isRequired,
       RefundID: PropTypes.string.isRequired,
       linkedPaymentReceptID: PropTypes.string.isRequired,
-      refundAmount: PropTypes.number.isRequired,
+      refundAmount: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+        .isRequired,
       refundedReason: PropTypes.string.isRequired,
       dateTime: PropTypes.string.isRequired,
       refunded: PropTypes.bool.isRequired,
     })
-  ).isRequired,
+  ),
 };
 
 export default UserRefundInvoices;

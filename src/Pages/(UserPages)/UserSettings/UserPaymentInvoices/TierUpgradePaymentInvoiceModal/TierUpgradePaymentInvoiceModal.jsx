@@ -193,8 +193,8 @@ const TierUpgradePaymentInvoiceModal = ({ PaymentID, Close }) => {
 
 // Prop Validation
 TierUpgradePaymentInvoiceModal.propTypes = {
-  PaymentID: PropTypes.string.isRequired,
-  Close: PropTypes.func.isRequired,
+  PaymentID: PropTypes.string,
+  Close: PropTypes.func,
 };
 
 export default TierUpgradePaymentInvoiceModal;

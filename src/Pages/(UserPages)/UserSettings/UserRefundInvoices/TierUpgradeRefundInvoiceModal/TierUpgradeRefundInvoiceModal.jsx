@@ -274,7 +274,7 @@ const TierUpgradeRefundInvoiceModal = ({ RefundID, Close }) => {
 
 // Prop Validation
 TierUpgradeRefundInvoiceModal.propTypes = {
-  RefundID: PropTypes.string.isRequired,
-  Close: PropTypes.func.isRequired,
+  RefundID: PropTypes.string,
+  Close: PropTypes.func,
 };
 export default TierUpgradeRefundInvoiceModal;
