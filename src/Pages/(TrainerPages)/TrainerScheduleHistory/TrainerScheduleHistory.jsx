@@ -533,161 +533,175 @@ const TrainerScheduleHistory = ({
         {/* Canceled Classes : Content */}
         {sortedHistory?.length > 0 ? (
           <>
-            {/* Canceled : Table  */}
-            <div className="hidden md:block overflow-x-auto rounded shadow-sm border border-gray-300">
-              <table className="min-w-full bg-white">
-                {/* Canceled Classes : Header */}
-                <thead className="bg-gray-800 text-white text-sm uppercase">
-                  <tr>
-                    {[
-                      "Bookie",
-                      "Booked At",
-                      "Total Price",
-                      "Duration",
-                      "Status",
-                      "reason",
-                      "Action",
-                    ].map((header) => (
-                      <th
-                        key={header}
-                        className="px-4 py-3 border-b border-gray-600"
-                      >
-                        {header}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
+            {/* Pre-filtered history */}
+            {/** Filter out bookings with status "Ended" */}
+            {(() => {
+              const filteredHistory = sortedHistory.filter(
+                (booking) => booking.status.toLowerCase() !== "ended"
+              );
 
-                {/* Canceled Classes : Body */}
-                <tbody className="text-sm text-center text-gray-700">
-                  {sortedHistory.map((booking) => {
-                    const rowBg = getStatusBackgroundColor(booking.status);
+              return (
+                <>
+                  {/* Desktop Table */}
+                  <div className="hidden md:block overflow-x-auto rounded shadow-sm border border-gray-300">
+                    <table className="min-w-full bg-white">
+                      {/* Table Header */}
+                      <thead className="bg-gray-800 text-white text-sm uppercase">
+                        <tr>
+                          {[
+                            "Bookie",
+                            "Booked At",
+                            "Total Price",
+                            "Duration",
+                            "Status",
+                            "Reason",
+                            "Action",
+                          ].map((header) => (
+                            <th
+                              key={header}
+                              className="px-4 py-3 border-b border-gray-600"
+                            >
+                              {header}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
 
-                    return (
-                      <tr
-                        key={booking._id}
-                        className={`transition-colors duration-200 border-b border-gray-500 ${rowBg}`}
-                      >
-                        {/* Booker Info */}
-                        <td className="px-4 py-3 font-medium">
-                          <TrainerBookingRequestUserBasicInfo
-                            email={booking?.bookerEmail}
-                          />
-                        </td>
+                      {/* Table Body */}
+                      <tbody className="text-sm text-center text-gray-700">
+                        {filteredHistory.map((booking) => {
+                          const rowBg = getStatusBackgroundColor(
+                            booking.status
+                          );
 
-                        {/* Booked At */}
-                        <td className="px-4 py-3">
-                          {formatDate(booking.bookedAt)}
-                        </td>
+                          return (
+                            <tr
+                              key={booking._id}
+                              className={`transition-colors duration-200 border-b border-gray-500 ${rowBg}`}
+                            >
+                              {/* Booker Info */}
+                              <td className="px-4 py-3 font-medium">
+                                <TrainerBookingRequestUserBasicInfo
+                                  email={booking?.bookerEmail}
+                                />
+                              </td>
 
-                        {/* Total Price */}
-                        <td className="px-4 py-3">
-                          {booking?.totalPrice === "free"
-                            ? "Free"
-                            : `$ ${booking?.totalPrice}`}
-                        </td>
+                              {/* Booked At */}
+                              <td className="px-4 py-3">
+                                {formatDate(booking.bookedAt)}
+                              </td>
 
-                        {/* Duration */}
-                        <td className="px-4 py-3">
-                          {booking.durationWeeks}{" "}
-                          {booking.durationWeeks === 1 ? "Week" : "Weeks"}
-                        </td>
+                              {/* Total Price */}
+                              <td className="px-4 py-3">
+                                {booking?.totalPrice === "free"
+                                  ? "Free"
+                                  : `$ ${booking?.totalPrice}`}
+                              </td>
 
-                        {/* Status */}
-                        <td className="px-4 py-3 font-bold capitalize">
-                          {booking.status}
-                        </td>
+                              {/* Duration */}
+                              <td className="px-4 py-3">
+                                {booking.durationWeeks}{" "}
+                                {booking.durationWeeks === 1 ? "Week" : "Weeks"}
+                              </td>
 
-                        {/* Reason */}
-                        <td className="px-4 py-3 text-center font-semibold">
-                          {booking.reason}
-                        </td>
+                              {/* Status */}
+                              <td className="px-4 py-3 font-bold capitalize">
+                                {booking.status}
+                              </td>
 
-                        {/* Action */}
-                        <td className="px-4 py-3">
-                          <ViewDetailsButton
-                            id={`view-details-btn-${booking._id}`}
-                            onClick={() => {
-                              setSelectedBooking(booking);
-                              modalRef.current?.showModal();
-                            }}
-                            tooltip="View Detailed Booking Info"
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                              {/* Reason */}
+                              <td className="px-4 py-3 text-center font-semibold">
+                                {booking.reason}
+                              </td>
 
-            {/* Canceled : Mobile View */}
-            <div className="md:hidden space-y-4 text-black">
-              {sortedHistory.map((booking) => {
-                const rowBg = getStatusBackgroundColor(booking.status);
-
-                return (
-                  <div
-                    key={booking._id}
-                    className={`border border-gray-300 rounded-md shadow-sm p-4 bg-white space-y-2 ${rowBg}`}
-                  >
-                    {/* Booker Info */}
-                    <div>
-                      <TrainerBookingRequestUserBasicInfo
-                        email={booking?.bookerEmail}
-                      />
-                    </div>
-
-                    {/* Booked At */}
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Booked At: </span>
-                      {formatDate(booking.bookedAt)}
-                    </div>
-
-                    {/* Total Price */}
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Total Price: </span>
-                      {booking?.totalPrice === "free"
-                        ? "Free"
-                        : `$ ${booking?.totalPrice}`}
-                    </div>
-
-                    {/* Duration */}
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Duration: </span>
-                      {booking.durationWeeks}{" "}
-                      {booking.durationWeeks === 1 ? "Week" : "Weeks"}
-                    </div>
-
-                    {/* Status */}
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Status: </span>
-                      <span className="font-bold capitalize">
-                        {booking.status}
-                      </span>
-                    </div>
-
-                    {/* Reason */}
-                    <div className="text-center">
-                      <p className="font-semibold">Reason: </p>
-                      <p>{booking.reason}</p>
-                    </div>
-
-                    {/* Action */}
-                    <div className="flex justify-end">
-                      <ViewDetailsButton
-                        id={`view-details-btn-${booking._id}-mobile`}
-                        onClick={() => {
-                          setSelectedBooking(booking);
-                          modalRef.current?.showModal();
-                        }}
-                        tooltip="View Detailed Booking Info"
-                      />
-                    </div>
+                              {/* Action */}
+                              <td className="px-4 py-3">
+                                <ViewDetailsButton
+                                  id={`view-details-btn-${booking._id}`}
+                                  onClick={() => {
+                                    setSelectedBooking(booking);
+                                    modalRef.current?.showModal();
+                                  }}
+                                  tooltip="View Detailed Booking Info"
+                                />
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
-                );
-              })}
-            </div>
+
+                  {/* Mobile View */}
+                  <div className="md:hidden space-y-4 text-black">
+                    {filteredHistory.map((booking) => {
+                      const rowBg = getStatusBackgroundColor(booking.status);
+
+                      return (
+                        <div
+                          key={booking._id}
+                          className={`border border-gray-300 rounded-md shadow-sm p-4 bg-white space-y-2 ${rowBg}`}
+                        >
+                          {/* Booker Info */}
+                          <div>
+                            <TrainerBookingRequestUserBasicInfo
+                              email={booking?.bookerEmail}
+                            />
+                          </div>
+
+                          {/* Booked At */}
+                          <div className="flex justify-between">
+                            <span className="font-semibold">Booked At: </span>
+                            {formatDate(booking.bookedAt)}
+                          </div>
+
+                          {/* Total Price */}
+                          <div className="flex justify-between">
+                            <span className="font-semibold">Total Price: </span>
+                            {booking?.totalPrice === "free"
+                              ? "Free"
+                              : `$ ${booking?.totalPrice}`}
+                          </div>
+
+                          {/* Duration */}
+                          <div className="flex justify-between">
+                            <span className="font-semibold">Duration: </span>
+                            {booking.durationWeeks}{" "}
+                            {booking.durationWeeks === 1 ? "Week" : "Weeks"}
+                          </div>
+
+                          {/* Status */}
+                          <div className="flex justify-between">
+                            <span className="font-semibold">Status: </span>
+                            <span className="font-bold capitalize">
+                              {booking.status}
+                            </span>
+                          </div>
+
+                          {/* Reason */}
+                          <div className="text-center">
+                            <p className="font-semibold">Reason: </p>
+                            <p>{booking.reason}</p>
+                          </div>
+
+                          {/* Action */}
+                          <div className="flex justify-end">
+                            <ViewDetailsButton
+                              id={`view-details-btn-${booking._id}-mobile`}
+                              onClick={() => {
+                                setSelectedBooking(booking);
+                                modalRef.current?.showModal();
+                              }}
+                              tooltip="View Detailed Booking Info"
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              );
+            })()}
           </>
         ) : (
           <div className="flex flex-col items-center bg-gray-100 py-5 text-black italic">
