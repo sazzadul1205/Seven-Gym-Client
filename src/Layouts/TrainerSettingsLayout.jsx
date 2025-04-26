@@ -178,6 +178,40 @@ const TrainerSettingsLayout = () => {
     enabled: !!TrainerProfileData?._id,
   });
 
+  // Fetch Trainer Booking Accepted Data
+  const {
+    data: TrainerBookingHistoryDailyStatsData = [],
+    isLoading: TrainerBookingHistoryDailyStatsIsLoading,
+    error: TrainerBookingHistoryDailyStatsError,
+    refetch: TrainerStudentHistoryDailyStatsRefetch,
+  } = useQuery({
+    queryKey: ["TrainerBookingHistoryDailyStats", TrainerProfileData?._id],
+    queryFn: () =>
+      axiosPublic
+        .get(
+          `/Trainer_Booking_History/DailyStats?trainerId=${TrainerProfileData?._id}`
+        )
+        .then((res) => res.data),
+    enabled: !!TrainerProfileData?._id,
+  });
+
+  // Fetch Trainer Booking Accepted Data
+  const {
+    data: TrainerBookingAcceptedDailyStatsData = [],
+    isLoading: TrainerBookingAcceptedDailyStatsIsLoading,
+    error: TrainerBookingAcceptedDailyStatsError,
+    refetch: TrainerStudentAcceptedDailyStatsRefetch,
+  } = useQuery({
+    queryKey: ["TrainerBookingAcceptedDailyStats", TrainerProfileData?._id],
+    queryFn: () =>
+      axiosPublic
+        .get(
+          `/Trainer_Booking_Accepted/DailyStats?trainerId=${TrainerProfileData?._id}`
+        )
+        .then((res) => res.data),
+    enabled: !!TrainerProfileData?._id,
+  });
+
   // Unified refetch function
   const refetchAll = async () => {
     await TrainerRefetch();
@@ -186,6 +220,8 @@ const TrainerSettingsLayout = () => {
     await TrainerBookingHistoryRefetch();
     await TrainerStudentHistoryRefetch();
     await TrainerBookingAcceptedRefetch();
+    await TrainerStudentHistoryDailyStatsRefetch();
+    await TrainerStudentAcceptedDailyStatsRefetch();
   };
 
   // Tabs List
@@ -197,8 +233,12 @@ const TrainerSettingsLayout = () => {
       title: "Trainer Dashboard",
       content: (
         <TrainerDashboard
-          TrainerBookingAccepted={TrainerBookingAcceptedData}
           TrainerBookingHistory={TrainerBookingHistoryData}
+          TrainerBookingAccepted={TrainerBookingAcceptedData}
+          TrainerBookingHistoryDailyStats={TrainerBookingHistoryDailyStatsData}
+          TrainerBookingAcceptedDailyStats={
+            TrainerBookingAcceptedDailyStatsData
+          }
         />
       ),
     },
@@ -291,7 +331,9 @@ const TrainerSettingsLayout = () => {
     TrainerBookingRequestIsLoading ||
     TrainerBookingHistoryIsLoading ||
     TrainerStudentHistoryIsLoading ||
-    TrainerBookingAcceptedIsLoading
+    TrainerBookingAcceptedIsLoading ||
+    TrainerBookingHistoryDailyStatsIsLoading ||
+    TrainerBookingAcceptedDailyStatsIsLoading
   )
     return <Loading />;
 
@@ -303,7 +345,9 @@ const TrainerSettingsLayout = () => {
     TrainerBookingRequestError ||
     TrainerBookingHistoryError ||
     TrainerStudentHistoryError ||
-    TrainerBookingAcceptedError
+    TrainerBookingAcceptedError ||
+    TrainerBookingHistoryDailyStatsError ||
+    TrainerBookingAcceptedDailyStatsError
   )
     return <FetchingError />;
 

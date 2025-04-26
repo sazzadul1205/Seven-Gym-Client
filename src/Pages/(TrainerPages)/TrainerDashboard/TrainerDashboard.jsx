@@ -1,6 +1,9 @@
+/* eslint-disable react/prop-types */
 import PropTypes from "prop-types";
 
 const TrainerDashboard = ({
+  TrainerBookingHistoryDailyStats,
+  TrainerBookingAcceptedDailyStats,
   TrainerBookingAccepted,
   TrainerBookingHistory,
 }) => {
@@ -39,7 +42,17 @@ const TrainerDashboard = ({
     }, 0)
     .toFixed(2);
 
-  console.log("Trainer Booking History -> ", TrainerBookingHistory);
+  console.log("Trainer Booking Accepted -> :", TrainerBookingAccepted);
+
+  console.log(
+    "Trainer Booking History Daily Stats :",
+    TrainerBookingHistoryDailyStats
+  );
+  
+  console.log(
+    "Trainer Booking Accepted Daily Stats :",
+    TrainerBookingAcceptedDailyStats
+  );
 
   return (
     <div className="bg-gradient-to-t from-gray-100 to-gray-300 min-h-screen p-4">
