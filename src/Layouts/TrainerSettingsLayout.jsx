@@ -47,7 +47,7 @@ const TrainerSettingsLayout = () => {
 
   // Extract tab parameter from URL
   const searchParams = new URLSearchParams(location.search);
-  const initialTab = searchParams.get("tab") || "User_Info_Settings";
+  const initialTab = searchParams.get("tab") || "Trainer_Dashboard";
 
   // Tab Management
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -195,7 +195,12 @@ const TrainerSettingsLayout = () => {
       id: "Trainer_Dashboard",
       Icon: "https://i.ibb.co.com/LhBG5FfY/dashboard.png",
       title: "Trainer Dashboard",
-      content: <TrainerDashboard />,
+      content: (
+        <TrainerDashboard
+          TrainerBookingAccepted={TrainerBookingAcceptedData}
+          TrainerBookingHistory={TrainerBookingHistoryData}
+        />
+      ),
     },
     // Trainer Profile Tab
     {

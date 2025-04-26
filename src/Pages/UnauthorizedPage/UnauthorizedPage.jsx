@@ -9,6 +9,9 @@ import useAuth from "../../Hooks/useAuth";
 // Import Swal Alert
 import Swal from "sweetalert2";
 
+// Import Button
+import CommonButton from "../../Shared/Buttons/CommonButton";
+
 const UnauthorizedPage = () => {
   const { logOut } = useAuth();
   const navigate = useNavigate();
@@ -56,18 +59,28 @@ const UnauthorizedPage = () => {
 
             {/* Action buttons container with space between for layout */}
             <div className="modal-action justify-between">
-              {/* Button to navigate the user back to the homepage */}
-              <button className="bg-linear-to-br hover:bg-linear-to-tl from-[#F72C5B] to-[#f72c5b7a] mt-5 py-2 w-[150px] font-bold text-white rounded-full">
-                <Link to="/">Go to Home</Link>
-              </button>
+              {/* Home Button */}
+              <Link to="/">
+                <CommonButton
+                  text="Go to Home"
+                  bgColor="OriginalRed"
+                  textColor="text-white"
+                  width="[150px]"
+                  px="px-5"
+                  py="py-2"
+                />
+              </Link>
 
-              {/* Button to log the user out and redirect to login page */}
-              <button
-                className="bg-linear-to-br hover:bg-linear-to-tl from-[#F72C5B] to-[#f72c5b7a] mt-5 py-2 w-[150px] font-bold text-white rounded-full"
-                onClick={() => handleSignOut()} // Calls logout function on click
-              >
-                Login
-              </button>
+              {/* Login Button */}
+              <CommonButton
+                text="Login"
+                bgColor="OriginalRed"
+                textColor="text-white"
+                width="[150px]"
+                px="px-5"
+                py="py-2"
+                clickEvent={handleSignOut}
+              />
             </div>
           </div>
         </dialog>
