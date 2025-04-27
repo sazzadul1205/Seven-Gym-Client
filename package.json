@@ -21,7 +21,7 @@
     "date-fns": "^4.1.0",
     "dom-to-image": "^2.6.0",
     "firebase": "^11.1.0",
-    "jspdf": "^2.5.2",
+    "jspdf": "^3.0.1",
     "lucide-react": "^0.475.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -39,8 +39,9 @@
     "react-tabs": "^6.1.0",
     "react-to-print": "^3.0.4",
     "react-tooltip": "^5.28.0",
+    "recharts": "^2.15.3",
     "slick-carousel": "^1.8.1",
-    "sweetalert2": "^11.15.10",
+    "sweetalert2": "^11.6.13",
     "swiper": "^11.1.15"
   },
   "devDependencies": {
