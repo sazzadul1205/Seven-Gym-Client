@@ -19,6 +19,7 @@
     "@tanstack/react-query": "^5.62.7",
     "axios": "^1.7.9",
     "date-fns": "^4.1.0",
+    "dayjs": "^1.11.13",
     "dom-to-image": "^2.6.0",
     "firebase": "^11.1.0",
     "jspdf": "^3.0.1",

@@ -27,8 +27,9 @@ const TrainerDashboard = ({
         TrainerBookingHistory={TrainerBookingHistory}
       />
 
-      {/* Dashboard Graph */}
+      <div className="bg-gray-400 p-[1px] my-5" />
 
+      {/* Dashboard Graph */}
       <TrainerDashboardGraph
         HistoryDailyStats={TrainerBookingHistoryDailyStats}
         AcceptedDailyStats={TrainerBookingAcceptedDailyStats}
