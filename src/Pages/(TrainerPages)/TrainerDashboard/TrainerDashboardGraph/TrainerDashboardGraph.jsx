@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 // Importing necessary components from recharts for rendering line charts
 import {
@@ -125,6 +125,26 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
     }));
   };
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Update the screen size state when the window is resized
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768); // Set breakpoint at 768px for mobile view
+    };
+
+    handleResize(); // Initial check
+    window.addEventListener("resize", handleResize); // Add resize event listener
+
+    // Cleanup on unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // Dynamic viewBox based on screen size
+  const viewBox = isMobile ? "30 0 312 400" : "30 0 568 400"; // Adjust for mobile screens
+
   return (
     <div className="w-full text-black">
       {/* Title */}
@@ -137,13 +157,16 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
         {/* Sessions Overview */}
         <div className="flex-1">
           {/* Sessions Overview : Title */}
-          <h3 className="text-xl font-semibold mb-2 text-center">
+          <h3 className="text-xl md:text-2xl font-semibold mb-2 text-center">
             Sessions Overview ({monthYearLabel})
           </h3>
-
           {/* Sessions Overview : Chart */}
-          <ResponsiveContainer width="100%" className={"max-h-[400px]"}>
-            <LineChart data={preparedData}>
+          <ResponsiveContainer
+            width="100%"
+            height={400}
+            className="max-h-[400px] mx-auto"
+          >
+            <LineChart data={preparedData} viewBox={viewBox}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="day" tickFormatter={(t) => t.toString()} />
               <YAxis />
@@ -197,7 +220,7 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
               onClick={() => toggleSessionLine("sessions")}
               className={`px-5 py-3 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg cursor-pointer ${
                 sessionsVisibility.sessions
-                  ? "bg-linear-to-bl hover:bg-linear-to-tr from-indigo-300 to-indigo-600 text-white"
+                  ? "bg-gradient-to-bl hover:bg-gradient-to-tr from-indigo-300 to-indigo-600 text-white"
                   : "bg-gray-300 hover:bg-gray-300/60 text-gray-600"
               }`}
             >
@@ -209,7 +232,7 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
               onClick={() => toggleSessionLine("completedSessions")}
               className={`px-5 py-3 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg cursor-pointer ${
                 sessionsVisibility.completedSessions
-                  ? "bg-linear-to-bl hover:bg-linear-to-tr from-orange-300 to-orange-600 text-white"
+                  ? "bg-gradient-to-bl hover:bg-gradient-to-tr from-orange-300 to-orange-600 text-white"
                   : "bg-gray-300 hover:bg-gray-300/60 text-gray-600"
               }`}
             >
@@ -222,12 +245,16 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
         {/* Earnings Overview */}
         <div className="flex-1">
           {/* Earnings Overview : Title */}
-          <h3 className="text-xl font-semibold mb-2 text-center">
+          <h3 className="text-xl md:text-2xl font-semibold mb-2 text-center">
             Total Earnings Over Time ({monthYearLabel})
           </h3>
 
           {/* Earnings Overview : Chart */}
-          <ResponsiveContainer width="100%" className={"max-h-[400px]"}>
+          <ResponsiveContainer
+            width="100%"
+            height={400}
+            className="max-h-[400px]"
+          >
             <LineChart data={preparedData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="day" tickFormatter={(t) => t.toString()} />
@@ -288,7 +315,7 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
               onClick={() => toggleEarningsLine("totalEarned")}
               className={`px-5 py-3 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg cursor-pointer ${
                 earningsVisibility.totalEarned
-                  ? "bg-linear-to-bl hover:bg-linear-to-tr from-emerald-300 to-emerald-600 text-white"
+                  ? "bg-gradient-to-bl hover:bg-gradient-to-tr from-emerald-300 to-emerald-600 text-white"
                   : "bg-gray-300 hover:bg-gray-300/50 text-gray-600"
               }`}
             >
@@ -300,7 +327,7 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
               onClick={() => toggleEarningsLine("estimatedEarnings")}
               className={`px-5 py-3 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg cursor-pointer ${
                 earningsVisibility.estimatedEarnings
-                  ? "bg-linear-to-bl hover:bg-linear-to-tr from-yellow-300 to-yellow-600 text-white"
+                  ? "bg-gradient-to-bl hover:bg-gradient-to-tr from-yellow-300 to-yellow-600 text-white"
                   : "bg-gray-300 hover:bg-gray-300/50 text-gray-600"
               }`}
             >
@@ -313,7 +340,7 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
               onClick={() => toggleEarningsLine("totalRefundedAmount")}
               className={`px-5 py-3 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg cursor-pointer ${
                 earningsVisibility.totalRefundedAmount
-                  ? "bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-600 text-white"
+                  ? "bg-gradient-to-bl hover:bg-gradient-to-tr from-red-300 to-red-600 text-white"
                   : "bg-gray-300 hover:bg-gray-300/50 text-gray-600"
               }`}
             >
@@ -349,5 +376,4 @@ TrainerDashboardGraph.propTypes = {
   ),
 };
 
-// Exporting the component to be used in other parts of the application
 export default TrainerDashboardGraph;

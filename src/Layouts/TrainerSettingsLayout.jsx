@@ -45,11 +45,11 @@ const TrainerSettingsLayout = () => {
   // Refetch Spin state
   const [spinning, setSpinning] = useState(false);
 
-  // Extract tab parameter from URL
+  // Get initial tab from URL
   const searchParams = new URLSearchParams(location.search);
   const initialTab = searchParams.get("tab") || "Trainer_Dashboard";
 
-  // Tab Management
+  // Tab State
   const [activeTab, setActiveTab] = useState(initialTab);
 
   // Update URL when activeTab changes
@@ -57,8 +57,18 @@ const TrainerSettingsLayout = () => {
     const params = new URLSearchParams();
     params.set("tab", activeTab);
     navigate({ search: params.toString() }, { replace: true });
-    window.scrollTo(0, 0); // Scroll to top
+    window.scrollTo(0, 0);
   }, [activeTab, navigate]);
+
+  // Listen to URL changes and update activeTab
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const urlTab = params.get("tab") || "Trainer_Dashboard";
+    if (urlTab !== activeTab) {
+      setActiveTab(urlTab);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
   // Fetch Trainer Data
   const {
