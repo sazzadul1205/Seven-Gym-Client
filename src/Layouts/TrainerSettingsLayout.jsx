@@ -233,6 +233,7 @@ const TrainerSettingsLayout = () => {
       title: "Trainer Dashboard",
       content: (
         <TrainerDashboard
+          TrainerScheduleData={TrainerScheduleData}
           TrainerBookingHistory={TrainerBookingHistoryData}
           TrainerBookingAccepted={TrainerBookingAcceptedData}
           TrainerBookingHistoryDailyStats={TrainerBookingHistoryDailyStatsData}

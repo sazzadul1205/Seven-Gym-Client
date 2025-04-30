@@ -195,10 +195,10 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
             {/* Sessions Booked */}
             <button
               onClick={() => toggleSessionLine("sessions")}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all shadow-md ${
+              className={`px-5 py-3 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg cursor-pointer ${
                 sessionsVisibility.sessions
-                  ? "bg-indigo-500 text-white"
-                  : "bg-gray-300 text-gray-600"
+                  ? "bg-linear-to-bl hover:bg-linear-to-tr from-indigo-300 to-indigo-600 text-white"
+                  : "bg-gray-300 hover:bg-gray-300/60 text-gray-600"
               }`}
             >
               {sessionsVisibility.sessions ? "Hide" : "Show"} Sessions Booked
@@ -207,10 +207,10 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
             {/* Sessions Completed */}
             <button
               onClick={() => toggleSessionLine("completedSessions")}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all shadow-md ${
+              className={`px-5 py-3 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg cursor-pointer ${
                 sessionsVisibility.completedSessions
-                  ? "bg-orange-500 text-white"
-                  : "bg-gray-300 text-gray-600"
+                  ? "bg-linear-to-bl hover:bg-linear-to-tr from-orange-300 to-orange-600 text-white"
+                  : "bg-gray-300 hover:bg-gray-300/60 text-gray-600"
               }`}
             >
               {sessionsVisibility.completedSessions ? "Hide" : "Show"} Sessions
@@ -286,10 +286,10 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
             {/* Actual Earnings */}
             <button
               onClick={() => toggleEarningsLine("totalEarned")}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all shadow-md ${
+              className={`px-5 py-3 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg cursor-pointer ${
                 earningsVisibility.totalEarned
-                  ? "bg-emerald-500 text-white"
-                  : "bg-gray-300 text-gray-600"
+                  ? "bg-linear-to-bl hover:bg-linear-to-tr from-emerald-300 to-emerald-600 text-white"
+                  : "bg-gray-300 hover:bg-gray-300/50 text-gray-600"
               }`}
             >
               {earningsVisibility.totalEarned ? "Hide" : "Show"} Actual Earnings
@@ -298,10 +298,10 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
             {/* Est. Earnings */}
             <button
               onClick={() => toggleEarningsLine("estimatedEarnings")}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all shadow-md ${
+              className={`px-5 py-3 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg cursor-pointer ${
                 earningsVisibility.estimatedEarnings
-                  ? "bg-yellow-600 text-white"
-                  : "bg-gray-300 text-gray-600"
+                  ? "bg-linear-to-bl hover:bg-linear-to-tr from-yellow-300 to-yellow-600 text-white"
+                  : "bg-gray-300 hover:bg-gray-300/50 text-gray-600"
               }`}
             >
               {earningsVisibility.estimatedEarnings ? "Hide" : "Show"} Est.
@@ -311,10 +311,10 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
             {/* Refunded Amount */}
             <button
               onClick={() => toggleEarningsLine("totalRefundedAmount")}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all shadow-md ${
+              className={`px-5 py-3 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg cursor-pointer ${
                 earningsVisibility.totalRefundedAmount
-                  ? "bg-red-500 text-white"
-                  : "bg-gray-300 text-gray-600"
+                  ? "bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-600 text-white"
+                  : "bg-gray-300 hover:bg-gray-300/50 text-gray-600"
               }`}
             >
               {earningsVisibility.totalRefundedAmount ? "Hide" : "Show"}{" "}

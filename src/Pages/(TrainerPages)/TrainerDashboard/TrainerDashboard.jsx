@@ -1,12 +1,14 @@
 /* eslint-disable react/prop-types */
 import TrainerDashboardStatsGrid from "./TrainerDashboardStatsGrid/TrainerDashboardStatsGrid";
 import TrainerDashboardGraph from "./TrainerDashboardGraph/TrainerDashboardGraph";
+import TrainerDashboardSchedule from "./TrainerDashboardSchedule/TrainerDashboardSchedule";
 
 const TrainerDashboard = ({
-  TrainerBookingHistoryDailyStats,
   TrainerBookingAcceptedDailyStats,
+  TrainerBookingHistoryDailyStats,
   TrainerBookingAccepted,
   TrainerBookingHistory,
+  TrainerScheduleData,
 }) => {
   // Trainer name
   const trainerName = TrainerBookingAccepted[0]?.trainer || "N/A";
@@ -27,6 +29,7 @@ const TrainerDashboard = ({
         TrainerBookingHistory={TrainerBookingHistory}
       />
 
+      {/* Divider */}
       <div className="bg-gray-400 p-[1px] my-5" />
 
       {/* Dashboard Graph */}
@@ -34,6 +37,12 @@ const TrainerDashboard = ({
         HistoryDailyStats={TrainerBookingHistoryDailyStats}
         AcceptedDailyStats={TrainerBookingAcceptedDailyStats}
       />
+
+      {/* Divider */}
+      <div className="bg-gray-400 p-[1px] my-5" />
+
+      {/* Next Schedule & Notifications */}
+      <TrainerDashboardSchedule TrainerScheduleData={TrainerScheduleData} />
     </div>
   );
 };
