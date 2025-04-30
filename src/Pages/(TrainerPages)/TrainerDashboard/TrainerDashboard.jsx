@@ -2,6 +2,7 @@
 import TrainerDashboardStatsGrid from "./TrainerDashboardStatsGrid/TrainerDashboardStatsGrid";
 import TrainerDashboardGraph from "./TrainerDashboardGraph/TrainerDashboardGraph";
 import TrainerDashboardSchedule from "./TrainerDashboardSchedule/TrainerDashboardSchedule";
+import TrainerDashboardSessionHistory from "./TrainerDashboardSessionHistory/TrainerDashboardSessionHistory";
 
 const TrainerDashboard = ({
   TrainerBookingAcceptedDailyStats,
@@ -47,7 +48,10 @@ const TrainerDashboard = ({
       {/* Divider */}
       <div className="bg-gray-400 p-[1px] my-5" />
 
-
+      <TrainerDashboardSessionHistory
+        TrainerBookingAccepted={TrainerBookingAccepted}
+        TrainerBookingHistory={TrainerBookingHistory}
+      />
     </div>
   );
 };

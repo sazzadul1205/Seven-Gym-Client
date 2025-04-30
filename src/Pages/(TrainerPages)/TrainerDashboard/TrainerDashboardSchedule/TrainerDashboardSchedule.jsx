@@ -153,7 +153,7 @@ const TrainerDashboardSchedule = ({ TrainerScheduleData }) => {
 TrainerDashboardSchedule.propTypes = {
   TrainerScheduleData: PropTypes.arrayOf(
     PropTypes.shape({
-      day: PropTypes.string.isRequired,
+      day: PropTypes.string.isRequired, // Ensure day is always present
       date: PropTypes.string.isRequired,
       start: PropTypes.string.isRequired,
       end: PropTypes.string.isRequired,

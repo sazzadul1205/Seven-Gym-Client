@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 
 // Importing necessary components from recharts for rendering line charts
 import {
@@ -125,25 +125,7 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
     }));
   };
 
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Update the screen size state when the window is resized
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Set breakpoint at 768px for mobile view
-    };
-
-    handleResize(); // Initial check
-    window.addEventListener("resize", handleResize); // Add resize event listener
-
-    // Cleanup on unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  // Dynamic viewBox based on screen size
-  const viewBox = isMobile ? "30 0 312 400" : "30 0 568 400"; // Adjust for mobile screens
+  const isMobile = window.innerWidth < 768;
 
   return (
     <div className="w-full text-black">
@@ -154,57 +136,64 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
 
       {/* Graphs */}
       <div className="flex flex-col md:flex-row gap-8 justify-center">
-        {/* Sessions Overview */}
+        {/* Sessions Overview Section */}
         <div className="flex-1">
-          {/* Sessions Overview : Title */}
+          {/* Chart Title with dynamic month-year label */}
           <h3 className="text-xl md:text-2xl font-semibold mb-2 text-center">
             Sessions Overview ({monthYearLabel})
           </h3>
-          {/* Sessions Overview : Chart */}
+
+          {/* Chart Container with responsiveness */}
           <ResponsiveContainer
             width="100%"
             height={400}
             className="max-h-[400px] mx-auto"
           >
-            <LineChart data={preparedData} viewBox={viewBox}>
+            {/* LineChart rendering session data */}
+            <LineChart
+              data={preparedData} // Chart data, prepared based on session information
+              margin={{ top: 0, right: 0, bottom: 0, left: isMobile ? -20 : 0 }} // Adjust left margin based on screen size
+            >
+              {/* Grid lines in chart */}
               <CartesianGrid strokeDasharray="3 3" />
+
+              {/* X-Axis setup, using 'day' as data key */}
               <XAxis dataKey="day" tickFormatter={(t) => t.toString()} />
+
+              {/* Y-Axis setup */}
               <YAxis />
 
+              {/* Tooltip on hover, formats date and value */}
               <Tooltip
                 labelFormatter={(value) =>
                   currentMonth.date(value).format("DD - MMM")
                 }
-                formatter={(val, name) => [
-                  val,
-                  name === "sessions"
-                    ? "Sessions Booked"
-                    : "Sessions Completed",
-                ]}
+                formatter={(value, name) => [value, name]}
               />
 
+              {/* Legend for lines */}
               <Legend />
 
-              {/* Render Session Booked Line */}
+              {/* Conditionally render "Sessions Booked" line if visibility is true */}
               {sessionsVisibility.sessions && (
                 <Line
                   type="monotone"
                   dataKey="sessions"
+                  name="Session Booked"
                   stroke="#4f46e5"
-                  name="Sessions Booked"
                   strokeWidth={3}
                   dot={{ r: 3 }}
                   activeDot={{ r: 6 }}
                 />
               )}
 
-              {/* Render Completed Sessions Line */}
+              {/* Conditionally render "Sessions Completed" line if visibility is true */}
               {sessionsVisibility.completedSessions && (
                 <Line
                   type="monotone"
                   dataKey="completedSessions"
+                  name="Session Completed"
                   stroke="#f97316"
-                  name="Sessions Completed"
                   strokeWidth={3}
                   dot={{ r: 3 }}
                   activeDot={{ r: 6 }}
@@ -213,27 +202,27 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
             </LineChart>
           </ResponsiveContainer>
 
-          {/* Buttons to toggle session lines */}
+          {/* Toggle Buttons for showing/hiding session lines */}
           <div className="flex gap-4 justify-center mt-4 flex-wrap">
-            {/* Sessions Booked */}
+            {/* Toggle button for "Sessions Booked" line */}
             <button
               onClick={() => toggleSessionLine("sessions")}
-              className={`px-5 py-3 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg cursor-pointer ${
+              className={`px-5 py-3 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg ${
                 sessionsVisibility.sessions
-                  ? "bg-gradient-to-bl hover:bg-gradient-to-tr from-indigo-300 to-indigo-600 text-white"
-                  : "bg-gray-300 hover:bg-gray-300/60 text-gray-600"
+                  ? "bg-gradient-to-bl from-indigo-300 to-indigo-600 text-white"
+                  : "bg-gray-300 text-gray-600 hover:bg-gray-300/60"
               }`}
             >
               {sessionsVisibility.sessions ? "Hide" : "Show"} Sessions Booked
             </button>
 
-            {/* Sessions Completed */}
+            {/* Toggle button for "Sessions Completed" line */}
             <button
               onClick={() => toggleSessionLine("completedSessions")}
-              className={`px-5 py-3 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg cursor-pointer ${
+              className={`px-5 py-3 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg ${
                 sessionsVisibility.completedSessions
-                  ? "bg-gradient-to-bl hover:bg-gradient-to-tr from-orange-300 to-orange-600 text-white"
-                  : "bg-gray-300 hover:bg-gray-300/60 text-gray-600"
+                  ? "bg-gradient-to-bl from-orange-300 to-orange-600 text-white"
+                  : "bg-gray-300 text-gray-600 hover:bg-gray-300/60"
               }`}
             >
               {sessionsVisibility.completedSessions ? "Hide" : "Show"} Sessions
@@ -255,19 +244,31 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
             height={400}
             className="max-h-[400px]"
           >
-            <LineChart data={preparedData}>
+            <LineChart
+              data={preparedData}
+              margin={{ top: 20, right: 0, bottom: 0, left: isMobile ? -20 : 0 }} // Adjust left margin based on screen size
+            >
+              {/* Adds background grid lines with dashed strokes */}
               <CartesianGrid strokeDasharray="3 3" />
+
+              {/* X-Axis: displays the day number (from `day` field in data) */}
               <XAxis dataKey="day" tickFormatter={(t) => t.toString()} />
+
+              {/* Y-Axis: automatically scales based on data values */}
               <YAxis />
+
+              {/* Tooltip shown on hover: formats date and value display */}
               <Tooltip
-                labelFormatter={(value) =>
-                  currentMonth.date(value).format("DD - MMM")
+                labelFormatter={
+                  (value) => currentMonth.date(value).format("DD - MMM") // Formats date labels
                 }
-                formatter={(val, name) => [val, name]}
+                formatter={(val, name) => [val, name]} // Shows value and series name
               />
+
+              {/* Legend shows which color corresponds to which data line */}
               <Legend />
 
-              {/* Render Actual Earnings Line */}
+              {/* Conditionally render the "Actual Earnings" line */}
               {earningsVisibility.totalEarned && (
                 <Line
                   type="monotone"
@@ -280,7 +281,7 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
                 />
               )}
 
-              {/* Render Estimated Earnings Line */}
+              {/* Conditionally render the "Estimated Earnings" line */}
               {earningsVisibility.estimatedEarnings && (
                 <Line
                   type="monotone"
@@ -293,7 +294,7 @@ const TrainerDashboardGraph = ({ HistoryDailyStats, AcceptedDailyStats }) => {
                 />
               )}
 
-              {/* Render Refunded Amount Line */}
+              {/* Conditionally render the "Refunded Amount" line */}
               {earningsVisibility.totalRefundedAmount && (
                 <Line
                   type="monotone"
