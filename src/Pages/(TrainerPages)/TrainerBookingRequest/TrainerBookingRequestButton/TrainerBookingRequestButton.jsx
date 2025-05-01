@@ -43,7 +43,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
   // Function: Handle booking acceptance and update schedule accordingly
   const handleAccept = async (booking) => {
     try {
-      // 1. Prompt user for confirmation
+      // Step 1: Ask for user confirmation via SweetAlert
       const { isConfirmed } = await Swal.fire({
         title: "Are you sure?",
         text: "Do you want to accept this booking?",
@@ -53,22 +53,23 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
         cancelButtonText: "No, Cancel",
       });
 
-      if (!isConfirmed) return; // Exit if user cancels
+      // If user cancels, exit early
+      if (!isConfirmed) return;
 
-      // 2. Prepare payloads
-      const formattedDate = getFormattedStartDate(); // Custom utility to get current formatted datetime
+      // Step 2: Prepare data payloads
+      const formattedDate = getFormattedStartDate(); // Custom utility for timestamp
 
-      // Payload to update booking status
+      // Payload to update the booking status in the database
       const bookingUpdatePayload = {
         status: "Accepted",
         acceptedAt: formattedDate,
         paid: false,
       };
 
-      // Payload to add participant to schedule
+      // Payload to add participant to the trainer's schedule
       const participantPayload = {
         trainerName: booking.trainer,
-        ids: booking.sessions, // Array of session IDs
+        ids: booking.sessions, // Array of session IDs to be updated
         payload: {
           bookerEmail: booking.bookerEmail,
           duration: booking.durationWeeks,
@@ -78,22 +79,24 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
         },
       };
 
-      // 3. Send PATCH request to update booking status
+      // Step 3: Send PATCH request to update booking status
       const updateRes = await axiosPublic.patch(
         `/Trainer_Booking_Request/${booking._id}`,
         bookingUpdatePayload
       );
 
+      // If update response does not contain success message, throw error
       if (!updateRes.data?.message) {
         throw new Error("Failed to update booking status.");
       }
 
-      // 4. Send PUT request to update the trainer's schedule
+      // Step 4: Send PUT request to update the trainer's schedule
       const scheduleRes = await axiosPublic.put(
         "/Trainers_Schedule/AddParticipant",
         participantPayload
       );
 
+      // Validate the schedule update was successful
       const participantAdded =
         scheduleRes.data?.message === "Participants added successfully." ||
         typeof scheduleRes.data === "string";
@@ -102,7 +105,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
         throw new Error("Failed to add participant to schedule.");
       }
 
-      // 5. Notify user of success and refresh data
+      // Step 5: Show success message and refresh the UI
       await Swal.fire({
         icon: "success",
         title: "Booking Accepted",
@@ -111,10 +114,9 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
         showConfirmButton: false,
       });
 
-      refetch(); // Refresh data/UI
+      refetch(); // Refresh UI or data table
     } catch (err) {
-      // Handle and display errors gracefully
-      console.error("Error in handleAccept:", err);
+      // Step 6: Show error message on failure
       Swal.fire({
         icon: "error",
         title: "Operation Failed",

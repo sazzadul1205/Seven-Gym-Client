@@ -41,44 +41,50 @@ const TrainerBookingAcceptedSetTime = ({
     return resultDate.toISOString().split("T")[0]; // Format: yyyy-mm-dd
   };
 
-  // Submit selected start date and update both records
+  // Handle start date submission and update both booking and participant records
   const handleSubmit = async () => {
+    // Guard clause: Ensure a date is selected
     if (!selectedDate) {
       return Swal.fire("Error", "Please select a start date", "error");
     }
 
+    // Payload to update the booking with the selected start date
     const payload = {
       startAt: selectedDate,
     };
 
-    setLoading(true);
+    setLoading(true); // Begin loading state
 
     try {
-      // 1. Update the main accepted booking with start date
+      // 1️⃣ Update the accepted booking with the start date
       const response = await axiosPublic.put(
         `/Trainer_Booking_Accepted/Update/${selectedAcceptedBooking._id}`,
         payload
       );
 
-      // 2. Update the participant's schedule as well
+      // Proceed only if booking update was successful
       if (response.status === 200) {
+        // 2️⃣ Prepare payload for updating participant's schedule
         const participantPayload = {
           startAt: selectedDate,
           stripePaymentID:
             selectedAcceptedBooking?.stripePaymentID ||
-            selectedAcceptedBooking?.paymentID,
+            selectedAcceptedBooking?.paymentID, // Use fallback if necessary
         };
 
+        // Attempt to update the participant's schedule
         const participantResponse = await axiosPublic.post(
           "/Trainers_Schedule/UpdateParticipant",
           participantPayload
         );
 
         if (participantResponse.status === 200) {
+          // ✅ Both updates successful
           Swal.fire("Success", "Start date set successfully!", "success");
-          handleClose();
-          refetch(); // Refetch parent data to reflect changes
+          handleClose(); // Close modal/dialog
+          refetch(); // Refresh parent data view
         } else {
+          // ⚠️ Booking updated, but participant record was not found
           Swal.fire(
             "Warning",
             "Start date updated, but participant not found.",
@@ -90,7 +96,7 @@ const TrainerBookingAcceptedSetTime = ({
       console.error("Failed to update booking or participant:", error);
       Swal.fire("Error", "Failed to update booking or participant", "error");
     } finally {
-      setLoading(false);
+      setLoading(false); // End loading state
     }
   };
 

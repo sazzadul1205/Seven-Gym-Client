@@ -175,10 +175,7 @@ const UserTrainerSessionPayment = () => {
             </div>
 
             {/* Payment */}
-            <Elements
-              stripe={stripePromise}
-             
-            >
+            <Elements stripe={stripePromise}>
               <UserTrainerSessionPaymentForm
                 TrainerBookingRequestByIDData={TrainerBookingRequestByIDData}
               />

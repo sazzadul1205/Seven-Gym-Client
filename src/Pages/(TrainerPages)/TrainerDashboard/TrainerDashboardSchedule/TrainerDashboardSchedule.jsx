@@ -153,12 +153,12 @@ const TrainerDashboardSchedule = ({ TrainerScheduleData }) => {
 TrainerDashboardSchedule.propTypes = {
   TrainerScheduleData: PropTypes.arrayOf(
     PropTypes.shape({
-      day: PropTypes.string.isRequired, // Ensure day is always present
-      date: PropTypes.string.isRequired,
-      start: PropTypes.string.isRequired,
-      end: PropTypes.string.isRequired,
-      classType: PropTypes.string.isRequired,
-      participantCount: PropTypes.number.isRequired,
+      day: PropTypes.string,
+      date: PropTypes.string,
+      start: PropTypes.string,
+      end: PropTypes.string,
+      classType: PropTypes.string,
+      participantCount: PropTypes.number,
     })
   ).isRequired,
 };

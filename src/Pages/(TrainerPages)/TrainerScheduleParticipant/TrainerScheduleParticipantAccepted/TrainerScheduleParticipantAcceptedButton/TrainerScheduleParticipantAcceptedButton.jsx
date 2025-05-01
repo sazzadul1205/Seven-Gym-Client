@@ -6,6 +6,7 @@ import { FaInfo, FaRegClock, FaRegTrashAlt } from "react-icons/fa";
 
 // Import Packages
 import Swal from "sweetalert2";
+import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
 
 // Import Hooks
@@ -361,8 +362,8 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
     </div>
   );
 };
-import PropTypes from "prop-types";
 
+// Prop Validation
 TrainerScheduleParticipantAcceptedButton.propTypes = {
   booking: PropTypes.shape({
     _id: PropTypes.string.isRequired,
