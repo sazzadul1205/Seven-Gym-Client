@@ -40,10 +40,10 @@ const getFormattedStartDate = () => {
 const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
   const axiosPublic = useAxiosPublic();
 
-  // Function: Accept Session
+  // Function: Handle booking acceptance and update schedule accordingly
   const handleAccept = async (booking) => {
     try {
-      // Step 1: Confirm with the user
+      // 1. Prompt user for confirmation
       const { isConfirmed } = await Swal.fire({
         title: "Are you sure?",
         text: "Do you want to accept this booking?",
@@ -52,15 +52,20 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
         confirmButtonText: "Yes, Accept it",
         cancelButtonText: "No, Cancel",
       });
-      if (!isConfirmed) return;
 
-      // Step 2: Construct payloads with formatted date
-      const formattedDate = getFormattedStartDate();
+      if (!isConfirmed) return; // Exit if user cancels
+
+      // 2. Prepare payloads
+      const formattedDate = getFormattedStartDate(); // Custom utility to get current formatted datetime
+
+      // Payload to update booking status
       const bookingUpdatePayload = {
         status: "Accepted",
         acceptedAt: formattedDate,
         paid: false,
       };
+
+      // Payload to add participant to schedule
       const participantPayload = {
         trainerName: booking.trainer,
         ids: booking.sessions, // Array of session IDs
@@ -73,35 +78,42 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
         },
       };
 
-      // Step 3: Update booking status
+      // 3. Send PATCH request to update booking status
       const updateRes = await axiosPublic.patch(
         `/Trainer_Booking_Request/${booking._id}`,
         bookingUpdatePayload
       );
+
       if (!updateRes.data?.message) {
-        throw new Error("Booking status update failed.");
+        throw new Error("Failed to update booking status.");
       }
 
-      // Step 4: Add participant to trainer's schedule
+      // 4. Send PUT request to update the trainer's schedule
       const scheduleRes = await axiosPublic.put(
         "/Trainers_Schedule/AddParticipant",
         participantPayload
       );
-      const success =
+
+      const participantAdded =
         scheduleRes.data?.message === "Participants added successfully." ||
         typeof scheduleRes.data === "string";
-      if (!success) throw new Error("Participant addition failed.");
 
-      // Step 5: Show success notification and refresh UI
+      if (!participantAdded) {
+        throw new Error("Failed to add participant to schedule.");
+      }
+
+      // 5. Notify user of success and refresh data
       await Swal.fire({
         icon: "success",
-        title: "Booking Accepted!",
+        title: "Booking Accepted",
         text: "The participant was successfully added to the schedule.",
         timer: 1500,
         showConfirmButton: false,
       });
-      refetch();
+
+      refetch(); // Refresh data/UI
     } catch (err) {
+      // Handle and display errors gracefully
       console.error("Error in handleAccept:", err);
       Swal.fire({
         icon: "error",
@@ -109,7 +121,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
         text:
           err?.response?.data?.message ||
           err.message ||
-          "An error occurred while processing the booking.",
+          "An unexpected error occurred while processing the booking.",
       });
     }
   };
@@ -157,8 +169,9 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
     }
   };
 
-  // Function: Delete Expired Booking
+  // Function: Delete Expired Booking by ID
   const handleDeleteExpired = async (booking) => {
+    // Step 1: Confirm deletion from the user
     const confirmDelete = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to delete this booking?",
@@ -167,26 +180,32 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
       confirmButtonText: "Yes, Delete it",
       cancelButtonText: "No, Keep it",
     });
+
+    // Step 2: Exit if user cancels
     if (!confirmDelete.isConfirmed) return;
 
     try {
-      // Here, we assume deletion by booking ID in query parameter is corrected on backend.
+      // Step 3: Send DELETE request to server using booking ID as query parameter
       const response = await axiosPublic.delete(
         `/Trainer_Booking_Request?id=${booking._id}`
       );
+
+      // Step 4: Handle server response
       if (response.data?.message) {
-        Swal.fire({
+        // Step 5: Show success alert and trigger data refetch
+        await Swal.fire({
           icon: "success",
           title: "Deleted!",
           text: "Booking has been deleted.",
           timer: 1500,
           showConfirmButton: false,
         });
-        refetch();
+        refetch(); // Refresh booking list
       } else {
         throw new Error("No success message in response");
       }
     } catch (error) {
+      // Step 6: Handle failure case with error message
       console.error("Delete error:", error);
       Swal.fire({
         icon: "error",
@@ -283,9 +302,9 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
     }
   };
 
-  // Function: Unavailable Booking with reason input
+  // Function: Mark a booking as "Unavailable" with a rejection reason
   const handleUnavailableBooking = async (booking) => {
-    // Step 1: Confirm rejection action
+    // Step 1: Show confirmation modal before proceeding
     const confirmReject = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to Unavailable this booking?",
@@ -294,16 +313,19 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
       confirmButtonText: "Yes, Unavailable it",
       cancelButtonText: "No, Keep it",
     });
+
+    // Step 2: Exit early if user cancels the confirmation
     if (!confirmReject.isConfirmed) return;
 
-    // Step 3: Update backend booking status to "Rejected"
+    // Step 3: Send PATCH request to update the booking status to "Unavailable"
     try {
       await axiosPublic.patch(`/Trainer_Booking_Request/${booking._id}`, {
         status: "Unavailable",
         rejectedAt: getFormattedStartDate(),
         reason: "Some Sessions are Already Fully Booked",
       });
-      // Step 4: Show success message and refresh UI
+
+      // Step 4: Notify the user of success and refresh the data
       await Swal.fire({
         title: "Booking Unavailable",
         text: `Reason: Some Sessions are Already Fully Booked`,
@@ -311,9 +333,11 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
         timer: 1500,
         showConfirmButton: false,
       });
+
+      // Step 5: Refresh the booking list
       refetch();
-    } catch (error) {
-      console.error("Error Unavailable booking:", error);
+    } catch {
+      // Step 6: Show error modal if update fails
       Swal.fire({
         title: "Update Failed",
         text: "Something went wrong while Unavailable the booking.",
@@ -410,6 +434,7 @@ const TrainerBookingRequestButton = ({ booking, refetch, isBookingValid }) => {
   );
 };
 
+// Prop Validation
 TrainerBookingRequestButton.propTypes = {
   booking: PropTypes.shape({
     _id: PropTypes.string.isRequired,
