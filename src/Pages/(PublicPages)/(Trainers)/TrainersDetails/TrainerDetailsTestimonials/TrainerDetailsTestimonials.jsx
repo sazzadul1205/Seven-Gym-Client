@@ -1,10 +1,13 @@
+// Import Prop Type
 import PropTypes from "prop-types";
 
+// Imp[ort Slider Data
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import { FaStar } from "react-icons/fa"; // Star icon for rating
+// Import Icons
+import { FaStar } from "react-icons/fa";
 
 const TrainerDetailsTestimonials = ({ TrainerDetails }) => {
   // Slider settings for smooth auto-scrolling testimonials

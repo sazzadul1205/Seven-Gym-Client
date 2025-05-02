@@ -291,6 +291,7 @@ const TrainerSettingsLayout = () => {
       title: "Trainer Dashboard",
       content: (
         <TrainerDashboard
+          TrainerData={TrainerData}
           TrainerScheduleData={TrainerScheduleData}
           TrainerBookingHistory={TrainerBookingHistoryData}
           TrainerBookingAccepted={TrainerBookingAcceptedData}
@@ -410,15 +411,28 @@ const TrainerSettingsLayout = () => {
   )
     return <FetchingError />;
 
-  // Logout function
+  // Logout function with confirmation
   const handleSignOut = async () => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to log out?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, log me out",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!result.isConfirmed) return; // Exit if user cancels
+
     setIsLoggingOut(true);
     try {
       await logOut();
-      navigate("/"); // Redirects to the home page
+      navigate("/"); // Redirect to home
       setTimeout(() => {
         window.location.reload(); // Force reload
-      }, 100); // Short delay to ensure navigation happens first
+      }, 100);
     } catch (error) {
       Swal.fire({
         icon: "error",

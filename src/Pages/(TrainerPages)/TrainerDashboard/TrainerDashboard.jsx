@@ -3,6 +3,7 @@ import TrainerDashboardStatsGrid from "./TrainerDashboardStatsGrid/TrainerDashbo
 import TrainerDashboardGraph from "./TrainerDashboardGraph/TrainerDashboardGraph";
 import TrainerDashboardSchedule from "./TrainerDashboardSchedule/TrainerDashboardSchedule";
 import TrainerDashboardSessionHistory from "./TrainerDashboardSessionHistory/TrainerDashboardSessionHistory";
+import TrainerDashboardTestimonials from "./TrainerDashboardTestimonials/TrainerDashboardTestimonials";
 
 const TrainerDashboard = ({
   TrainerBookingAcceptedDailyStats,
@@ -10,9 +11,13 @@ const TrainerDashboard = ({
   TrainerBookingAccepted,
   TrainerBookingHistory,
   TrainerScheduleData,
+  TrainerData,
 }) => {
   // Trainer name
   const trainerName = TrainerBookingAccepted[0]?.trainer || "N/A";
+
+  // Extract trainer details
+  const TrainerProfileData = TrainerData?.[0] || null;
 
   return (
     <div className="bg-gradient-to-t from-gray-100 to-gray-300 min-h-screen p-1 md:p-4">
@@ -48,10 +53,16 @@ const TrainerDashboard = ({
       {/* Divider */}
       <div className="bg-gray-400 p-[1px] my-5" />
 
+      {/* Trainer Session History */}
       <TrainerDashboardSessionHistory
         TrainerBookingAccepted={TrainerBookingAccepted}
         TrainerBookingHistory={TrainerBookingHistory}
       />
+
+      {/* Divider */}
+      <div className="bg-gray-400 p-[1px] my-5" />
+
+      <TrainerDashboardTestimonials TrainerDetails={TrainerProfileData || {}} />
     </div>
   );
 };

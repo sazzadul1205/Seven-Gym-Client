@@ -42,11 +42,11 @@ import UserSettings from "./Pages/(UserPages)/UserSettings/UserSettings.jsx";
 import UserTierUpgrade from "./Pages/(UserPages)/UserTierUpgrade/UserTierUpgrade.jsx";
 import TearUpgradePayment from "./Pages/(UserPages)/TierUpgradePayment/TierUpgradePayment.jsx";
 import UserSchedulePlanner from "./Pages/(UserPages)/UserSchedulePlanner/UserSchedulePlanner.jsx";
+import UserTrainerManagement from "./Pages/(UserPages)/UserTrainerManagement/UserTrainerManagement.jsx";
 import UserTrainerSessionPayment from "./Pages/(UserPages)/UserTrainerSessionPayment/UserTrainerSessionPayment.jsx";
 
 // Trainer Pages Import
 import TrainerSettingsLayout from "./Layouts/TrainerSettingsLayout.jsx";
-import UserTrainerManagement from "./Pages/(UserPages)/UserTrainerManagement/UserTrainerManagement.jsx";
 
 // Private Route
 import MemberPrivateRoute from "./Routes/MemberPrivateRoute.jsx";
