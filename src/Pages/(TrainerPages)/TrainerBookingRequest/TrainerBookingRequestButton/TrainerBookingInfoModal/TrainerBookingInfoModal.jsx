@@ -113,7 +113,7 @@ const TrainerBookingInfoModal = ({
       <div className="overflow-auto px-4 py-6 sm:px-6 md:px-8">
         <div className="flex bg-gray-200 flex-col lg:flex-row items-start lg:items-center justify-between gap-6 py-2">
           {/* Booker Info */}
-          <div className="w-full lg:w-1/2 flex flex-col sm:flex-row items-center sm:items-start justify-center gap-4 sm:gap-6">
+          <div className="w-full lg:w-1/2 flex flex-col sm:flex-row items-center sm:items-start px-5 gap-4 sm:gap-6">
             {/* Image */}
             <img
               src={BookerData?.profileImage || "/default-profile.png"}

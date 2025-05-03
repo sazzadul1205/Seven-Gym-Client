@@ -25,10 +25,10 @@ const TrainerStudentHistory = ({ TrainerStudentHistoryData }) => {
       {/* Section heading */}
       <div className="text-center py-3">
         <h3 className="text-2xl sm:text-3xl font-bold text-gray-800">
-          Trainer Testimonials
+          Trainer Students History
         </h3>
         <p className="text-gray-600 text-sm sm:text-base mt-1">
-          Hear what your clients have to say
+          See all your Students
         </p>
       </div>
 
@@ -36,7 +36,7 @@ const TrainerStudentHistory = ({ TrainerStudentHistoryData }) => {
       <div className="mx-auto bg-white w-1/3 p-[1px]" />
 
       {/* Students Box */}
-      <div className="py-4 px-4 md:px-10">
+      <div className="py-4  px-1 md:px-10">
         {students.length > 0 ? (
           // Display list of student cards in responsive grid
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -123,7 +123,7 @@ const StudentCard = ({ email, booking }) => {
         ${!booking.startAt ? "bg-green-100 hover:bg-green-50" : ""}`}
     >
       {/* Top Row: Avatar, Info */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
+      <div className="flex md:flex-col flex-col sm:items-center sm:gap-4">
         {/* Student Avatar */}
         <img
           src={data.profileImage}
@@ -142,13 +142,13 @@ const StudentCard = ({ email, booking }) => {
       <span
         className={`${fetchTierBadge(
           data?.tier
-        )} px-3 py-1  rounded-full text-xs font-bold uppercase tracking-wide shadow-md whitespace-nowrap sm:text-sm`}
+        )} flex items-center justify-center text-center  mx-auto`}
       >
         {data?.tier} Tier
       </span>
 
       {/* Bottom Row: Last Booking Info & Review Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+      <div className="flex flex-row sm:items-center justify-between gap-1 sm:gap-0">
         {/* Last Booking Info */}
         <div className="space-y-1">
           <p className="font-bold text-sm sm:text-base">Last Booking:</p>
