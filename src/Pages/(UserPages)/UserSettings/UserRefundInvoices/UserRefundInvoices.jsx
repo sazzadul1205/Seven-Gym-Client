@@ -81,9 +81,9 @@ const UserRefundInvoices = ({ UserTierUpgradeRefundData }) => {
 
                     {/* Linked Payment Receipt */}
                     <td className="py-3 px-4">
-                      {item.linkedPaymentReceptID.length > 10
+                      {item.linkedPaymentReceptID?.length > 10
                         ? `${item.linkedPaymentReceptID.slice(0, 10)}...`
-                        : item.linkedPaymentReceptID}
+                        : item.linkedPaymentReceptID || "N/A"}
                     </td>
 
                     {/* Refund Amount */}
@@ -243,7 +243,7 @@ UserRefundInvoices.propTypes = {
     PropTypes.shape({
       _id: PropTypes.string.isRequired,
       RefundID: PropTypes.string.isRequired,
-      linkedPaymentReceptID: PropTypes.string.isRequired,
+      linkedPaymentReceptID: PropTypes.string,
       refundAmount: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
         .isRequired,
       refundedReason: PropTypes.string.isRequired,

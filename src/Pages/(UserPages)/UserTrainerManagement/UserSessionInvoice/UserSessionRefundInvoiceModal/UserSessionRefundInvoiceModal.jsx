@@ -339,7 +339,7 @@ UserSessionRefundInvoiceModal.propTypes = {
     PaymentRefund: PropTypes.shape({
       refundAmount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     }),
-  }).isRequired,
+  }),
 };
 
 export default UserSessionRefundInvoiceModal;

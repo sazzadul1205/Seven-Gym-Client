@@ -30,6 +30,7 @@ import CommonButton from "../Shared/Buttons/CommonButton";
 // Import Utility
 import { getGenderIcon } from "../Utility/getGenderIcon";
 import { fetchTierBadge } from "../Utility/fetchTierBadge";
+import TrainerTestimonials from "../Pages/(TrainerPages)/TrainerTestimonials/TrainerTestimonials";
 
 const TrainerSettingsLayout = () => {
   const { user, logOut } = useAuth();
@@ -359,7 +360,7 @@ const TrainerSettingsLayout = () => {
     // Schedule Participant Tab
     {
       id: "Schedule_History",
-      Icon: "https://i.ibb.co.com/gM88HmKm/clock.png ",
+      Icon: "https://i.ibb.co.com/gM88HmKm/clock.png",
       title: "Session History",
       content: (
         <TrainerScheduleHistory
@@ -369,16 +370,23 @@ const TrainerSettingsLayout = () => {
         />
       ),
     },
-    // Schedule Participant Tab
+    // Student Participant Tab
     {
       id: "Students_History",
-      Icon: "https://i.ibb.co.com/RTpsgqvH/user.png ",
+      Icon: "https://i.ibb.co.com/RTpsgqvH/user.png",
       title: "Students History",
       content: (
         <TrainerStudentHistory
           TrainerStudentHistoryData={TrainerStudentHistoryData}
         />
       ),
+    },
+    // Trainer Testimonials
+    {
+      id: "Trainer_Testimonials",
+      Icon: "https://i.ibb.co.com/LD2939f4/customer-review.png",
+      title: "Trainer Testimonials",
+      content: <TrainerTestimonials TrainerData={TrainerData} />,
     },
     // Add more tabs as needed
   ];

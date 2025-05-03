@@ -1,7 +1,7 @@
-import PropTypes from "prop-types";
-import { IoMdArrowRoundBack, IoMdFemale, IoMdMale } from "react-icons/io";
-import { MdOutlinePeopleAlt } from "react-icons/md";
 import { useNavigate } from "react-router";
+import PropTypes from "prop-types";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { getGenderIcon } from "../../../../../Utility/getGenderIcon";
 
 // Function to get tier badge styles dynamically
 const getTierBadge = (tier) => {
@@ -12,109 +12,72 @@ const getTierBadge = (tier) => {
     Diamond: "bg-blue-600 text-white ring-2 ring-blue-300 shadow-lg",
     Platinum: "bg-gray-800 text-white ring-2 ring-gray-500 shadow-lg",
   };
-
-  // Default style for unknown tiers
   return tierStyles[tier] || "bg-gray-200 text-gray-700 ring-2 ring-gray-300";
 };
 
-// Function to determine gender icon & label
-const getGenderIcon = (gender) => {
-  const genderData = {
-    Male: {
-      icon: <IoMdMale className="text-blue-500 text-4xl font-bold" />,
-      label: "Male",
-    },
-    Female: {
-      icon: <IoMdFemale className="text-pink-500 text-4xl font-bold" />,
-      label: "Female",
-    },
-    Other: {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 text-4xl font-bold" />,
-      label: "Other",
-    },
-  };
-
-  // Default to "Not specified"
-  return (
-    genderData[gender] || {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 text-2xl" />,
-      label: "Not specified",
-    }
-  );
-};
-
-const TrainersDetailsHeader = ({ TrainerDetails }) => {
+const TrainersDetailsHeader = ({
+  TrainerDetails: {
+    imageUrl = "/default-profile.png",
+    name = "Unknown Trainer",
+    specialization = "Specialization Not Available",
+    tier = null,
+    gender = "Not specified",
+  } = {},
+}) => {
   const navigate = useNavigate();
-
-  // Get gender details (icon + label)
-  const { icon } = getGenderIcon(TrainerDetails?.gender);
+  const { icon } = getGenderIcon(gender, '4xl');
 
   return (
     <div className="relative bg-linear-to-b from-gray-500/80 to-gray-500/50 mx-auto justify-between text-center py-10">
-      {/* Section-Scoped Floating Back Button */}
+      {/* Back Button */}
       <button
-        className="absolute top-5 left-5 flex items-center gap-2 text-lg px-5 md:px-10 py-2 bg-white hover:bg-gray-100/90 text-black rounded-lg cursor-pointer"
+        className="absolute top-5 left-5 flex items-center gap-2 text-lg px-5 md:px-10 py-2 bg-white hover:bg-gray-100/90 text-black rounded-lg"
         onClick={() => navigate(-1)}
       >
         <IoMdArrowRoundBack className="text-xl" />
-        <p className="hidden md:flex" > Back</p>
+        <span className="hidden md:inline">Back</span>
       </button>
 
-      {/* Trainer Profile Image */}
+      {/* Profile Image */}
       <img
-        src={TrainerDetails?.imageUrl || "/default-profile.png"}
-        alt={TrainerDetails?.name || "Trainer"}
+        src={imageUrl}
+        alt={name}
         className="w-32 h-32 rounded-full mx-auto mb-2"
         loading="lazy"
       />
 
-      {/* Trainer Name & Gender */}
+      {/* Name & Gender */}
       <div className="flex justify-center items-center gap-3">
-        <p className="text-4xl font-bold text-white">
-          {TrainerDetails?.name || "Unknown Trainer"}
-        </p>
+        <h1 className="text-4xl font-bold text-white">{name}</h1>
         <span>{icon}</span>
       </div>
 
-      {/* Trainer Specialization */}
-      <p className="text-xl text-white italic">
-        {TrainerDetails?.specialization || "Specialization Not Available"}
-      </p>
+      {/* Specialization */}
+      <p className="text-xl text-white italic">{specialization}</p>
 
       {/* Tier Badge */}
-      {TrainerDetails?.tier && (
+      {tier && (
         <span
           className={`inline-block px-6 py-1 mt-2 rounded-full text-sm font-semibold ${getTierBadge(
-            TrainerDetails?.tier
+            tier
           )}`}
         >
-          {TrainerDetails?.tier} Tier
+          {tier} Tier
         </span>
       )}
     </div>
   );
 };
 
-// **PropTypes Validation**
+// PropTypes validation
 TrainersDetailsHeader.propTypes = {
   TrainerDetails: PropTypes.shape({
-    imageUrl: PropTypes.string, // URL of trainer's image
-    name: PropTypes.string, // Trainer's name
-    specialization: PropTypes.string, // Trainer's specialization
-    tier: PropTypes.oneOf(["Bronze", "Silver", "Gold", "Diamond", "Platinum"]), // Allowed tiers
-    gender: PropTypes.oneOf(["Male", "Female", "Other", "Not specified"]), // Gender options
+    imageUrl: PropTypes.string,
+    name: PropTypes.string,
+    specialization: PropTypes.string,
+    tier: PropTypes.oneOf(["Bronze", "Silver", "Gold", "Diamond", "Platinum"]),
+    gender: PropTypes.oneOf(["Male", "Female", "Other", "Not specified"]),
   }),
-};
-
-// **Default Props** (Fallback Values)
-TrainersDetailsHeader.defaultProps = {
-  TrainerDetails: {
-    imageUrl: "/default-profile.png",
-    name: "Unknown Trainer",
-    specialization: "Specialization Not Available",
-    tier: null, // No tier by default
-    gender: "Not specified", // Default to "Not specified"
-  },
 };
 
 export default TrainersDetailsHeader;

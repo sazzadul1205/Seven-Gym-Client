@@ -187,7 +187,7 @@ const UserSettings = () => {
     {
       id: "User_Testimonials_Settings",
       Icon: "https://i.ibb.co.com/MkWZ1sPW/testimonial.png",
-      title: "User Testimonials Settings",
+      title: "User Testimonial",
       content: (
         <UserSettingsTestimonials
           UsersData={UsersData}

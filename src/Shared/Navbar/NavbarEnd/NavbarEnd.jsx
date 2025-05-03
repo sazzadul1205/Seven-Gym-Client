@@ -30,20 +30,33 @@ const NavbarEnd = ({ UsersData }) => {
 
   // Logout function
   const handleSignOut = async () => {
-    setIsLoggingOut(true);
-    try {
-      await logOut();
-      window.location.reload();
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Logout Failed",
-        text: `Error logging out: ${error.message}`,
-        confirmButtonColor: "#d33",
-        timer: 3000,
-      });
-    } finally {
-      setIsLoggingOut(false);
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You will be logged out of your account.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, log me out",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      setIsLoggingOut(true);
+      try {
+        await logOut();
+        window.location.reload();
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Logout Failed",
+          text: `Error logging out: ${error.message}`,
+          confirmButtonColor: "#d33",
+          timer: 3000,
+        });
+      } finally {
+        setIsLoggingOut(false);
+      }
     }
   };
 
