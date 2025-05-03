@@ -28,11 +28,15 @@ const TrainerScheduleParticipant = ({
 
   return (
     <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
-      {/* Title */}
-      <div className="text-center space-y-1 py-4">
-        <h3 className="text-center font-semibold text-white text-xl">
-          Participant Control & Information
+      {/* Section heading */}
+      <div className="text-center py-3">
+        <h3 className="text-2xl sm:text-3xl font-bold text-gray-800">
+          Trainer Session Participants
         </h3>
+        <p className="text-gray-600 text-sm sm:text-base mt-1">
+          View participant data across scheduled, reserved, and accepted
+          sessions
+        </p>
       </div>
 
       {/* Divider */}
@@ -67,7 +71,7 @@ TrainerScheduleParticipant.propTypes = {
   TrainerBookingAcceptedData: PropTypes.array.isRequired,
   TrainerProfileScheduleData: PropTypes.shape({
     trainerSchedule: PropTypes.object,
-  }), 
+  }),
 };
 
 export default TrainerScheduleParticipant;

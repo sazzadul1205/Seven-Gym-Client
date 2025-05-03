@@ -59,7 +59,7 @@ const TrainerScheduleParticipantTable = ({ days, sortedTimes, schedule }) => {
   return (
     <>
       {/* Daily Schedule Table : Desktop View */}
-      <div className="hidden md:block overflow-x-auto text-black p-5">
+      <div className="hidden md:block overflow-x-auto text-black px-1 py-5">
         <table className="min-w-full table-auto border border-gray-300 text-sm text-left shadow-lg rounded overflow-hidden">
           {/* Table Header */}
           <thead className="bg-gray-800 text-white">

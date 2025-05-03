@@ -36,26 +36,25 @@ const TrainerStudentHistory = ({ TrainerStudentHistoryData }) => {
       <div className="mx-auto bg-white w-1/3 p-[1px]" />
 
       {/* Students Box */}
-      <div className="py-4  px-1 md:px-10">
-        {students.length > 0 ? (
-          // Display list of student cards in responsive grid
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {students.map((booking, index) => (
-              <StudentCard
-                key={booking?._id || index} // Fallback to index if _id is missing
-                email={booking.bookerEmail}
-                booking={booking}
-              />
-            ))}
-          </div>
-        ) : (
-          // Empty state when no students are found
-          <div className="flex flex-col items-center bg-gray-100 py-5 text-black italic">
-            <FaTriangleExclamation className="text-xl text-red-500 mb-2" />
-            No Students
-          </div>
-        )}
-      </div>
+
+      {students.length > 0 ? (
+        // Display list of student cards in responsive grid
+        <div className="grid gap-2 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-5 py-5">
+          {students.map((booking, index) => (
+            <StudentCard
+              key={booking?._id || index} // Fallback to index if _id is missing
+              email={booking.bookerEmail}
+              booking={booking}
+            />
+          ))}
+        </div>
+      ) : (
+        // Empty state when no students are found
+        <div className="flex flex-col items-center bg-gray-100 py-5 text-black italic">
+          <FaTriangleExclamation className="text-xl text-red-500 mb-2" />
+          No Students
+        </div>
+      )}
     </div>
   );
 };
@@ -119,7 +118,7 @@ const StudentCard = ({ email, booking }) => {
 
   return (
     <div
-      className={`p-4 flex flex-col gap-4 transition-colors duration-200 hover:bg-gray-100 border border-gray-300 rounded-lg text-black shadow-sm cursor-default
+      className={`p-4 flex flex-col gap-4 transition-colors duration-200 hover:bg-gray-100 border border-gray-300 rounded-lg text-black shadow-sm cursor-default transform hover:-translate-y-1
         ${!booking.startAt ? "bg-green-100 hover:bg-green-50" : ""}`}
     >
       {/* Top Row: Avatar, Info */}

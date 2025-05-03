@@ -116,7 +116,12 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
     <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
       {/* Header Section */}
       <div className="text-center space-y-1 py-4">
-        <h3 className="text-xl font-semibold">Incoming Booking Requests</h3>
+        <h3 className="text-2xl sm:text-3xl font-bold text-gray-800">
+          Trainer Booking Requests
+        </h3>
+        <p className="text-gray-600 text-sm sm:text-base mt-1">
+          Manage and respond to client session bookings
+        </p>
         <p className="text-sm text-red-600 italic">
           Note: Requests expire one week after submission if not accepted.
         </p>
@@ -126,7 +131,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
       <div className="mx-auto bg-white w-1/3 p-[1px]" />
 
       {/* Booking Request Management Table */}
-      <div className="py-4 px-4 md:px-10">
+      <div className="py-4 px-1">
         {TrainerBookingRequestData.filter(
           (booking) =>
             booking.status !== "Rejected" && booking.status !== "Cancelled"
@@ -255,7 +260,7 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
             </div>
 
             {/* Mobile Card View */}
-            <div className="md:hidden space-y-4">
+            <div className="md:hidden text-black">
               {TrainerBookingRequestData.filter(
                 (booking) =>
                   booking.status !== "Rejected" &&
@@ -272,10 +277,10 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
                 return (
                   <div
                     key={booking._id}
-                    className={`p-4 rounded-lg shadow-md border ${cardBg}`}
+                    className={`border border-gray-300 rounded-md shadow-sm p-4 bg-white space-y-2 ${cardBg}`}
                   >
                     {/* Trainer Info */}
-                    <div className="font-semibold mb-1">
+                    <div>
                       <TrainerBookingRequestUserBasicInfo
                         email={booking?.bookerEmail}
                       />
@@ -283,40 +288,43 @@ const TrainerBookingRequest = ({ TrainerBookingRequestData, refetch }) => {
 
                     {/* Booked At */}
                     <div className="text-sm">
-                      <p>
+                      <div className="flex justify-between">
                         <strong>Booked At:</strong>{" "}
                         {formatDate(booking.bookedAt)}
-                      </p>
+                      </div>
 
                       {/* Price */}
-                      <p>
+                      <div className="flex justify-between">
                         <strong>Price:</strong>{" "}
                         {booking?.totalPrice === "free"
                           ? "Free"
                           : `$ ${booking?.totalPrice}`}
-                      </p>
+                      </div>
 
                       {/* Duration */}
-                      <p>
-                        {booking.durationWeeks}{" "}
-                        {booking.durationWeeks === 1 ? "Week" : "Weeks"}
-                      </p>
+                      <div className="flex justify-between">
+                        <span>Duration</span>
+                        <p>
+                          {booking.durationWeeks}{" "}
+                          {booking.durationWeeks === 1 ? "Week" : "Weeks"}
+                        </p>
+                      </div>
 
                       {/* Status */}
-                      <p>
+                      <div className="flex justify-between">
                         <strong>Status:</strong>{" "}
                         {!isValid ? "Unavailable" : booking.status}
-                      </p>
+                      </div>
 
                       {/* Expires At */}
-                      <p>
+                      <div className="flex justify-between">
                         <strong>Expires In:</strong>
                         {booking.status === "Accepted"
                           ? "Waiting for payment"
                           : booking.status === "Pending"
                           ? getRemainingTime(booking.bookedAt, now)
                           : "-- / --"}
-                      </p>
+                      </div>
                     </div>
 
                     {/* Buttons */}

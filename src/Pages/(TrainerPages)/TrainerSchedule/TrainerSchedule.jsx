@@ -125,7 +125,17 @@ const TrainerSchedule = ({
 
   return (
     <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
-      <div className="mx-auto px-1 md:px-4 py-8">
+      {/* Section heading */}
+      <div className="text-center py-1">
+        <h3 className="text-2xl sm:text-3xl font-bold text-gray-800">
+          Manage Trainer Schedule
+        </h3>
+        <p className="text-gray-600 text-sm sm:text-base mt-1">
+          Customize class types, availability, and session details
+        </p>
+      </div>
+
+      <div className="mx-auto px-1 md:px-4 py-2">
         {/* Trainer Schedule Class Selector Component */}
         <TrainerScheduleClassSelector
           refetch={refetch}

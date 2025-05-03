@@ -6,9 +6,11 @@ import Swal from "sweetalert2";
 import { useQuery } from "@tanstack/react-query";
 
 // Import Tabs
+import TrainerLogs from "../Pages/(TrainerPages)/TrainerLogs/TrainerLogs";
 import TrainerProfile from "../Pages/(TrainerPages)/TrainerProfile/TrainerProfile";
 import TrainerSchedule from "../Pages/(TrainerPages)/TrainerSchedule/TrainerSchedule";
 import TrainerDashboard from "../Pages/(TrainerPages)/TrainerDashboard/TrainerDashboard";
+import TrainerTestimonials from "../Pages/(TrainerPages)/TrainerTestimonials/TrainerTestimonials";
 import TrainerStudentHistory from "../Pages/(TrainerPages)/TrainerStudentHistory/TrainerStudentHistory";
 import TrainerBookingRequest from "../Pages/(TrainerPages)/TrainerBookingRequest/TrainerBookingRequest";
 import TrainerScheduleHistory from "../Pages/(TrainerPages)/TrainerScheduleHistory/TrainerScheduleHistory";
@@ -30,7 +32,6 @@ import CommonButton from "../Shared/Buttons/CommonButton";
 // Import Utility
 import { getGenderIcon } from "../Utility/getGenderIcon";
 import { fetchTierBadge } from "../Utility/fetchTierBadge";
-import TrainerTestimonials from "../Pages/(TrainerPages)/TrainerTestimonials/TrainerTestimonials";
 
 const TrainerSettingsLayout = () => {
   const { user, logOut } = useAuth();
@@ -387,6 +388,18 @@ const TrainerSettingsLayout = () => {
       Icon: "https://i.ibb.co.com/LD2939f4/customer-review.png",
       title: "Trainer Testimonials",
       content: <TrainerTestimonials TrainerData={TrainerData} />,
+    },
+    // Trainer Logs
+    {
+      id: "Trainer_Logs",
+      Icon: "https://i.ibb.co.com/Gfyx4b9c/log.png",
+      title: "Trainer Logs",
+      content: (
+        <TrainerLogs
+          TrainerBookingAccepted={TrainerBookingAcceptedData}
+          TrainerBookingHistory={TrainerBookingHistoryData}
+        />
+      ),
     },
     // Add more tabs as needed
   ];

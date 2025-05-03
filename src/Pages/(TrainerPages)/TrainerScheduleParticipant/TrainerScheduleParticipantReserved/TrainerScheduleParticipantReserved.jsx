@@ -200,7 +200,7 @@ const TrainerScheduleParticipantReserved = ({
   if (!TrainerBookingRequestData) return null; // Or a fallback loading state
 
   return (
-    <div className="px-5 pb-5">
+    <div className="px-1 pb-5">
       {/* Section Title */}
       <p className="text-xl font-semibold text-black border-b-2 border-gray-700 pb-2">
         Reserved Class Participant

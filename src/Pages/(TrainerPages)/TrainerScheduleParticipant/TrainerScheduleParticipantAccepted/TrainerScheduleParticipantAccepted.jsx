@@ -18,7 +18,7 @@ const TrainerScheduleParticipantAccepted = ({
   TrainerBookingAcceptedData,
 }) => {
   return (
-    <div className="px-5 pb-5">
+    <div className="px-1 pb-5">
       {/* Section Title */}
       <h3 className="text-xl font-semibold text-black border-b-2 border-gray-700 pb-2">
         Accepted Class Participant

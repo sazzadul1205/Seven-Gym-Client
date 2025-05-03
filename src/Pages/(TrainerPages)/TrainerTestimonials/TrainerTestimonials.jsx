@@ -13,7 +13,7 @@ const TrainerTestimonials = ({ TrainerData = [] }) => {
   const hasTestimonials = TrainerTestimonialsData.length > 0;
 
   return (
-    <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen px-4 sm:px-6 lg:px-8">
+    <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
       {/* Section heading */}
       <div className="text-center py-3">
         <h3 className="text-2xl sm:text-3xl font-bold text-gray-800">
@@ -25,11 +25,11 @@ const TrainerTestimonials = ({ TrainerData = [] }) => {
       </div>
 
       {/* Decorative divider line */}
-      <div className="mx-auto bg-white w-1/3 h-[1px] mb-10" />
+      <div className="mx-auto bg-white w-1/3 h-[1px]" />
 
       {/* Testimonials grid or fallback message */}
       {hasTestimonials ? (
-        <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-2 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-5 py-5">
           {TrainerTestimonialsData.map((t, i) => (
             <div
               key={i}

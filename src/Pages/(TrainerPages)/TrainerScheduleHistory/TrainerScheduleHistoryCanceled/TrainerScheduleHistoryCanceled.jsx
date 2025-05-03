@@ -10,7 +10,6 @@ import { formatDate } from "../../../../Utility/formatDate";
 // Import Basic User Info Component
 import TrainerBookingRequestUserBasicInfo from "../../TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
 
-// import PropTypes
 import PropTypes from "prop-types";
 
 const TrainerScheduleHistoryCanceled = ({
