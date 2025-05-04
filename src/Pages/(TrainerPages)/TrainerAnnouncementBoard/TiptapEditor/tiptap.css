@@ -1,0 +1,17 @@
+/* styles/tiptap.css or global.css */
+.ProseMirror {
+    outline: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    min-height: 200px;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.ProseMirror>* {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}

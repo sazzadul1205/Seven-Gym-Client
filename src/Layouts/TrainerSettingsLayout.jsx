@@ -14,6 +14,7 @@ import TrainerTestimonials from "../Pages/(TrainerPages)/TrainerTestimonials/Tra
 import TrainerStudentHistory from "../Pages/(TrainerPages)/TrainerStudentHistory/TrainerStudentHistory";
 import TrainerBookingRequest from "../Pages/(TrainerPages)/TrainerBookingRequest/TrainerBookingRequest";
 import TrainerScheduleHistory from "../Pages/(TrainerPages)/TrainerScheduleHistory/TrainerScheduleHistory";
+import TrainerAnnouncementBoard from "../Pages/(TrainerPages)/TrainerAnnouncementBoard/TrainerAnnouncementBoard";
 import TrainerScheduleParticipant from "../Pages/(TrainerPages)/TrainerScheduleParticipant/TrainerScheduleParticipant";
 
 // Import Icons
@@ -32,7 +33,6 @@ import CommonButton from "../Shared/Buttons/CommonButton";
 // Import Utility
 import { getGenderIcon } from "../Utility/getGenderIcon";
 import { fetchTierBadge } from "../Utility/fetchTierBadge";
-import TrainerAnnouncementBoard from "../Pages/(TrainerPages)/TrainerAnnouncementBoard/TrainerAnnouncementBoard";
 
 const TrainerSettingsLayout = () => {
   const { user, logOut } = useAuth();

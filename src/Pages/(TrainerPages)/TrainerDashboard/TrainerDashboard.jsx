@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import TrainerDashboardStatsGrid from "./TrainerDashboardStatsGrid/TrainerDashboardStatsGrid";
 import TrainerDashboardGraph from "./TrainerDashboardGraph/TrainerDashboardGraph";
 import TrainerDashboardSchedule from "./TrainerDashboardSchedule/TrainerDashboardSchedule";
