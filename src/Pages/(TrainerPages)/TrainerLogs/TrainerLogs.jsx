@@ -1,11 +1,6 @@
 import { useMemo } from "react";
+import PropTypes from "prop-types";
 
-/**
- * TrainerLogs component
- * Displays logs of trainer bookings, sorted by logged time.
- * - On desktop (sm and up): renders a table layout.
- * - On mobile (below sm): falls back to a card-style list view.
- */
 const TrainerLogs = ({ TrainerBookingAccepted, TrainerBookingHistory }) => {
   // useMemo to memoize the sorted bookings list to avoid unnecessary re-computation on re-renders
   const sortedBookings = useMemo(() => {
@@ -173,7 +168,7 @@ const TrainerLogs = ({ TrainerBookingAccepted, TrainerBookingHistory }) => {
           >
             {/* Log */}
             <p className="text-sm font-bold mb-2">Log #{index + 1}</p>
-            
+
             {/* Log Time */}
             <div className="flex justify-between">
               <span className="font-medium">Logged Time:</span>{" "}
@@ -249,6 +244,42 @@ const TrainerLogs = ({ TrainerBookingAccepted, TrainerBookingHistory }) => {
       </div>
     </div>
   );
+};
+
+// Prop Validation
+TrainerLogs.propTypes = {
+  TrainerBookingAccepted: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string,
+      loggedTime: PropTypes.string,
+      bookerEmail: PropTypes.string,
+      status: PropTypes.string,
+      reason: PropTypes.string,
+      droppedAt: PropTypes.string,
+      RefundPercentage: PropTypes.string,
+      RefundAmount: PropTypes.number,
+      paid: PropTypes.bool,
+      paidAt: PropTypes.string,
+      startAt: PropTypes.string,
+      durationWeeks: PropTypes.number,
+    })
+  ),
+  TrainerBookingHistory: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string,
+      loggedTime: PropTypes.string,
+      bookerEmail: PropTypes.string,
+      status: PropTypes.string,
+      reason: PropTypes.string,
+      droppedAt: PropTypes.string,
+      RefundPercentage: PropTypes.string,
+      RefundAmount: PropTypes.number,
+      paid: PropTypes.bool,
+      paidAt: PropTypes.string,
+      startAt: PropTypes.string,
+      durationWeeks: PropTypes.number,
+    })
+  ),
 };
 
 export default TrainerLogs;

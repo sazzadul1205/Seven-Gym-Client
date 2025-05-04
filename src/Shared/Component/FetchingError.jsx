@@ -19,7 +19,7 @@ const FetchingError = () => {
 
       {/* Reload Button */}
       <button
-        className="px-6 py-3 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 focus:ring-4 focus:ring-red-300 transition duration-300"
+        className="px-6 py-3 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600/60 focus:ring-4 focus:ring-red-300 transition duration-300 cursor-pointer"
         onClick={() => window.location.reload()}
       >
         Reload Page

@@ -32,6 +32,7 @@ import CommonButton from "../Shared/Buttons/CommonButton";
 // Import Utility
 import { getGenderIcon } from "../Utility/getGenderIcon";
 import { fetchTierBadge } from "../Utility/fetchTierBadge";
+import TrainerAnnouncementBoard from "../Pages/(TrainerPages)/TrainerAnnouncementBoard/TrainerAnnouncementBoard";
 
 const TrainerSettingsLayout = () => {
   const { user, logOut } = useAuth();
@@ -400,6 +401,13 @@ const TrainerSettingsLayout = () => {
           TrainerBookingHistory={TrainerBookingHistoryData}
         />
       ),
+    },
+    // Trainer Announcement Board
+    {
+      id: "Trainer_Announcement_Board",
+      Icon: "https://i.ibb.co.com/DfTDZGRX/ads-board.png",
+      title: "Trainer Announcement Board",
+      content: <TrainerAnnouncementBoard />,
     },
     // Add more tabs as needed
   ];
