@@ -135,7 +135,7 @@ const TiptapEditor = ({ content, setContent }) => {
 
   return (
     <div>
-      <div className="flex flex-wrap gap-1 mb-3 border-b pb-2">
+      <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4 mb-3 border-b pb-2">
         {/* Bold Button */}
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -220,65 +220,67 @@ const TiptapEditor = ({ content, setContent }) => {
           icon={lucideReact.AlignRight}
         />
 
-        {/* Font Size Dropdown */}
-        <div>
-          <label className="sr-only" htmlFor="font-size">
-            Font Size
-          </label>
-          <select
-            id="font-size"
-            className="p-2 rounded border cursor-pointer"
-            onChange={(e) =>
-              editor.chain().focus().setFontSize(e.target.value).run()
-            }
-            title="Font Size"
-            defaultValue=""
-          >
-            <option value="" disabled>
+        <div className="flex flex-row gap-2" >
+          {/* Font Size Dropdown */}
+          <div className="min-w-[120px]">
+            <label className="sr-only" htmlFor="font-size">
               Font Size
-            </option>
-            <option value="12px">12px</option>
-            <option value="14px">14px</option>
-            <option value="16px">16px</option>
-            <option value="18px">18px</option>
-            <option value="20px">20px</option>
-          </select>
-        </div>
+            </label>
+            <select
+              id="font-size"
+              className="w-full p-1 sm:p-2 rounded border text-sm"
+              onChange={(e) =>
+                editor.chain().focus().setFontSize(e.target.value).run()
+              }
+              title="Font Size"
+              defaultValue=""
+            >
+              <option value="" disabled>
+                Font Size
+              </option>
+              <option value="12px">12px</option>
+              <option value="14px">14px</option>
+              <option value="16px">16px</option>
+              <option value="18px">18px</option>
+              <option value="20px">20px</option>
+            </select>
+          </div>
 
-        {/* Line Height Dropdown */}
-        <div>
-          <label className="sr-only" htmlFor="line-height">
-            Line Height
-          </label>
-          <select
-            id="line-height"
-            className="p-2 rounded border cursor-pointer"
-            onChange={(e) =>
-              editor.chain().focus().setLineHeight(e.target.value).run()
-            }
-            title="Line Height"
-            defaultValue=""
-          >
-            <option value="" disabled>
+          {/* Line Height Dropdown */}
+          <div className="min-w-[120px]">
+            <label className="sr-only" htmlFor="line-height">
               Line Height
-            </option>
-            <option value="1">1</option>
-            <option value="1.5">1.5</option>
-            <option value="2">2</option>
-            <option value="2.5">2.5</option>
-            <option value="3">3</option>
-          </select>
+            </label>
+            <select
+              id="line-height"
+              className="w-full p-1 sm:p-2 rounded border text-sm"
+              onChange={(e) =>
+                editor.chain().focus().setLineHeight(e.target.value).run()
+              }
+              title="Line Height"
+              defaultValue=""
+            >
+              <option value="" disabled>
+                Line Height
+              </option>
+              <option value="1">1</option>
+              <option value="1.5">1.5</option>
+              <option value="2">2</option>
+              <option value="2.5">2.5</option>
+              <option value="3">3</option>
+            </select>
+          </div>
         </div>
 
         {/* Text Color Picker */}
-        <div>
+        <div className="min-w-[120px]">
           <label className="sr-only" htmlFor="text-color">
             Text Color
           </label>
           <input
             type="color"
             id="text-color"
-            className="p-2 rounded border cursor-pointer"
+            className="w-full h-[36px] rounded border"
             onChange={(e) =>
               editor.chain().focus().setColor(e.target.value).run()
             }

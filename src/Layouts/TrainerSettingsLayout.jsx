@@ -273,10 +273,33 @@ const TrainerSettingsLayout = () => {
     enabled: !!TrainerProfileData?._id,
   });
 
+  // 11. Fetch Daily Accepted Stats
+  const {
+    data: TrainerAnnouncementData = [],
+    isLoading: TrainerAnnouncementIsLoading,
+    error: TrainerAnnouncementError,
+    refetch: TrainerAnnouncementRefetch,
+  } = useQuery({
+    queryKey: ["TrainerAnnouncement", TrainerProfileData?._id],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainer_Announcement?trainerID=${TrainerProfileData?._id}`
+        );
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+    enabled: !!TrainerProfileData?._id,
+  });
+
   // Unified refetch function
   const refetchAll = async () => {
     await TrainerRefetch();
     await TrainerScheduleRefetch();
+    await TrainerAnnouncementRefetch();
     await TrainerBookingRequestRefetch();
     await TrainerBookingHistoryRefetch();
     await TrainerStudentHistoryRefetch();
@@ -407,7 +430,13 @@ const TrainerSettingsLayout = () => {
       id: "Trainer_Announcement_Board",
       Icon: "https://i.ibb.co.com/DfTDZGRX/ads-board.png",
       title: "Trainer Announcement Board",
-      content: <TrainerAnnouncementBoard />,
+      content: (
+        <TrainerAnnouncementBoard
+          refetchAll={refetchAll}
+          TrainerProfileData={TrainerProfileData}
+          TrainerAnnouncement={TrainerAnnouncementData}
+        />
+      ),
     },
     // Add more tabs as needed
   ];
@@ -417,6 +446,7 @@ const TrainerSettingsLayout = () => {
     TrainerDataIsLoading ||
     ClassTypesDataIsLoading ||
     TrainerScheduleIsLoading ||
+    TrainerAnnouncementIsLoading ||
     TrainerBookingRequestIsLoading ||
     TrainerBookingHistoryIsLoading ||
     TrainerStudentHistoryIsLoading ||
@@ -431,6 +461,7 @@ const TrainerSettingsLayout = () => {
     TrainerDataError ||
     ClassTypesDataError ||
     TrainerScheduleError ||
+    TrainerAnnouncementError ||
     TrainerBookingRequestError ||
     TrainerBookingHistoryError ||
     TrainerStudentHistoryError ||
