@@ -60,6 +60,11 @@ const TrainerScheduleParticipantTable = ({ days, sortedTimes, schedule }) => {
     <>
       {/* Daily Schedule Table : Desktop View */}
       <div className="hidden md:block overflow-x-auto text-black px-1 py-5">
+        {/* Section Title */}
+        <h3 className="bg-gray-800 text-xl font-semibold py-2 text-center border-b-2 border-gray-100 text-white">
+          Sessions Schedule
+        </h3>
+
         <table className="min-w-full table-auto border border-gray-300 text-sm text-left shadow-lg rounded overflow-hidden">
           {/* Table Header */}
           <thead className="bg-gray-800 text-white">

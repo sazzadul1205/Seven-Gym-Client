@@ -134,18 +134,6 @@ const TrainerScheduleParticipantReserved = ({
     };
 
     try {
-      // Step 4: Simulate mode (used for testing without real API calls)
-      //   Swal.fire({
-      //     icon: "success",
-      //     title: "Cancelled!",
-      //     text: "Booking cancelled and participant removed (simulation).",
-      //     timer: 1500,
-      //     showConfirmButton: false,
-      //   });
-      //   refetch(); // Refresh data
-      //   return;
-      // }
-
       // Step 5: Send PATCH request to update booking status
       const bookingResponse = await axiosPublic.patch(
         `/Trainer_Booking_Request/${booking._id}`,
@@ -202,9 +190,9 @@ const TrainerScheduleParticipantReserved = ({
   return (
     <div className="px-1 pb-5">
       {/* Section Title */}
-      <p className="text-xl font-semibold text-black border-b-2 border-gray-700 pb-2">
-        Reserved Class Participant
-      </p>
+      <h3 className="bg-gray-800 text-xl font-semibold py-2 text-center border-b-2 border-gray-100 ">
+        Sessions Participants Requests
+      </h3>
 
       {/* Accepted Bookings Data */}
       {acceptedBookings.length > 0 ? (

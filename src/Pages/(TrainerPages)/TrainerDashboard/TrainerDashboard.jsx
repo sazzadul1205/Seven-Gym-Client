@@ -1,8 +1,12 @@
-import TrainerDashboardStatsGrid from "./TrainerDashboardStatsGrid/TrainerDashboardStatsGrid";
-import TrainerDashboardGraph from "./TrainerDashboardGraph/TrainerDashboardGraph";
-import TrainerDashboardSchedule from "./TrainerDashboardSchedule/TrainerDashboardSchedule";
+// Import Prop Type
+import PropTypes from "prop-types";
+
+// Import Components
 import TrainerDashboardSessionHistory from "./TrainerDashboardSessionHistory/TrainerDashboardSessionHistory";
 import TrainerDashboardTestimonials from "./TrainerDashboardTestimonials/TrainerDashboardTestimonials";
+import TrainerDashboardStatsGrid from "./TrainerDashboardStatsGrid/TrainerDashboardStatsGrid";
+import TrainerDashboardSchedule from "./TrainerDashboardSchedule/TrainerDashboardSchedule";
+import TrainerDashboardGraph from "./TrainerDashboardGraph/TrainerDashboardGraph";
 
 const TrainerDashboard = ({
   TrainerBookingAcceptedDailyStats,
@@ -30,8 +34,9 @@ const TrainerDashboard = ({
 
       {/* Stats Grid */}
       <TrainerDashboardStatsGrid
-        TrainerBookingAccepted={TrainerBookingAccepted}
+        TrainerData={TrainerData}
         TrainerBookingHistory={TrainerBookingHistory}
+        TrainerBookingAccepted={TrainerBookingAccepted}
       />
 
       {/* Divider */}
@@ -64,6 +69,18 @@ const TrainerDashboard = ({
       <TrainerDashboardTestimonials TrainerDetails={TrainerProfileData || {}} />
     </div>
   );
+};
+
+// Prop Validation
+TrainerDashboard.propTypes = {
+  TrainerBookingAcceptedDailyStats: PropTypes.arrayOf(PropTypes.object)
+    .isRequired,
+  TrainerBookingHistoryDailyStats: PropTypes.arrayOf(PropTypes.object)
+    .isRequired,
+  TrainerBookingAccepted: PropTypes.arrayOf(PropTypes.object).isRequired,
+  TrainerBookingHistory: PropTypes.arrayOf(PropTypes.object).isRequired,
+  TrainerScheduleData: PropTypes.arrayOf(PropTypes.object).isRequired,
+  TrainerData: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default TrainerDashboard;

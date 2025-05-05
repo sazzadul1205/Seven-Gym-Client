@@ -135,7 +135,7 @@ const TrainerSchedule = ({
         </p>
       </div>
 
-      <div className="mx-auto px-1 md:px-4 py-2">
+      <div className="mx-auto px-1 py-2">
         {/* Trainer Schedule Class Selector Component */}
         <TrainerScheduleClassSelector
           refetch={refetch}

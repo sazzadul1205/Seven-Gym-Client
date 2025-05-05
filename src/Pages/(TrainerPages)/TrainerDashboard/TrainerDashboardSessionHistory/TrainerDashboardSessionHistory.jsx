@@ -143,7 +143,7 @@ const TrainerDashboardSessionHistory = ({
       {visibleCount < sortedBookings.length && (
         <div className="text-center py-5 bg-gray-800">
           <Link
-            to={`/Trainer?tab=Trainer_Booking_Log`}
+            to={`/Trainer?tab=Trainer_Logs`}
             className="text-white font-bold underline hover:text-gray-300 cursor-pointer"
           >
             ... Show More
