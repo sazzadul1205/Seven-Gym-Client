@@ -1,4 +1,6 @@
 import { useState } from "react";
+
+// Import Packages
 import PropTypes from "prop-types";
 
 // Import Icons
@@ -12,15 +14,8 @@ import {
 // Import Modal
 import TrainerScheduleEditModal from "./TrainerScheduleEditModal/TrainerScheduleEditModal";
 
-// Convert 24-hour time to 12-hour AM/PM format
-const formatTimeTo12Hour = (time) => {
-  if (!time) return "";
-  const [hour, minute] = time.split(":");
-  const h = parseInt(hour, 10);
-  const amPm = h >= 12 ? "PM" : "AM";
-  const formattedHour = h % 12 === 0 ? 12 : h % 12;
-  return `${formattedHour}:${minute} ${amPm}`;
-};
+// import Utility
+import { formatTimeTo12Hour } from "../../../../Utility/formatTimeTo12Hour";
 
 const TrainerScheduleDisplay = ({
   handleClear,
@@ -43,8 +38,10 @@ const TrainerScheduleDisplay = ({
         return (
           <div
             key={day}
-            className="bg-gradient-to-bl from-gray-100 to-gray-300 p-4 rounded-lg shadow"
+            className="bg-gradient-to-bl from-gray-100 to-gray-300 border border-gray-400 p-4 rounded-lg shadow"
           >
+            {/* Day Header */}
+
             <h3 className="text-xl font-semibold text-black">{day}</h3>
 
             {/* Desktop View */}

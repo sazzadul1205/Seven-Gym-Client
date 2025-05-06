@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // Import Package
 import Swal from "sweetalert2";
-import PropTypes from "prop-types"; // Import PropTypes
+import PropTypes from "prop-types";
 
 // Import hooks
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
@@ -11,20 +11,27 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import TrainerScheduleDisplay from "./TrainerScheduleDisplay/TrainerScheduleDisplay";
 import TrainerScheduleClassSelector from "./TrainerScheduleClassSelector/TrainerScheduleClassSelector";
 
-// Helper function to remove "edited" flags from a schedule object
+// import Icons
+import timeEfficiency from "../../../assets/TrainerSchedule/time-efficiency.png";
+import CommonButton from "../../../Shared/Buttons/CommonButton";
+import TrainerScheduleDayControl from "./TrainerScheduleDayControl/TrainerScheduleDayControl";
+import TrainerScheduleRangeSelector from "./TrainerScheduleRangeSelector/TrainerScheduleRangeSelector";
+
+// Helper function to remove "edited" flags
 const removeEditedFlags = (schedule) => {
   const cleaned = {};
   for (const day in schedule) {
     cleaned[day] = {};
     for (const time in schedule[day]) {
-      // Copy the time slot without the "edited" flag
-      // eslint-disable-next-line no-unused-vars
       const { edited, ...rest } = schedule[day][time];
       cleaned[day][time] = rest;
     }
   }
   return cleaned;
 };
+
+// Maximum selectable days
+const MAX_DAYS = 5;
 
 const TrainerSchedule = ({
   refetch,
@@ -33,153 +40,221 @@ const TrainerSchedule = ({
   TrainerProfileScheduleData,
 }) => {
   const axiosPublic = useAxiosPublic();
-
-  // State to manage the temporary schedule and changes made before saving
   const [tempSchedule, setTempSchedule] = useState({});
   const [changesMade, setChangesMade] = useState(false);
+  const [originalSchedule, setOriginalSchedule] = useState({});
+  const [defaultTimeSlots, setDefaultTimeSlots] = useState([]);
+  const [timeRangeSlots, setTimeRangeSlots] = useState([]);
 
-  // Fetch trainer Class preferences
-  const TrainersClassType = TrainerProfileData?.preferences?.classTypes || null;
+  const TrainersClassType = TrainerProfileData?.preferences?.classTypes || [];
+  const initialSchedule = useMemo(
+    () => TrainerProfileScheduleData?.trainerSchedule || {},
+    [TrainerProfileScheduleData]
+  );
 
-  // Initialize tempSchedule with the trainer's schedule data (without "edited" flags)
-  const initialSchedule = TrainerProfileScheduleData?.trainerSchedule || {};
-
-  // Set the initial schedule when TrainerScheduleData changes,
-  // and remove any "edited" flags so they don't persist after refresh.
   useEffect(() => {
-    const cleanedSchedule = removeEditedFlags(initialSchedule);
-    if (JSON.stringify(tempSchedule) !== JSON.stringify(cleanedSchedule)) {
-      setTempSchedule(cleanedSchedule);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [TrainerProfileScheduleData, TrainerProfileData]);
+    const cleaned = removeEditedFlags(initialSchedule);
+    setTempSchedule(cleaned);
+    setOriginalSchedule(JSON.parse(JSON.stringify(cleaned)));
+    setChangesMade(false);
+    const days = Object.keys(cleaned);
+    if (days.length) setDefaultTimeSlots(Object.keys(cleaned[days[0]]));
+    else
+      setDefaultTimeSlots([
+        "08:00",
+        "09:00",
+        "10:00",
+        "11:00",
+        "12:00",
+        "13:00",
+      ]);
+  }, [initialSchedule]);
 
-  // Function to handle clearing a class slot
+  const handleReset = () => {
+    setTempSchedule(JSON.parse(JSON.stringify(originalSchedule)));
+    setChangesMade(false);
+  };
+
   const handleClear = (day, time) => {
+    const slot = tempSchedule[day]?.[time];
+    if (slot?.participant && Object.keys(slot.participant).length) {
+      Swal.fire({
+        title: "Cannot clear",
+        text: "Session has participants.",
+        icon: "warning",
+      });
+      return;
+    }
     setTempSchedule((prev) => {
-      const updated = { ...prev };
-      if (updated[day] && updated[day][time]) {
-        updated[day][time] = {
-          ...updated[day][time],
-          classType: "",
-          participantLimit: "",
-          classPrice: "",
-        };
+      const clone = { ...prev };
+      clone[day][time] = {
+        ...clone[day][time],
+        classType: "",
+        participantLimit: "",
+        classPrice: "",
+      };
+      return clone;
+    });
+    setChangesMade(true);
+  };
+
+  const isValidClassType = (type) => AvailableClassTypesData?.includes(type);
+
+  const handleUpdate = (updated) => {
+    const slot = tempSchedule[updated.day]?.[updated.time];
+    if (
+      slot?.participant &&
+      Object.keys(slot.participant).length &&
+      slot.classType !== updated.classType
+    ) {
+      Swal.fire({
+        title: "Cannot change class",
+        text: "Session has participants.",
+        icon: "warning",
+      });
+      return;
+    }
+    setTempSchedule((prev) => ({
+      ...prev,
+      [updated.day]: {
+        ...prev[updated.day],
+        [updated.time]: { ...updated, edited: true },
+      },
+    }));
+    setChangesMade(true);
+  };
+
+  const handleSave = async () => {
+    if (Object.keys(tempSchedule).length < MAX_DAYS) {
+      Swal.fire({
+        title: "Error!",
+        text: `Select ${MAX_DAYS} days.`,
+        icon: "error",
+      });
+      return;
+    }
+    const result = await Swal.fire({
+      title: "Save changes?",
+      icon: "warning",
+      showCancelButton: true,
+    });
+    if (result.isConfirmed) {
+      try {
+        await axiosPublic.put("/Trainers_Schedule/Update", {
+          trainerName: TrainerProfileData?.name,
+          trainerSchedule: tempSchedule,
+        });
+        Swal.fire({
+          icon: "success",
+          title: "Saved!",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+        setTempSchedule((prev) => removeEditedFlags(prev));
+        setChangesMade(false);
+      } catch {
+        Swal.fire({ title: "Error!", text: "Save failed.", icon: "error" });
+      }
+    }
+  };
+
+  const onRangeChange = (ranges) => setTimeRangeSlots(ranges);
+
+  // New logic: zip existing slots with new ranges by index, preserving other fields
+  const handleApplyRanges = () => {
+    setTempSchedule((prev) => {
+      const updated = {};
+      for (const day of Object.keys(prev)) {
+        const oldSlots = Object.values(prev[day]);
+        updated[day] = {};
+        oldSlots.forEach((slot, idx) => {
+          const range = timeRangeSlots[idx];
+          if (!range) return;
+          updated[day][range.start] = {
+            ...slot,
+            time: range.start,
+            start: range.start,
+            end: range.end,
+            id: `${TrainerProfileData.name.replace(/\s+/g, "_")}-${day}-${
+              range.start
+            }`,
+          };
+        });
       }
       return updated;
     });
     setChangesMade(true);
   };
 
-  // Function to check if a class type is valid
-  const isValidClassType = (classType) =>
-    AvailableClassTypesData?.includes(classType);
-
-  // Function to handle updating a class slot from the modal
-  const handleUpdate = (updatedClass) => {
-    setTempSchedule((prev) => {
-      const newSchedule = { ...prev };
-      const { day, time } = updatedClass;
-      newSchedule[day] = { ...newSchedule[day] };
-      // Mark the updated slot with "edited: true"
-      newSchedule[day][time] = { ...updatedClass, edited: true };
-      return newSchedule;
-    });
-    setChangesMade(true);
-  };
-
-  // Function to handle saving changes to the schedule
-  const handleSave = async () => {
-    try {
-      // Make a PUT request to update the trainer's schedule
-      await axiosPublic.put("/Trainers_Schedule/Update", {
-        trainerName: TrainerProfileData?.name,
-        trainerSchedule: tempSchedule,
-      });
-
-      // On success, show a success message using Swal
-      Swal.fire({
-        icon: "success",
-        title: "Success!",
-        text: "Trainer schedule updated successfully!",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-
-      // Remove "edited" flags so that after reloading the page they won't reappear
-      setTempSchedule((prev) => removeEditedFlags(prev));
-
-      // Reset the changesMade flag
-      setChangesMade(false);
-    } catch (error) {
-      console.error("Error saving schedule:", error);
-
-      Swal.fire({
-        title: "Error!",
-        text: "Something went wrong while saving the schedule.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
-    }
-  };
+  const selectedCount = Object.keys(tempSchedule).length;
 
   return (
     <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
-      {/* Section heading */}
       <div className="text-center py-1">
-        <h3 className="text-2xl sm:text-3xl font-bold text-gray-800">
+        <h3 className="text-2xl font-bold text-gray-800">
           Manage Trainer Schedule
         </h3>
-        <p className="text-gray-600 text-sm sm:text-base mt-1">
-          Customize class types, availability, and session details
+        <p className="text-gray-600">
+          Customize availability & session details
         </p>
       </div>
-
-      <div className="mx-auto px-1 py-2">
-        {/* Trainer Schedule Class Selector Component */}
+      <div className="mx-auto p-4">
         <TrainerScheduleClassSelector
           refetch={refetch}
           trainerClassTypes={TrainersClassType}
           availableClassTypes={AvailableClassTypesData}
         />
-
-        {/* Trainer Schedule Display Component */}
-        <div className="bg-gray-100 border border-gray-300 p-1 mt-1">
-          <div className="mt-4 flex flex-col md:flex-row justify-between items-center gap-3 px-5">
-            {/* Text */}
-            <h3 className="font-semibold text-lg text-black">
-              Schedule Control
-            </h3>
-
-            {/* Save Button */}
-            <button
-              onClick={handleSave}
-              disabled={!changesMade}
-              className={`px-10 py-2 rounded-lg font-medium shadow-md flex items-center ${
-                changesMade
-                  ? "bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-600 text-white cursor-pointer"
-                  : "bg-gray-400 text-gray-200 cursor-not-allowed"
-              }`}
-            >
-              Save Schedule
-            </button>
+        <div className="bg-white p-4 mt-4 rounded shadow">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-2">
+              <img src={timeEfficiency} alt="icon" className="w-8 h-8" />
+              <span>
+                Days ({selectedCount}/{MAX_DAYS})
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <CommonButton
+                clickEvent={handleReset}
+                text="Reset"
+                disabled={!changesMade}
+                bgColor="yellow"
+              />
+              <CommonButton
+                clickEvent={handleSave}
+                text="Save"
+                disabled={selectedCount < MAX_DAYS || !changesMade}
+                bgColor="green"
+              />
+            </div>
           </div>
-
-          {/* Trainer Schedule Display Component */}
-          <TrainerScheduleDisplay
-            handleClear={handleClear}
+          <TrainerScheduleDayControl
             tempSchedule={tempSchedule}
-            handleUpdate={handleUpdate}
-            isValidClassType={isValidClassType}
-            TrainersClassType={TrainersClassType}
+            selectedCount={selectedCount}
+            setChangesMade={setChangesMade}
+            setTempSchedule={setTempSchedule}
+            defaultTimeSlots={defaultTimeSlots}
+            TrainerProfileData={TrainerProfileData}
+          />
+          <TrainerScheduleRangeSelector
+            defaultTimeSlots={defaultTimeSlots}
+            hoursCount={timeRangeSlots.length || 6}
+            onRangeChange={onRangeChange}
+            handleApplyRanges={handleApplyRanges}
+            timeRangeSlots={timeRangeSlots}
           />
         </div>
+        <TrainerScheduleDisplay
+          handleClear={handleClear}
+          tempSchedule={tempSchedule}
+          handleUpdate={handleUpdate}
+          isValidClassType={isValidClassType}
+          TrainersClassType={TrainersClassType}
+        />
       </div>
     </div>
   );
 };
 
-// Define PropTypes for TrainerSchedule
 TrainerSchedule.propTypes = {
   refetch: PropTypes.func,
   TrainerProfileData: PropTypes.shape({
@@ -190,19 +265,8 @@ TrainerSchedule.propTypes = {
   }),
   AvailableClassTypesData: PropTypes.arrayOf(PropTypes.string),
   TrainerProfileScheduleData: PropTypes.shape({
-    trainerSchedule: PropTypes.objectOf(
-      PropTypes.objectOf(
-        PropTypes.shape({
-          classType: PropTypes.string,
-          participantLimit: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.number,
-          ]),
-          classPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-          edited: PropTypes.bool, // Optional flag for tracking changes
-        })
-      )
-    ),
-  }),
+    trainerSchedule: PropTypes.object,
+  }).isRequired,
 };
+
 export default TrainerSchedule;
