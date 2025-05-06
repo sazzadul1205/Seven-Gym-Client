@@ -61,9 +61,7 @@ const TrainerScheduleDayControl = ({
     setChangesMade(true);
   };
 
-  /**
-   * Handle removing a day from the temp schedule
-   */
+  //  Handle removing a day from the temp schedule
   const handleRemoveDay = (day) => {
     const slots = tempSchedule[day] || {};
 

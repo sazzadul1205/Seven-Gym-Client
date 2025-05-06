@@ -1,28 +1,30 @@
+// React core hooks
 import { useEffect, useMemo, useState } from "react";
 
-// Import Package
-import Swal from "sweetalert2";
-import PropTypes from "prop-types";
+// External packages
+import Swal from "sweetalert2"; // SweetAlert2 for pop-up modals
+import PropTypes from "prop-types"; // Runtime type checking for props
 
-// Import hooks
+// Custom hook for Axios instance
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 
-// Import Components
+// Component imports
 import TrainerScheduleDisplay from "./TrainerScheduleDisplay/TrainerScheduleDisplay";
 import TrainerScheduleClassSelector from "./TrainerScheduleClassSelector/TrainerScheduleClassSelector";
-
-// import Icons
-import timeEfficiency from "../../../assets/TrainerSchedule/time-efficiency.png";
 import CommonButton from "../../../Shared/Buttons/CommonButton";
 import TrainerScheduleDayControl from "./TrainerScheduleDayControl/TrainerScheduleDayControl";
 import TrainerScheduleRangeSelector from "./TrainerScheduleRangeSelector/TrainerScheduleRangeSelector";
 
-// Helper function to remove "edited" flags
+// Asset imports
+import timeEfficiency from "../../../assets/TrainerSchedule/time-efficiency.png";
+
+// Utility to remove 'edited' flags before sending to server
 const removeEditedFlags = (schedule) => {
   const cleaned = {};
   for (const day in schedule) {
     cleaned[day] = {};
     for (const time in schedule[day]) {
+      // eslint-disable-next-line no-unused-vars
       const { edited, ...rest } = schedule[day][time];
       cleaned[day][time] = rest;
     }
@@ -30,7 +32,7 @@ const removeEditedFlags = (schedule) => {
   return cleaned;
 };
 
-// Maximum selectable days
+// Max number of days allowed in schedule
 const MAX_DAYS = 5;
 
 const TrainerSchedule = ({
@@ -40,24 +42,51 @@ const TrainerSchedule = ({
   TrainerProfileScheduleData,
 }) => {
   const axiosPublic = useAxiosPublic();
+
+  // Local state
+
+  // Holds working copy of schedule
   const [tempSchedule, setTempSchedule] = useState({});
+
+  // Tracks unsaved changes
   const [changesMade, setChangesMade] = useState(false);
+
+  // Original copy for reset
   const [originalSchedule, setOriginalSchedule] = useState({});
+
+  // Initial time slot structure
   const [defaultTimeSlots, setDefaultTimeSlots] = useState([]);
+
+  // Dynamic time slot ranges from UI
   const [timeRangeSlots, setTimeRangeSlots] = useState([]);
 
+  // Extract trainer's preferred class types
   const TrainersClassType = TrainerProfileData?.preferences?.classTypes || [];
+
+  // Memoize schedule from props to prevent re-computation
   const initialSchedule = useMemo(
     () => TrainerProfileScheduleData?.trainerSchedule || {},
     [TrainerProfileScheduleData]
   );
 
+  // On load or when schedule data changes
   useEffect(() => {
+    // Clean up any flags
     const cleaned = removeEditedFlags(initialSchedule);
+
+    // Use cleaned schedule for editing
     setTempSchedule(cleaned);
+
+    // Deep copy for reset
     setOriginalSchedule(JSON.parse(JSON.stringify(cleaned)));
+
+    // No changes yet
     setChangesMade(false);
+
+    // Determine which days are in schedule
     const days = Object.keys(cleaned);
+
+    // Set default slots (used in UI components)
     if (days.length) setDefaultTimeSlots(Object.keys(cleaned[days[0]]));
     else
       setDefaultTimeSlots([
@@ -70,11 +99,13 @@ const TrainerSchedule = ({
       ]);
   }, [initialSchedule]);
 
+  // Reset schedule to original
   const handleReset = () => {
     setTempSchedule(JSON.parse(JSON.stringify(originalSchedule)));
     setChangesMade(false);
   };
 
+  // Clear a session slot (only if no participants)
   const handleClear = (day, time) => {
     const slot = tempSchedule[day]?.[time];
     if (slot?.participant && Object.keys(slot.participant).length) {
@@ -85,6 +116,8 @@ const TrainerSchedule = ({
       });
       return;
     }
+
+    // Reset session slot values
     setTempSchedule((prev) => {
       const clone = { ...prev };
       clone[day][time] = {
@@ -98,10 +131,14 @@ const TrainerSchedule = ({
     setChangesMade(true);
   };
 
+  // Ensure only allowed class types can be selected
   const isValidClassType = (type) => AvailableClassTypesData?.includes(type);
 
+  // Update a time slot
   const handleUpdate = (updated) => {
     const slot = tempSchedule[updated.day]?.[updated.time];
+
+    // Block updates if participants are enrolled and class type changes
     if (
       slot?.participant &&
       Object.keys(slot.participant).length &&
@@ -114,6 +151,8 @@ const TrainerSchedule = ({
       });
       return;
     }
+
+    // Mark slot as edited and update
     setTempSchedule((prev) => ({
       ...prev,
       [updated.day]: {
@@ -124,6 +163,7 @@ const TrainerSchedule = ({
     setChangesMade(true);
   };
 
+  // Save schedule to server
   const handleSave = async () => {
     if (Object.keys(tempSchedule).length < MAX_DAYS) {
       Swal.fire({
@@ -133,23 +173,29 @@ const TrainerSchedule = ({
       });
       return;
     }
+
+    // Confirm before saving
     const result = await Swal.fire({
       title: "Save changes?",
       icon: "warning",
       showCancelButton: true,
     });
+
     if (result.isConfirmed) {
       try {
         await axiosPublic.put("/Trainers_Schedule/Update", {
           trainerName: TrainerProfileData?.name,
           trainerSchedule: tempSchedule,
         });
+
         Swal.fire({
           icon: "success",
           title: "Saved!",
           timer: 1500,
           showConfirmButton: false,
         });
+
+        // Clean up and finalize state
         setTempSchedule((prev) => removeEditedFlags(prev));
         setChangesMade(false);
       } catch {
@@ -158,9 +204,10 @@ const TrainerSchedule = ({
     }
   };
 
+  // Range input changes (e.g., "08:00 to 09:00")
   const onRangeChange = (ranges) => setTimeRangeSlots(ranges);
 
-  // New logic: zip existing slots with new ranges by index, preserving other fields
+  // Apply selected ranges to schedule
   const handleApplyRanges = () => {
     setTempSchedule((prev) => {
       const updated = {};
@@ -186,47 +233,71 @@ const TrainerSchedule = ({
     setChangesMade(true);
   };
 
+  // Number of selected days
   const selectedCount = Object.keys(tempSchedule).length;
 
   return (
     <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
+      {/* Header */}
       <div className="text-center py-1">
+        {/* Title */}
         <h3 className="text-2xl font-bold text-gray-800">
           Manage Trainer Schedule
         </h3>
+
+        {/* Subtitle */}
         <p className="text-gray-600">
           Customize availability & session details
         </p>
       </div>
-      <div className="mx-auto p-4">
+
+      {/* Main Content */}
+      <div className="mx-auto py-4 px-1 ">
+        {/* Trainer's Class Type Management */}
         <TrainerScheduleClassSelector
           refetch={refetch}
           trainerClassTypes={TrainersClassType}
           availableClassTypes={AvailableClassTypesData}
         />
-        <div className="bg-white p-4 mt-4 rounded shadow">
-          <div className="flex justify-between items-center mb-4">
+
+        {/* Schedule Editing Panel */}
+        <div className="bg-white text-black p-4 mt-4 rounded shadow">
+          {/* Header Controls */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+            {/* Title and Icon */}
             <div className="flex items-center gap-2">
+              {/* Icon for time efficiency */}
               <img src={timeEfficiency} alt="icon" className="w-8 h-8" />
-              <span>
-                Days ({selectedCount}/{MAX_DAYS})
+
+              {/* Title with dynamic count */}
+              <span className="font-bold text-base md:text-lg">
+                Sessions Management ({selectedCount}/{MAX_DAYS})
               </span>
             </div>
-            <div className="flex gap-2">
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
               <CommonButton
                 clickEvent={handleReset}
                 text="Reset"
+                px="px-10"
                 disabled={!changesMade}
                 bgColor="yellow"
+                className="w-full sm:w-auto"
               />
+
               <CommonButton
                 clickEvent={handleSave}
-                text="Save"
+                text="Update Class Schedule"
+                px="px-10"
                 disabled={selectedCount < MAX_DAYS || !changesMade}
                 bgColor="green"
+                className="w-full sm:w-auto"
               />
             </div>
           </div>
+
+          {/* Day Selector and Time Slots */}
           <TrainerScheduleDayControl
             tempSchedule={tempSchedule}
             selectedCount={selectedCount}
@@ -235,14 +306,19 @@ const TrainerSchedule = ({
             defaultTimeSlots={defaultTimeSlots}
             TrainerProfileData={TrainerProfileData}
           />
+
+          {/* Time Range Customize */}
           <TrainerScheduleRangeSelector
             defaultTimeSlots={defaultTimeSlots}
             hoursCount={timeRangeSlots.length || 6}
             onRangeChange={onRangeChange}
             handleApplyRanges={handleApplyRanges}
             timeRangeSlots={timeRangeSlots}
+            TrainerProfileScheduleData={TrainerProfileScheduleData}
           />
         </div>
+
+        {/* Display and Edit Current Schedule */}
         <TrainerScheduleDisplay
           handleClear={handleClear}
           tempSchedule={tempSchedule}
@@ -255,6 +331,7 @@ const TrainerSchedule = ({
   );
 };
 
+// Runtime prop validation
 TrainerSchedule.propTypes = {
   refetch: PropTypes.func,
   TrainerProfileData: PropTypes.shape({
