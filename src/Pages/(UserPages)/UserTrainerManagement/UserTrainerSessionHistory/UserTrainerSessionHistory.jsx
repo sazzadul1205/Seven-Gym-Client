@@ -12,6 +12,7 @@ import { FaTriangleExclamation } from "react-icons/fa6";
 // Import Modal
 import UserTrainerBookingHistoryInfoModal from "./UserTrainerBookingHistoryInfoModal/UserTrainerBookingHistoryInfoModal";
 import { formatDate } from "../../../../Utility/formatDate";
+import BookedTrainerBasicInfo from "../../../../Shared/Component/BookedTrainerBasicInfo";
 
 const parseCustomDate = (dateStr) => {
   // Example: 16-04-2025T19:43
@@ -90,15 +91,16 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                   {sortedBookingHistory.map((booking, index) => (
                     <tr
                       key={booking._id}
-                      className={`border-b bg-white hover:bg-gray-100 cursor-default`}
+                      className="border-b border-gray-500 bg-gray-50 hover:bg-gray-200 px-5"
                     >
                       {/* Table : Number */}
-                      <td className="px-4 py-2 border-r border-b border-gray-400">
-                        {index + 1}
-                      </td>
+                      <td className="px-4 py-2"># {index + 1}</td>
 
                       {/* Table : Trainer */}
-                      <td className="px-4 py-2">{booking.trainer}</td>
+                      <BookedTrainerBasicInfo
+                        trainerID={booking.trainerId}
+                        py={3}
+                      />
 
                       {/* Table : Booked At */}
                       <td className="px-4 py-2">
@@ -125,15 +127,15 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                       </td>
 
                       {/* Table : Remaining Time */}
-                      <td className="px-4 py-2 font-semibold text-sm text-center">
+                      <td className="px-4 py-2 font-semibold text-sm">
                         {booking?.reason && <span>{booking.reason}</span>}
                       </td>
 
                       {/* Table : Buttons */}
-                      <td className="flex px-4 py-2 gap-2">
+                      <td>
                         <button
-                          id={`view-details-btn-${booking._id}`} // Unique ID for each button
-                          className="border-2 border-yellow-500 bg-yellow-100 hover:bg-yellow-200 rounded-full p-2 cursor-pointer hover:scale-105"
+                          id={`view-details-btn-${booking._id}`}
+                          className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 hover:scale-105 transition-transform cursor-pointer "
                           onClick={() => {
                             setSelectedBooking(booking);
                             document
@@ -143,7 +145,7 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                               .showModal();
                           }}
                         >
-                          <FaInfo className="text-yellow-500" />{" "}
+                          <FaInfo className="text-yellow-500" />
                         </button>
                         <Tooltip
                           anchorSelect={`#view-details-btn-${booking._id}`}
@@ -157,38 +159,39 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
             </div>
 
             {/* Mobile View */}
-            <div className="flex md:hidden flex-col space-y-4 mb-6">
+            <div className="flex md:hidden flex-col space-y-1">
               {sortedBookingHistory.map((booking) => (
                 <div
                   key={booking._id}
-                  className={`text-black text-center bg-white  mb-4 p-4 border-b`}
+                  className="border-b-2 border-gray-800 bg-gray-50 p-4"
                 >
                   <div className="flex flex-col space-y-1">
-                    {/* Trainer */}
-                    <div className="font-semibold">
-                      Trainer: {booking.trainer}
-                    </div>
+                    {/* Trainer Name */}
+                    <BookedTrainerBasicInfo
+                      trainerID={booking.trainerId}
+                      py={3}
+                    />
 
                     {/* Booked At */}
-                    <div className="flex justify-between items-center pt-2">
+                    <div className="flex justify-between items-center pt-1">
                       <p className="font-bold">Booked At:</p>
                       <span>{formatDate(booking.bookedAt)}</span>
                     </div>
 
                     {/* Total Price */}
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center pt-1">
                       <p className="font-bold">Total Price:</p>
                       <span>$ {booking.totalPrice}</span>
                     </div>
 
                     {/* Duration */}
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center pt-1">
                       <p className="font-bold">Duration:</p>
                       <span>{booking.durationWeeks} Weeks</span>
                     </div>
 
                     {/* Status */}
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center pt-1">
                       <p className="font-bold">Status:</p>
                       <span>
                         {booking.status === "Ended" ? (
@@ -202,15 +205,15 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                     </div>
 
                     {/* Remaining Time */}
-                    <div className=" text-sm">
-                      <p className="font-bold">Reason :</p>
+                    <div className=" text-center">
+                      <p className="font-bold py-1">Reason :</p>
                       {booking?.reason && <span>{booking.reason}</span>}
                     </div>
 
                     {/* Buttons */}
-                    <div className="flex justify-between">
+                    <div className="flex justify-end items-center mt-4">
                       <button
-                        id={`view-details-btn-${booking._id}`} // Unique ID for each button
+                        id={`view-details-btn-${booking._id}`}
                         className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
                         onClick={() => {
                           setSelectedBooking(booking);

@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
 
 // Import Components & Modal
+import BookedTrainerBasicInfo from "../../../../Shared/Component/BookedTrainerBasicInfo";
 import UserTrainerBookingInfoModal from "./UserTrainerBookingInfoModal/UserTrainerBookingInfoModal";
 import TrainerBookingSessionButton from "./TrainerBookingSessionButton/TrainerBookingSessionButton";
 
@@ -100,14 +101,15 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                   {TrainersBookingRequestData.map((booking) => (
                     <tr
                       key={booking._id}
-                      className={`border-b hover:bg-gray-100 ${getStatusBackgroundColor(
+                      className={`border-b hover:bg-gray-100 cursor-default ${getStatusBackgroundColor(
                         booking.status
                       )}`}
                     >
-                      {/* Trainer */}
-                      <td className="px-4 py-2 font-semibold">
-                        {booking.trainer}
-                      </td>
+                      {/* Trainer Name */}
+                      <BookedTrainerBasicInfo
+                        trainerID={booking.trainerId}
+                        py={3}
+                      />
 
                       {/* Booked At */}
                       <td className="px-4 py-2">
@@ -116,7 +118,9 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
 
                       {/* Total Price */}
                       <td className="px-4 py-2">
-                        $ {booking.totalPrice || "0"}
+                        {Number(booking.totalPrice) === 0
+                          ? "Free"
+                          : `$ ${booking.totalPrice}`}
                       </td>
 
                       {/* Duration Weeks */}
@@ -137,27 +141,30 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                       </td>
 
                       {/* Buttons */}
-                      <td className="flex px-4 py-2 gap-2">
-                        <TrainerBookingSessionButton
-                          booking={booking}
-                          refetch={refetch}
-                        />
+                      <td className="px-4 py-2">
+                        <div className="flex justify-center items-center gap-2">
+                          <TrainerBookingSessionButton
+                            booking={booking}
+                            refetch={refetch}
+                          />
 
-                        {/* View Button */}
-                        <button
-                          id={`view-details-btn-${booking._id}`}
-                          className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                          onClick={() => {
-                            setSelectedBooking(booking);
-                            modalRef.current?.showModal();
-                          }}
-                        >
-                          <FaInfo className="text-yellow-500" />
-                        </button>
-                        <Tooltip
-                          anchorSelect={`#view-details-btn-${booking._id}`}
-                          content="View Detailed Booking Data"
-                        />
+                          {/* View Button */}
+                          <button
+                            id={`view-details-btn-${booking._id}`}
+                            className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                            onClick={() => {
+                              setSelectedBooking(booking);
+                              modalRef.current?.showModal();
+                            }}
+                          >
+                            <FaInfo className="text-yellow-500" />
+                          </button>
+
+                          <Tooltip
+                            anchorSelect={`#view-details-btn-${booking._id}`}
+                            content="View Detailed Booking Data"
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -170,15 +177,16 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
               {TrainersBookingRequestData.map((booking) => (
                 <div
                   key={booking._id}
-                  className={`text-black ${getStatusBackgroundColor(
+                  className={`text-black bg-white ${getStatusBackgroundColor(
                     booking.status
                   )} mb-4 p-4 border rounded-lg shadow-md`}
                 >
                   <div className="flex flex-col space-y-2 text-left">
-                    {/* Trainer */}
-                    <p className="font-semibold flex justify-between">
-                      <strong>Trainer:</strong> {booking.trainer || "N/A"}
-                    </p>
+                    {/* Trainer Name */}
+                    <BookedTrainerBasicInfo
+                      trainerID={booking.trainerId}
+                      py={3}
+                    />
 
                     {/* Booked At */}
                     <p className="flex justify-between">

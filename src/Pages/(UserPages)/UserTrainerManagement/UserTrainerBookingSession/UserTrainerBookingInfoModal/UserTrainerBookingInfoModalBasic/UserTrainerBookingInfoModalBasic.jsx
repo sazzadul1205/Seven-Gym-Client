@@ -13,7 +13,7 @@ const UserTrainerBookingInfoModalBasic = ({
   const { icon } = getGenderIcon(SelectedTrainerData?.gender);
 
   return (
-    <div className="overflow-auto px-4 py-6 sm:px-6 md:px-8">
+    <div className="overflow-auto p-1 md:p-5">
       <div className="flex bg-gray-200 flex-col lg:flex-row items-start lg:items-center justify-between gap-6 py-2">
         {/* Trainer Info */}
         <div className="w-full lg:w-1/2 flex flex-col sm:flex-row items-center sm:items-start justify-center gap-4 sm:gap-6 bg-gray-200">

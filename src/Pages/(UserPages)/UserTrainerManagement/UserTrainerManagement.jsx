@@ -58,7 +58,7 @@ const icons = [
   {
     src: "https://i.ibb.co.com/TD9b62sJ/announcement.png",
     alt: "Trainer Announcements",
-    id: "User_Trainer_Announcement",
+    id: "User-Trainer-Announcement",
     label: "Trainer Announcements",
   },
 ];
@@ -358,7 +358,7 @@ const UserTrainerManagement = () => {
               />
             )}
             {/* User Trainer Review Tab */}
-            {activeTab === "User-Session-Invoice" && (
+            {activeTab === "User-Trainer-Announcement" && (
               <UserTrainerAnnouncement
                 TrainerAnnouncementData={TrainerAnnouncementData}
               />
