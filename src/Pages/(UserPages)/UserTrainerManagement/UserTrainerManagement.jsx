@@ -21,6 +21,7 @@ import Loading from "../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
 import UserSessionInvoice from "./UserSessionInvoice/UserSessionInvoice";
+import UserTrainerAnnouncement from "./UserTrainerAnnouncement/UserTrainerAnnouncement";
 
 // Tab Icons
 const icons = [
@@ -53,6 +54,12 @@ const icons = [
     alt: "Invoice",
     id: "User-Session-Invoice",
     label: "Session's Invoice",
+  },
+  {
+    src: "https://i.ibb.co.com/TD9b62sJ/announcement.png",
+    alt: "Trainer Announcements",
+    id: "User_Trainer_Announcement",
+    label: "Trainer Announcements",
   },
 ];
 
@@ -228,9 +235,33 @@ const UserTrainerManagement = () => {
     },
   });
 
+  // Ensure trainerIds is always defined
+  const trainerIds = Array.isArray(TrainersBookingAcceptedData)
+    ? [...new Set(TrainersBookingAcceptedData.map((b) => b.trainerId))]
+    : [];
+
+  // Build query string
+  const queryString = trainerIds.map((id) => `trainerID=${id}`).join("&");
+
+  // Hook must run unconditionally
+  const {
+    data: TrainerAnnouncementData,
+    isLoading: TrainerAnnouncementIsLoading,
+    error: TrainerAnnouncementError,
+    refetch: TrainerAnnouncementRefetch,
+  } = useQuery({
+    queryKey: ["TrainerAnnouncement", trainerIds],
+    queryFn: async () => {
+      const res = await axiosPublic.get(`/Trainer_Announcement?${queryString}`);
+      return res.data;
+    },
+    enabled: trainerIds.length > 0,
+  });
+
   // Refetch Everything
   const refetch = async () => {
     await UserBasicRefetch?.();
+    await TrainerAnnouncementRefetch?.();
     await TrainerStudentHistoryRefetch?.();
     await SessionRefundInvoicesRefetch?.();
     await TrainersBookingHistoryRefetch?.();
@@ -242,6 +273,7 @@ const UserTrainerManagement = () => {
   // Load State
   if (
     UserBasicIsLoading ||
+    TrainerAnnouncementIsLoading ||
     SessionRefundInvoicesIsLoading ||
     TrainerStudentHistoryIsLoading ||
     TrainersBookingRequestIsLoading ||
@@ -254,6 +286,7 @@ const UserTrainerManagement = () => {
   // Error State
   if (
     UserBasicError ||
+    TrainerAnnouncementError ||
     SessionRefundInvoicesError ||
     TrainerStudentHistoryError ||
     TrainersBookingRequestError ||
@@ -322,6 +355,12 @@ const UserTrainerManagement = () => {
               <UserSessionInvoice
                 SessionRefundInvoicesData={SessionRefundInvoicesData}
                 SessionPaymentInvoicesData={SessionPaymentInvoicesData}
+              />
+            )}
+            {/* User Trainer Review Tab */}
+            {activeTab === "User-Session-Invoice" && (
+              <UserTrainerAnnouncement
+                TrainerAnnouncementData={TrainerAnnouncementData}
               />
             )}
           </div>
