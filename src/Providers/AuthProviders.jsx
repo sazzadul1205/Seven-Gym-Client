@@ -28,6 +28,7 @@ const facebookProvider = new FacebookAuthProvider();
 
 // Request server-side JWT and store with expiry
 // Fetch server-side JWT and store with expiry in localStorage
+
 const fetchServerToken = async (user, axiosPublic) => {
   try {
     const payload = {
@@ -72,7 +73,6 @@ const AuthProvider = ({ children }) => {
           password
         );
         setUser(userCredential.user);
-        // exchange for server JWT
         await fetchServerToken(userCredential.user, axiosPublic);
         return userCredential;
       } catch (error) {
@@ -120,20 +120,6 @@ const AuthProvider = ({ children }) => {
     [axiosPublic]
   );
 
-  // Sign out user and clear token
-  const logOut = useCallback(async () => {
-    setLoading(true);
-    try {
-      await signOut(auth);
-      resetUserState();
-    } catch (error) {
-      console.error("Logout Error:", error.message);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [resetUserState]);
-
   // Social sign-ins
   const signInWithGoogle = useCallback(async () => {
     setLoading(true);
@@ -164,6 +150,20 @@ const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   }, [axiosPublic]);
+
+  const logOut = useCallback(async () => {
+    setLoading(true);
+    try {
+      await signOut(auth); // Firebase or your auth logic
+      resetUserState(); // Clears auth context
+      return { success: true, message: "Logout successful" };
+    } catch (error) {
+      console.error("Logout Error:", error.message);
+      return { success: false, message: error.message };
+    } finally {
+      setLoading(false);
+    }
+  }, [resetUserState]);
 
   // On load, check auth state and token expiry
   useEffect(() => {

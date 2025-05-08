@@ -84,7 +84,7 @@ const SignUp = () => {
               <input
                 type="email"
                 placeholder="name@mail.com"
-                className="input w-full text-black bg-white rounded-xl shadow-lg hover:shadow-xl focus:shadow-xl"
+                className="input w-full text-black bg-white shadow-lg hover:shadow-xl"
                 {...register("email", {
                   required: "Email is required",
                   pattern: {
@@ -108,7 +108,7 @@ const SignUp = () => {
               <input
                 type="password"
                 placeholder="********"
-                className="input w-full text-black bg-white rounded-xl shadow-lg hover:shadow-xl focus:shadow-xl"
+                className="input w-full text-black bg-white shadow-lg hover:shadow-xl"
                 {...register("password", {
                   required: "Password is required",
                   minLength: {
@@ -132,7 +132,7 @@ const SignUp = () => {
               <input
                 type="password"
                 placeholder="********"
-                className="input w-full text-black bg-white rounded-xl shadow-lg hover:shadow-xl focus:shadow-xl"
+                className="input w-full text-black bg-white shadow-lg hover:shadow-xl"
                 {...register("confirmPassword", {
                   required: "Confirm Password is required",
                   validate: (value) =>

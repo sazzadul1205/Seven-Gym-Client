@@ -7,10 +7,16 @@ import { useForm } from "react-hook-form";
 // Background Image
 import LoginBack from "../../../assets/Background-Auth/LoginBack.jpeg";
 
+// Import Hooks
 import useAuth from "../../../Hooks/useAuth";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import SocialLinks from "../../../Shared/SocialLinks/SocialLinks";
+
+// Import Button
 import CommonButton from "../../../Shared/Buttons/CommonButton";
+
+// Import Icons
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const Login = () => {
   // Hooks for authentication, navigation, and API calls
@@ -20,6 +26,9 @@ const Login = () => {
   const axiosPublic = useAxiosPublic();
 
   const [loading, setLoading] = useState(false);
+
+  // Inside the component
+  const [showPassword, setShowPassword] = useState(false);
 
   // Determine the navigation path after login
   const from = location.state?.from?.pathname || "/";
@@ -103,7 +112,7 @@ const Login = () => {
       }}
     >
       {/* Login card container */}
-      <div className="w-full max-w-lg shadow-md rounded-tl-[50px] rounded-br-[50px] px-3 py-10 md:px-10 md:py-10 bg-linear-to-bl from-gray-100 to-gray-400">
+      <div className="w-full max-w-lg shadow-md rounded-tl-[50px] rounded-br-[50px] px-3 py-10 md:px-10 md:py-10 bg-linear-to-bl from-gray-100/80 to-gray-400/80">
         {/* Heading section */}
         <div className="pb-5">
           <h4 className="text-3xl font-bold text-center text-[#F72C5B]">
@@ -126,7 +135,7 @@ const Login = () => {
             <input
               type="email"
               placeholder="Example@gmail.com"
-              className="input w-full text-black bg-white rounded-xl shadow-lg hover:shadow-xl focus:shadow-xl"
+              className="input w-full text-black bg-white shadow-lg hover:shadow-xl"
               {...register("email", {
                 required: "Email is required",
                 pattern: {
@@ -143,22 +152,32 @@ const Login = () => {
           </div>
 
           {/* Password input field */}
-          <div>
+          <div className="relative mb-4">
             <label className="block text-gray-700 font-semibold text-xl pb-2">
               Password
             </label>
-            <input
-              type="password"
-              placeholder="********"
-              className="input w-full text-black bg-white rounded-xl shadow-lg hover:shadow-xl focus:shadow-xl"
-              {...register("password", {
-                required: "Password is required",
-                minLength: {
-                  value: 6,
-                  message: "Password must be at least 6 characters long",
-                },
-              })}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="********"
+                className="input w-full text-black bg-white shadow-lg hover:shadow-xl pr-10"
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters long",
+                  },
+                })}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-600 focus:outline-none"
+                tabIndex={-1}
+              >
+                {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+              </button>
+            </div>
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.password.message}

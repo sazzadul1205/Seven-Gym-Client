@@ -1,5 +1,5 @@
-import { Link } from "react-router";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router";
 
 // Import Package
 import PropTypes from "prop-types";
@@ -15,52 +15,19 @@ import { MdDashboard } from "react-icons/md";
 import { AiTwotoneSchedule } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaStopwatch, FaUser } from "react-icons/fa";
+import CommonButton from "../../Buttons/CommonButton";
 
 const NavbarEnd = ({ UsersData }) => {
   // Fetch authentication state and logout function
   const { user, logOut } = useAuth();
 
   // State variables
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Refs for handling outside clicks
   const dropdownRef = useRef(null);
   const timerRef = useRef(null);
-
-  // Logout function
-  const handleSignOut = async () => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You will be logged out of your account.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, log me out",
-      cancelButtonText: "Cancel",
-    });
-
-    if (result.isConfirmed) {
-      setIsLoggingOut(true);
-      try {
-        await logOut(); // This should clear auth context
-        setIsDropdownOpen(false); // Close the dropdown
-        // Optionally, you can also clear UsersData if it's local state
-        // And redirect or reset as needed
-      } catch (error) {
-        Swal.fire({
-          icon: "error",
-          title: "Logout Failed",
-          text: `Error logging out: ${error.message}`,
-          confirmButtonColor: "#d33",
-          timer: 3000,
-        });
-      } finally {
-        setIsLoggingOut(false);
-      }
-    }
-  };
 
   // Role-based navigation links
   const roleBasedLinks = {
@@ -106,6 +73,43 @@ const NavbarEnd = ({ UsersData }) => {
     ],
   };
 
+  // Logout function
+  const handleLogOut = async () => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You will be logged out of your account.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, log me out",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      setIsLoggingOut(true);
+      try {
+        const response = await logOut();
+
+        if (response.success) {
+          setIsDropdownOpen(false);
+        } else {
+          throw new Error(response.message);
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Logout Failed",
+          text: `Error logging out: ${error.message}`,
+          confirmButtonColor: "#d33",
+          timer: 3000,
+        });
+      } finally {
+        setIsLoggingOut(false);
+      }
+    }
+  };
+
   // Close dropdown if clicked outside
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -146,12 +150,11 @@ const NavbarEnd = ({ UsersData }) => {
       setIsDropdownOpen(false);
     }, 1000);
   };
-  
 
   return (
     <div className="navbar-end flex items-center">
       {/* Show user avatar if logged in, otherwise show login button */}
-      {UsersData ? (
+      {user ? (
         <div
           className="relative rounded-full border-4 border-white"
           ref={dropdownRef}
@@ -189,7 +192,7 @@ const NavbarEnd = ({ UsersData }) => {
                 {/* Logout button */}
                 <li
                   className="p-2 py-3 px-5 text-red-500 font-semibold hover:bg-gray-100 flex items-center justify-between cursor-pointer"
-                  onClick={handleSignOut}
+                  onClick={handleLogOut}
                 >
                   {isLoggingOut ? (
                     <>
@@ -210,9 +213,16 @@ const NavbarEnd = ({ UsersData }) => {
       ) : (
         // Show login button if no user data
         <Link to="/Login">
-          <button className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-500 to-blue-300 py-3 px-14 text-white font-semibold rounded-xl shadow-lg hover:shadow-2xl cursor-pointer">
-            Login
-          </button>
+          <CommonButton
+            type="button"
+            text="Login"
+            bgColor="blue"
+            px="px-14"
+            py="py-3"
+            borderRadius="rounded-xl"
+            textColor="text-white"
+            width="auto"
+          />
         </Link>
       )}
     </div>
