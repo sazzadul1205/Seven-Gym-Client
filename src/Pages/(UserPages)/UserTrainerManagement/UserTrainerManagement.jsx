@@ -6,9 +6,6 @@ import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
 import { useQuery } from "@tanstack/react-query";
 
-// Import Background
-import UserTrainerManagementBackground from "../../../assets/User-Trainer-Management-Background/UserTrainerManagementBackground.jpg";
-
 // Import Tab Content
 import UserTrainerTestimonials from "./UserTrainerTestimonials/UserTrainerTestimonials";
 import UserTrainerActiveSession from "./UserTrainerActiveSession/UserTrainerActiveSession";
@@ -23,40 +20,51 @@ import FetchingError from "../../../Shared/Component/FetchingError";
 import UserSessionInvoice from "./UserSessionInvoice/UserSessionInvoice";
 import UserTrainerAnnouncement from "./UserTrainerAnnouncement/UserTrainerAnnouncement";
 
+// Import Background
+import UserTrainerManagementBackground from "../../../assets/User-Trainer-Management-Background/UserTrainerManagementBackground.jpg";
+
+// Import Icons
+import Invoice from "../../../assets/UserTrainerManagement/invoice.png";
+import Announcement from "../../../assets/UserTrainerManagement/announcement.png";
+import Active_Trainer from "../../../assets/UserTrainerManagement/Active-Trainer.png";
+import TrainerHistory from "../../../assets/UserTrainerManagement/Trainer-History.png";
+import Trainer_Booking from "../../../assets/UserTrainerManagement/Trainer-Booking.png";
+import Customer_Satisfaction from "../../../assets/UserTrainerManagement/customer-satisfaction.png";
+
 // Tab Icons
 const icons = [
   {
-    src: "https://i.ibb.co/gF6qkSKF/Active-Trainer.png",
+    src: Active_Trainer,
     alt: "Active Sessions",
     id: "User-Active-Session",
     label: "Active Session's",
   },
   {
-    src: "https://i.ibb.co/LdVXnyDK/Trainer-Booking.png",
+    src: Announcement,
     alt: "Booking Request",
     id: "User-Booking-Session",
     label: "Booking Session's",
   },
   {
-    src: "https://i.ibb.co/SXM5XxWG/Trainer-History.png",
+    src: Customer_Satisfaction,
     alt: "History",
     id: "User-Session-History",
     label: "Session's History",
   },
   {
-    src: "https://i.ibb.co.com/w2GjrCs/customer-satisfaction.png",
+    src: Invoice,
     alt: "Review",
     id: "User-Trainer-Review",
     label: "Trainer's Review",
   },
   {
-    src: "https://i.ibb.co.com/LD1shHFP/invoice.png",
+    src: Trainer_Booking,
     alt: "Invoice",
     id: "User-Session-Invoice",
     label: "Session's Invoice",
   },
   {
-    src: "https://i.ibb.co.com/TD9b62sJ/announcement.png",
+    src: TrainerHistory,
     alt: "Trainer Announcements",
     id: "User-Trainer-Announcement",
     label: "Trainer Announcements",
@@ -157,7 +165,7 @@ const UserTrainerManagement = () => {
           // No bookings found — not a real error
           return [];
         }
-        throw err; // Re-throw other errors (e.g., 500, 401, etc.)
+        throw err;
       }
     },
   });
@@ -182,7 +190,7 @@ const UserTrainerManagement = () => {
           // No bookings found — not a real error
           return [];
         }
-        throw err; // Re-throw other errors (e.g., 500, 401, etc.)
+        throw err;
       }
     },
   });

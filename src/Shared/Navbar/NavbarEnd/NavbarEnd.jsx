@@ -44,8 +44,10 @@ const NavbarEnd = ({ UsersData }) => {
     if (result.isConfirmed) {
       setIsLoggingOut(true);
       try {
-        await logOut();
-        window.location.reload();
+        await logOut(); // This should clear auth context
+        setIsDropdownOpen(false); // Close the dropdown
+        // Optionally, you can also clear UsersData if it's local state
+        // And redirect or reset as needed
       } catch (error) {
         Swal.fire({
           icon: "error",
@@ -144,6 +146,7 @@ const NavbarEnd = ({ UsersData }) => {
       setIsDropdownOpen(false);
     }, 1000);
   };
+  
 
   return (
     <div className="navbar-end flex items-center">
