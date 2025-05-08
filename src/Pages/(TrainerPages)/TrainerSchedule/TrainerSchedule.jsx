@@ -343,7 +343,7 @@ TrainerSchedule.propTypes = {
   AvailableClassTypesData: PropTypes.arrayOf(PropTypes.string),
   TrainerProfileScheduleData: PropTypes.shape({
     trainerSchedule: PropTypes.object,
-  }).isRequired,
+  }),
 };
 
 export default TrainerSchedule;

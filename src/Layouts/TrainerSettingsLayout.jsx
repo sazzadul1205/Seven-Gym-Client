@@ -34,6 +34,18 @@ import CommonButton from "../Shared/Buttons/CommonButton";
 import { getGenderIcon } from "../Utility/getGenderIcon";
 import { fetchTierBadge } from "../Utility/fetchTierBadge";
 
+// Import Icons
+import Log from "../assets/Trainer_Settings_Layout_Icons/Log.png";
+import User from "../assets/Trainer_Settings_Layout_Icons/User.png";
+import Clock from "../assets/Trainer_Settings_Layout_Icons/Clock.png";
+import Booking from "../assets/Trainer_Settings_Layout_Icons/Booking.png";
+import Calendar from "../assets/Trainer_Settings_Layout_Icons/Calendar.png";
+import Schedule from "../assets/Trainer_Settings_Layout_Icons/Schedule.png";
+import AdsBoard from "../assets/Trainer_Settings_Layout_Icons/Ads-Board.png";
+import Dashboard from "../assets/Trainer_Settings_Layout_Icons/Dashboard.png";
+import UserSettings from "../assets/Trainer_Settings_Layout_Icons/User-Settings.png";
+import CustomerReview from "../assets/Trainer_Settings_Layout_Icons/Customer-Review.png";
+
 const TrainerSettingsLayout = () => {
   const { user, logOut } = useAuth();
   const axiosPublic = useAxiosPublic();
@@ -313,7 +325,7 @@ const TrainerSettingsLayout = () => {
     // Trainer Dashboard Tab
     {
       id: "Trainer_Dashboard",
-      Icon: "https://i.ibb.co.com/LhBG5FfY/dashboard.png",
+      Icon: Dashboard,
       title: "Trainer Dashboard",
       content: (
         <TrainerDashboard
@@ -331,7 +343,7 @@ const TrainerSettingsLayout = () => {
     // Trainer Profile Tab
     {
       id: "Trainer_Profile",
-      Icon: "https://i.ibb.co.com/0yHdfd7c/User-Settings.png",
+      Icon: UserSettings,
       title: "Trainer Profile",
       content: (
         <TrainerProfile
@@ -344,7 +356,7 @@ const TrainerSettingsLayout = () => {
     // Trainer Schedule Tab
     {
       id: "Trainer_Schedule",
-      Icon: "https://i.ibb.co.com/xSjNG396/calendar.png",
+      Icon: Calendar,
       title: "Trainer Schedule",
       content: (
         <TrainerSchedule
@@ -358,7 +370,7 @@ const TrainerSettingsLayout = () => {
     // Trainer Booking Request Tab
     {
       id: "Trainer_Booking_Request",
-      Icon: "https://i.ibb.co.com/YBcHM9vp/booking.png",
+      Icon: Booking,
       title: "Trainer Booking Request",
       content: (
         <TrainerBookingRequest
@@ -370,7 +382,7 @@ const TrainerSettingsLayout = () => {
     // Schedule Participant Tab
     {
       id: "Schedule_Participant",
-      Icon: "https://i.ibb.co.com/hFTNrhbm/schedule.png",
+      Icon: Schedule,
       title: "Schedule Participant",
       content: (
         <TrainerScheduleParticipant
@@ -385,7 +397,7 @@ const TrainerSettingsLayout = () => {
     // Schedule Participant Tab
     {
       id: "Schedule_History",
-      Icon: "https://i.ibb.co.com/gM88HmKm/clock.png",
+      Icon: Clock,
       title: "Session History",
       content: (
         <TrainerScheduleHistory
@@ -398,7 +410,7 @@ const TrainerSettingsLayout = () => {
     // Student Participant Tab
     {
       id: "Students_History",
-      Icon: "https://i.ibb.co.com/RTpsgqvH/user.png",
+      Icon: User,
       title: "Students History",
       content: (
         <TrainerStudentHistory
@@ -409,14 +421,14 @@ const TrainerSettingsLayout = () => {
     // Trainer Testimonials
     {
       id: "Trainer_Testimonials",
-      Icon: "https://i.ibb.co.com/LD2939f4/customer-review.png",
+      Icon: CustomerReview,
       title: "Trainer Testimonials",
       content: <TrainerTestimonials TrainerData={TrainerData} />,
     },
     // Trainer Logs
     {
       id: "Trainer_Logs",
-      Icon: "https://i.ibb.co.com/Gfyx4b9c/log.png",
+      Icon: Log,
       title: "Trainer Logs",
       content: (
         <TrainerLogs
@@ -428,7 +440,7 @@ const TrainerSettingsLayout = () => {
     // Trainer Announcement Board
     {
       id: "Trainer_Announcement_Board",
-      Icon: "https://i.ibb.co.com/DfTDZGRX/ads-board.png",
+      Icon: AdsBoard,
       title: "Trainer Announcement Board",
       content: (
         <TrainerAnnouncementBoard

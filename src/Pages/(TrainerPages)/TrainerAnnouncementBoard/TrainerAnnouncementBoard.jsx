@@ -104,47 +104,46 @@ const AnnouncementForm = ({
 
   return (
     <div className="bg-white border-4 border-gray-600 rounded-2xl shadow-md p-4 sm:p-6 text-black">
-    <form onSubmit={handleSubmit}>
-      {/* Title input section */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 border border-gray-400 rounded-t-lg px-3 py-2 sm:px-4 sm:py-3 shadow-sm bg-white mb-4">
-        <label className="font-semibold text-gray-700 whitespace-nowrap">
-          Announcement:
-        </label>
-        <input
-          type="text"
-          className="flex-1 border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-green-500"
-          placeholder="Enter announcement title..."
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-      </div>
-  
-      {/* TipTap Rich Text Editor */}
-      <TiptapEditor content={content} setContent={setContent} />
-  
-      {/* Action Buttons */}
-      <div className="mt-4 flex flex-col sm:flex-row justify-end gap-3 sm:gap-5">
-        <CommonButton
-          clickEvent={onCancel}
-          text="Cancel"
-          bgColor="gray"
-          width="w-full sm:w-[100px]"
-          py="py-2"
-          borderRadius="rounded"
-        />
-        <CommonButton
-          type="submit"
-          text={isEdit ? "Update" : "Add"}
-          bgColor="blue"
-          width="w-full sm:w-[100px]"
-          py="py-2"
-          borderRadius="rounded"
-        />
-      </div>
-    </form>
-  </div>
-  
+      <form onSubmit={handleSubmit}>
+        {/* Title input section */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 border border-gray-400 rounded-t-lg px-3 py-2 sm:px-4 sm:py-3 shadow-sm bg-white mb-4">
+          <label className="font-semibold text-gray-700 whitespace-nowrap">
+            Announcement:
+          </label>
+          <input
+            type="text"
+            className="flex-1 border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+            placeholder="Enter announcement title..."
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* TipTap Rich Text Editor */}
+        <TiptapEditor content={content} setContent={setContent} />
+
+        {/* Action Buttons */}
+        <div className="mt-4 flex flex-col sm:flex-row justify-end gap-3 sm:gap-5">
+          <CommonButton
+            clickEvent={onCancel}
+            text="Cancel"
+            bgColor="gray"
+            width="w-full sm:w-[100px]"
+            py="py-2"
+            borderRadius="rounded"
+          />
+          <CommonButton
+            type="submit"
+            text={isEdit ? "Update" : "Add"}
+            bgColor="blue"
+            width="w-full sm:w-[100px]"
+            py="py-2"
+            borderRadius="rounded"
+          />
+        </div>
+      </form>
+    </div>
   );
 };
 
@@ -364,24 +363,64 @@ const TrainerAnnouncementBoard = ({
 };
 
 // ---------------- PropTypes Definitions ----------------
+// PropTypes for AnnouncementForm
 AnnouncementForm.propTypes = {
-  TrainerProfileData: PropTypes.object.isRequired,
-  initialData: PropTypes.object,
+  TrainerProfileData: PropTypes.shape({
+    _id: PropTypes.string,
+    name: PropTypes.string,
+    email: PropTypes.string,
+  }),
+  initialData: PropTypes.shape({
+    _id: PropTypes.string,
+    title: PropTypes.string,
+    content: PropTypes.string,
+    date: PropTypes.string,
+    time: PropTypes.string,
+  }),
   refetchAll: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
 };
 
+// PropTypes for AnnouncementCard
 AnnouncementCard.propTypes = {
-  announcement: PropTypes.object.isRequired,
+  announcement: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    content: PropTypes.string.isRequired,
+    date: PropTypes.string.isRequired,
+    time: PropTypes.string.isRequired,
+  }).isRequired,
   onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
 };
 
+// PropTypes for TrainerAnnouncementBoard
 TrainerAnnouncementBoard.propTypes = {
   refetchAll: PropTypes.func.isRequired,
-  TrainerProfileData: PropTypes.object.isRequired,
-  TrainerAnnouncement: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+  TrainerProfileData: PropTypes.shape({
+    _id: PropTypes.string,
+    name: PropTypes.string,
+    email: PropTypes.string,
+  }),
+  TrainerAnnouncement: PropTypes.oneOfType([
+    PropTypes.arrayOf(
+      PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+        content: PropTypes.string.isRequired,
+        date: PropTypes.string.isRequired,
+        time: PropTypes.string.isRequired,
+      })
+    ),
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      content: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired,
+      time: PropTypes.string.isRequired,
+    }),
+  ]),
 };
 
 export default TrainerAnnouncementBoard;
