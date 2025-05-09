@@ -19,6 +19,8 @@ const CommonButton = ({
   width = "auto", // Custom width
   cursorStyle = "cursor-pointer", // Default cursor
   disabled = false, // Disabled state
+  className = "",
+  iconPosition = "before", // Default icon position before the text
 }) => {
   // Preset color gradients for common background colors
   const colorMap = {
@@ -62,23 +64,32 @@ const CommonButton = ({
       className={`flex w-${width} items-center justify-center font-semibold ${px} ${py} ${borderRadius} ${cursorStyle} transition-all duration-300 
         ${textColor} 
         bg-gradient-to-bl ${fromColor} ${toColor}
-        hover:bg-gradient-to-tr active:opacity-70 disabled:opacity-50 disabled:cursor-not-allowed`} // Add active:opacity-70 for mobile feedback
+        hover:bg-gradient-to-tr active:opacity-70 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
       onClick={clickEvent}
       disabled={isButtonDisabled} // Disable button while loading
     >
       {isLoading ? (
         // Show loading state with spinner
         <span className="flex items-center">
-          <span className="animate-spin mr-2"><ImSpinner9 /></span> {loadingText}
+          <span className="animate-spin mr-2">
+            <ImSpinner9 />
+          </span>{" "}
+          {loadingText}
         </span>
       ) : (
         <>
           {/* Optional icon */}
-          {icon && (
+          {icon && iconPosition === "before" && (
             <span className={`${text ? "mr-2" : ""} ${iconSize}`}>{icon}</span>
           )}
+
           {/* Optional button text */}
           {text && <span>{text}</span>}
+
+          {/* Optional icon after the text */}
+          {icon && iconPosition === "after" && (
+            <span className={`${text ? "ml-2" : ""} ${iconSize}`}>{icon}</span>
+          )}
         </>
       )}
     </button>
@@ -102,8 +113,10 @@ CommonButton.propTypes = {
   loadingText: PropTypes.string,
   borderRadius: PropTypes.string,
   width: PropTypes.string,
-  cursorStyle: PropTypes.string, // New: Custom cursor style
-  disabled: PropTypes.bool, // New: Disabled state
+  cursorStyle: PropTypes.string,
+  disabled: PropTypes.bool,
+  className: PropTypes.string,
+  iconPosition: PropTypes.oneOf(["before", "after"]), // New prop for icon position
 };
 
 export default CommonButton;
