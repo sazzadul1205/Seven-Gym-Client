@@ -45,6 +45,7 @@ import AdsBoard from "../assets/Trainer_Settings_Layout_Icons/Ads-Board.png";
 import Dashboard from "../assets/Trainer_Settings_Layout_Icons/Dashboard.png";
 import UserSettings from "../assets/Trainer_Settings_Layout_Icons/User-Settings.png";
 import CustomerReview from "../assets/Trainer_Settings_Layout_Icons/Customer-Review.png";
+import TrainerAddModal from "../Pages/(TrainerPages)/TrainerAddModal/TrainerAddModal";
 
 const TrainerSettingsLayout = () => {
   const { user, logOut } = useAuth();
@@ -453,6 +454,14 @@ const TrainerSettingsLayout = () => {
     // Add more tabs as needed
   ];
 
+  // Open the Add Trainer Data Modal
+  useEffect(() => {
+    if (TrainerData?.length === 1) {
+      const modal = document.getElementById("Add_Trainer_Data");
+      if (modal) modal.showModal();
+    }
+  }, [TrainerData]);
+
   // Loading state
   if (
     TrainerDataIsLoading ||
@@ -705,12 +714,28 @@ const TrainerSettingsLayout = () => {
 
         {/* Tab Content */}
         <div className="w-full">
-          {tabs.map(
-            (tab) =>
-              activeTab === tab.id && <div key={tab.id}>{tab.content}</div>
+          {TrainerData?.length === 1 ? (
+            <div className="bg-gradient-to-t from-gray-100 to-gray-300 min-h-screen p-1 md:p-4">
+              <p className="text-center text-black italic">
+                No trainer data available.
+              </p>
+            </div>
+          ) : (
+            tabs.map(
+              (tab) =>
+                activeTab === tab.id && (
+                  <div key={tab.id} className="p-4">
+                    {tab.content}
+                  </div>
+                )
+            )
           )}
         </div>
       </div>
+
+      <dialog id="Add_Trainer_Data" className="modal">
+        <TrainerAddModal />
+      </dialog>
     </div>
   );
 };

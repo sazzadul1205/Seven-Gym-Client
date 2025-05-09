@@ -7,8 +7,9 @@ import { RiFocus2Fill } from "react-icons/ri";
 import { FaRegCircleDot } from "react-icons/fa6";
 
 // Import Utility
-import { fetchTierBadge } from "../../../../../Utility/fetchTierBadge";
 import { getGenderIcon } from "../../../../../Utility/getGenderIcon";
+import { fetchTierBadge } from "../../../../../Utility/fetchTierBadge";
+
 
 const TrainerBookingTrainer = ({ trainer }) => {
   // Get gender details (icon + label)
@@ -142,6 +143,7 @@ const TrainerBookingTrainer = ({ trainer }) => {
             {/* Email */}
             {trainer?.contact?.email ? (
               <a
+              
                 href={`mailto:${trainer.contact.email}`}
                 className="text-white hover:underline break-all md:mr-4"
               >

@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import My_Social_Links from "../JSON/My_Social_Links.json";
 
 // Importing Tooltip from react-tooltip
@@ -16,9 +17,9 @@ const Footer = () => {
               {["Branding", "Design", "Marketing", "Advertisement"].map(
                 (service) => (
                   <li key={service}>
-                    <a href="#" className="link link-hover">
+                    <Link to="#" className="link link-hover">
                       {service}
-                    </a>
+                    </Link>
                   </li>
                 )
               )}
@@ -31,9 +32,9 @@ const Footer = () => {
             <ul className="space-y-2">
               {["About us", "Contact", "Jobs", "Press kit"].map((item) => (
                 <li key={item}>
-                  <a href="#" className="link link-hover">
+                  <Link to="#" className="link link-hover">
                     {item}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -47,9 +48,9 @@ const Footer = () => {
           </h6>
           <div className="grid grid-cols-4 lg:grid-cols-5 gap-6 mt-4 justify-center">
             {Object.entries(My_Social_Links).map(([platform, url]) => (
-              <a
+              <Link
                 key={platform}
-                href={url}
+                to={url}
                 rel="noopener noreferrer"
                 data-tooltip-id={`tooltip-${platform}`}
                 data-tooltip-content={platform.toUpperCase()}
@@ -57,7 +58,7 @@ const Footer = () => {
               >
                 <SocialIcon url={url} target="_blank" />
                 <Tooltip id={`tooltip-${platform}`} place="top" />
-              </a>
+              </Link>
             ))}
           </div>
         </nav>

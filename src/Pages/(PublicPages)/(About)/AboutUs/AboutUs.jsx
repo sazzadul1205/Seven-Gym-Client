@@ -9,6 +9,7 @@ import AboutUsBanner from "../../../../assets/AboutUS/AboutUsBanner.jpg";
 import Loading from "../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../Shared/Component/FetchingError";
+import { Link } from "react-router";
 
 const AboutUs = () => {
   const axiosPublic = useAxiosPublic();
@@ -57,9 +58,7 @@ const AboutUs = () => {
             <h2 className="text-3xl font-bold">
               {AboutUsData?.introduction?.title}
             </h2>
-            <p className="text-lg ">
-              {AboutUsData?.introduction?.description}
-            </p>
+            <p className="text-lg ">{AboutUsData?.introduction?.description}</p>
           </div>
         </div>
 
@@ -153,12 +152,12 @@ const AboutUs = () => {
           <p className="text-lg text-white mb-6">
             {AboutUsData?.callToAction?.description}
           </p>
-          <a
-            href={AboutUsData?.callToAction?.buttonLink}
+          <Link
+            to={`/${AboutUsData?.callToAction?.buttonLink}`}
             className="bg-gradient-to-bl hover:bg-gradient-to-tr from-white to-gray-300 text-black font-semibold text-lg rounded-xl shadow-lg hover:shadow-2xl px-10 py-3 inline-block transition-all"
           >
             {AboutUsData?.callToAction?.buttonText}
-          </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -1,9 +1,10 @@
+// React core
 import { useEffect, useState, useCallback } from "react";
 
-// import Packages
+// PropTypes for validating props
 import PropTypes from "prop-types";
 
-// Import Firebase Auth
+// Firebase Auth SDK
 import {
   GoogleAuthProvider,
   FacebookAuthProvider,
@@ -15,31 +16,34 @@ import {
   updateProfile,
 } from "firebase/auth";
 
-// Import Firebase Config
+// Firebase configuration (custom setup)
 import auth from "../Firebase/firebase.config";
 
-// Import Context
+// Context for sharing auth across app
 import { AuthContext } from "./AuthContext";
+
+// Custom hook for Axios instance (public)
 import useAxiosPublic from "../Hooks/useAxiosPublic";
 
-// Initialize providers
+// Initialize Google and Facebook Auth Providers
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
 
-// Request server-side JWT and store with expiry
-// Fetch server-side JWT and store with expiry in localStorage
-
+/**
+ * Fetch server-side JWT after Firebase login and store it in localStorage.
+ * Token includes a 10-day expiry timestamp.
+ */
 const fetchServerToken = async (user, axiosPublic) => {
   try {
     const payload = {
       id: user?.uid,
       email: user?.email,
-      role: user?.role || "user", // fallback, optional
+      role: user?.role || "user", // fallback role
     };
 
     const response = await axiosPublic.post("/jwt", { user: payload });
-
     const token = response?.data?.token;
+
     if (!token) throw new Error("Token missing in response.");
 
     const expiry = Date.now() + 10 * 24 * 60 * 60 * 1000; // 10 days
@@ -50,19 +54,27 @@ const fetchServerToken = async (user, axiosPublic) => {
   }
 };
 
+/**
+ * AuthProvider component - wraps around app to provide auth state and methods
+ */
 const AuthProvider = ({ children }) => {
   const axiosPublic = useAxiosPublic();
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Clears localStorage + resets auth state
+  /**
+   * Clears local auth state and localStorage token
+   */
   const resetUserState = useCallback(() => {
     localStorage.removeItem("authData");
     setUser(null);
     setLoading(false);
   }, []);
 
-  // Register user with email/password
+  /**
+   * Register user using Firebase Email/Password
+   */
   const createUser = useCallback(
     async (email, password) => {
       setLoading(true);
@@ -85,11 +97,15 @@ const AuthProvider = ({ children }) => {
     [axiosPublic]
   );
 
-  // Update Firebase user profile
+  /**
+   * Update Firebase profile (name, photo)
+   */
   const updateUser = useCallback(async (displayName, photoURL) => {
     try {
       if (!auth.currentUser) throw new Error("No current user found");
       await updateProfile(auth.currentUser, { displayName, photoURL });
+
+      // Also update state manually to reflect changes
       setUser((prev) => ({ ...prev, displayName, photoURL }));
     } catch (error) {
       console.error("Update User Error:", error.message);
@@ -97,7 +113,9 @@ const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Sign in with email/password
+  /**
+   * Log in using Email/Password
+   */
   const signIn = useCallback(
     async (email, password) => {
       setLoading(true);
@@ -120,7 +138,9 @@ const AuthProvider = ({ children }) => {
     [axiosPublic]
   );
 
-  // Social sign-ins
+  /**
+   * Sign in with Google
+   */
   const signInWithGoogle = useCallback(async () => {
     setLoading(true);
     try {
@@ -136,6 +156,9 @@ const AuthProvider = ({ children }) => {
     }
   }, [axiosPublic]);
 
+  /**
+   * Sign in with Facebook
+   */
   const signInWithFacebook = useCallback(async () => {
     setLoading(true);
     try {
@@ -151,11 +174,14 @@ const AuthProvider = ({ children }) => {
     }
   }, [axiosPublic]);
 
+  /**
+   * Logout user and reset auth state
+   */
   const logOut = useCallback(async () => {
     setLoading(true);
     try {
-      await signOut(auth); // Firebase or your auth logic
-      resetUserState(); // Clears auth context
+      await signOut(auth);
+      resetUserState();
       return { success: true, message: "Logout successful" };
     } catch (error) {
       console.error("Logout Error:", error.message);
@@ -165,7 +191,9 @@ const AuthProvider = ({ children }) => {
     }
   }, [resetUserState]);
 
-  // On load, check auth state and token expiry
+  /**
+   * Check Firebase auth + local token on mount
+   */
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
       const authData = JSON.parse(localStorage.getItem("authData"));
@@ -179,10 +207,13 @@ const AuthProvider = ({ children }) => {
 
       setLoading(false);
     });
+
     return () => unSubscribe();
   }, [resetUserState]);
 
-  // Auto-logout when server token expires
+  /**
+   * Auto-logout when token expires (check every 1 min)
+   */
   useEffect(() => {
     const interval = setInterval(() => {
       const authData = JSON.parse(localStorage.getItem("authData"));
@@ -190,9 +221,13 @@ const AuthProvider = ({ children }) => {
         logOut();
       }
     }, 60 * 1000);
+
     return () => clearInterval(interval);
   }, [logOut]);
 
+  /**
+   * Exported context value
+   */
   const authInfo = {
     user,
     logOut,
@@ -209,6 +244,7 @@ const AuthProvider = ({ children }) => {
   );
 };
 
+// Validate prop types
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
