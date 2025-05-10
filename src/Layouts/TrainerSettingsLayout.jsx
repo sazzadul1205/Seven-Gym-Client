@@ -45,6 +45,8 @@ import AdsBoard from "../assets/Trainer_Settings_Layout_Icons/Ads-Board.png";
 import Dashboard from "../assets/Trainer_Settings_Layout_Icons/Dashboard.png";
 import UserSettings from "../assets/Trainer_Settings_Layout_Icons/User-Settings.png";
 import CustomerReview from "../assets/Trainer_Settings_Layout_Icons/Customer-Review.png";
+
+// Import Modals
 import TrainerAddModal from "../Pages/(TrainerPages)/TrainerAddModal/TrainerAddModal";
 
 const TrainerSettingsLayout = () => {

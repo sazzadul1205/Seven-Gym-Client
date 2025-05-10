@@ -290,7 +290,14 @@ const SignUpDetails = () => {
 };
 
 // Reusable Input Field Component
-const InputField = ({ label, placeholder, register, errors, name, type }) => (
+export const InputField = ({
+  label,
+  placeholder,
+  register,
+  errors,
+  name,
+  type,
+}) => (
   <div>
     <label className="block text-gray-700 font-semibold text-xl pb-2">
       {label}
@@ -318,7 +325,7 @@ InputField.propTypes = {
 };
 
 // Reusable Gender Select Field Component
-const GenderSelectField = ({ register, errors }) => (
+export const GenderSelectField = ({ register, errors }) => (
   <div>
     <label className="block text-black font-semibold text-xl pb-2">
       Gender

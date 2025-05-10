@@ -1,21 +1,191 @@
+import { useState } from "react";
+import TrainerAddModalBasicInformation from "./TrainerAddModalBasicInformation/TrainerAddModalBasicInformation";
 import TrainerAddModalWelcomeSection from "./TrainerAddModalWelcomeSection/TrainerAddModalWelcomeSection";
 
+import {
+  FaDumbbell,
+  FaRunning,
+  FaHeartbeat,
+  FaBiking,
+  FaUserAlt,
+} from "react-icons/fa";
+import {
+  GiWeightLiftingUp,
+  GiBoxingGlove,
+  GiGymBag,
+  GiMuscleUp,
+  GiTrophy,
+} from "react-icons/gi";
+import { MdStar } from "react-icons/md";
+
+const shuffleArray = (array) => {
+  const shuffledArray = [...array];
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
+  return shuffledArray;
+};
+
+const icons = [
+  {
+    icon: FaDumbbell,
+    positions: shuffleArray([
+      "top-6 left-10",
+      "top-24 left-1/3",
+      "bottom-16 right-10",
+      "top-[65%] left-[10%]",
+      "top-[80%] right-[15%]",
+      "top-[5%] right-[25%]",
+    ]),
+  },
+  {
+    icon: FaRunning,
+    positions: shuffleArray([
+      "bottom-10 right-20",
+      "top-32 right-10",
+      "bottom-[30%] left-[40%]",
+      "top-[35%] left-[5%]",
+      "top-[20%] right-[10%]",
+    ]),
+  },
+  {
+    icon: GiWeightLiftingUp,
+    positions: shuffleArray([
+      "top-24 right-8",
+      "top-1/2 right-1/4",
+      "top-[70%] left-[45%]",
+      "bottom-[5%] left-[15%]",
+    ]),
+  },
+  {
+    icon: GiBoxingGlove,
+    positions: shuffleArray([
+      "bottom-20 left-16",
+      "top-[45%] left-[20%]",
+      "bottom-[10%] right-[30%]",
+      "top-[30%] right-[5%]",
+    ]),
+  },
+  {
+    icon: GiGymBag,
+    positions: shuffleArray([
+      "top-1/2 left-2",
+      "top-[80%] left-[25%]",
+      "bottom-[20%] right-[10%]",
+    ]),
+  },
+  {
+    icon: GiMuscleUp,
+    positions: shuffleArray([
+      "bottom-1/4 right-10",
+      "top-[60%] right-[35%]",
+      "top-[25%] left-[5%]",
+      "bottom-[35%] left-[15%]",
+    ]),
+  },
+  {
+    icon: FaHeartbeat,
+    positions: shuffleArray([
+      "bottom-5 left-5",
+      "top-[15%] right-[50%]",
+      "bottom-[45%] left-[50%]",
+      "top-[5%] left-[30%]",
+    ]),
+  },
+  {
+    icon: FaUserAlt,
+    positions: shuffleArray([
+      "top-10 right-1/3",
+      "top-[40%] left-[60%]",
+      "bottom-[15%] right-[15%]",
+      "bottom-[25%] left-[70%]",
+    ]),
+  },
+  {
+    icon: FaBiking,
+    positions: shuffleArray([
+      "bottom-1/2 left-1/4",
+      "top-[70%] left-[5%]",
+      "top-[10%] right-[5%]",
+      "bottom-[10%] left-[60%]",
+    ]),
+  },
+  {
+    icon: GiTrophy,
+    positions: shuffleArray([
+      "top-20 left-10",
+      "bottom-[20%] right-[30%]",
+      "top-[50%] left-[60%]",
+      "bottom-[40%] left-[50%]",
+    ]),
+  },
+  {
+    icon: MdStar,
+    positions: shuffleArray([
+      "top-1/4 left-1/3",
+      "bottom-1/4 right-[20%]",
+      "top-[60%] left-[15%]",
+      "bottom-[30%] left-[40%]",
+    ]),
+  },
+];
+
 const TrainerAddModal = () => {
+  const [currentStep, setCurrentStep] = useState(0); // 0: Welcome, 1: Basic Info
+
+  const iconClasses = "text-3xl text-red-500 absolute opacity-20 z-0";
+
   return (
     <div className="modal-box max-w-5xl p-0 bg-gradient-to-b from-white to-gray-200 text-black rounded-lg shadow-xl">
-      {/* Steps */}
-      <div className="px-4 pt-4 border-b-2 border-gray-300">
+      {/* Steps Navigation */}
+      <div className="px-4 py-4 border-b-2 border-gray-300">
         <ul className="steps steps-vertical md:steps-horizontal w-full justify-center">
-          <li className="step step-primary">Welcome</li>
-          <li className="step">Basic Info</li>
-          <li className="step">Details</li>
-          <li className="step">Sessions</li>
-          <li className="step">Preview</li>
+          {["Welcome", "Basic Info", "Details", "Sessions", "Preview"].map(
+            (label, index) => (
+              <li
+                key={label}
+                className={`step ${currentStep >= index ? "step-primary" : ""}`}
+                onClick={() => setCurrentStep(index)}
+                style={{ cursor: "pointer" }}
+              >
+                {label}
+              </li>
+            )
+          )}
         </ul>
       </div>
 
-      {/* Modal Header */}
-      <TrainerAddModalWelcomeSection />
+      {/* Content Section */}
+      <div
+        className="min-h-[500px] relative z-10"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(239,68,68,0) 40%, rgba(239,68,68,0.15) 75%, rgba(239,68,68,0.3) 100%)",
+        }}
+      >
+        <div>
+          {currentStep === 0 && (
+            <TrainerAddModalWelcomeSection
+              onNextStep={() => setCurrentStep(1)}
+            />
+          )}
+          {currentStep === 1 && <TrainerAddModalBasicInformation />}
+        </div>
+      </div>
+
+      {/* Background Icons */}
+      {icons.map((iconSet, index) =>
+        iconSet.positions.map((position, posIndex) => {
+          const IconComponent = iconSet.icon;
+          return (
+            <IconComponent
+              key={`${index}-${posIndex}`}
+              className={`${iconClasses} ${position} w-6 h-6`}
+            />
+          );
+        })
+      )}
     </div>
   );
 };

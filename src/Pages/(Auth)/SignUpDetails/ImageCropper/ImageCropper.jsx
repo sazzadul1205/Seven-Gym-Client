@@ -96,7 +96,7 @@ const ImageCropper = ({ onImageCropped }) => {
     <div>
       {/* Image Preview & Upload */}
       <div
-        className="w-[250px] h-[250px] rounded-full mx-auto border-2 border-dashed border-gray-500 flex items-center justify-center relative overflow-hidden hover:scale-105 sm:w-[200px] sm:h-[200px] md:w-[250px] md:h-[250px]"
+        className="w-[250px] h-[250px] rounded-full mx-auto border-2 border-dashed border-gray-500 flex items-center justify-center relative overflow-hidden hover:scale-105 transform transition-transform duration-300 ease-in-out sm:w-[200px] sm:h-[200px] md:w-[250px] md:h-[250px]"
         style={{ backgroundColor: "#f9f9f9" }}
       >
         {/* Display cropped image if available, else show upload icon */}
