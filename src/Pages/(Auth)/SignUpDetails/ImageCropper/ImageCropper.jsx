@@ -7,15 +7,21 @@ import Cropper from "react-easy-crop";
 // Import Icons
 import { FiCamera } from "react-icons/fi";
 
-const ImageCropper = ({ onImageCropped }) => {
-  // State for image cropping
-  const [zoom, setZoom] = useState(1); // Zoom level
-  const [rotation, setRotation] = useState(0); // Rotation angle
-  const [imageSrc, setImageSrc] = useState(null); // Stores image URL for cropper
-  const [cropArea, setCropArea] = useState(null); // Cropped area in pixels
-  const [crop, setCrop] = useState({ x: 0, y: 0 }); // Crop position
-  const [showCropper, setShowCropper] = useState(false); // Show/hide cropper
-  const [croppedImage, setCroppedImage] = useState(null); // Store cropped image data
+const ImageCropper = ({ onImageCropped, defaultImageUrl }) => {
+  const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
+  const [imageSrc, setImageSrc] = useState(null);
+  const [cropArea, setCropArea] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [showCropper, setShowCropper] = useState(false);
+  const [croppedImage, setCroppedImage] = useState(null);
+
+  // If there's a default image, set it as the initial cropped image (only once)
+  useEffect(() => {
+    if (defaultImageUrl && !croppedImage) {
+      setCroppedImage(defaultImageUrl);
+    }
+  }, [defaultImageUrl, croppedImage]);
 
   // Handle file selection
   const handleImageChange = (e) => {
@@ -23,19 +29,17 @@ const ImageCropper = ({ onImageCropped }) => {
     if (file) {
       const fileReader = new FileReader();
       fileReader.onload = () => {
-        setImageSrc(fileReader.result); // Convert file to data URL
+        setImageSrc(fileReader.result);
         setShowCropper(true);
       };
       fileReader.readAsDataURL(file);
     }
   };
 
-  // Handle crop completion
   const onCropComplete = useCallback((_, croppedAreaPixels) => {
     setCropArea(croppedAreaPixels);
   }, []);
 
-  // Generate cropped image
   const getCroppedImage = async () => {
     if (!imageSrc || !cropArea) return;
 
@@ -68,13 +72,12 @@ const ImageCropper = ({ onImageCropped }) => {
         );
         ctx.restore();
 
-        // Convert canvas to image blob and update preview
         canvas.toBlob(
           (blob) => {
             const croppedImageUrl = URL.createObjectURL(blob);
-            setCroppedImage(croppedImageUrl); // Update cropped image
-            onImageCropped(blob); // Notify parent with cropped image
-            setShowCropper(false); // Hide cropper after saving
+            setCroppedImage(croppedImageUrl);
+            onImageCropped(blob);
+            setShowCropper(false);
             resolve(blob);
           },
           "image/jpeg",
@@ -84,13 +87,14 @@ const ImageCropper = ({ onImageCropped }) => {
     });
   };
 
-  // Clean up URL when unmounting
+  // Clean up blob URLs
   useEffect(() => {
     return () => {
       if (imageSrc) URL.revokeObjectURL(imageSrc);
-      if (croppedImage) URL.revokeObjectURL(croppedImage); // Clean up cropped image URL
+      if (croppedImage && croppedImage !== defaultImageUrl)
+        URL.revokeObjectURL(croppedImage);
     };
-  }, [imageSrc, croppedImage]);
+  }, [imageSrc, croppedImage, defaultImageUrl]);
 
   return (
     <div>
@@ -99,10 +103,9 @@ const ImageCropper = ({ onImageCropped }) => {
         className="w-[250px] h-[250px] rounded-full mx-auto border-2 border-dashed border-gray-500 flex items-center justify-center relative overflow-hidden hover:scale-105 transform transition-transform duration-300 ease-in-out sm:w-[200px] sm:h-[200px] md:w-[250px] md:h-[250px]"
         style={{ backgroundColor: "#f9f9f9" }}
       >
-        {/* Display cropped image if available, else show upload icon */}
-        {croppedImage && !showCropper ? (
+        {(croppedImage || defaultImageUrl) && !showCropper ? (
           <img
-            src={croppedImage}
+            src={croppedImage || defaultImageUrl}
             alt="Profile"
             className="w-full h-full object-cover rounded-full"
           />
@@ -112,7 +115,7 @@ const ImageCropper = ({ onImageCropped }) => {
             <p>Click to Upload</p>
           </div>
         )}
-        {/* Hidden input field */}
+
         <input
           type="file"
           accept="image/*"
@@ -122,64 +125,64 @@ const ImageCropper = ({ onImageCropped }) => {
       </div>
 
       {/* Cropper Modal */}
-      <div className="relative">
-        {showCropper && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40">
-            <div className="bg-gray-100 p-5 rounded-lg shadow-lg relative w-full max-w-4xl sm:w-[90%] md:w-[80%] lg:w-[60%]">
-              <div className="relative h-96">
-                <Cropper
-                  image={imageSrc}
-                  crop={crop}
-                  zoom={zoom}
-                  rotation={rotation}
-                  aspect={1 / 1}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onRotationChange={setRotation}
-                  onCropComplete={onCropComplete}
+      {showCropper && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40">
+          <div className="bg-gray-100 p-5 rounded-lg shadow-lg relative w-full max-w-4xl sm:w-[90%] md:w-[80%] lg:w-[60%]">
+            <div className="relative h-96">
+              <Cropper
+                image={imageSrc}
+                crop={crop}
+                zoom={zoom}
+                rotation={rotation}
+                aspect={1 / 1}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onRotationChange={setRotation}
+                onCropComplete={onCropComplete}
+              />
+            </div>
+
+            <div className="flex flex-col md:flex-row justify-between items-center mt-4 space-x-4">
+              {/* Zoom Slider */}
+              <div className="flex items-center">
+                <label className="text-gray-700 text-sm">Zoom:</label>
+                <input
+                  type="range"
+                  min="1"
+                  max="3"
+                  step="0.1"
+                  value={zoom}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="ml-2 w-24 sm:w-32 md:w-48"
                 />
               </div>
-              <div className="flex flex-col md:flex-row justify-between items-center mt-4 space-x-4">
-                {/* Zoom Control */}
-                <div className="flex items-center">
-                  <label className="text-gray-700 text-sm">Zoom:</label>
-                  <input
-                    type="range"
-                    min="1"
-                    max="3"
-                    step="0.1"
-                    value={zoom}
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="ml-2 w-24 sm:w-32 md:w-48"
-                  />
-                </div>
 
-                {/* Buttons */}
-                <div className="flex space-x-2 gap-4">
-                  <button
-                    className="bg-gray-500 hover:bg-gray-300 text-white px-4 py-2 rounded-lg w-[100px] cursor-pointer"
-                    onClick={() => setShowCropper(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="bg-[#b8264a] hover:bg-[#fc003f] text-white px-4 py-2 rounded-lg w-[100px] cursor-pointer"
-                    onClick={getCroppedImage}
-                  >
-                    Save
-                  </button>
-                </div>
+              {/* Action Buttons */}
+              <div className="flex space-x-2 gap-4">
+                <button
+                  className="bg-gray-500 hover:bg-gray-300 text-white px-4 py-2 rounded-lg w-[100px] cursor-pointer"
+                  onClick={() => setShowCropper(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="bg-[#b8264a] hover:bg-[#fc003f] text-white px-4 py-2 rounded-lg w-[100px] cursor-pointer"
+                  onClick={getCroppedImage}
+                >
+                  Save
+                </button>
               </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
 
 ImageCropper.propTypes = {
   onImageCropped: PropTypes.func.isRequired,
+  defaultImageUrl: PropTypes.string,
 };
 
 export default ImageCropper;

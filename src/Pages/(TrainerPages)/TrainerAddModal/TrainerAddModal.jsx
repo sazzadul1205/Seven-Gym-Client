@@ -1,5 +1,4 @@
 import { useState } from "react";
-import TrainerAddModalBasicInformation from "./TrainerAddModalBasicInformation/TrainerAddModalBasicInformation";
 import TrainerAddModalWelcomeSection from "./TrainerAddModalWelcomeSection/TrainerAddModalWelcomeSection";
 
 import {
@@ -17,6 +16,7 @@ import {
   GiTrophy,
 } from "react-icons/gi";
 import { MdStar } from "react-icons/md";
+import TrainerAddModalInputBasicInformation from "./TrainerAddModalInputBasicInformation/TrainerAddModalInputBasicInformation";
 
 const shuffleArray = (array) => {
   const shuffledArray = [...array];
@@ -170,7 +170,7 @@ const TrainerAddModal = () => {
               onNextStep={() => setCurrentStep(1)}
             />
           )}
-          {currentStep === 1 && <TrainerAddModalBasicInformation />}
+          {currentStep === 1 && <TrainerAddModalInputBasicInformation />}
         </div>
       </div>
 

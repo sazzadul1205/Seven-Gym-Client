@@ -1,19 +1,16 @@
-import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import ImageCropper from "../../../(Auth)/SignUpDetails/ImageCropper/ImageCropper";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
-
+import ImageCropper from "../../../(Auth)/SignUpDetails/ImageCropper/ImageCropper";
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
 import { FaArrowRight } from "react-icons/fa";
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
-const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
-const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Key}`;
-
-const TrainerAddModalBasicInformation = () => {
+const TrainerAddModalInputBasicInformation = () => {
   const axiosPublic = useAxiosPublic();
-  const [profileImage, setProfileImage] = useState(null);
+
   const [isImageUploading, setIsImageUploading] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
   const [imageSet, setImageSet] = useState(false);
 
   const storedData = JSON.parse(
@@ -121,13 +118,16 @@ const TrainerAddModalBasicInformation = () => {
   const isNextDisabled =
     !isValid || typeof profileImage !== "string" || isImageUploading;
 
+  const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
+  const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Key}`;
+
   return (
     <div className="space-y-6">
       <h3 className="text-2xl font-semibold text-center text-gray-800">
         Basic Information
       </h3>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-10 items-center px-5">
           {/* Profile Image Section */}
           <div className="flex items-center justify-center h-full w-full">
@@ -143,33 +143,32 @@ const TrainerAddModalBasicInformation = () => {
                 errors={errors}
               />
 
-              {/* SET IMAGE BUTTON */}
-              {profileImage && typeof profileImage !== "string" && (
-                <div className="flex justify-center mt-3">
-                  <CommonButton
-                    text={
-                      isImageUploading
-                        ? "Uploading..."
-                        : imageSet
-                        ? "Image Set"
-                        : "Set Image"
-                    }
-                    onClick={handleSetImage}
-                    bgColor="green"
-                    py="py-2"
-                    px="px-6"
-                    textColor="text-white"
-                    borderRadius="rounded"
-                    disabled={isImageUploading}
-                    className="transition-all duration-300"
-                  />
-                </div>
-              )}
+              {/* Save Image Button */}
+
+              <div className="flex justify-center mt-3">
+                <CommonButton
+                  text={
+                    isImageUploading
+                      ? "Uploading..."
+                      : imageSet
+                      ? "Image Set"
+                      : "Set Image"
+                  }
+                  onClick={handleSetImage}
+                  bgColor="green"
+                  py="py-2"
+                  px="px-6"
+                  textColor="text-white"
+                  borderRadius="rounded"
+                  disabled={isImageUploading}
+                  className="transition-all duration-300"
+                />
+              </div>
             </div>
           </div>
 
           {/* Form Fields */}
-          <div className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="block text-gray-700 font-semibold text-xl pb-2">
                 Trainer Name
@@ -237,7 +236,7 @@ const TrainerAddModalBasicInformation = () => {
                 </p>
               )}
             </div>
-          </div>
+          </form>
         </div>
 
         {/* NEXT BUTTON */}
@@ -261,9 +260,9 @@ const TrainerAddModalBasicInformation = () => {
             iconPosition="after"
           />
         </div>
-      </form>
+      </div>
     </div>
   );
 };
 
-export default TrainerAddModalBasicInformation;
+export default TrainerAddModalInputBasicInformation;

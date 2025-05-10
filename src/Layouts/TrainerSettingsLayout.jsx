@@ -1,10 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
 
-// Import Packages
-import Swal from "sweetalert2";
-import { useQuery } from "@tanstack/react-query";
-
 // Import Tabs
 import TrainerLogs from "../Pages/(TrainerPages)/TrainerLogs/TrainerLogs";
 import TrainerProfile from "../Pages/(TrainerPages)/TrainerProfile/TrainerProfile";
@@ -18,21 +14,14 @@ import TrainerAnnouncementBoard from "../Pages/(TrainerPages)/TrainerAnnouncemen
 import TrainerScheduleParticipant from "../Pages/(TrainerPages)/TrainerScheduleParticipant/TrainerScheduleParticipant";
 
 // Import Icons
-import { FaPowerOff } from "react-icons/fa";
 import { RiArchiveDrawerFill } from "react-icons/ri";
 
 // Import Hooks
-import useAuth from "../Hooks/useAuth";
 import Loading from "../Shared/Loading/Loading";
-import useAxiosPublic from "../Hooks/useAxiosPublic";
 import FetchingError from "../Shared/Component/FetchingError";
 
-// Import Button
-import CommonButton from "../Shared/Buttons/CommonButton";
-
-// Import Utility
-import { getGenderIcon } from "../Utility/getGenderIcon";
-import { fetchTierBadge } from "../Utility/fetchTierBadge";
+// Import Data Fetch
+import useTrainerDashboardData from "../Utility/useTrainerDashboardData";
 
 // Import Icons
 import Log from "../assets/Trainer_Settings_Layout_Icons/Log.png";
@@ -49,19 +38,56 @@ import CustomerReview from "../assets/Trainer_Settings_Layout_Icons/Customer-Rev
 // Import Modals
 import TrainerAddModal from "../Pages/(TrainerPages)/TrainerAddModal/TrainerAddModal";
 
+// Import Component
+import TrainerSettingsLayoutHeader from "../Pages/(TrainerPages)/TrainerSettingsLayoutHeader/TrainerSettingsLayoutHeader";
+
 const TrainerSettingsLayout = () => {
-  const { user, logOut } = useAuth();
-  const axiosPublic = useAxiosPublic();
+  const {
+    // Refetch
+    refetchAll,
+
+    // IsLoading
+    TrainerDataIsLoading,
+    ClassTypesDataIsLoading,
+    TrainerScheduleIsLoading,
+    TrainerAnnouncementIsLoading,
+    TrainerBookingRequestIsLoading,
+    TrainerBookingHistoryIsLoading,
+    TrainerStudentHistoryIsLoading,
+    TrainerBookingAcceptedIsLoading,
+    TrainerBookingHistoryDailyStatsIsLoading,
+    TrainerBookingAcceptedDailyStatsIsLoading,
+
+    // Error
+    TrainerDataError,
+    ClassTypesDataError,
+    TrainerScheduleError,
+    TrainerAnnouncementError,
+    TrainerBookingRequestError,
+    TrainerBookingHistoryError,
+    TrainerStudentHistoryError,
+    TrainerBookingAcceptedError,
+    TrainerBookingHistoryDailyStatsError,
+    TrainerBookingAcceptedDailyStatsError,
+
+    // Data
+    TrainerData,
+    ClassTypesData,
+    TrainerProfileData,
+    TrainerScheduleData,
+    TrainerAnnouncementData,
+    TrainerStudentHistoryData,
+    TrainerBookingRequestData,
+    TrainerBookingHistoryData,
+    TrainerBookingAcceptedData,
+    TrainerProfileScheduleData,
+    TrainerBookingHistoryDailyStatsData,
+    TrainerBookingAcceptedDailyStatsData,
+  } = useTrainerDashboardData();
 
   // Use Cases Call
   const navigate = useNavigate();
   const location = useLocation();
-
-  // State Management
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  // Refetch Spin state
-  const [spinning, setSpinning] = useState(false);
 
   // Get initial tab from URL
   const searchParams = new URLSearchParams(location.search);
@@ -87,241 +113,6 @@ const TrainerSettingsLayout = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
-
-  // 1. Fetch Trainer Data
-  const {
-    data: TrainerData = [],
-    isLoading: TrainerDataIsLoading,
-    error: TrainerDataError,
-    refetch: TrainerRefetch,
-  } = useQuery({
-    queryKey: ["TrainerData", user?.email],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Trainers?email=${user?.email}`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-    enabled: !!user?.email,
-  });
-
-  // 2. Extract Trainer Profile
-  const TrainerProfileData = TrainerData?.[0] || null;
-
-  // 3. Fetch Trainer Schedule
-  const {
-    data: TrainerScheduleData = [],
-    isLoading: TrainerScheduleIsLoading,
-    error: TrainerScheduleError,
-    refetch: TrainerScheduleRefetch,
-  } = useQuery({
-    queryKey: ["TrainerScheduleData", TrainerProfileData?.name],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainers_Schedule/ByTrainerName?trainerName=${encodeURIComponent(
-            TrainerProfileData?.name
-          )}`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-    enabled: !!TrainerProfileData?.name,
-  });
-
-  // 4. Extract Schedule Profile
-  const TrainerProfileScheduleData = TrainerScheduleData?.[0] || null;
-
-  // 5. Fetch Class Types
-  const {
-    data: ClassTypesData = [],
-    isLoading: ClassTypesDataIsLoading,
-    error: ClassTypesDataError,
-  } = useQuery({
-    queryKey: ["TrainerClassTypes"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Trainers/classTypes`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
-
-  // 6. Fetch Booking Request
-  const {
-    data: TrainerBookingRequestData = [],
-    isLoading: TrainerBookingRequestIsLoading,
-    error: TrainerBookingRequestError,
-    refetch: TrainerBookingRequestRefetch,
-  } = useQuery({
-    queryKey: ["TrainerBookingRequestData", TrainerProfileData?.name],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Booking_Request/Trainer/${TrainerProfileData?.name}`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-    enabled: !!TrainerProfileData?.name,
-  });
-
-  // 7. Fetch Accepted Bookings
-  const {
-    data: TrainerBookingAcceptedData = [],
-    isLoading: TrainerBookingAcceptedIsLoading,
-    error: TrainerBookingAcceptedError,
-    refetch: TrainerBookingAcceptedRefetch,
-  } = useQuery({
-    queryKey: ["TrainerBookingAcceptedData", TrainerProfileData?.name],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Booking_Accepted/Trainer/${TrainerProfileData?.name}`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-    enabled: !!TrainerProfileData?.name,
-  });
-
-  // 8. Fetch Booking History
-  const {
-    data: TrainerBookingHistoryData = [],
-    isLoading: TrainerBookingHistoryIsLoading,
-    error: TrainerBookingHistoryError,
-    refetch: TrainerBookingHistoryRefetch,
-  } = useQuery({
-    queryKey: ["TrainerBookingHistoryData", TrainerProfileData?._id],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Booking_History/Trainer/${TrainerProfileData?._id}`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-    enabled: !!TrainerProfileData?._id,
-  });
-
-  // 9. Fetch Trainer-Student History
-  const {
-    data: TrainerStudentHistoryData = [],
-    isLoading: TrainerStudentHistoryIsLoading,
-    error: TrainerStudentHistoryError,
-    refetch: TrainerStudentHistoryRefetch,
-  } = useQuery({
-    queryKey: ["TrainerStudentHistory", TrainerProfileData?._id],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Student_History?trainerId=${TrainerProfileData?._id}`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-    enabled: !!TrainerProfileData?._id,
-  });
-
-  // 10. Fetch Daily Booking History Stats
-  const {
-    data: TrainerBookingHistoryDailyStatsData = [],
-    isLoading: TrainerBookingHistoryDailyStatsIsLoading,
-    error: TrainerBookingHistoryDailyStatsError,
-    refetch: TrainerStudentHistoryDailyStatsRefetch,
-  } = useQuery({
-    queryKey: ["TrainerBookingHistoryDailyStats", TrainerProfileData?._id],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Booking_History/DailyStats?trainerId=${TrainerProfileData?._id}`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-    enabled: !!TrainerProfileData?._id,
-  });
-
-  // 11. Fetch Daily Accepted Stats
-  const {
-    data: TrainerBookingAcceptedDailyStatsData = [],
-    isLoading: TrainerBookingAcceptedDailyStatsIsLoading,
-    error: TrainerBookingAcceptedDailyStatsError,
-    refetch: TrainerStudentAcceptedDailyStatsRefetch,
-  } = useQuery({
-    queryKey: ["TrainerBookingAcceptedDailyStats", TrainerProfileData?._id],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Booking_Accepted/DailyStats?trainerId=${TrainerProfileData?._id}`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-    enabled: !!TrainerProfileData?._id,
-  });
-
-  // 11. Fetch Daily Accepted Stats
-  const {
-    data: TrainerAnnouncementData = [],
-    isLoading: TrainerAnnouncementIsLoading,
-    error: TrainerAnnouncementError,
-    refetch: TrainerAnnouncementRefetch,
-  } = useQuery({
-    queryKey: ["TrainerAnnouncement", TrainerProfileData?._id],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Announcement?trainerID=${TrainerProfileData?._id}`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-    enabled: !!TrainerProfileData?._id,
-  });
-
-  // Unified refetch function
-  const refetchAll = async () => {
-    await TrainerRefetch();
-    await TrainerScheduleRefetch();
-    await TrainerAnnouncementRefetch();
-    await TrainerBookingRequestRefetch();
-    await TrainerBookingHistoryRefetch();
-    await TrainerStudentHistoryRefetch();
-    await TrainerBookingAcceptedRefetch();
-    await TrainerStudentHistoryDailyStatsRefetch();
-    await TrainerStudentAcceptedDailyStatsRefetch();
-  };
 
   // Tabs List
   const tabs = [
@@ -456,14 +247,6 @@ const TrainerSettingsLayout = () => {
     // Add more tabs as needed
   ];
 
-  // Open the Add Trainer Data Modal
-  useEffect(() => {
-    if (TrainerData?.length === 1) {
-      const modal = document.getElementById("Add_Trainer_Data");
-      if (modal) modal.showModal();
-    }
-  }, [TrainerData]);
-
   // Loading state
   if (
     TrainerDataIsLoading ||
@@ -494,134 +277,12 @@ const TrainerSettingsLayout = () => {
   )
     return <FetchingError />;
 
-  // Logout function with confirmation
-  const handleSignOut = async () => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you really want to log out?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, log me out",
-      cancelButtonText: "Cancel",
-    });
-
-    if (!result.isConfirmed) return; // Exit if user cancels
-
-    setIsLoggingOut(true);
-    try {
-      await logOut();
-      navigate("/"); // Redirect to home
-      setTimeout(() => {
-        window.location.reload(); // Force reload
-      }, 100);
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Logout Failed",
-        text: `Error logging out: ${error.message}`,
-        confirmButtonColor: "#d33",
-        timer: 3000,
-      });
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
-
-  // Get gender details (icon + label)
-  const { icon } = getGenderIcon(TrainerProfileData?.gender);
-
-  // Handle Refetch Spin
-  const handleClick = () => {
-    if (spinning) return; // Prevent spam clicks
-    setSpinning(true);
-    refetchAll();
-
-    // Stop spinning after 1 second (adjust as needed)
-    setTimeout(() => setSpinning(false), 1000);
-  };
-
   return (
     <div className="min-h-screen bg-white ">
-      {/* Header Section */}
-      <div className="mx-auto flex flex-row justify-between gap-6 py-2 bg-gray-300 text-black px-1 md:px-5">
-        {/* Trainer image and basic info */}
-        <div className="flex items-center space-x-4 w-3/4 md:w-auto">
-          {/* Trainer Profile Picture */}
-          <img
-            src={TrainerProfileData?.imageUrl}
-            alt="Trainer Profile"
-            className="w-12 h-12 rounded-full border border-gray-300"
-          />
-
-          {/* Trainer Name and Specialization */}
-          <div className="py-1 w-full">
-            {/* Trainer Data */}
-            <div className="flex justify-start items-center gap-3">
-              {/* Trainer Name */}
-              <h3 className="text-lg font-bold text-gray-700">
-                {TrainerProfileData?.name}
-              </h3>
-
-              {/* Trainer Icons */}
-              <span className="text-xl font-bold">{icon}</span>
-            </div>
-
-            {/* Trainer Specialization */}
-            <p className="text-sm text-gray-600">
-              {TrainerProfileData?.specialization}
-            </p>
-          </div>
-        </div>
-
-        {/* Badge Display */}
-        <div className="hidden md:flex items-center">
-          {TrainerProfileData?.tier && (
-            <span className={fetchTierBadge(TrainerProfileData.tier)}>
-              {TrainerProfileData.tier} Tier
-            </span>
-          )}
-        </div>
-
-        {/* Log out button */}
-        <div className="hidden md:flex w-full md:w-auto my-auto justify-end gap-2">
-          <button
-            className="bg-gradient-to-bl from-yellow-300 to-yellow-600 hover:from-yellow-400 hover:to-yellow-700 p-2 rounded-lg cursor-pointer"
-            onClick={handleClick}
-          >
-            <img
-              src="https://i.ibb.co.com/Wp0ymPyY/refresh.png"
-              alt="Refresh Icon"
-              className={`w-[25px] h-[25px] ${spinning ? "animate-spin" : ""}`}
-            />
-          </button>
-
-          <CommonButton
-            text={isLoggingOut ? "Logging Out..." : "Log Out"}
-            clickEvent={handleSignOut}
-            bgColor="red"
-            py="py-3"
-            px="px-10"
-            icon={<FaPowerOff />}
-            isLoading={isLoggingOut}
-            loadingText="Logging Out..."
-          />
-        </div>
-
-        {/* Log out button */}
-        <div className="flex md:hidden w-1/4 md:w-auto my-auto justify-end">
-          <CommonButton
-            clickEvent={handleSignOut}
-            bgColor="red"
-            py="py-3"
-            px="px-2"
-            icon={<FaPowerOff />}
-            isLoading={isLoggingOut}
-            loadingText="Logging Out..."
-          />
-        </div>
-      </div>
+      <TrainerSettingsLayoutHeader
+        refetchAll={refetchAll}
+        TrainerProfileData={TrainerProfileData}
+      />
 
       {/* Floating Drawer Button for Mobile */}
       <label
@@ -716,26 +377,40 @@ const TrainerSettingsLayout = () => {
 
         {/* Tab Content */}
         <div className="w-full">
-          {TrainerData?.length === 1 ? (
-            <div className="bg-gradient-to-t from-gray-100 to-gray-300 min-h-screen p-1 md:p-4">
-              <p className="text-center text-black italic">
-                No trainer data available.
-              </p>
+          {Array.isArray(TrainerData) && TrainerData.length === 0 ? (
+            <div className="bg-gradient-to-t from-gray-100 to-gray-300 min-h-screen p-4 flex items-center justify-center">
+              <div className="bg-white shadow-lg rounded-2xl p-6 max-w-xl w-full text-center space-y-4">
+                <h1 className="text-2xl font-bold text-gray-800">
+                  Welcome, New Trainer!
+                </h1>
+                <p className="text-gray-600">
+                  It looks like your trainer profile isn't set up yet. Let's get
+                  you started so clients can begin booking sessions with you.
+                </p>
+                <p className="text-gray-600">
+                  Setting up your profile only takes a few minutes. You can add
+                  your schedule, services, and other important details.
+                </p>
+                <button className="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition duration-200">
+                  Set Up Your Trainer Profile
+                </button>
+              </div>
             </div>
           ) : (
             tabs.map(
               (tab) =>
-                activeTab === tab.id && (
-                  <div key={tab.id} className="p-4">
-                    {tab.content}
-                  </div>
-                )
+                activeTab === tab.id && <div key={tab.id}>{tab.content}</div>
             )
           )}
         </div>
       </div>
 
-      <dialog id="Add_Trainer_Data" className="modal">
+      {/* Add Trainer Data Modal */}
+      <dialog
+        id="Add_Trainer_Data"
+        className="modal"
+        onCancel={(e) => e.preventDefault()}
+      >
         <TrainerAddModal />
       </dialog>
     </div>
