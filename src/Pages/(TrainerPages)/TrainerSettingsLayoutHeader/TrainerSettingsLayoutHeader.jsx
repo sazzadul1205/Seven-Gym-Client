@@ -164,7 +164,7 @@ TrainerSettingsLayoutHeader.propTypes = {
     gender: PropTypes.string,
     specialization: PropTypes.string,
     tier: PropTypes.string,
-  }).isRequired,
+  }),
 };
 
 export default TrainerSettingsLayoutHeader;

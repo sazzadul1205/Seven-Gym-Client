@@ -1,6 +1,7 @@
+// React hook for managing component state
 import { useState } from "react";
-import TrainerAddModalWelcomeSection from "./TrainerAddModalWelcomeSection/TrainerAddModalWelcomeSection";
 
+// Icon Imports from various icon libraries
 import {
   FaDumbbell,
   FaRunning,
@@ -16,8 +17,13 @@ import {
   GiTrophy,
 } from "react-icons/gi";
 import { MdStar } from "react-icons/md";
-import TrainerAddModalInputBasicInformation from "./TrainerAddModalInputBasicInformation/TrainerAddModalInputBasicInformation";
 
+// Importing child components for specific steps in the modal
+import TrainerAddModalWelcomeSection from "./TrainerAddModalWelcomeSection/TrainerAddModalWelcomeSection";
+import TrainerAddModalInputBasicInformation from "./TrainerAddModalInputBasicInformation/TrainerAddModalInputBasicInformation";
+import TrainerAddModalInputPersonalInformation from "./TrainerAddModalInputPersonalInformation/TrainerAddModalInputPersonalInformation";
+
+// Utility function to randomly shuffle an array
 const shuffleArray = (array) => {
   const shuffledArray = [...array];
   for (let i = shuffledArray.length - 1; i > 0; i--) {
@@ -27,6 +33,7 @@ const shuffleArray = (array) => {
   return shuffledArray;
 };
 
+// Predefined icon set and randomized positions for floating decorative icons
 const icons = [
   {
     icon: FaDumbbell,
@@ -131,14 +138,17 @@ const icons = [
   },
 ];
 
+// Main component definition
 const TrainerAddModal = () => {
-  const [currentStep, setCurrentStep] = useState(0); // 0: Welcome, 1: Basic Info
+  // Track current step in modal process
+  const [currentStep, setCurrentStep] = useState(0);
 
+  // Shared classes for floating background icons
   const iconClasses = "text-3xl text-red-500 absolute opacity-20 z-0";
 
   return (
     <div className="modal-box max-w-5xl p-0 bg-gradient-to-b from-white to-gray-200 text-black rounded-lg shadow-xl">
-      {/* Steps Navigation */}
+      {/* Step Navigation Bar */}
       <div className="px-4 py-4 border-b-2 border-gray-300">
         <ul className="steps steps-vertical md:steps-horizontal w-full justify-center">
           {["Welcome", "Basic Info", "Details", "Sessions", "Preview"].map(
@@ -156,7 +166,7 @@ const TrainerAddModal = () => {
         </ul>
       </div>
 
-      {/* Content Section */}
+      {/* Step Content Area with subtle background radial gradient */}
       <div
         className="min-h-[500px] relative z-10"
         style={{
@@ -164,17 +174,27 @@ const TrainerAddModal = () => {
             "radial-gradient(circle, rgba(239,68,68,0) 40%, rgba(239,68,68,0.15) 75%, rgba(239,68,68,0.3) 100%)",
         }}
       >
+        {/* Conditional rendering of step components based on current step */}
         <div>
+          {/* Welcome Step Component */}
           {currentStep === 0 && (
             <TrainerAddModalWelcomeSection
               onNextStep={() => setCurrentStep(1)}
             />
           )}
-          {currentStep === 1 && <TrainerAddModalInputBasicInformation />}
+
+          {/* Basic Info Step Component */}
+          {currentStep === 1 && (
+            <TrainerAddModalInputBasicInformation
+              onNextStep={() => setCurrentStep(2)}
+            />
+          )}
+
+          {currentStep === 2 && <TrainerAddModalInputPersonalInformation />}
         </div>
       </div>
 
-      {/* Background Icons */}
+      {/* Render decorative floating icons in randomized positions */}
       {icons.map((iconSet, index) =>
         iconSet.positions.map((position, posIndex) => {
           const IconComponent = iconSet.icon;

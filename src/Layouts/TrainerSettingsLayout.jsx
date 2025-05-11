@@ -40,6 +40,7 @@ import TrainerAddModal from "../Pages/(TrainerPages)/TrainerAddModal/TrainerAddM
 
 // Import Component
 import TrainerSettingsLayoutHeader from "../Pages/(TrainerPages)/TrainerSettingsLayoutHeader/TrainerSettingsLayoutHeader";
+import CommonButton from "../Shared/Buttons/CommonButton";
 
 const TrainerSettingsLayout = () => {
   const {
@@ -279,20 +280,21 @@ const TrainerSettingsLayout = () => {
 
   return (
     <div className="min-h-screen bg-white ">
+      {/* Trainer Settings Header */}
       <TrainerSettingsLayoutHeader
         refetchAll={refetchAll}
         TrainerProfileData={TrainerProfileData}
       />
 
       {/* Floating Drawer Button for Mobile */}
-      <label
+      <div
         htmlFor="trainer-settings-drawer"
         className="fixed lg:hidden top-20 left-0 bg-gray-500/70 shadow-md cursor-pointer z-50 p-2 "
       >
         <p className="bg-linear-to-bl from-blue-300 to-blue-600 p-4 rounded-full">
           <RiArchiveDrawerFill size={24} />
         </p>
-      </label>
+      </div>
 
       {/* Drawer for Mobile & Tablet View */}
       <div className="drawer z-50 lg:hidden">
@@ -378,22 +380,42 @@ const TrainerSettingsLayout = () => {
         {/* Tab Content */}
         <div className="w-full">
           {Array.isArray(TrainerData) && TrainerData.length === 0 ? (
-            <div className="bg-gradient-to-t from-gray-100 to-gray-300 min-h-screen p-4 flex items-center justify-center">
-              <div className="bg-white shadow-lg rounded-2xl p-6 max-w-xl w-full text-center space-y-4">
-                <h1 className="text-2xl font-bold text-gray-800">
+            // Full-screen gradient background wrapper for centering the welcome card
+            <div className="bg-gradient-to-tr from-gray-100 via-gray-200 to-gray-300 min-h-screen flex items-center justify-center px-0 md:px-4 py-0 md:py-8">
+              {/* Card container with shadow, padding, and rounded corners */}
+              <div className="bg-white shadow-2xl rounded-3xl p-8 max-w-2xl w-full text-center space-y-6 border border-gray-200">
+                {/* Title */}
+                <h1 className="text-3xl font-extrabold text-gray-800">
                   Welcome, New Trainer!
                 </h1>
-                <p className="text-gray-600">
-                  It looks like your trainer profile isn't set up yet. Let's get
-                  you started so clients can begin booking sessions with you.
+
+                {/* Subtitle / Introductory message */}
+                <p className="text-gray-700 text-base leading-relaxed">
+                  Your trainer profile has not been set up yet. Let&apos;s fix
+                  that so clients can start booking sessions with you.
                 </p>
-                <p className="text-gray-600">
-                  Setting up your profile only takes a few minutes. You can add
-                  your schedule, services, and other important details.
+
+                {/* Additional guidance for the trainer */}
+                <p className="text-gray-700 text-base leading-relaxed">
+                  It only takes a few minutes to set up your profile. Add your
+                  availability, services, and more to get started.
                 </p>
-                <button className="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition duration-200">
-                  Set Up Your Trainer Profile
-                </button>
+
+                {/* Call-to-action button */}
+                <div className="flex justify-center items-center w-full">
+                  <CommonButton
+                    text="Set Up Your Trainer Profile"
+                    bgColor="blue"
+                    textColor="text-white"
+                    px="px-8"
+                    py="py-3"
+                    width="auto"
+                    clickEvent={() =>
+                      document.getElementById("Add_Trainer_Data").showModal()
+                    }
+                    className="text-sm md:text-md"
+                  />
+                </div>
               </div>
             </div>
           ) : (
@@ -406,11 +428,7 @@ const TrainerSettingsLayout = () => {
       </div>
 
       {/* Add Trainer Data Modal */}
-      <dialog
-        id="Add_Trainer_Data"
-        className="modal"
-        onCancel={(e) => e.preventDefault()}
-      >
+      <dialog id="Add_Trainer_Data" className="modal">
         <TrainerAddModal />
       </dialog>
     </div>
