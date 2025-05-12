@@ -101,7 +101,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
       // Mark the image as set
       setImageSet(true);
 
-      // Store the new image URL in localStorage
+      // Store the new image URL in localStorage without deleting other data
       const existing = JSON.parse(
         localStorage.getItem("trainerBasicInfo") || "{}"
       );
@@ -123,22 +123,28 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
 
   // Function to handle form submission and store form data in localStorage
   const onSubmit = async (data) => {
-    // Check if the profile image is a valid URL and prepare the full trainer data object
+    // Prepare the updated values (ensure profileImage is a string URL)
     const uploadedImageUrl =
       typeof profileImage === "string" ? profileImage : "";
 
-    const fullTrainerData = {
+    const updatedValues = {
       ...data,
-
-      // Add image URL to the form data
       imageUrl: uploadedImageUrl,
     };
 
-    // Store the trainer data in localStorage
-    localStorage.setItem("trainerBasicInfo", JSON.stringify(fullTrainerData));
+    // Get existing data from localStorage
+    const existing = JSON.parse(
+      localStorage.getItem("trainerBasicInfo") || "{}"
+    );
 
-    // Log saved trainer info
-    console.log("Saved Trainer Info:", fullTrainerData);
+    // Merge the existing data with the new basic info (overwrite only specific fields)
+    const mergedData = {
+      ...existing,
+      ...updatedValues,
+    };
+
+    // Store merged data in localStorage
+    localStorage.setItem("trainerBasicInfo", JSON.stringify(mergedData));
 
     onNextStep();
   };
@@ -163,46 +169,48 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
           Basic Information
         </h3>
 
+        {/* Form Fields */}
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-10 items-center px-5">
             {/* Profile Image Section */}
-            <div className="flex items-center justify-center h-full w-full">
-              <div>
-                <h3 className="text-xl font-semibold text-center py-2">
-                  Trainer Profile Image
-                </h3>
+            <div className="items-center justify-center h-full w-full">
+              {/* Trainer Image Title */}
+              <h3 className="text-xl font-semibold text-center py-2">
+                Trainer Profile Image
+                <hr className="bg-black p-[1px] w-1/2 mx-auto" />
+              </h3>
 
-                {/* Image Cropper component to upload and crop image */}
-                <ImageCropper
-                  onImageCropped={handleImageChange} // Handle image change after cropping
-                  defaultImageUrl={storedData?.imageUrl} // Load default image if exists
-                  register={register} // Register the image field in form
-                  errors={errors} // Handle form validation errors
+              {/* Image Cropper component to upload and crop image */}
+              <ImageCropper
+                onImageCropped={handleImageChange}
+                defaultImageUrl={storedData?.imageUrl}
+                register={register}
+                errors={errors}
+              />
+
+              {/* Save Image Button */}
+              <div className="flex justify-center mt-3">
+                <CommonButton
+                  clickEvent={handleSetImage}
+                  isLoading={isImageUploading}
+                  loadingText="Uploading..."
+                  text={imageSet ? "Image Set" : "Set Image"}
+                  bgColor="green"
+                  py="py-2"
+                  px="px-6"
+                  textColor="text-white"
+                  borderRadius="rounded"
+                  disabled={isImageUploading || imageSet}
+                  className={`transition-all duration-300 ${
+                    imageSet ? "bg-gray-400 cursor-not-allowed" : ""
+                  }`}
                 />
-
-                {/* Save Image Button */}
-                <div className="flex justify-center mt-3">
-                  <CommonButton
-                    clickEvent={handleSetImage} // Trigger image upload when clicked
-                    isLoading={isImageUploading} // Show loading state while uploading
-                    loadingText="Uploading..." // Text shown during upload
-                    text={imageSet ? "Image Set" : "Set Image"} // Text based on image status
-                    bgColor="green"
-                    py="py-2"
-                    px="px-6"
-                    textColor="text-white"
-                    borderRadius="rounded"
-                    disabled={isImageUploading || imageSet} // Disable if uploading or image already set
-                    className={`transition-all duration-300 ${
-                      imageSet ? "bg-gray-400 cursor-not-allowed" : ""
-                    }`}
-                  />
-                </div>
               </div>
             </div>
 
             {/* Form Fields */}
             <div className="space-y-4">
+              {/* Trainer Name */}
               <div>
                 <label className="block text-gray-700 font-semibold text-xl pb-2">
                   Trainer Name
@@ -222,6 +230,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                 )}
               </div>
 
+              {/* Gender */}
               <div>
                 <label className="block text-gray-700">Gender</label>
                 <select
@@ -240,6 +249,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                 )}
               </div>
 
+              {/* Age */}
               <div>
                 <label className="block text-gray-700">Age</label>
                 <input
@@ -253,6 +263,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                 )}
               </div>
 
+              {/* Years of Experience */}
               <div>
                 <label className="block text-gray-700">
                   Years of Experience

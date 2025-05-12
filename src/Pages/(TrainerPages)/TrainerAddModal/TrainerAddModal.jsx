@@ -190,7 +190,11 @@ const TrainerAddModal = () => {
             />
           )}
 
-          {currentStep === 2 && <TrainerAddModalInputPersonalInformation />}
+          {currentStep === 2 && (
+            <TrainerAddModalInputPersonalInformation
+              onNextStep={() => setCurrentStep(3)}
+            />
+          )}
         </div>
       </div>
 
