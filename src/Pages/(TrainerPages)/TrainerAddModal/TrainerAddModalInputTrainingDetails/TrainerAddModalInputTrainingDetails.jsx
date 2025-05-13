@@ -1,10 +1,19 @@
-import { useForm } from "react-hook-form";
-import DynamicFieldArrayInputList from "../../../../Shared/DynamicFieldArrayInputList/DynamicFieldArrayInputList";
-import CommonButton from "../../../../Shared/Buttons/CommonButton";
-import { FaArrowRight } from "react-icons/fa";
 import { useEffect } from "react";
 
-const TrainerAddModalInputTrainingDetails = () => {
+// import Packages
+import PropTypes from "prop-types";
+import { useForm } from "react-hook-form";
+
+// Import Icons
+import { FaArrowRight } from "react-icons/fa";
+
+// Import Input Form
+import DynamicFieldArrayInputList from "../../../../Shared/DynamicFieldArrayInputList/DynamicFieldArrayInputList";
+
+// Import Buttons
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
+
+const TrainerAddModalInputTrainingDetails = ({ onNextStep }) => {
   // useForm hook from react-hook-form for handling form state and validation
   const { control, handleSubmit, setValue } = useForm({});
 
@@ -54,13 +63,15 @@ const TrainerAddModalInputTrainingDetails = () => {
 
     // Save the updated data back to localStorage
     localStorage.setItem("trainerBasicInfo", JSON.stringify(updatedData));
+
+    onNextStep();
   };
 
   return (
     <div className="p-2">
       {/* Title */}
       <h3 className="text-2xl font-semibold text-center text-gray-800">
-        Training Details
+        Trainer Details
       </h3>
 
       {/* Form Content */}
@@ -112,26 +123,6 @@ const TrainerAddModalInputTrainingDetails = () => {
           />
         </div>
 
-        {/* Partnerships */}
-        <DynamicFieldArrayInputList
-          control={control}
-          name="partnerships"
-          label="Partnerships"
-          placeholder="Enter partner name"
-          fields={["partnerName", "website"]}
-          multiFieldLayoutClass="flex gap-2"
-        />
-
-        {/* Awards */}
-        <DynamicFieldArrayInputList
-          control={control}
-          name="awards"
-          label="Awards"
-          placeholder="Enter award title"
-          fields={["title", "organization", "year"]}
-          multiFieldLayoutClass="flex gap-1"
-        />
-
         {/* Submit Button */}
         <div className="flex justify-center items-center w-full">
           <CommonButton
@@ -152,6 +143,11 @@ const TrainerAddModalInputTrainingDetails = () => {
       </form>
     </div>
   );
+};
+
+// Prop validation
+TrainerAddModalInputTrainingDetails.propTypes = {
+  onNextStep: PropTypes.func.isRequired,
 };
 
 export default TrainerAddModalInputTrainingDetails;

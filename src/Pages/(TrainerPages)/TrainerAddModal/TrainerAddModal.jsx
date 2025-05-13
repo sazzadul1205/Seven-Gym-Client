@@ -23,6 +23,9 @@ import TrainerAddModalWelcomeSection from "./TrainerAddModalWelcomeSection/Train
 import TrainerAddModalInputBasicInformation from "./TrainerAddModalInputBasicInformation/TrainerAddModalInputBasicInformation";
 import TrainerAddModalInputPersonalInformation from "./TrainerAddModalInputPersonalInformation/TrainerAddModalInputPersonalInformation";
 import TrainerAddModalInputTrainingDetails from "./TrainerAddModalInputTrainingDetails/TrainerAddModalInputTrainingDetails";
+import TrainerAddModalInputAwards from "./TrainerAddModalInputAwards/TrainerAddModalInputAwards";
+import TrainerAddModalInputPartnerships from "./TrainerAddModalInputPartnerships/TrainerAddModalInputPartnerships";
+import TrainerAddModalScheduleSelector from "./TrainerAddModalScheduleSelector/TrainerAddModalScheduleSelector";
 
 // Utility function to randomly shuffle an array
 const shuffleArray = (array) => {
@@ -152,18 +155,25 @@ const TrainerAddModal = () => {
       {/* Step Navigation Bar */}
       <div className="px-4 py-4 border-b-2 border-gray-300">
         <ul className="steps steps-vertical md:steps-horizontal w-full justify-center">
-          {["Welcome", "Basic Info", "Details", "Sessions", "Preview"].map(
-            (label, index) => (
-              <li
-                key={label}
-                className={`step ${currentStep >= index ? "step-primary" : ""}`}
-                onClick={() => setCurrentStep(index)}
-                style={{ cursor: "pointer" }}
-              >
-                {label}
-              </li>
-            )
-          )}
+          {[
+            "Welcome",
+            "Basic Info",
+            "Personal & Contact Info",
+            "Trainer Details",
+            "Achievements",
+            "Schedule Selector",
+          ].map((label, index) => (
+            <li
+              key={label}
+              className={`step text-sm ${
+                currentStep >= index ? "step-primary" : ""
+              }`}
+              onClick={() => setCurrentStep(index)}
+              style={{ cursor: "pointer" }}
+            >
+              {label}
+            </li>
+          ))}
         </ul>
       </div>
 
@@ -200,6 +210,22 @@ const TrainerAddModal = () => {
           {currentStep === 3 && (
             <TrainerAddModalInputTrainingDetails
               onNextStep={() => setCurrentStep(4)}
+            />
+          )}
+
+          {currentStep === 4 && (
+            <TrainerAddModalInputAwards onNextStep={() => setCurrentStep(5)} />
+          )}
+
+          {currentStep === 5 && (
+            <TrainerAddModalInputPartnerships
+              onNextStep={() => setCurrentStep(6)}
+            />
+          )}
+
+          {currentStep === 6 && (
+            <TrainerAddModalScheduleSelector
+              onNextStep={() => setCurrentStep(7)}
             />
           )}
         </div>

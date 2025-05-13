@@ -1,4 +1,4 @@
-import { Navigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useState } from "react";
 
 // Import Icons
@@ -19,6 +19,7 @@ import useAuth from "../../../Hooks/useAuth";
 
 const TrainerSettingsLayoutHeader = ({ refetchAll, TrainerProfileData }) => {
   const { logOut } = useAuth();
+  const navigate = useNavigate();
 
   // State Management
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -47,10 +48,7 @@ const TrainerSettingsLayoutHeader = ({ refetchAll, TrainerProfileData }) => {
     setIsLoggingOut(true);
     try {
       await logOut();
-      Navigate("/"); // Redirect to home
-      setTimeout(() => {
-        window.location.reload(); // Force reload
-      }, 100);
+      navigate("/"); // Redirect to home
     } catch (error) {
       Swal.fire({
         icon: "error",
