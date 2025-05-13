@@ -161,6 +161,7 @@ const TrainerAddModal = () => {
             "Personal & Contact Info",
             "Trainer Details",
             "Achievements",
+            "Partnerships",
             "Schedule Selector",
           ].map((label, index) => (
             <li
