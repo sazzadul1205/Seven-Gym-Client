@@ -108,6 +108,7 @@ const TrainerProfileDetailsUpdateModal = ({ TrainerDetails, refetch }) => {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
+        {/* Certifications */}
         <DynamicFieldArrayInputList
           control={control}
           name="certifications"

@@ -22,6 +22,7 @@ import { MdStar } from "react-icons/md";
 import TrainerAddModalWelcomeSection from "./TrainerAddModalWelcomeSection/TrainerAddModalWelcomeSection";
 import TrainerAddModalInputBasicInformation from "./TrainerAddModalInputBasicInformation/TrainerAddModalInputBasicInformation";
 import TrainerAddModalInputPersonalInformation from "./TrainerAddModalInputPersonalInformation/TrainerAddModalInputPersonalInformation";
+import TrainerAddModalInputTrainingDetails from "./TrainerAddModalInputTrainingDetails/TrainerAddModalInputTrainingDetails";
 
 // Utility function to randomly shuffle an array
 const shuffleArray = (array) => {
@@ -193,6 +194,12 @@ const TrainerAddModal = () => {
           {currentStep === 2 && (
             <TrainerAddModalInputPersonalInformation
               onNextStep={() => setCurrentStep(3)}
+            />
+          )}
+
+          {currentStep === 3 && (
+            <TrainerAddModalInputTrainingDetails
+              onNextStep={() => setCurrentStep(4)}
             />
           )}
         </div>

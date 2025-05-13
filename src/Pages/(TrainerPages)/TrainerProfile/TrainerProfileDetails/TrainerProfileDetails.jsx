@@ -18,7 +18,7 @@ const TrainerProfileDetails = ({ TrainerDetails, refetch }) => {
   if (!TrainerDetails) return null;
 
   return (
-    <div className="relative max-w-7xl mx-auto pt-3">
+    <div className="relative mx-auto px-10 pt-3">
       {/* Settings Icon (Top Right) */}
       <div
         className="absolute top-2 right-2 p-2"
@@ -29,13 +29,17 @@ const TrainerProfileDetails = ({ TrainerDetails, refetch }) => {
             .showModal()
         }
       >
+        {/* Settings Icon  */}
         <IoSettings className="text-red-500 text-4xl transition-transform duration-500 hover:rotate-180 hover:text-red-400 cursor-pointer" />
+
+        {/* Setting Icon Tool Tip */}
+        <Tooltip
+          id="Trainer_Profile_Settings_Details_Tooltip"
+          place="top"
+          content="Trainer Details Settings"
+        />
       </div>
-      <Tooltip
-        id="Trainer_Profile_Settings_Details_Tooltip"
-        place="top"
-        content="Trainer Details Settings"
-      />
+
       {/* Trainer Profile Details Section */}
       <div className="mx-auto grid grid-cols-1 md:grid-cols-2 gap-5 pt-12">
         {/* Trainer Certifications Section */}
@@ -47,11 +51,11 @@ const TrainerProfileDetails = ({ TrainerDetails, refetch }) => {
           </h2>
 
           {/* Certifications List */}
-          <ul className="list-decimal text-black space-y-2 pl-6">
+          <ul className="text-black space-y-2 ">
             {TrainerDetails?.certifications?.length ? (
               TrainerDetails?.certifications.map((cert, index) => (
                 <li key={index} className="text-lg">
-                  {cert}
+                  {index + 1}. <span className="font-semibold">{cert}</span>
                 </li>
               ))
             ) : (
@@ -73,14 +77,22 @@ const TrainerProfileDetails = ({ TrainerDetails, refetch }) => {
             {TrainerDetails?.awards?.length ? (
               TrainerDetails?.awards.map((award, index) => (
                 // Display each award with title, year, and organization
-                <div key={index} className="mb-2">
+                <div key={index} className="mb-2 space-y-1">
+                  {/* Title and Number */}
                   <h3 className="font-semibold text-xl text-black">
-                    {award.title}
+                    # {index + 1} [ {award.title} ]
                   </h3>
+
+                  {/* Year & Organization */}
                   <p className="text-gray-800 text-lg">
+                    {/* Year */}
                     <span className="font-bold">{award.year}</span> -{" "}
+                    {/* Organization */}
                     {award.organization}
                   </p>
+
+                  {/* Divider */}
+                  <hr className="bg-gray-200 p-[1px]" />
                 </div>
               ))
             ) : (
