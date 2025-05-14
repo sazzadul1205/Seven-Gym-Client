@@ -124,6 +124,11 @@ const ImageCropper = ({ onImageCropped, defaultImageUrl }) => {
     };
   }, [imageSrc, croppedImage, defaultImageUrl]);
 
+  // Prevent file input click event from propagating
+  const handleFileInputClick = (e) => {
+    e.stopPropagation();
+  };
+
   return (
     <div>
       {/* Image Preview Box */}
@@ -151,6 +156,7 @@ const ImageCropper = ({ onImageCropped, defaultImageUrl }) => {
           accept="image/*"
           className="absolute inset-0 opacity-0 cursor-pointer"
           onChange={handleImageChange}
+          onClick={handleFileInputClick} // Prevent event propagation
         />
       </div>
 
@@ -195,18 +201,20 @@ const ImageCropper = ({ onImageCropped, defaultImageUrl }) => {
                   text="Cancel"
                   clickEvent={() => setShowCropper(false)}
                   bgColor="gray"
-                  bgFromColor="gray-500"
-                  bgToColor="gray-300"
                   textColor="text-white"
                   px="px-4"
                   py="py-2"
                   width="[100px]"
                   borderRadius="rounded-lg"
                 />
+
                 <CommonButton
                   text="Save"
-                  clickEvent={getCroppedImage}
-                  bgColor="OriginalRed" // Uses your defined gradient
+                  clickEvent={(e) => {
+                    e.preventDefault();
+                    getCroppedImage();
+                  }}
+                  bgColor="OriginalRed"
                   textColor="text-white"
                   px="px-4"
                   py="py-2"

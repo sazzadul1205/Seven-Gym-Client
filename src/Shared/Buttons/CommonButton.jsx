@@ -44,6 +44,10 @@ const CommonButton = ({
       from: "from-red-600",
       to: "to-red-700",
     },
+    gray: {
+      from: "from-gray-300",
+      to: "to-gray-600",
+    },
     // add other colors as needed
   };
 

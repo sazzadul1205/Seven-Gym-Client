@@ -25,23 +25,20 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
-  // State Management
   const [imageSet, setImageSet] = useState(false);
-  const [profileImage, setProfileImage] = useState(null);
+  const [tempImageBlob, setTempImageBlob] = useState(null);
+  const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [isImageUploading, setIsImageUploading] = useState(false);
 
-  // Load stored trainer data from localStorage
   const storedData = JSON.parse(
     localStorage.getItem("trainerBasicInfo") || "{}"
   );
 
-  // React Hook Form setup for form validation and handling form submission
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
-    setValue,
   } = useForm({
     mode: "onChange",
     defaultValues: {
@@ -49,168 +46,122 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
       gender: storedData?.gender || "",
       age: storedData?.age || "",
       experience: storedData?.experience || "",
-      imageUrl: storedData?.imageUrl || "",
     },
   });
 
-  // Load stored image from localStorage and set it as the profile image if exists
   useEffect(() => {
     if (storedData?.imageUrl) {
-      setProfileImage(storedData.imageUrl);
-
-      // Mark the image as set on reload
+      setProfileImageUrl(storedData.imageUrl);
       setImageSet(true);
     }
   }, [storedData.imageUrl]);
 
-  // Handler for updating the profile image when a new one is cropped
-  const handleImageChange = (newImage) => {
-    setProfileImage(newImage);
+  const handleImageChange = (newImageBlob) => {
+    setTempImageBlob(newImageBlob);
     setSuccessMessage("");
     setImageSet(false);
   };
 
-  // Function to upload the cropped image to the image hosting service
-  const handleSetImage = async () => {
-    // If IOmage is invalid
-    if (!profileImage || !(profileImage instanceof Blob)) {
+  const uploadImageAndGetUrl = async (imageBlob) => {
+    if (!imageBlob || !(imageBlob instanceof Blob)) {
       console.error("Invalid image format");
-      return;
+      return null;
     }
 
-    // Set uploading state to true during the image upload
     setIsImageUploading(true);
     const formData = new FormData();
-    formData.append("image", profileImage, `${user?.email}-profile-image.jpg`);
+    formData.append("image", imageBlob, `${user?.email}-profile-image.jpg`);
 
     try {
-      // Make API request to upload image
       const res = await axiosPublic.post(Image_Hosting_API, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // Update the profile image with the uploaded URL
       const uploadedUrl = res.data.data.display_url;
-      setProfileImage(uploadedUrl);
-
-      // Update form field with the image URL
-      setValue("imageUrl", uploadedUrl);
-
-      // Mark the image as set
-      setImageSet(true);
-
-      // Store the new image URL in localStorage without deleting other data
-      const existing = JSON.parse(
-        localStorage.getItem("trainerBasicInfo") || "{}"
-      );
-      const updated = { ...existing, imageUrl: uploadedUrl };
-      localStorage.setItem("trainerBasicInfo", JSON.stringify(updated));
-
-      // Display success message
       setSuccessMessage("Image Set Successfully!");
+      setImageSet(true);
+      return uploadedUrl;
     } catch (error) {
       console.error("Upload Error:", error);
-
-      // Show error message if upload fails
-      setSuccessMessage("Failed to Upload Image. Please try again.");
+      setSuccessMessage("Failed to upload image. Please try again.");
+      return null;
     } finally {
-      // Reset uploading state after request
       setIsImageUploading(false);
     }
   };
 
-  // Function to handle form submission and store form data in localStorage
   const onSubmit = async (data) => {
-    // Prepare the updated values (ensure profileImage is a string URL)
-    const uploadedImageUrl =
-      typeof profileImage === "string" ? profileImage : "";
+    let finalImageUrl = profileImageUrl;
+
+    if (tempImageBlob) {
+      const uploadedUrl = await uploadImageAndGetUrl(tempImageBlob);
+      if (!uploadedUrl) return; // If upload failed, stop submission
+      finalImageUrl = uploadedUrl;
+      setProfileImageUrl(uploadedUrl);
+    }
 
     const updatedValues = {
       ...data,
-      imageUrl: uploadedImageUrl,
+      imageUrl: finalImageUrl,
     };
 
-    // Get existing data from localStorage
     const existing = JSON.parse(
       localStorage.getItem("trainerBasicInfo") || "{}"
     );
-
-    // Merge the existing data with the new basic info (overwrite only specific fields)
-    const mergedData = {
-      ...existing,
-      ...updatedValues,
-    };
-
-    // Store merged data in localStorage
+    const mergedData = { ...existing, ...updatedValues };
     localStorage.setItem("trainerBasicInfo", JSON.stringify(mergedData));
 
     onNextStep();
   };
 
-  // Check if the "Next Step" button should be disabled (e.g., form not valid, image not set)
-  const isNextDisabled =
-    !isValid || typeof profileImage !== "string" || isImageUploading;
+  const isNextDisabled = !isValid || isImageUploading;
 
   return (
     <div>
-      {/* Success Message displayed at the top */}
       {successMessage && (
         <div className="text-center text-green-500 font-semibold p-3 bg-green-100 rounded-md">
           {successMessage}
         </div>
       )}
 
-      {/* Page Content */}
       <div className="py-5">
-        {/* Title */}
         <h3 className="text-2xl font-semibold text-center text-gray-800">
           Basic Information
         </h3>
 
-        {/* Form Fields */}
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-10 items-center px-5">
-            {/* Profile Image Section */}
             <div className="items-center justify-center h-full w-full">
-              {/* Trainer Image Title */}
               <h3 className="text-xl font-semibold text-center py-2">
                 Trainer Profile Image
                 <hr className="bg-black p-[1px] w-1/2 mx-auto" />
               </h3>
 
-              {/* Image Cropper component to upload and crop image */}
               <ImageCropper
                 onImageCropped={handleImageChange}
-                defaultImageUrl={storedData?.imageUrl}
+                defaultImageUrl={profileImageUrl}
                 register={register}
                 errors={errors}
               />
 
-              {/* Save Image Button */}
               <div className="flex justify-center mt-3">
                 <CommonButton
-                  clickEvent={handleSetImage}
-                  isLoading={isImageUploading}
+                  clickEvent={() => {}}
+                  isLoading={false}
                   loadingText="Uploading..."
-                  text={imageSet ? "Image Set" : "Set Image"}
-                  bgColor="green"
+                  text={imageSet ? "Image Set" : "Image Ready"}
+                  bgColor={imageSet ? "gray" : "yellow"}
                   py="py-2"
                   px="px-6"
                   textColor="text-white"
                   borderRadius="rounded"
-                  disabled={isImageUploading || imageSet}
-                  className={`transition-all duration-300 ${
-                    imageSet ? "bg-gray-400 cursor-not-allowed" : ""
-                  }`}
+                  disabled
+                  className="cursor-default"
                 />
               </div>
             </div>
 
-            {/* Form Fields */}
             <div className="space-y-4">
-              {/* Trainer Name */}
               <div>
                 <label className="block text-gray-700 font-semibold text-xl pb-2">
                   Trainer Name
@@ -230,7 +181,6 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                 )}
               </div>
 
-              {/* Gender */}
               <div>
                 <label className="block text-gray-700">Gender</label>
                 <select
@@ -249,7 +199,6 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                 )}
               </div>
 
-              {/* Age */}
               <div>
                 <label className="block text-gray-700">Age</label>
                 <input
@@ -263,7 +212,6 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                 )}
               </div>
 
-              {/* Years of Experience */}
               <div>
                 <label className="block text-gray-700">
                   Years of Experience
@@ -290,7 +238,6 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
             </div>
           </div>
 
-          {/* Next Step Button */}
           <div className="flex justify-center items-center w-full">
             <CommonButton
               type="submit"
@@ -302,7 +249,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
               py="py-3"
               borderRadius="rounded-lg"
               width="auto"
-              isLoading={false}
+              isLoading={isImageUploading}
               disabled={isNextDisabled}
               textColor="text-white"
               className={`hover:transform hover:translate-x-2 transition-transform duration-300 ${
@@ -317,7 +264,6 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
   );
 };
 
-// Prop validation
 TrainerAddModalInputBasicInformation.propTypes = {
   onNextStep: PropTypes.func.isRequired,
 };
