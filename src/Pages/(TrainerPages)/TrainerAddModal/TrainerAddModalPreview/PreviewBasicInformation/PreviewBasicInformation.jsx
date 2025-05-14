@@ -103,7 +103,7 @@ PreviewBasicInformation.propTypes = {
     experience: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     age: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     availableDays: PropTypes.arrayOf(PropTypes.string),
-  }).isRequired,
+  }),
 };
 
 export default PreviewBasicInformation;

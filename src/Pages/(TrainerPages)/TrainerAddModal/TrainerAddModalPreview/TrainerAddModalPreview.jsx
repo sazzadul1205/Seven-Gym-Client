@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 // Import Components
 import PreviewBasicInformation from "./PreviewBasicInformation/PreviewBasicInformation";
 import PreviewContacts from "./PreviewContacts/PreviewContacts";
+import PreviewDetails from "./PreviewDetails/PreviewDetails";
+import PreviewSchedule from "./PreviewSchedule/PreviewSchedule";
 
 const TrainerAddModalPreview = () => {
   const [trainerSchedule, setTrainerSchedule] = useState(null);
@@ -26,8 +28,6 @@ const TrainerAddModalPreview = () => {
     }
   }, []);
 
-  console.log(trainerSchedule);
-
   return (
     <div>
       {/* Title */}
@@ -38,7 +38,14 @@ const TrainerAddModalPreview = () => {
       {/* Basic Preview */}
       <PreviewBasicInformation trainerBasicInfo={trainerBasicInfo} />
 
+      {/* Contacts */}
       <PreviewContacts trainerBasicInfo={trainerBasicInfo} />
+
+      {/* Details */}
+      <PreviewDetails trainerBasicInfo={trainerBasicInfo} />
+
+      {/* Trainer Schedule  */}
+      <PreviewSchedule trainerSchedule={trainerSchedule} />
     </div>
   );
 };

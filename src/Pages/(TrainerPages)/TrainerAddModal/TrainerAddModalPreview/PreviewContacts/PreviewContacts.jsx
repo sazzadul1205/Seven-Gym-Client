@@ -183,6 +183,7 @@ const PreviewContacts = ({ trainerBasicInfo }) => {
   );
 };
 
+// Prop Validation
 PreviewContacts.propTypes = {
   trainerBasicInfo: PropTypes.shape({
     contact: PropTypes.shape({
