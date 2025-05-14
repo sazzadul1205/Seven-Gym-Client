@@ -118,12 +118,12 @@ const TrainerProfileContact = ({ TrainerDetails, refetch }) => {
         }
       >
         <IoSettings className="text-red-500 text-4xl transition-transform duration-500 hover:rotate-180 hover:text-red-400 cursor-pointer" />
+        <Tooltip
+          id="Trainer_Profile_Settings_Contact_Tooltip"
+          place="top"
+          content="Trainer Profile Contact Settings"
+        />
       </div>
-      <Tooltip
-        id="Trainer_Profile_Settings_Contact_Tooltip"
-        place="top"
-        content="Trainer Profile Contact Settings"
-      />
 
       {/* Header */}
       <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">

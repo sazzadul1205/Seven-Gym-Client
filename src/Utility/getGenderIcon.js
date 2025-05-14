@@ -1,6 +1,8 @@
+import React from "react";
+
+// Import Icons
 import { IoMdFemale, IoMdMale } from "react-icons/io";
 import { MdOutlinePeopleAlt } from "react-icons/md";
-import React from "react";
 
 /**
  * Return an icon element and label for a given gender.

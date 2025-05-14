@@ -4,11 +4,12 @@ import PropTypes from "prop-types";
 // Import Icons
 import { Tooltip } from "react-tooltip";
 import { IoSettings } from "react-icons/io5";
-import { MdOutlinePeopleAlt } from "react-icons/md";
-import { IoMdFemale, IoMdMale } from "react-icons/io";
 
 // Import Modal
 import TrainerProfileHeaderUpdateModal from "./TrainerProfileHeaderUpdateModal.jsx/TrainerProfileHeaderUpdateModal";
+
+// Import Utility
+import { getGenderIcon } from "../../../../Utility/getGenderIcon";
 
 // Function to get tier badge styles dynamically
 const getTierBadge = (tier) => {
@@ -21,31 +22,6 @@ const getTierBadge = (tier) => {
   };
 
   return tierStyles[tier] || "bg-gray-200 text-gray-700 ring-2 ring-gray-300";
-};
-
-// Function to determine gender icon & label
-const getGenderIcon = (gender) => {
-  const genderData = {
-    Male: {
-      icon: <IoMdMale className="text-blue-500 text-4xl font-bold" />,
-      label: "Male",
-    },
-    Female: {
-      icon: <IoMdFemale className="text-pink-500 text-4xl font-bold" />,
-      label: "Female",
-    },
-    Other: {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 text-4xl font-bold" />,
-      label: "Other",
-    },
-  };
-
-  return (
-    genderData[gender] || {
-      icon: <MdOutlinePeopleAlt className="text-gray-500 text-2xl" />,
-      label: "Not specified",
-    }
-  );
 };
 
 const TrainerProfileHeader = ({ TrainerDetails, refetch }) => {

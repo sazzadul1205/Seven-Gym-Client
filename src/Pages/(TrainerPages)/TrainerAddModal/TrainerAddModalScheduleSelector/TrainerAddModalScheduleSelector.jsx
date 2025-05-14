@@ -107,41 +107,78 @@ const TrainerAddModalScheduleSelector = ({ onNextStep }) => {
 
   // Handle Apply button click
   const handleApply = () => {
+    // Start loading state to disable the button and show spinner
     setIsLoading(true);
+
+    // Get trainer's name from localStorage
     const trainerName = getTrainerName();
+
+    // Store the name in a ref to track who last applied the schedule
     lastGeneratedNameRef.current = trainerName;
 
+    // Create an empty object to store the final schedule
     const schedule = {};
 
-    // Build schedule by combining selected days with each time range
+    // Loop through each selected day
     selectedDays.forEach((day) => {
+      // Initialize an empty object for this day
       schedule[day] = {};
+
+      // Loop through each selected time range
       ranges.forEach((range) => {
         const timeKey = range.start;
+
+        // Add a session entry for this time slot on the given day
         schedule[day][timeKey] = {
-          id: `${trainerName.replace(/\s+/g, "_")}-${day}-${timeKey}`,
-          classType: "N/A",
-          participant: {},
-          participantLimit: 0,
-          classPrice: 0.0,
+          id: `${trainerName.replace(/\s+/g, "_")}-${day}-${timeKey}`, // Unique ID
+          classType: "N/A", // Default value
+          participant: {}, // Initially empty
+          participantLimit: 0, // No participants allowed by default
+          classPrice: 0.0, // Free by default
           start: range.start,
           end: range.end,
         };
       });
     });
 
+    // Final object that contains trainer name and their schedule
     const result = {
       trainerName,
       trainerSchedule: schedule,
     };
 
+    // Update state to store the newly generated schedule
     setGeneratedSchedule(result);
 
-    // Save to localStorage
+    // Save the schedule to localStorage for persistence
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(result));
 
-    // Prevent multiple applies
+    // ✅ Also update trainerBasicInfo in localStorage with availableDays (i.e., selectedDays)
+    try {
+      // Parse the existing trainerBasicInfo from localStorage
+      const basicInfo =
+        JSON.parse(localStorage.getItem("trainerBasicInfo")) || {};
+
+      // Merge existing info with new field: availableDays
+      const updatedInfo = {
+        ...basicInfo,
+        availableDays: selectedDays,
+      };
+
+      // Save the updated info back to localStorage
+      localStorage.setItem("trainerBasicInfo", JSON.stringify(updatedInfo));
+    } catch (error) {
+      // If something goes wrong (e.g., malformed JSON), log the error
+      console.error(
+        "Failed to update trainerBasicInfo with availableDays:",
+        error
+      );
+    }
+
+    // Disable the Apply button to prevent re-submission
     setIsApplyDisabled(true);
+
+    // End loading state
     setIsLoading(false);
   };
 

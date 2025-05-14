@@ -7,34 +7,44 @@ import { useForm } from "react-hook-form";
 // Import Icons
 import { FaArrowRight } from "react-icons/fa";
 
-// Import Hooks
+// Import Custom Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-
-// Import Component
-import ImageCropper from "../../../(Auth)/SignUpDetails/ImageCropper/ImageCropper";
-
-// Import Button
-import CommonButton from "../../../../Shared/Buttons/CommonButton";
 import useAuth from "../../../../Hooks/useAuth";
 
-// Image hosting API key and URL from environment variables
+// Import Components
+import ImageCropper from "../../../(Auth)/SignUpDetails/ImageCropper/ImageCropper";
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
+
+// Image hosting service configuration (imgbb)
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Key}`;
 
+// Main Component
 const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
+  // Indicates if image was successfully uploaded/set
   const [imageSet, setImageSet] = useState(false);
+
+  // Cropped image blob for upload
   const [tempImageBlob, setTempImageBlob] = useState(null);
+
+  // Uploaded image URL
   const [profileImageUrl, setProfileImageUrl] = useState(null);
+
+  // Message shown after upload success/failure
   const [successMessage, setSuccessMessage] = useState("");
+
+  // Indicates image is uploading
   const [isImageUploading, setIsImageUploading] = useState(false);
 
+  // Load existing data from localStorage (used for prefill)
   const storedData = JSON.parse(
     localStorage.getItem("trainerBasicInfo") || "{}"
   );
 
+  // React Hook Form setup with default values
   const {
     register,
     handleSubmit,
@@ -49,6 +59,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
     },
   });
 
+  // Prefill profile image if previously set
   useEffect(() => {
     if (storedData?.imageUrl) {
       setProfileImageUrl(storedData.imageUrl);
@@ -56,12 +67,14 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
     }
   }, [storedData.imageUrl]);
 
+  // Handler for cropped image blob
   const handleImageChange = (newImageBlob) => {
     setTempImageBlob(newImageBlob);
     setSuccessMessage("");
     setImageSet(false);
   };
 
+  // Upload image to hosting service and return image URL
   const uploadImageAndGetUrl = async (imageBlob) => {
     if (!imageBlob || !(imageBlob instanceof Blob)) {
       console.error("Invalid image format");
@@ -90,16 +103,19 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
     }
   };
 
+  // Final form submit handler
   const onSubmit = async (data) => {
     let finalImageUrl = profileImageUrl;
 
+    // Upload image if cropped but not yet uploaded
     if (tempImageBlob) {
       const uploadedUrl = await uploadImageAndGetUrl(tempImageBlob);
-      if (!uploadedUrl) return; // If upload failed, stop submission
+      if (!uploadedUrl) return;
       finalImageUrl = uploadedUrl;
       setProfileImageUrl(uploadedUrl);
     }
 
+    // Merge new form values with existing localStorage data
     const updatedValues = {
       ...data,
       imageUrl: finalImageUrl,
@@ -109,34 +125,46 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
       localStorage.getItem("trainerBasicInfo") || "{}"
     );
     const mergedData = { ...existing, ...updatedValues };
+
+    // Save updated data to localStorage
     localStorage.setItem("trainerBasicInfo", JSON.stringify(mergedData));
 
+    // Proceed to next step
     onNextStep();
   };
 
+  // Disable next button if form is invalid or image is uploading
   const isNextDisabled = !isValid || isImageUploading;
 
   return (
     <div>
+      {/* Success message after image upload */}
       {successMessage && (
         <div className="text-center text-green-500 font-semibold p-3 bg-green-100 rounded-md">
           {successMessage}
         </div>
       )}
 
+      {/* Main Form */}
       <div className="py-5">
+        {/* Main Title */}
         <h3 className="text-2xl font-semibold text-center text-gray-800">
           Basic Information
         </h3>
 
+        {/* Form Content */}
         <form onSubmit={handleSubmit(onSubmit)}>
+          {/* Input Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-10 items-center px-5">
+            {/* Profile Image Crop & Upload */}
             <div className="items-center justify-center h-full w-full">
+              {/* Title */}
               <h3 className="text-xl font-semibold text-center py-2">
                 Trainer Profile Image
                 <hr className="bg-black p-[1px] w-1/2 mx-auto" />
               </h3>
 
+              {/* Cropping Component */}
               <ImageCropper
                 onImageCropped={handleImageChange}
                 defaultImageUrl={profileImageUrl}
@@ -144,6 +172,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                 errors={errors}
               />
 
+              {/* Upload Button Status */}
               <div className="flex justify-center mt-3">
                 <CommonButton
                   clickEvent={() => {}}
@@ -161,7 +190,9 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
               </div>
             </div>
 
+            {/* Form Fields */}
             <div className="space-y-4">
+              {/* Name Field */}
               <div>
                 <label className="block text-gray-700 font-semibold text-xl pb-2">
                   Trainer Name
@@ -181,6 +212,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                 )}
               </div>
 
+              {/* Gender Field */}
               <div>
                 <label className="block text-gray-700">Gender</label>
                 <select
@@ -188,9 +220,9 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                   className="input w-full bg-white rounded-lg shadow-lg hover:shadow-xl focus:shadow-xl"
                 >
                   <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
                 </select>
                 {errors.gender && (
                   <p className="text-red-500 text-sm">
@@ -199,6 +231,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                 )}
               </div>
 
+              {/* Age Field */}
               <div>
                 <label className="block text-gray-700">Age</label>
                 <input
@@ -212,6 +245,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                 )}
               </div>
 
+              {/* Experience Field */}
               <div>
                 <label className="block text-gray-700">
                   Years of Experience
@@ -238,6 +272,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
             </div>
           </div>
 
+          {/* Submit Button */}
           <div className="flex justify-center items-center w-full">
             <CommonButton
               type="submit"
@@ -264,6 +299,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
   );
 };
 
+// Type checking for props
 TrainerAddModalInputBasicInformation.propTypes = {
   onNextStep: PropTypes.func.isRequired,
 };
