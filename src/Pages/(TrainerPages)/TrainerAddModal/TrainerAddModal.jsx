@@ -26,6 +26,7 @@ import TrainerAddModalInputTrainingDetails from "./TrainerAddModalInputTrainingD
 import TrainerAddModalInputAwards from "./TrainerAddModalInputAwards/TrainerAddModalInputAwards";
 import TrainerAddModalInputPartnerships from "./TrainerAddModalInputPartnerships/TrainerAddModalInputPartnerships";
 import TrainerAddModalScheduleSelector from "./TrainerAddModalScheduleSelector/TrainerAddModalScheduleSelector";
+import TrainerAddModalScheduleClassSelector from "./TrainerAddModalScheduleClassSelector/TrainerAddModalScheduleClassSelector";
 
 // Utility function to randomly shuffle an array
 const shuffleArray = (array) => {
@@ -163,6 +164,7 @@ const TrainerAddModal = () => {
             "Achievements",
             "Partnerships",
             "Schedule Selector",
+            "Class Selector",
           ].map((label, index) => (
             <li
               key={label}
@@ -227,6 +229,12 @@ const TrainerAddModal = () => {
           {currentStep === 6 && (
             <TrainerAddModalScheduleSelector
               onNextStep={() => setCurrentStep(7)}
+            />
+          )}
+
+          {currentStep === 7 && (
+            <TrainerAddModalScheduleClassSelector
+              onNextStep={() => setCurrentStep(8)}
             />
           )}
         </div>
