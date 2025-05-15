@@ -205,14 +205,14 @@ const TrainerAddModalScheduleSelector = ({ onNextStep }) => {
   }, [selectedDays, ranges]);
 
   return (
-    <div className="p-4">
+    <div>
       {/* Title */}
-      <h3 className="text-2xl font-semibold text-center text-gray-800">
+      <h3 className="text-2xl font-semibold text-center text-gray-800 bg-white py-2 border border-b-black">
         Trainer Schedule Selector
       </h3>
 
       {/* Day & Time range selectors */}
-      <div>
+      <div className="px-2" >
         {/* Schedule Day Selector */}
         <ScheduleDaySelector
           selectedDays={selectedDays}
@@ -227,14 +227,14 @@ const TrainerAddModalScheduleSelector = ({ onNextStep }) => {
       <hr className="bg-gray-300 p-[1px] my-5" />
 
       {/* Apply Button */}
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center mt-4 px-2">
         <CommonButton
           clickEvent={handleApply}
           disabled={isApplyDisabled}
           isLoading={isLoading}
           loadingText="Processing..."
           text="Apply"
-          bgColor="blue"
+          bgColor="green"
           px="px-20"
           py="py-2"
           borderRadius="rounded-lg"
@@ -244,24 +244,19 @@ const TrainerAddModalScheduleSelector = ({ onNextStep }) => {
 
       {/* Render the generated schedule table only if it's available */}
       {generatedSchedule && (
-        <div className="mt-6">
-          {/* Header showing the trainer name */}
-          <h4 className="text-2xl font-bold mb-4 text-center text-green-700">
-            ✅ Schedule for {generatedSchedule.trainerName}
+        <div className="mt-6 px-2 sm:px-4">
+          <h4 className="text-xl sm:text-2xl font-bold mb-4 text-center ">
+            Schedule for {generatedSchedule.trainerName}
           </h4>
 
-          {/* Responsive table container with styling */}
-          <div className="overflow-x-auto rounded-lg shadow-md border border-gray-300">
-            <table className="min-w-full divide-y divide-gray-200">
-              {/* Table head with day/time labels */}
-              <thead className="bg-green-100 sticky top-0 z-10">
+          {/* Desktop/Table view */}
+          <div className="hidden sm:block overflow-x-auto rounded-lg shadow-md border border-gray-300">
+            <table className="min-w-full divide-y divide-gray-200 text-sm sm:text-base">
+              <thead className="bg-green-100 sticky top-0 z-20">
                 <tr>
-                  {/* First column header for days */}
                   <th className="text-left px-4 py-2 text-sm font-medium text-gray-700">
                     Day / Time
                   </th>
-
-                  {/* Dynamically generate a column for each selected time range */}
                   {ranges.map((range) => (
                     <th
                       key={range.start}
@@ -272,32 +267,25 @@ const TrainerAddModalScheduleSelector = ({ onNextStep }) => {
                   ))}
                 </tr>
               </thead>
-
-              {/* Table body: each row represents a selected day */}
               <tbody className="bg-white divide-y divide-gray-200">
                 {selectedDays.map((day, index) => (
                   <tr
                     key={day}
-                    className={index % 2 === 0 ? "bg-gray-50" : "bg-white"} // Alternate row color
+                    className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
                   >
-                    {/* First cell shows the name of the day */}
                     <td className="px-4 py-2 text-sm font-semibold text-gray-800 text-center">
                       {day}
                     </td>
-
-                    {/* For each time range, render a cell indicating if a session exists */}
                     {ranges.map((range) => {
-                      // Check if the schedule has a slot for this day and time range
                       const hasSlot =
                         generatedSchedule.trainerSchedule?.[day]?.[range.start];
-
                       return (
                         <td
                           key={range.start}
                           className={`px-4 py-2 text-center text-lg ${
                             hasSlot
-                              ? "text-green-600 font-bold" // If scheduled, show green checkmark
-                              : "text-gray-300" // If not scheduled, show grey dash
+                              ? "text-green-600 font-bold"
+                              : "text-gray-300"
                           }`}
                         >
                           {hasSlot ? "✅" : "—"}
@@ -308,6 +296,45 @@ const TrainerAddModalScheduleSelector = ({ onNextStep }) => {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile card view */}
+          <div className="sm:hidden space-y-4">
+            {selectedDays.map((day) => (
+              <div
+                key={day}
+                className="border border-gray-300 rounded-lg shadow-sm p-4 bg-white"
+              >
+                <h5 className="text-md font-semibold text-green-700 mb-2 text-center">
+                  {day}
+                </h5>
+                <ul className="space-y-2">
+                  {ranges.map((range) => {
+                    const hasSlot =
+                      generatedSchedule.trainerSchedule?.[day]?.[range.start];
+                    return (
+                      <li
+                        key={range.start}
+                        className="flex justify-between items-center text-sm"
+                      >
+                        <span className="text-gray-600">
+                          {range.start} - {range.end}
+                        </span>
+                        <span
+                          className={
+                            hasSlot
+                              ? "text-green-600 font-bold"
+                              : "text-gray-400"
+                          }
+                        >
+                          {hasSlot ? "✅" : "—"}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
       )}

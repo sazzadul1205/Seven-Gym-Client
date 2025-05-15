@@ -6,7 +6,7 @@ const PreviewBasicInformation = ({ trainerBasicInfo }) => {
   const { icon } = getGenderIcon(trainerBasicInfo?.gender, "3xl");
 
   return (
-    <div className="p-2">
+    <div className="p-2 md:p-2">
       {/* Trainer Profile Image */}
       <img
         src={trainerBasicInfo?.imageUrl || "/default-profile.png"}
@@ -28,7 +28,7 @@ const PreviewBasicInformation = ({ trainerBasicInfo }) => {
       <hr className="bg-gray-500 p-[1px] w-1/2 mx-auto" />
 
       {/* Section containing bio and stats */}
-      <div className="p-2 space-y-6">
+      <div className="p-0 pt-2 md:p-2 space-y-6">
         {/* Trainer Bio Section */}
         <div>
           {/* Title */}
@@ -47,7 +47,7 @@ const PreviewBasicInformation = ({ trainerBasicInfo }) => {
         </div>
 
         {/* Experience, Age, and Available Days Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-4">
           {/* Dynamic stat card rendering */}
           {[
             {

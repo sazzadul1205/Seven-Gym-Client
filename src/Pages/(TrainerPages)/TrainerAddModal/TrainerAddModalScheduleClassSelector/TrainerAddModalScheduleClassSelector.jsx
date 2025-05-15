@@ -56,18 +56,22 @@ const TrainerAddModalScheduleClassSelector = ({ onNextStep }) => {
   };
 
   return (
-    <div className="p-4">
+    <div>
       {/* Page Title */}
-      <h3 className="text-2xl font-semibold text-center text-gray-800 mb-4">
+      <h3 className="text-xl font-semibold text-center text-gray-800 bg-white py-2 border border-b-black">
         Trainer Schedule Class Selector
       </h3>
 
-      {/* Table displaying available class options */}
-      <div className="overflow-x-auto rounded-md border border-gray-300 shadow-sm">
+      {/* =================== Class Selection Section =================== */}
+
+      {/* Desktop/Table View: Hidden on screens smaller than `sm` */}
+      <div className="hidden sm:block overflow-x-auto rounded-md border border-gray-300 shadow-sm p-2">
+        {/* Table for class selection */}
         <table className="min-w-full divide-y divide-gray-200">
-          {/* Table Header */}
+          {/* Table header row */}
           <thead className="bg-gray-100">
             <tr>
+              {/* Render header labels dynamically */}
               {[
                 "Select",
                 "Class Type",
@@ -85,14 +89,14 @@ const TrainerAddModalScheduleClassSelector = ({ onNextStep }) => {
             </tr>
           </thead>
 
-          {/* Table Body: List of classes */}
+          {/* Table body containing class information rows */}
           <tbody className="bg-white divide-y divide-gray-200">
             {ClassInformation.map((classInfo, index) => (
               <tr
                 key={index}
                 className={`transition-colors ${
                   selectedClasses.includes(classInfo.classType)
-                    ? "bg-green-100"
+                    ? "bg-green-100" // Highlight selected row
                     : ""
                 }`}
               >
@@ -106,16 +110,22 @@ const TrainerAddModalScheduleClassSelector = ({ onNextStep }) => {
                   />
                 </td>
 
-                {/* Display class details */}
+                {/* Class type */}
                 <td className="px-4 py-2 text-sm font-medium text-gray-800">
                   {classInfo.classType}
                 </td>
+
+                {/* Class description */}
                 <td className="px-4 py-2 text-sm text-gray-600">
                   {classInfo.description}
                 </td>
+
+                {/* Participant limit */}
                 <td className="px-4 py-2 text-sm text-gray-600">
                   {classInfo.participantLimit}
                 </td>
+
+                {/* Price range */}
                 <td className="px-4 py-2 text-sm text-gray-600">
                   {classInfo.priceRange}
                 </td>
@@ -123,6 +133,57 @@ const TrainerAddModalScheduleClassSelector = ({ onNextStep }) => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* =================== Mobile/Card View: Hidden on screens `sm` and above =================== */}
+      <div className="sm:hidden p-2">
+        {/* Loop through class information for card rendering */}
+        {ClassInformation.map((classInfo, index) => (
+          <div
+            key={index}
+            className={`border border-gray-300 rounded-md p-4 shadow-sm ${
+              selectedClasses.includes(classInfo.classType)
+                ? "bg-green-50" // Highlight selected card
+                : "bg-white"
+            }`}
+          >
+            {/* Card header: class type and checkbox */}
+            <div className="flex items-center justify-between mb-2">
+              {/* Class type title */}
+              <h5 className="text-base font-semibold text-green-700">
+                {classInfo.classType}
+              </h5>
+
+              {/* Checkbox for selection */}
+              <input
+                type="checkbox"
+                checked={selectedClasses.includes(classInfo.classType)}
+                onChange={() => handleCheckboxChange(classInfo.classType)}
+                className="form-checkbox h-4 w-4 text-green-600"
+              />
+            </div>
+
+            {/* Class description */}
+            <p className="text-sm text-gray-600 mb-1">
+              <span className="font-medium text-gray-700">Description: </span>
+              {classInfo.description}
+            </p>
+
+            {/* Participant limit */}
+            <p className="text-sm text-gray-600 mb-1">
+              <span className="font-medium text-gray-700">
+                Participant Limit:{" "}
+              </span>
+              {classInfo.participantLimit}
+            </p>
+
+            {/* Price range */}
+            <p className="text-sm text-gray-600">
+              <span className="font-medium text-gray-700">Price Range: </span>
+              {classInfo.priceRange}
+            </p>
+          </div>
+        ))}
       </div>
 
       {/* Submit Button: Save selections and proceed */}

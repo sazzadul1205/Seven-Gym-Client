@@ -107,11 +107,11 @@ const socialPlatforms = [
 
 const TrainerAddModalInputPersonalInformation = ({ onNextStep }) => {
   // State Management
-  const [addedPlatforms, setAddedPlatforms] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [socialLinks, setSocialLinks] = useState({});
+  const [addedPlatforms, setAddedPlatforms] = useState([]);
 
-  // useForm hook from react-hook-form for handling form state and validation
+  // React Hook Form setup with default values and validation
   const {
     register,
     handleSubmit,
@@ -125,14 +125,13 @@ const TrainerAddModalInputPersonalInformation = ({ onNextStep }) => {
     },
   });
 
-  // useEffect hook to load existing trainer data from localStorage and prepopulated form fields
+  // Load existing data from localStorage on mount, and prefill form fields
   useEffect(() => {
     const existingData =
       JSON.parse(localStorage.getItem("trainerBasicInfo")) || {};
     const contact = existingData.contact || {};
     const socials = {};
 
-    // Set social media links based on existing data in localStorage
     socialPlatforms.forEach((platform) => {
       if (contact[platform.key]) {
         socials[platform.key] = contact[platform.key];
@@ -144,15 +143,33 @@ const TrainerAddModalInputPersonalInformation = ({ onNextStep }) => {
     setValue("email", contact.email || "");
     setValue("website", contact.website || "");
     setSocialLinks(socials);
-    setAddedPlatforms(Object.keys(socials)); // Set platforms that already have data
+    setAddedPlatforms(Object.keys(socials));
   }, [setValue]);
 
-  // Function to handle change in social media links input
+  // Validate if string is a proper URL
+  const isValidUrl = (str) => {
+    try {
+      // Accept URLs with protocol (http/https) or without protocol but with domain
+      new URL(str);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  // Validate if email is valid (simple regex)
+  const isValidEmail = (email) => {
+    // Simple regex for email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Social link input change handler
   const handleSocialLinkChange = (key, value) => {
     setSocialLinks((prev) => ({ ...prev, [key]: value }));
   };
 
-  // Function to add a new social platform to the active list
+  // Add social platform to active list
   const handleAddPlatform = (key) => {
     if (!addedPlatforms.includes(key)) {
       setAddedPlatforms((prev) => [...prev, key]);
@@ -160,7 +177,7 @@ const TrainerAddModalInputPersonalInformation = ({ onNextStep }) => {
     }
   };
 
-  // Function to remove a social platform from the active list
+  // Remove social platform from active list
   const handleRemovePlatform = (key) => {
     setAddedPlatforms((prev) => prev.filter((item) => item !== key));
     setSocialLinks((prev) => {
@@ -170,8 +187,41 @@ const TrainerAddModalInputPersonalInformation = ({ onNextStep }) => {
     });
   };
 
-  // Handle form submission and store updated data in localStorage
+  // Form submission handler with validation checks for URLs & email
   const onSubmit = (data) => {
+    // Basic validations before proceeding:
+
+    // Check phone number is entered
+    if (!phoneNumber || phoneNumber.trim().length < 5) {
+      alert("Please enter a valid phone number.");
+      return;
+    }
+
+    // Validate email format
+    if (data.email && !isValidEmail(data.email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    // Validate website URL (if provided)
+    if (data.website && !isValidUrl(data.website)) {
+      alert("Please enter a valid website URL.");
+      return;
+    }
+
+    // Validate all social links URLs (if not empty)
+    for (const [key, link] of Object.entries(socialLinks)) {
+      if (link.trim() !== "" && !isValidUrl(link.trim())) {
+        alert(
+          `Please enter a valid URL for ${
+            key.charAt(0).toUpperCase() + key.slice(1)
+          }.`
+        );
+        return;
+      }
+    }
+
+    // If all checks pass, save to localStorage and move to next step
     const existingData =
       JSON.parse(localStorage.getItem("trainerBasicInfo")) || {};
 
@@ -186,13 +236,12 @@ const TrainerAddModalInputPersonalInformation = ({ onNextStep }) => {
       },
     };
 
-    // Save updated data to localStorage
     localStorage.setItem("trainerBasicInfo", JSON.stringify(updatedData));
 
     onNextStep();
   };
 
-  // Get the list of active social platforms based on the addedPlatforms state
+  // Active and inactive social platforms for UI display
   const activePlatforms = socialPlatforms.filter((p) =>
     addedPlatforms.includes(p.key)
   );
@@ -201,14 +250,17 @@ const TrainerAddModalInputPersonalInformation = ({ onNextStep }) => {
   );
 
   return (
-    <div className="py-5">
+    <div>
       {/* Title */}
-      <h3 className="text-2xl font-semibold text-center text-gray-800">
+      <h3 className="text-xl md:text-2xl font-semibold text-center text-gray-800 bg-white py-2 border border-b-black">
         Personal & Contact Information
       </h3>
 
       {/* Form Content */}
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-4 px-10 space-y-3">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="px-1 md:px-5 space-y-2 pb-2"
+      >
         {/* Bio Section */}
         <div>
           <label className="block text-gray-700 font-semibold text-xl pb-2">
@@ -232,20 +284,21 @@ const TrainerAddModalInputPersonalInformation = ({ onNextStep }) => {
         </div>
 
         {/* Contact Info Section */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Your Phone Number */}
           <div>
             <label className="block font-bold ml-1 mb-2">
               Your Phone Number
             </label>
             <PhoneInput
-              country={"bd"} // Default country code set to Bangladesh
+              country={"bd"} // Default country code: Bangladesh
               value={phoneNumber}
               onChange={setPhoneNumber}
               inputClass="!w-full !bg-white !text-black !rounded-lg !shadow-lg"
               inputStyle={{ width: "100%", height: "40px" }}
             />
           </div>
+
           {/* Contact Email */}
           <InputField
             label="Contact Email"
@@ -254,6 +307,7 @@ const TrainerAddModalInputPersonalInformation = ({ onNextStep }) => {
             placeholder="Enter email address"
             register={register}
             errors={errors}
+            // We do extra email validation on submit
           />
 
           {/* Portfolio Website URL */}
@@ -273,23 +327,22 @@ const TrainerAddModalInputPersonalInformation = ({ onNextStep }) => {
           <h3 className="text-xl font-semibold text-black py-1">
             Social Links:
           </h3>
-
-          {/* Divider */}
           <hr className="bg-white p-[2px] w-1/2 mb-4" />
 
-          {/* Map Active Platform that are Already existing */}
+          {/* Render active social platforms */}
           <div className="pb-3">
             {activePlatforms.length > 0 && (
-              <div className="space-y-3 grid grid-cols-2 space-x-2">
+              <div className="space-y-3 grid grid-cols-1 md:grid-cols-2 space-x-2">
                 {activePlatforms.map((platform) => (
                   <div key={platform.key} className="flex items-center gap-1">
-                    {/* Icons */}
+                    {/* Social Icon */}
                     <div className="p-1 bg-white rounded-full">
                       <span className={`text-4xl ${platform.color}`}>
                         {platform.icon}
                       </span>
                     </div>
-                    {/* Input */}
+
+                    {/* Social link input */}
                     <input
                       type="text"
                       placeholder={platform.name}
@@ -299,7 +352,8 @@ const TrainerAddModalInputPersonalInformation = ({ onNextStep }) => {
                       }
                       className="input input-bordered w-full rounded-lg bg-white border-gray-600"
                     />
-                    {/* Close Icon */}
+
+                    {/* Remove platform button */}
                     <MdClose
                       onClick={() => handleRemovePlatform(platform.key)}
                       className="cursor-pointer text-4xl hover:scale-105 text-red-500 bg-white rounded-full p-1"
@@ -310,18 +364,13 @@ const TrainerAddModalInputPersonalInformation = ({ onNextStep }) => {
             )}
           </div>
 
-          {/* Add More Platforms Section */}
+          {/* Add More Platforms */}
           <div className="pb-2">
-            {/* Title */}
             <h3 className="text-xl font-semibold text-black py-1">
               Add More Social Links:
             </h3>
-
-            {/* Divider */}
             <hr className="bg-white p-[2px] w-1/3 mb-4" />
-
-            {/* Map In-Active Platform that are do not exist */}
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-2 md:gap-4">
               {inactivePlatforms.map((platform) => (
                 <div
                   key={platform.key}

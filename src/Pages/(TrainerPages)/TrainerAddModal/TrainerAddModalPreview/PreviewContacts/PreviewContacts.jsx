@@ -107,7 +107,7 @@ const PreviewContacts = ({ trainerBasicInfo }) => {
 
       <div>
         {/* Contact Details */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-1 md:gap-4">
           {/* Phone */}
           {trainerBasicInfo?.contact?.phone && (
             <div className="flex items-center space-x-3 bg-white p-4 rounded-lg shadow-md">

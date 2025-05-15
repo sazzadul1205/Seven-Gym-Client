@@ -10,13 +10,7 @@ import { FaPlus, FaTrash } from "react-icons/fa";
 // Shared Button
 import CommonButton from "../Buttons/CommonButton";
 
-const DynamicFieldArrayInputList = ({
-  control,
-  name,
-  label,
-  fields,
-  multiFieldLayoutClass = "",
-}) => {
+const DynamicFieldArrayInputList = ({ control, name, label, fields }) => {
   // useFieldArray hook provides methods to manipulate field arrays
   const {
     fields: fieldArray,
@@ -100,16 +94,14 @@ const DynamicFieldArrayInputList = ({
           ) : (
             // Render multi-field entry (e.g., partnerName and website)
             <div key={field.id} className="w-full">
-              <div
-                className={`flex items-start gap-2 ${multiFieldLayoutClass}`}
-              >
+              <div className={`flex items-start gap-2`}>
                 {/* Field index */}
                 <span className="font-bold text-gray-700 mt-3">
                   {index + 1}.
                 </span>
 
-                {/* Render all inputs inside the entry */}
-                <div className={`flex-1 ${multiFieldLayoutClass}`}>
+                {/* Stacked input fields */}
+                <div className="flex-1 space-y-2">
                   {fields.map((fieldName) => (
                     <input
                       key={fieldName}
@@ -124,7 +116,6 @@ const DynamicFieldArrayInputList = ({
                 <button
                   type="button"
                   onClick={() => {
-                    // Prevent all fields from being removed
                     if (fieldArray.length === 1) {
                       remove(index);
                       append(createEmptyField());

@@ -150,7 +150,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
       ...data,
       imageUrl: finalImageUrl,
     };
-
+    
     // Retrieve any existing trainer data from localStorage
     const existing = JSON.parse(
       localStorage.getItem("trainerBasicInfo") || "{}"
@@ -186,7 +186,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
         </h3>
 
         {/* Form Content */}
-        <form onSubmit={handleSubmit(onSubmit)} className="px-2" >
+        <form onSubmit={handleSubmit(onSubmit)} className="px-5" >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-10 items-start">
             {/* Image Cropper & Upload Area */}
             <div className="w-full">

@@ -190,42 +190,59 @@ const TrainerAddModal = ({ refetch }) => {
             "radial-gradient(circle, rgba(239,68,68,0) 40%, rgba(239,68,68,0.15) 75%, rgba(239,68,68,0.3) 100%)",
         }}
       >
+        {/* Welcome Section */}
         {currentStep === 0 && (
           <TrainerAddModalWelcomeSection onNextStep={() => setCurrentStep(1)} />
         )}
+
+        {/* Basic Information Section */}
         {currentStep === 1 && (
           <TrainerAddModalInputBasicInformation
             onNextStep={() => setCurrentStep(2)}
           />
         )}
+
+        {/* Personal Information Section */}
         {currentStep === 2 && (
           <TrainerAddModalInputPersonalInformation
             onNextStep={() => setCurrentStep(3)}
           />
         )}
+
+        {/* Trainer Details */}
         {currentStep === 3 && (
           <TrainerAddModalInputTrainingDetails
             onNextStep={() => setCurrentStep(4)}
           />
         )}
+
+        {/* Trainer Awards */}
         {currentStep === 4 && (
           <TrainerAddModalInputAwards onNextStep={() => setCurrentStep(5)} />
         )}
+
+        {/* Trainers Partnerships */}
         {currentStep === 5 && (
           <TrainerAddModalInputPartnerships
             onNextStep={() => setCurrentStep(6)}
           />
         )}
+
+        {/* Trainer Schedule */}
         {currentStep === 6 && (
           <TrainerAddModalScheduleSelector
             onNextStep={() => setCurrentStep(7)}
           />
         )}
+
+        {/* Trainer Class */}
         {currentStep === 7 && (
           <TrainerAddModalScheduleClassSelector
             onNextStep={() => setCurrentStep(8)}
           />
         )}
+
+        {/* Profile Preview */}
         {currentStep === 8 && (
           <TrainerAddModalPreview
             onNextStep={() => setCurrentStep(9)}

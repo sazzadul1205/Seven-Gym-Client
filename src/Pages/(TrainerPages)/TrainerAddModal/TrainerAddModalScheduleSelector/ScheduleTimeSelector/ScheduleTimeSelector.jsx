@@ -87,13 +87,16 @@ const ScheduleTimeSelector = ({ ranges, setRanges }) => {
         Select {HOURS_COUNT} Time Slots
       </label>
 
-      {/* Time selector for choosing the starting hour */}
+      {/* Responsive container for time selector and button */}
+      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full">
+        {/* Label for start time */}
+        <label className="font-bold shrink-0 sm:w-auto">
+          Select Starting Hour :
+        </label>
 
-      <div className="flex gap-3 items-center">
-        <label className="font-bold ">Select Starting Hour :</label>
         {/* Dropdown for selecting the start time from available hourly times */}
         <select
-          className="border border-gray-300 bg-white rounded-md px-4 py-2 text-sm shadow-sm w-[500px]"
+          className="border border-gray-300 bg-white rounded-md px-4 py-2 text-sm shadow-sm w-full sm:w-[300px] md:w-[400px]"
           value={fromTime}
           onChange={(e) => setFromTime(e.target.value)}
         >
@@ -104,6 +107,7 @@ const ScheduleTimeSelector = ({ ranges, setRanges }) => {
             </option>
           ))}
         </select>
+
         {/* Button to apply the selected range */}
         <div className="w-full sm:w-auto">
           <CommonButton
@@ -112,6 +116,7 @@ const ScheduleTimeSelector = ({ ranges, setRanges }) => {
             disabled={!fromTime}
             bgColor="blue"
             py="py-2"
+            className="w-full sm:w-auto" // Responsive width for the button
           />
         </div>
       </div>
@@ -127,7 +132,7 @@ const ScheduleTimeSelector = ({ ranges, setRanges }) => {
             ranges.map(({ start, end }, idx) => (
               <p
                 key={idx}
-                className="flex gap-2 items-center bg-gray-100 rounded-2xl border py-2 px-4 text-gray-800 shadow-sm"
+                className="flex gap-2 items-center bg-gray-100 rounded-2xl border py-2 px-4 text-gray-800 shadow-sm text-sm"
               >
                 {/* Display each generated time block */}
                 <span className="text-blue-700">Class {idx + 1}:</span>
@@ -136,7 +141,7 @@ const ScheduleTimeSelector = ({ ranges, setRanges }) => {
               </p>
             ))
           ) : (
-            <p className="text-gray-500 italic">
+            <p className="text-gray-500 italic text-sm">
               No time blocks generated yet.
             </p> // Message shown if no time blocks have been generated
           )}

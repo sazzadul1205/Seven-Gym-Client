@@ -12,7 +12,7 @@ import {
 // PreviewDetails component to display trainer information
 const PreviewDetails = ({ trainerBasicInfo }) => {
   return (
-    <div className="mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+    <div className="mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 p-1 md:p-4">
       {/* Trainer Certifications Section */}
       <div className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-100 to-gray-300 rounded-lg shadow-lg mx-auto w-full p-4 cursor-pointer">
         {/* Header */}

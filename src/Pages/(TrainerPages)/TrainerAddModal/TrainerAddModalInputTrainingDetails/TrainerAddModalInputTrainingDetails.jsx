@@ -68,16 +68,16 @@ const TrainerAddModalInputTrainingDetails = ({ onNextStep }) => {
   };
 
   return (
-    <div className="p-2">
+    <div>
       {/* Title */}
-      <h3 className="text-2xl font-semibold text-center text-gray-800">
+      <h3 className="text-2xl font-semibold text-center text-gray-800 bg-white py-2 border border-b-black">
         Trainer Details
       </h3>
 
       {/* Form Content */}
       <form onSubmit={handleSubmit(onSubmit)} className="p-2">
         {/* Single Field Data */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {/* Certifications */}
           <DynamicFieldArrayInputList
             control={control}
