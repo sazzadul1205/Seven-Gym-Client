@@ -1,50 +1,50 @@
 import { useEffect, useState } from "react";
 
-// Import Packages
+// Import necessary packages
 import PropTypes from "prop-types";
 import { useForm } from "react-hook-form";
 
-// Import Icons
+// Import icons
 import { FaArrowRight } from "react-icons/fa";
 
-// Import Custom Hooks
+// Import custom hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../Hooks/useAuth";
 
-// Import Components
+// Import components
 import ImageCropper from "../../../(Auth)/SignUpDetails/ImageCropper/ImageCropper";
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
-// Image hosting service configuration (imgbb)
+// Set up image hosting key and API endpoint
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Key}`;
 
-// Main Component
+// Main component
 const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
-  // Indicates if image was successfully uploaded/set
+  // Whether image was uploaded/set
   const [imageSet, setImageSet] = useState(false);
 
-  // Cropped image blob for upload
+  // Temporary cropped image blob
   const [tempImageBlob, setTempImageBlob] = useState(null);
 
-  // Uploaded image URL
+  // Final uploaded image URL
   const [profileImageUrl, setProfileImageUrl] = useState(null);
 
-  // Message shown after upload success/failure
+  // Message after upload attempt
   const [successMessage, setSuccessMessage] = useState("");
 
-  // Indicates image is uploading
+  // Image upload loader flag
   const [isImageUploading, setIsImageUploading] = useState(false);
 
-  // Load existing data from localStorage (used for prefill)
+  // Load any stored trainer basic info from localStorage
   const storedData = JSON.parse(
     localStorage.getItem("trainerBasicInfo") || "{}"
   );
 
-  // React Hook Form setup with default values
+  // Set up react-hook-form with default values from localStorage
   const {
     register,
     handleSubmit,
@@ -59,7 +59,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
     },
   });
 
-  // Prefill profile image if previously set
+  // On mount, set existing profile image if previously uploaded
   useEffect(() => {
     if (storedData?.imageUrl) {
       setProfileImageUrl(storedData.imageUrl);
@@ -67,104 +67,135 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
     }
   }, [storedData.imageUrl]);
 
-  // Handler for cropped image blob
+  // Handle cropped image blob change
   const handleImageChange = (newImageBlob) => {
     setTempImageBlob(newImageBlob);
     setSuccessMessage("");
     setImageSet(false);
   };
 
-  // Upload image to hosting service and return image URL
+  // Function to upload a cropped image blob to imgbb and get back the image URL
   const uploadImageAndGetUrl = async (imageBlob) => {
+    // Validate input: check if imageBlob exists and is a valid Blob instance
     if (!imageBlob || !(imageBlob instanceof Blob)) {
+      // Log error for debugging
       console.error("Invalid image format");
+
+      // Stop execution and return null
       return null;
     }
 
+    // Trigger loading state (e.g., disable buttons/spinner)
     setIsImageUploading(true);
+
+    // Prepare FormData object for the POST request
     const formData = new FormData();
+
+    // Append image with a filename
     formData.append("image", imageBlob, `${user?.email}-profile-image.jpg`);
 
     try {
+      // Send POST request to image hosting API (imgbb in this case)
       const res = await axiosPublic.post(Image_Hosting_API, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
+      // Extract uploaded image URL from response
       const uploadedUrl = res.data.data.display_url;
+
+      // Notify user upload succeeded and update state
       setSuccessMessage("Image Set Successfully!");
+
+      // Flag indicating image is successfully uploaded
       setImageSet(true);
+
+      // Return the image URL
       return uploadedUrl;
     } catch (error) {
+      // Log error details and show failure message to user
       console.error("Upload Error:", error);
+
       setSuccessMessage("Failed to upload image. Please try again.");
+
+      // Return null indicating failure
       return null;
     } finally {
+      // End loading state, regardless of success/failure
       setIsImageUploading(false);
     }
   };
 
-  // Final form submit handler
+  // Handle form submission logic
   const onSubmit = async (data) => {
+    // Start with existing image URL (if already uploaded)
     let finalImageUrl = profileImageUrl;
 
-    // Upload image if cropped but not yet uploaded
+    // If there's a cropped image blob that hasn't been uploaded yet
     if (tempImageBlob) {
+      // Upload it
       const uploadedUrl = await uploadImageAndGetUrl(tempImageBlob);
+
+      // Stop if upload failed
       if (!uploadedUrl) return;
+
+      // Use new uploaded URL
       finalImageUrl = uploadedUrl;
+
+      // Update image URL in state
       setProfileImageUrl(uploadedUrl);
     }
 
-    // Merge new form values with existing localStorage data
+    // Combine form data with the final image URL
     const updatedValues = {
       ...data,
       imageUrl: finalImageUrl,
     };
 
+    // Retrieve any existing trainer data from localStorage
     const existing = JSON.parse(
       localStorage.getItem("trainerBasicInfo") || "{}"
     );
+
+    // Merge new form values into existing data
     const mergedData = { ...existing, ...updatedValues };
 
-    // Save updated data to localStorage
+    // Save the updated trainer info back to localStorage
     localStorage.setItem("trainerBasicInfo", JSON.stringify(mergedData));
 
-    // Proceed to next step
+    // Proceed to the next step in the form/modal flow
     onNextStep();
   };
 
-  // Disable next button if form is invalid or image is uploading
+  // Disable submit if form is invalid or image is uploading
   const isNextDisabled = !isValid || isImageUploading;
 
   return (
     <div>
-      {/* Success message after image upload */}
+      {/* Show success message after image upload */}
       {successMessage && (
         <div className="text-center text-green-500 font-semibold p-3 bg-green-100 rounded-md">
           {successMessage}
         </div>
       )}
 
-      {/* Main Form */}
-      <div className="py-5">
-        {/* Main Title */}
-        <h3 className="text-2xl font-semibold text-center text-gray-800">
+      {/* Form section */}
+      <div>
+        {/* Form Title */}
+        <h3 className="text-2xl font-semibold text-center text-gray-800 bg-white py-2 border border-b-black">
           Basic Information
         </h3>
 
         {/* Form Content */}
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Input Fields */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-10 items-center px-5">
-            {/* Profile Image Crop & Upload */}
-            <div className="items-center justify-center h-full w-full">
-              {/* Title */}
+        <form onSubmit={handleSubmit(onSubmit)} className="px-2" >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-10 items-start">
+            {/* Image Cropper & Upload Area */}
+            <div className="w-full">
               <h3 className="text-xl font-semibold text-center py-2">
                 Trainer Profile Image
                 <hr className="bg-black p-[1px] w-1/2 mx-auto" />
               </h3>
 
-              {/* Cropping Component */}
+              {/* Cropper component */}
               <ImageCropper
                 onImageCropped={handleImageChange}
                 defaultImageUrl={profileImageUrl}
@@ -172,7 +203,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                 errors={errors}
               />
 
-              {/* Upload Button Status */}
+              {/* Button showing upload status */}
               <div className="flex justify-center mt-3">
                 <CommonButton
                   clickEvent={() => {}}
@@ -190,9 +221,9 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
               </div>
             </div>
 
-            {/* Form Fields */}
+            {/* Input Fields Section */}
             <div className="space-y-4">
-              {/* Name Field */}
+              {/* Name Input */}
               <div>
                 <label className="block text-gray-700 font-semibold text-xl pb-2">
                   Trainer Name
@@ -212,7 +243,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                 )}
               </div>
 
-              {/* Gender Field */}
+              {/* Gender Input */}
               <div>
                 <label className="block text-gray-700">Gender</label>
                 <select
@@ -231,7 +262,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                 )}
               </div>
 
-              {/* Age Field */}
+              {/* Age Input */}
               <div>
                 <label className="block text-gray-700">Age</label>
                 <input
@@ -245,7 +276,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
                 )}
               </div>
 
-              {/* Experience Field */}
+              {/* Experience Input */}
               <div>
                 <label className="block text-gray-700">
                   Years of Experience
@@ -272,7 +303,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
             </div>
           </div>
 
-          {/* Submit Button */}
+          {/* Submit/Next Step Button */}
           <div className="flex justify-center items-center w-full">
             <CommonButton
               type="submit"
@@ -299,7 +330,7 @@ const TrainerAddModalInputBasicInformation = ({ onNextStep }) => {
   );
 };
 
-// Type checking for props
+// Define expected prop types
 TrainerAddModalInputBasicInformation.propTypes = {
   onNextStep: PropTypes.func.isRequired,
 };

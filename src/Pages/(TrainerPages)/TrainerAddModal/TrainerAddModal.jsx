@@ -1,7 +1,9 @@
-// React hook for managing component state
 import { useState } from "react";
 
-// Icon Imports from various icon libraries
+// import Packages
+import PropTypes from "prop-types";
+
+// Icon Imports
 import {
   FaDumbbell,
   FaRunning,
@@ -18,7 +20,7 @@ import {
 } from "react-icons/gi";
 import { MdStar } from "react-icons/md";
 
-// Importing child components for specific steps in the modal
+// Step Components
 import TrainerAddModalWelcomeSection from "./TrainerAddModalWelcomeSection/TrainerAddModalWelcomeSection";
 import TrainerAddModalInputBasicInformation from "./TrainerAddModalInputBasicInformation/TrainerAddModalInputBasicInformation";
 import TrainerAddModalInputPersonalInformation from "./TrainerAddModalInputPersonalInformation/TrainerAddModalInputPersonalInformation";
@@ -29,7 +31,7 @@ import TrainerAddModalScheduleSelector from "./TrainerAddModalScheduleSelector/T
 import TrainerAddModalScheduleClassSelector from "./TrainerAddModalScheduleClassSelector/TrainerAddModalScheduleClassSelector";
 import TrainerAddModalPreview from "./TrainerAddModalPreview/TrainerAddModalPreview";
 
-// Utility function to randomly shuffle an array
+// Shuffle utility
 const shuffleArray = (array) => {
   const shuffledArray = [...array];
   for (let i = shuffledArray.length - 1; i > 0; i--) {
@@ -39,7 +41,7 @@ const shuffleArray = (array) => {
   return shuffledArray;
 };
 
-// Predefined icon set and randomized positions for floating decorative icons
+// Icon Sets
 const icons = [
   {
     icon: FaDumbbell,
@@ -144,19 +146,17 @@ const icons = [
   },
 ];
 
-// Main component definition
-const TrainerAddModal = () => {
-  // Track current step in modal process
+// Main Component
+const TrainerAddModal = ({ refetch }) => {
   const [currentStep, setCurrentStep] = useState(0);
-
-  // Shared classes for floating background icons
-  const iconClasses = "text-3xl text-red-500 absolute opacity-20 z-0";
+  const iconClasses =
+    "text-2xl md:text-3xl text-red-500 absolute opacity-20 z-0";
 
   return (
-    <div className="modal-box max-w-5xl p-0 bg-gradient-to-b from-white to-gray-200 text-black rounded-lg shadow-xl">
-      {/* Step Navigation Bar */}
-      <div className="px-4 py-4 border-b-2 border-gray-300">
-        <ul className="steps steps-vertical md:steps-horizontal w-full justify-center">
+    <div className="modal-box w-full max-w-5xl p-0 bg-gradient-to-b from-white to-gray-200 text-black rounded-lg shadow-xl overflow-hidden max-h-screen">
+      {/* Steps */}
+      <div className="px-4 py-4 border-b-2 border-gray-300 overflow-x-auto">
+        <ul className="steps steps-horizontal md:steps-horizontal w-[900px] md:w-full justify-start md:justify-center">
           {[
             "Welcome",
             "Basic Info",
@@ -182,73 +182,59 @@ const TrainerAddModal = () => {
         </ul>
       </div>
 
-      {/* Step Content Area with subtle background radial gradient */}
+      {/* Content Area */}
       <div
-        className="min-h-[500px] relative z-10"
+        className="min-h-[500px] max-h-[70vh] overflow-y-auto relative z-10"
         style={{
           background:
             "radial-gradient(circle, rgba(239,68,68,0) 40%, rgba(239,68,68,0.15) 75%, rgba(239,68,68,0.3) 100%)",
         }}
       >
-        {/* Conditional rendering of step components based on current step */}
-        <div>
-          {/* Welcome Step Component */}
-          {currentStep === 0 && (
-            <TrainerAddModalWelcomeSection
-              onNextStep={() => setCurrentStep(1)}
-            />
-          )}
-
-          {/* Basic Info Step Component */}
-          {currentStep === 1 && (
-            <TrainerAddModalInputBasicInformation
-              onNextStep={() => setCurrentStep(2)}
-            />
-          )}
-
-          {currentStep === 2 && (
-            <TrainerAddModalInputPersonalInformation
-              onNextStep={() => setCurrentStep(3)}
-            />
-          )}
-
-          {currentStep === 3 && (
-            <TrainerAddModalInputTrainingDetails
-              onNextStep={() => setCurrentStep(4)}
-            />
-          )}
-
-          {currentStep === 4 && (
-            <TrainerAddModalInputAwards onNextStep={() => setCurrentStep(5)} />
-          )}
-
-          {currentStep === 5 && (
-            <TrainerAddModalInputPartnerships
-              onNextStep={() => setCurrentStep(6)}
-            />
-          )}
-
-          {currentStep === 6 && (
-            <TrainerAddModalScheduleSelector
-              onNextStep={() => setCurrentStep(7)}
-            />
-          )}
-
-          {currentStep === 7 && (
-            <TrainerAddModalScheduleClassSelector
-              onNextStep={() => setCurrentStep(8)}
-            />
-          )}
-
-          {currentStep === 8 && (
-            <TrainerAddModalPreview
-              onNextStep={() => setCurrentStep(9)}
-            />
-          )}
-        </div>
+        {currentStep === 0 && (
+          <TrainerAddModalWelcomeSection onNextStep={() => setCurrentStep(1)} />
+        )}
+        {currentStep === 1 && (
+          <TrainerAddModalInputBasicInformation
+            onNextStep={() => setCurrentStep(2)}
+          />
+        )}
+        {currentStep === 2 && (
+          <TrainerAddModalInputPersonalInformation
+            onNextStep={() => setCurrentStep(3)}
+          />
+        )}
+        {currentStep === 3 && (
+          <TrainerAddModalInputTrainingDetails
+            onNextStep={() => setCurrentStep(4)}
+          />
+        )}
+        {currentStep === 4 && (
+          <TrainerAddModalInputAwards onNextStep={() => setCurrentStep(5)} />
+        )}
+        {currentStep === 5 && (
+          <TrainerAddModalInputPartnerships
+            onNextStep={() => setCurrentStep(6)}
+          />
+        )}
+        {currentStep === 6 && (
+          <TrainerAddModalScheduleSelector
+            onNextStep={() => setCurrentStep(7)}
+          />
+        )}
+        {currentStep === 7 && (
+          <TrainerAddModalScheduleClassSelector
+            onNextStep={() => setCurrentStep(8)}
+          />
+        )}
+        {currentStep === 8 && (
+          <TrainerAddModalPreview
+            onNextStep={() => setCurrentStep(9)}
+            refetch={refetch}
+          />
+        )}
       </div>
 
-      {/* Render decorative floating icons in randomized positions */}
+      {/* Background Icons */}
       {icons.map((iconSet, index) =>
         iconSet.positions.map((position, posIndex) => {
           const IconComponent = iconSet.icon;
@@ -262,6 +248,11 @@ const TrainerAddModal = () => {
       )}
     </div>
   );
+};
+
+// Prop Validation
+TrainerAddModal.propTypes = {
+  refetch: PropTypes.func.isRequired,
 };
 
 export default TrainerAddModal;

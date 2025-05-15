@@ -429,7 +429,7 @@ const TrainerSettingsLayout = () => {
 
       {/* Add Trainer Data Modal */}
       <dialog id="Add_Trainer_Data" className="modal">
-        <TrainerAddModal />
+        <TrainerAddModal refetch={refetchAll} />
       </dialog>
     </div>
   );

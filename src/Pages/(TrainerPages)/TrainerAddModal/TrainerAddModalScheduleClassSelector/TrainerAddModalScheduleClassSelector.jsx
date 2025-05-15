@@ -9,8 +9,10 @@ import CommonButton from "../../../../Shared/Buttons/CommonButton";
 // Import Icons
 import { FaArrowRight } from "react-icons/fa";
 
-// Component: TrainerAddModalScheduleClassSelector
-const TrainerAddModalScheduleClassSelector = () => {
+// Import Packages
+import PropTypes from "prop-types";
+
+const TrainerAddModalScheduleClassSelector = ({ onNextStep }) => {
   // State to store selected class types
   const [selectedClasses, setSelectedClasses] = useState([]);
 
@@ -49,6 +51,8 @@ const TrainerAddModalScheduleClassSelector = () => {
 
     // Save back to localStorage
     localStorage.setItem("trainerBasicInfo", JSON.stringify(updatedData));
+
+    onNextStep();
   };
 
   return (
@@ -143,4 +147,8 @@ const TrainerAddModalScheduleClassSelector = () => {
   );
 };
 
+// Prop validation
+TrainerAddModalScheduleClassSelector.propTypes = {
+  onNextStep: PropTypes.func.isRequired,
+};
 export default TrainerAddModalScheduleClassSelector;
