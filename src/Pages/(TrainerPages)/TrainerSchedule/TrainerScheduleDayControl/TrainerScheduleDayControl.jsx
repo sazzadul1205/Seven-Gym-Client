@@ -108,8 +108,8 @@ const TrainerScheduleDayControl = ({
               isDisabled
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : isAdded
-                ? "bg-red-500 text-white hover:bg-red-600"
-                : "bg-blue-500 text-white hover:bg-blue-600"
+                ? "bg-red-500 text-white hover:bg-red-600 cursor-pointer"
+                : "bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
             }`}
           >
             {isAdded ? `− ${day}` : `+ ${day}`} {/* Button label */}

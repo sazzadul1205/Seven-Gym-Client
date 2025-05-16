@@ -8,23 +8,14 @@ import { useForm } from "react-hook-form";
 import { ImCross } from "react-icons/im";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 
-// import JSON data
-import ClassInformation from "../../../../../JSON/ClassInformation.json";
-
-// Convert 24-hour time to 12-hour AM/PM format
-const formatTimeTo12Hour = (time) => {
-  if (!time) return "";
-  const [hour, minute] = time.split(":");
-  const h = parseInt(hour, 10);
-  const amPm = h >= 12 ? "PM" : "AM";
-  const formattedHour = h % 12 === 0 ? 12 : h % 12;
-  return `${formattedHour}:${minute} ${amPm}`;
-};
+// Import Utility
+import { formatTimeTo12Hour } from "../../../../../Utility/formatTimeTo12Hour";
 
 const TrainerScheduleEditModal = ({
-  selectedClass,
-  TrainersClassType,
   handleUpdate,
+  selectedClass,
+  ClassInformation,
+  TrainersClassType,
 }) => {
   // State Management for toggling the Class Information section
   const [showClassInfo, setShowClassInfo] = useState(false);
@@ -312,9 +303,28 @@ const TrainerScheduleEditModal = ({
 
 // PropTypes for type checking
 TrainerScheduleEditModal.propTypes = {
-  selectedClass: PropTypes.object,
-  TrainersClassType: PropTypes.array,
   handleUpdate: PropTypes.func.isRequired,
+
+  selectedClass: PropTypes.shape({
+    id: PropTypes.string,
+    classType: PropTypes.string,
+    participantLimit: PropTypes.number,
+    classPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    day: PropTypes.string,
+    start: PropTypes.string,
+    end: PropTypes.string,
+  }),
+
+  TrainersClassType: PropTypes.arrayOf(PropTypes.string).isRequired,
+
+  ClassInformation: PropTypes.arrayOf(
+    PropTypes.shape({
+      classType: PropTypes.string.isRequired,
+      description: PropTypes.string,
+      participantLimit: PropTypes.number,
+      priceRange: PropTypes.string,
+    })
+  ).isRequired,
 };
 
 export default TrainerScheduleEditModal;

@@ -20,11 +20,15 @@ import { formatTimeTo12Hour } from "../../../../Utility/formatTimeTo12Hour";
 const TrainerScheduleDisplay = ({
   handleClear,
   tempSchedule,
-  isValidClassType,
-  TrainersClassType,
   handleUpdate,
+  TrainersClassType,
+  // isValidClassType,
+  ClassTypesData,
 }) => {
   const [selectedClass, setSelectedClass] = useState(null);
+
+  const isValidClassType = (type) =>
+    ClassTypesData.some((item) => item.classType === type);
 
   // Handle Edit
   const handleEdit = (day, time) => {
@@ -254,19 +258,40 @@ const TrainerScheduleDisplay = ({
           handleUpdate={handleUpdate}
           selectedClass={selectedClass}
           TrainersClassType={TrainersClassType}
+          ClassInformation={ClassTypesData}
         />
       </dialog>
     </div>
   );
 };
 
-// Prop types
 TrainerScheduleDisplay.propTypes = {
   handleClear: PropTypes.func.isRequired,
-  tempSchedule: PropTypes.object.isRequired,
-  isValidClassType: PropTypes.func.isRequired,
-  TrainersClassType: PropTypes.array,
+  tempSchedule: PropTypes.objectOf(
+    PropTypes.objectOf(
+      PropTypes.shape({
+        start: PropTypes.string,
+        end: PropTypes.string,
+        classType: PropTypes.string,
+        participantLimit: PropTypes.oneOfType([
+          PropTypes.number,
+          PropTypes.string,
+        ]),
+        classPrice: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        edited: PropTypes.bool,
+      })
+    )
+  ).isRequired,
+
+  TrainersClassType: PropTypes.arrayOf(PropTypes.string),
+
   handleUpdate: PropTypes.func.isRequired,
+
+  ClassTypesData: PropTypes.arrayOf(
+    PropTypes.shape({
+      classType: PropTypes.string.isRequired,
+    })
+  ),
 };
 
 export default TrainerScheduleDisplay;

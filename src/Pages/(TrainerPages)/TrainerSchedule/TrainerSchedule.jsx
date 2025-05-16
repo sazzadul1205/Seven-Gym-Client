@@ -1,17 +1,16 @@
-// React core hooks
 import { useEffect, useMemo, useState } from "react";
 
 // External packages
-import Swal from "sweetalert2"; // SweetAlert2 for pop-up modals
-import PropTypes from "prop-types"; // Runtime type checking for props
+import Swal from "sweetalert2";
+import PropTypes from "prop-types";
 
 // Custom hook for Axios instance
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 
 // Component imports
 import TrainerScheduleDisplay from "./TrainerScheduleDisplay/TrainerScheduleDisplay";
-import TrainerScheduleClassSelector from "./TrainerScheduleClassSelector/TrainerScheduleClassSelector";
 import TrainerScheduleDayControl from "./TrainerScheduleDayControl/TrainerScheduleDayControl";
+import TrainerScheduleClassSelector from "./TrainerScheduleClassSelector/TrainerScheduleClassSelector";
 import TrainerScheduleRangeSelector from "./TrainerScheduleRangeSelector/TrainerScheduleRangeSelector";
 
 // Import Button
@@ -39,28 +38,20 @@ const MAX_DAYS = 5;
 
 const TrainerSchedule = ({
   refetch,
+  ClassTypesData,
   TrainerProfileData,
-  AvailableClassTypesData,
   TrainerProfileScheduleData,
 }) => {
   const axiosPublic = useAxiosPublic();
 
   // Local state
-
-  // Holds working copy of schedule
   const [tempSchedule, setTempSchedule] = useState({});
-
-  // Tracks unsaved changes
   const [changesMade, setChangesMade] = useState(false);
-
-  // Original copy for reset
+  const [timeRangeSlots, setTimeRangeSlots] = useState([]);
   const [originalSchedule, setOriginalSchedule] = useState({});
-
-  // Initial time slot structure
   const [defaultTimeSlots, setDefaultTimeSlots] = useState([]);
 
-  // Dynamic time slot ranges from UI
-  const [timeRangeSlots, setTimeRangeSlots] = useState([]);
+  console.log(ClassTypesData);
 
   // Extract trainer's preferred class types
   const TrainersClassType = TrainerProfileData?.preferences?.classTypes || [];
@@ -101,6 +92,8 @@ const TrainerSchedule = ({
       ]);
   }, [initialSchedule]);
 
+  // ==================== Handles ===================
+
   // Reset schedule to original
   const handleReset = () => {
     setTempSchedule(JSON.parse(JSON.stringify(originalSchedule)));
@@ -132,9 +125,6 @@ const TrainerSchedule = ({
     });
     setChangesMade(true);
   };
-
-  // Ensure only allowed class types can be selected
-  const isValidClassType = (type) => AvailableClassTypesData?.includes(type);
 
   // Update a time slot
   const handleUpdate = (updated) => {
@@ -258,94 +248,120 @@ const TrainerSchedule = ({
         {/* Trainer's Class Type Management */}
         <TrainerScheduleClassSelector
           refetch={refetch}
+          ClassTypesData={ClassTypesData}
           trainerClassTypes={TrainersClassType}
-          availableClassTypes={AvailableClassTypesData}
-        />
-
-        {/* Schedule Editing Panel */}
-        <div className="bg-white text-black p-4 mt-4 rounded shadow">
-          {/* Header Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-            {/* Title and Icon */}
-            <div className="flex items-center gap-2">
-              {/* Icon for time efficiency */}
-              <img src={timeEfficiency} alt="icon" className="w-8 h-8" />
-
-              {/* Title with dynamic count */}
-              <span className="font-bold text-base md:text-lg">
-                Sessions Management ({selectedCount}/{MAX_DAYS})
-              </span>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-              <CommonButton
-                clickEvent={handleReset}
-                text="Reset"
-                px="px-10"
-                disabled={!changesMade}
-                bgColor="yellow"
-                className="w-full sm:w-auto"
-              />
-
-              <CommonButton
-                clickEvent={handleSave}
-                text="Update Class Schedule"
-                px="px-10"
-                disabled={selectedCount < MAX_DAYS || !changesMade}
-                bgColor="green"
-                className="w-full sm:w-auto"
-              />
-            </div>
-          </div>
-
-          {/* Day Selector and Time Slots */}
-          <TrainerScheduleDayControl
-            tempSchedule={tempSchedule}
-            selectedCount={selectedCount}
-            setChangesMade={setChangesMade}
-            setTempSchedule={setTempSchedule}
-            defaultTimeSlots={defaultTimeSlots}
-            TrainerProfileData={TrainerProfileData}
-          />
-
-          {/* Time Range Customize */}
-          <TrainerScheduleRangeSelector
-            defaultTimeSlots={defaultTimeSlots}
-            hoursCount={timeRangeSlots.length || 6}
-            onRangeChange={onRangeChange}
-            handleApplyRanges={handleApplyRanges}
-            timeRangeSlots={timeRangeSlots}
-            TrainerProfileScheduleData={TrainerProfileScheduleData}
-          />
-        </div>
-
-        {/* Display and Edit Current Schedule */}
-        <TrainerScheduleDisplay
-          handleClear={handleClear}
-          tempSchedule={tempSchedule}
-          handleUpdate={handleUpdate}
-          isValidClassType={isValidClassType}
-          TrainersClassType={TrainersClassType}
         />
       </div>
+
+      {/* Schedule Editing Panel */}
+      <div className="bg-white text-black p-4 mt-4 rounded shadow">
+        {/* Header Controls */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+          {/* Title and Icon */}
+          <div className="flex items-center gap-2">
+            {/* Icon for time efficiency */}
+            <img src={timeEfficiency} alt="icon" className="w-8 h-8" />
+
+            {/* Title with dynamic count */}
+            <span className="font-bold text-base md:text-lg">
+              Sessions Management ({selectedCount}/{MAX_DAYS})
+            </span>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+            <CommonButton
+              clickEvent={handleReset}
+              text="Reset"
+              px="px-10"
+              py="py-2"
+              disabled={!changesMade}
+              bgColor="yellow"
+              className="w-full sm:w-auto"
+            />
+
+            <CommonButton
+              clickEvent={handleSave}
+              text="Update Class Schedule"
+              px="px-10"
+              py="py-2"
+              disabled={selectedCount < MAX_DAYS || !changesMade}
+              bgColor="green"
+              className="w-full sm:w-auto"
+            />
+          </div>
+        </div>
+
+        {/* Day Selector and Time Slots */}
+        <TrainerScheduleDayControl
+          tempSchedule={tempSchedule}
+          selectedCount={selectedCount}
+          setChangesMade={setChangesMade}
+          setTempSchedule={setTempSchedule}
+          defaultTimeSlots={defaultTimeSlots}
+          TrainerProfileData={TrainerProfileData}
+        />
+
+        {/* Time Range Customize */}
+        <TrainerScheduleRangeSelector
+          defaultTimeSlots={defaultTimeSlots}
+          hoursCount={timeRangeSlots.length || 6}
+          onRangeChange={onRangeChange}
+          handleApplyRanges={handleApplyRanges}
+          timeRangeSlots={timeRangeSlots}
+          TrainerProfileScheduleData={TrainerProfileScheduleData}
+        />
+      </div>
+
+      {/* Display and Edit Current Schedule */}
+      <TrainerScheduleDisplay
+        handleClear={handleClear}
+        tempSchedule={tempSchedule}
+        handleUpdate={handleUpdate}
+        // isValidClassType={isValidClassType}
+        ClassTypesData={ClassTypesData}
+        TrainersClassType={TrainersClassType}
+      />
     </div>
   );
 };
 
 // Runtime prop validation
 TrainerSchedule.propTypes = {
-  refetch: PropTypes.func,
+  refetch: PropTypes.func.isRequired,
+  ClassTypesData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string,
+      name: PropTypes.string,
+      description: PropTypes.string,
+    })
+  ).isRequired,
   TrainerProfileData: PropTypes.shape({
-    name: PropTypes.string,
+    name: PropTypes.string.isRequired,
     preferences: PropTypes.shape({
       classTypes: PropTypes.arrayOf(PropTypes.string),
     }),
-  }),
-  AvailableClassTypesData: PropTypes.arrayOf(PropTypes.string),
+  }).isRequired,
   TrainerProfileScheduleData: PropTypes.shape({
-    trainerSchedule: PropTypes.object,
-  }),
+    trainerSchedule: PropTypes.objectOf(
+      PropTypes.objectOf(
+        PropTypes.shape({
+          classType: PropTypes.string,
+          participantLimit: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+          ]),
+          classPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+          participant: PropTypes.object,
+          time: PropTypes.string,
+          start: PropTypes.string,
+          end: PropTypes.string,
+          id: PropTypes.string,
+          edited: PropTypes.bool,
+        })
+      )
+    ),
+  }).isRequired,
 };
 
 export default TrainerSchedule;

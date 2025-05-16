@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-// Import Package
+// Import Libraries
 import Swal from "sweetalert2";
 import PropTypes from "prop-types";
 
@@ -9,102 +9,107 @@ import { FaPlus } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 
-// import class Information Data
-import ClassInformation from "../../../../JSON/ClassInformation.json";
-
-// Import Hooks and Shared
+// Custom Hooks
 import useAuth from "../../../../Hooks/useAuth";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 const TrainerScheduleClassSelector = ({
-  trainerClassTypes,
-  availableClassTypes,
   refetch,
+  ClassTypesData,
+  trainerClassTypes,
 }) => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
 
-  // Local state tracks each class as an object with a status:
-  // status: 'original' (from parent), 'added' (new), or 'removed' (deleted)
+  // State for tracking changes, current class list, and dropdown
   const [hasChanges, setHasChanges] = useState(false);
   const [localClasses, setLocalClasses] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // Initialize localClasses from the parent prop on mount or when trainerClassTypes changes.
+  // Initialize local class types from trainerClassTypes
   useEffect(() => {
-    const initialClasses = trainerClassTypes?.map((ct) => ({
-      classType: ct,
-      status: "original",
-    }));
-    setLocalClasses(initialClasses);
-  }, [trainerClassTypes]);
+    const initialClasses = trainerClassTypes?.map((type) => {
+      const fullInfo = ClassTypesData.find((ct) => ct.classType === type);
+      return {
+        classType: fullInfo?.classType || type,
+        status: "original",
+      };
+    });
+    setLocalClasses(initialClasses || []);
+  }, [trainerClassTypes, ClassTypesData]);
 
-  // Track changes in localClasses to update hasChanges state
+  // Check if there are any changes
   useEffect(() => {
     const changesDetected = localClasses?.some(
-      (item) => item?.status === "added" || item?.status === "removed"
+      (item) => item.status === "added" || item.status === "removed"
     );
     setHasChanges(changesDetected);
   }, [localClasses]);
 
-  // Compute class types that are available to add:
-  const availableToAdd = availableClassTypes.filter(
+  // Classes that can be added (not already in the list or not removed)
+  const availableToAdd = ClassTypesData.filter(
     (ct) =>
       !localClasses?.find(
-        (item) => item?.classType === ct && item?.status !== "removed"
+        (item) => item.classType === ct.classType && item.status !== "removed"
       )
   );
 
-  // When adding a class, if it exists with a removed status, restore it.
-  const addClassType = (classType) => {
-    const existing = localClasses.find((item) => item?.classType === classType);
+  // Add new class type to the list
+  const addClassType = (classObj) => {
+    const existing = localClasses.find(
+      (item) => item.classType === classObj.classType
+    );
     if (existing && existing.status === "removed") {
+      // Restore removed class
       setLocalClasses((prev) =>
         prev.map((item) =>
-          item?.classType === classType ? { ...item, status: "original" } : item
+          item.classType === classObj.classType
+            ? { ...item, status: "original" }
+            : item
         )
       );
     } else {
-      setLocalClasses((prev) => [...prev, { classType, status: "added" }]);
+      // Add new class
+      setLocalClasses((prev) => [
+        ...prev,
+        { classType: classObj.classType, status: "added" },
+      ]);
     }
     setShowDropdown(false);
   };
 
-  // Remove a class:
+  // Remove class type from the list
   const removeClassType = (classType) => {
     setLocalClasses((prev) =>
       prev
         .map((item) => {
-          if (item?.classType === classType) {
-            if (item?.status === "added") {
-              return null; // remove added classes outright
-            }
-            if (item?.status === "original") {
-              return { ...item, status: "removed" };
-            }
+          if (item.classType === classType) {
+            if (item.status === "added") return null; // Remove new class
+            if (item.status === "original")
+              return { ...item, status: "removed" }; // Mark original as removed
           }
           return item;
         })
-        .filter((item) => item !== null)
+        .filter(Boolean)
     );
   };
 
-  // Toggle a removed class back to original if clicked.
+  // Restore removed class
   const toggleClass = (classType) => {
     setLocalClasses((prev) =>
       prev.map((item) =>
-        item?.classType === classType && item?.status === "removed"
+        item.classType === classType && item.status === "removed"
           ? { ...item, status: "original" }
           : item
       )
     );
   };
 
-  // Save changes: update the parent's state with the classes that are not removed,
+  // Save changes to the backend
   const handleSave = async () => {
     const updatedClassTypes = localClasses
-      .filter((item) => item.status !== "removed") // Keep only 'original' & 'added'
-      .map((item) => item.classType); // Extract only class names
+      .filter((item) => item.status !== "removed")
+      .map((item) => item.classType);
 
     if (!user?.email) {
       Swal.fire({
@@ -119,7 +124,7 @@ const TrainerScheduleClassSelector = ({
       const response = await axiosPublic.put(
         "/Trainers/UpdateTrainerClassTypes",
         {
-          email: user?.email, // Using email as the identifier
+          email: user.email,
           classTypes: updatedClassTypes,
         }
       );
@@ -132,8 +137,8 @@ const TrainerScheduleClassSelector = ({
           timer: 1500,
           showConfirmButton: false,
         });
-        refetch(); // Refetch the data to reflect changes
-        setHasChanges(false); // Reset change tracking
+        refetch();
+        setHasChanges(false);
       } else {
         Swal.fire({
           icon: "error",
@@ -151,70 +156,71 @@ const TrainerScheduleClassSelector = ({
     }
   };
 
-  if (!trainerClassTypes && !availableClassTypes) return null; // Return null if no class types are provided
+  // Prevent render if data is missing
+  if (!trainerClassTypes) return null;
 
   return (
-    <div className="bg-gray-100 text-black p-4 rounded-lg shadow">
-      {/* Title */}
-      <h3 className="font-semibold text-lg mb-2">My Picked Classes:</h3>
+    <div className="bg-gray-100 text-black p-4 shadow">
+      {/* Header */}
+      <h3 className="font-semibold text-lg mb-2">My Selected Classes:</h3>
 
-      {/* Class Types Display */}
+      {/* Class badges */}
       <div className="flex flex-col md:flex-row md:flex-wrap gap-3 bg-white p-4 rounded-lg shadow">
         {localClasses?.map((item, index) => {
-          // Set display styles based on status
+          // Style based on status
           let bgColor =
-            "bg-linear-to-bl hover:bg-linear-to-tr from-blue-300 to-blue-600";
+            "bg-gradient-to-bl hover:bg-gradient-to-tr from-blue-300 to-blue-600";
           let textDecoration = "";
-          if (item?.status === "added") {
+          if (item.status === "added") {
             bgColor =
-              "bg-linear-to-bl hover:bg-linear-to-tr from-gray-300 to-gray-600";
+              "bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-300 to-gray-600";
           }
-          if (item?.status === "removed") {
+          if (item.status === "removed") {
             bgColor =
-              "bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-600";
+              "bg-gradient-to-bl hover:bg-gradient-to-tr from-red-300 to-red-600";
             textDecoration = "line-through";
           }
+
           return (
             <span
               key={index}
               onClick={() =>
-                item?.status === "removed"
-                  ? toggleClass(item?.classType)
-                  : removeClassType(item?.classType)
+                item.status === "removed"
+                  ? toggleClass(item.classType)
+                  : removeClassType(item.classType)
               }
               className={`flex justify-between items-center px-4 py-2 text-white font-medium rounded-lg shadow-md cursor-pointer ${bgColor} ${textDecoration}`}
               title={
-                item?.status === "removed"
+                item.status === "removed"
                   ? "Click to restore"
                   : "Click to remove"
               }
             >
-              {item?.classType} <ImCross className="ml-2" />
+              {item.classType} <ImCross className="ml-2" />
             </span>
           );
         })}
 
-        {/* Add Class part */}
+        {/* Add button with dropdown */}
         <div className="relative">
-          {/* Add Class Button */}
           <button
             onClick={() => setShowDropdown(!showDropdown)}
-            className="bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-600 text-white font-medium rounded-lg shadow-md flex items-center px-5 py-2 gap-2 cursor-pointer"
+            className="bg-gradient-to-bl hover:bg-gradient-to-tr from-green-300 to-green-600 text-white font-medium rounded-lg shadow-md flex items-center px-5 py-2 gap-2 cursor-pointer"
           >
             <FaPlus /> Add
           </button>
 
-          {/* Available Classes Dropdown */}
+          {/* Dropdown list */}
           {showDropdown && (
             <div className="absolute top-full mt-2 bg-white border border-gray-300 shadow-lg rounded-lg w-48 max-h-60 overflow-auto z-10">
               {availableToAdd.length > 0 ? (
-                availableToAdd.map((classType, index) => (
+                availableToAdd.map((classObj, index) => (
                   <button
                     key={index}
-                    onClick={() => addClassType(classType)}
+                    onClick={() => addClassType(classObj)}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-200"
                   >
-                    {classType}
+                    {classObj.classType}
                   </button>
                 ))
               ) : (
@@ -225,11 +231,11 @@ const TrainerScheduleClassSelector = ({
         </div>
       </div>
 
-      {/* Buttons */}
+      {/* Info and Save buttons */}
       <div className="mt-4 flex flex-col md:flex-row justify-between items-center gap-3">
-        {/* Class Information Name and Button */}
+        {/* Show Information */}
         <div className="flex items-center gap-2">
-          <p className="font-semibold">Class Information Details</p>
+          <p className="font-semibold">Class type Details</p>
           <IoMdInformationCircleOutline
             className="text-yellow-500 hover:text-yellow-700 text-2xl cursor-pointer"
             onClick={() =>
@@ -243,10 +249,10 @@ const TrainerScheduleClassSelector = ({
         {/* Save Changes Button */}
         <button
           onClick={handleSave}
-          disabled={!hasChanges} // Disable the button if no changes are detected
+          disabled={!hasChanges}
           className={`px-5 py-2 rounded text-lg font-semibold  ${
             hasChanges
-              ? "bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-600 text-white cursor-pointer"
+              ? "bg-gradient-to-bl hover:bg-gradient-to-tr from-green-300 to-green-600 text-white cursor-pointer"
               : "bg-gray-400 text-gray-200 cursor-not-allowed"
           }`}
         >
@@ -254,17 +260,19 @@ const TrainerScheduleClassSelector = ({
         </button>
       </div>
 
-      {/* Information Modal */}
+      {/* Modal for Class Information */}
       <dialog
         id="Trainer_Schedule_Class_Selector_Information"
         className="modal"
       >
-        <div className="modal-box max-w-5xl p-0 bg-linear-to-b from-white to-gray-300 text-black">
-          {/* Header with title and close button */}
+        <div className="modal-box max-w-5xl p-0 bg-gradient-to-b from-white to-gray-300 text-black">
+          {/* Title and Close */}
           <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
+            {/* Title */}
             <h3 className="font-bold text-lg">
               Trainer Schedule Class Selector Information
             </h3>
+            {/* Close */}
             <ImCross
               className="text-xl hover:text-[#F72C5B] cursor-pointer"
               onClick={() =>
@@ -275,33 +283,73 @@ const TrainerScheduleClassSelector = ({
             />
           </div>
 
-          {/* Table to display class data */}
-          <div className="overflow-x-auto p-4">
-            <table className="table-auto w-full text-left border border-gray-200">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2 border-b">Class Type</th>
-                  <th className="px-4 py-2 border-b">Description</th>
-                  <th className="px-4 py-2 border-b">Participant Limit</th>
-                  <th className="px-4 py-2 border-b">Price Range</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Map through ClassInformation data and display each item in a row */}
-                {ClassInformation.map((item, index) => (
-                  <tr key={index} className="hover:bg-gray-100">
-                    <td className="px-4 py-2 border-b">{item?.classType}</td>
-                    <td className="px-4 py-2 border-b">{item?.description}</td>
-                    <td className="px-4 py-2 border-b">
-                      {item?.participantLimit}
-                    </td>
-                    <td className="px-4 py-2 border-b">
-                      {item?.priceRange || "Not available"}
-                    </td>
+          {/* Table showing class info */}
+          <div className="p-2 md:p-4">
+            {/* Desktop Table View */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="table-auto w-full text-left border border-gray-200">
+                <thead>
+                  <tr>
+                    <th className="px-4 py-2 border-b">Class Type</th>
+                    <th className="px-4 py-2 border-b">Description</th>
+                    <th className="px-4 py-2 border-b">Participant Limit</th>
+                    <th className="px-4 py-2 border-b">Price Range</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {ClassTypesData.map((item, index) => (
+                    <tr key={index} className="hover:bg-gray-100">
+                      <td className="px-4 py-2 border-b">{item.classType}</td>
+                      <td className="px-4 py-2 border-b">{item.description}</td>
+                      <td className="px-4 py-2 border-b">
+                        {item.participantLimit}
+                      </td>
+                      <td className="px-4 py-2 border-b">
+                        {item.priceRange || "Not available"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="sm:hidden space-y-4 px-1">
+              {ClassTypesData.map((item, index) => (
+                <div
+                  key={index}
+                  className="border border-gray-300 rounded-2xl p-4 shadow-md bg-white"
+                >
+                  <div className="mb-3">
+                    <h3 className="text-base font-bold text-gray-800">
+                      {item.classType}
+                    </h3>
+                  </div>
+
+                  <div className="mb-3">
+                    <p className="text-xs text-gray-400 mt-1">Description</p>
+                    <p className="text-sm text-gray-700">{item.description}</p>
+                  </div>
+
+                  <div className="mb-3">
+                    <p className="text-xs text-gray-400 mt-1">
+                      Participant Limit
+                    </p>
+                    <p className="text-sm text-gray-700">
+                      {item.participantLimit}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-gray-400 mt-1">Price Range :</p>
+
+                    <p className="text-sm text-gray-700">
+                      {item.priceRange || "Not available"}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </dialog>
@@ -309,11 +357,15 @@ const TrainerScheduleClassSelector = ({
   );
 };
 
-// PropTypes for type checking
+// Prop validation
 TrainerScheduleClassSelector.propTypes = {
-  trainerClassTypes: PropTypes.arrayOf(PropTypes.string),
-  availableClassTypes: PropTypes.arrayOf(PropTypes.string).isRequired,
-  refetch: PropTypes.func,
+  refetch: PropTypes.func.isRequired,
+  ClassTypesData: PropTypes.arrayOf(
+    PropTypes.shape({
+      classType: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  trainerClassTypes: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default TrainerScheduleClassSelector;

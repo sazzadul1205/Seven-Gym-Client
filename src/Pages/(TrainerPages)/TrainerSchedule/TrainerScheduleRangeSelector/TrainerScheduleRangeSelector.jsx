@@ -122,6 +122,7 @@ const TrainerScheduleRangeSelector = ({
           <CommonButton
             clickEvent={handleApplyRanges}
             text="Apply Range"
+            py="py-2"
             disabled={!timeRangeSlots.length}
             bgColor="blue"
             className="w-full sm:w-fit mt-2 sm:mt-0"

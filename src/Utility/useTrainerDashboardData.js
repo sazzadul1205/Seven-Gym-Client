@@ -65,7 +65,7 @@ const useTrainerDashboardData = () => {
     queryKey: ["TrainerClassTypes"],
     queryFn: async () => {
       try {
-        const res = await axiosPublic.get(`/Trainers/classTypes`);
+        const res = await axiosPublic.get(`/Trainer_Class_Information`);
         return res.data;
       } catch (err) {
         if (err.response?.status === 404) return [];

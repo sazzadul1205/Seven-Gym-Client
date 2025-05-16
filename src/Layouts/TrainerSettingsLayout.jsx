@@ -156,6 +156,7 @@ const TrainerSettingsLayout = () => {
       content: (
         <TrainerSchedule
           refetch={refetchAll}
+          ClassTypesData={ClassTypesData}
           TrainerProfileData={TrainerProfileData}
           AvailableClassTypesData={ClassTypesData}
           TrainerProfileScheduleData={TrainerProfileScheduleData}
