@@ -11,9 +11,11 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 // Component imports
 import TrainerScheduleDisplay from "./TrainerScheduleDisplay/TrainerScheduleDisplay";
 import TrainerScheduleClassSelector from "./TrainerScheduleClassSelector/TrainerScheduleClassSelector";
-import CommonButton from "../../../Shared/Buttons/CommonButton";
 import TrainerScheduleDayControl from "./TrainerScheduleDayControl/TrainerScheduleDayControl";
 import TrainerScheduleRangeSelector from "./TrainerScheduleRangeSelector/TrainerScheduleRangeSelector";
+
+// Import Button
+import CommonButton from "../../../Shared/Buttons/CommonButton";
 
 // Asset imports
 import timeEfficiency from "../../../assets/TrainerSchedule/time-efficiency.png";

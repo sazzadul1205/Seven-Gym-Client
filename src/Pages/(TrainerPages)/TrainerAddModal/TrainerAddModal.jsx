@@ -21,14 +21,14 @@ import {
 import { MdStar } from "react-icons/md";
 
 // Step Components
-import TrainerAddModalWelcomeSection from "./TrainerAddModalWelcomeSection/TrainerAddModalWelcomeSection";
-import TrainerAddModalInputBasicInformation from "./TrainerAddModalInputBasicInformation/TrainerAddModalInputBasicInformation";
 import TrainerAddModalInputPersonalInformation from "./TrainerAddModalInputPersonalInformation/TrainerAddModalInputPersonalInformation";
+import TrainerAddModalScheduleClassSelector from "./TrainerAddModalScheduleClassSelector/TrainerAddModalScheduleClassSelector";
+import TrainerAddModalInputBasicInformation from "./TrainerAddModalInputBasicInformation/TrainerAddModalInputBasicInformation";
 import TrainerAddModalInputTrainingDetails from "./TrainerAddModalInputTrainingDetails/TrainerAddModalInputTrainingDetails";
-import TrainerAddModalInputAwards from "./TrainerAddModalInputAwards/TrainerAddModalInputAwards";
 import TrainerAddModalInputPartnerships from "./TrainerAddModalInputPartnerships/TrainerAddModalInputPartnerships";
 import TrainerAddModalScheduleSelector from "./TrainerAddModalScheduleSelector/TrainerAddModalScheduleSelector";
-import TrainerAddModalScheduleClassSelector from "./TrainerAddModalScheduleClassSelector/TrainerAddModalScheduleClassSelector";
+import TrainerAddModalWelcomeSection from "./TrainerAddModalWelcomeSection/TrainerAddModalWelcomeSection";
+import TrainerAddModalInputAwards from "./TrainerAddModalInputAwards/TrainerAddModalInputAwards";
 import TrainerAddModalPreview from "./TrainerAddModalPreview/TrainerAddModalPreview";
 
 // Shuffle utility
