@@ -13,7 +13,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 
 import Dashboard from "../assets/Trainer_Settings_Layout_Icons/Dashboard.png";
-import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement";
+import coach from "../assets/AdminPanel/";
+import users from "../assets/AdminPanel";
+
+import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
+import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserManagement";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -69,6 +73,13 @@ const AdminPanelLayout = () => {
       title: "All Users",
       content: <AllUserManagement />,
     },
+    // Trainer Dashboard Tab
+    {
+      id: "All_Trainers",
+      Icon: Dashboard,
+      title: "All Trainers",
+      content: <AllTrainersManagement />,
+    },
   ];
 
   return (
@@ -106,7 +117,7 @@ const AdminPanelLayout = () => {
       {/* Admin Body */}
       <div className="flex bg-white">
         {/* Side Panel */}
-        <div className="w-1/6 bg-gray-300 border-l border-gray-300 min-h-screen">
+        <div className="w-1/6 bg-linear-to-bl from-gray-300 to-gray-100 border-r border-gray-300 min-h-screen">
           {/* Title */}
           <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2">
             Admin Panel Options
@@ -116,15 +127,13 @@ const AdminPanelLayout = () => {
           {tabs.map((tab) => (
             <p
               key={tab.id}
-              className={`flex items-center gap-3 w-full text-left px-2 py-4 font-bold cursor-pointer ${
-                activeTab === tab.id
-                  ? "bg-gradient-to-br from-blue-500 to-blue-300 text-white"
-                  : "bg-gradient-to-bl border border-gray-400 from-gray-200 to-gray-300 hover:from-blue-400 hover:to-blue-200 hover:text-white"
+              className={`flex items-center gap-3 w-full text-left px-2 py-4 font-bold cursor-pointer text-black hover:text-gray-700 ${
+                activeTab === tab.id ? "pl-5" : ""
               }`}
               onClick={() => setActiveTab(tab.id)}
             >
               <img src={tab.Icon} alt="Tab Icon" className="w-5" />
-              {tab.title}
+              <p>{tab.title}</p>
             </p>
           ))}
         </div>
