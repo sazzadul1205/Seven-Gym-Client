@@ -6,17 +6,28 @@ import CommonButton from "../Shared/Buttons/CommonButton";
 
 // Profile Default Image
 import ProfileDefault from "../assets/ProfileDefault.jpg";
+
 import Swal from "sweetalert2";
 import useAuth from "../Hooks/useAuth";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
+import Dashboard from "../assets/Trainer_Settings_Layout_Icons/Dashboard.png";
+import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement";
+
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
   const navigate = useNavigate();
 
+  // Get initial tab from URL
+  const searchParams = new URLSearchParams(location.search);
+  const initialTab = searchParams.get("tab") || "Trainer_Dashboard";
+
   // State Management
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Tab State
+  const [activeTab, setActiveTab] = useState(initialTab);
 
   // Logout function with confirmation
   const handleSignOut = async () => {
@@ -50,10 +61,20 @@ const AdminPanelLayout = () => {
     }
   };
 
+  const tabs = [
+    // Trainer Dashboard Tab
+    {
+      id: "All_Users",
+      Icon: Dashboard,
+      title: "All Users",
+      content: <AllUserManagement />,
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-white">
       {/* Admin Header */}
-      <div className="flex justify-between items-center bg-gray-200 py-3 px-2 border-b-2 border-black">
+      <div className="flex justify-between items-center bg-gray-200 py-3 px-2 border-b-2 border-gray-300">
         {/* Trainer Profile Picture */}
         <div className="flex gap-2">
           <img
@@ -80,6 +101,36 @@ const AdminPanelLayout = () => {
             loadingText="Logging Out..."
           />
         </div>
+      </div>
+
+      {/* Admin Body */}
+      <div className="flex bg-white">
+        {/* Side Panel */}
+        <div className="w-1/6 bg-gray-300 border-l border-gray-300 min-h-screen">
+          {/* Title */}
+          <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2">
+            Admin Panel Options
+          </p>
+
+          {/* Options */}
+          {tabs.map((tab) => (
+            <p
+              key={tab.id}
+              className={`flex items-center gap-3 w-full text-left px-2 py-4 font-bold cursor-pointer ${
+                activeTab === tab.id
+                  ? "bg-gradient-to-br from-blue-500 to-blue-300 text-white"
+                  : "bg-gradient-to-bl border border-gray-400 from-gray-200 to-gray-300 hover:from-blue-400 hover:to-blue-200 hover:text-white"
+              }`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <img src={tab.Icon} alt="Tab Icon" className="w-5" />
+              {tab.title}
+            </p>
+          ))}
+        </div>
+
+        {/* Content */}
+        <div className="w-5/6"></div>
       </div>
     </div>
   );
