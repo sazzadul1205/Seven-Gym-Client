@@ -52,6 +52,7 @@ import TrainerSettingsLayout from "./Layouts/TrainerSettingsLayout.jsx";
 import MemberPrivateRoute from "./Routes/MemberPrivateRoute.jsx";
 import TrainerPrivateRoute from "./Routes/TrainerPrivateRoute.jsx";
 import UnauthorizedPage from "./Pages/UnauthorizedPage/UnauthorizedPage.jsx";
+import AdminPanelLayout from "./Layouts/AdminPanelLayout.jsx";
 
 // React Query Client
 const queryClient = new QueryClient();
@@ -172,10 +173,12 @@ createRoot(document.getElementById("root")).render(
                 </TrainerPrivateRoute>
               }
             />
+
+            {/* Admin Page Links */}
+            <Route path="/Admin" element={<AdminPanelLayout />} />
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>
     </AuthProvider>
   </StrictMode>
 );
-
