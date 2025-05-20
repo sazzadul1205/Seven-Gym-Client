@@ -1,8 +1,14 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
+
+// Import Packages
 import Swal from "sweetalert2";
+import PropTypes from "prop-types";
+
+// Import Icons
 import { ImCross } from "react-icons/im";
 import { FaRegTrashAlt } from "react-icons/fa";
+
+// Import Hooks
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../../Hooks/useAuth";
 
@@ -170,6 +176,23 @@ const ViewAllRecentWorkoutModal = ({ recentWorkouts, refetch }) => {
       </div>
     </div>
   );
+};
+
+ViewAllRecentWorkoutModal.propTypes = {
+  recentWorkouts: PropTypes.arrayOf(
+    PropTypes.shape({
+      workoutId: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      duration: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired,
+      calories: PropTypes.number.isRequired,
+      location: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired,
+      intensity: PropTypes.string.isRequired,
+      notes: PropTypes.string,
+    })
+  ).isRequired,
+  refetch: PropTypes.func.isRequired,
 };
 
 export default ViewAllRecentWorkoutModal;

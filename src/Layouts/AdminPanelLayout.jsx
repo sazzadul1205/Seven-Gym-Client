@@ -1,39 +1,63 @@
-// Import Icons
-import { FaPowerOff } from "react-icons/fa";
-
-// Import Shared Button
-import CommonButton from "../Shared/Buttons/CommonButton";
-
-// Profile Default Image
-import ProfileDefault from "../assets/ProfileDefault.jpg";
-
-import Swal from "sweetalert2";
-import useAuth from "../Hooks/useAuth";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
-import Dashboard from "../assets/Trainer_Settings_Layout_Icons/Dashboard.png";
-import coach from "../assets/AdminPanel/";
-import users from "../assets/AdminPanel";
+// Icons
+import { FaLongArrowAltRight, FaPowerOff } from "react-icons/fa";
 
-import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
+// Hooks
+import useAuth from "../Hooks/useAuth";
+
+// Shared Components
+import CommonButton from "../Shared/Buttons/CommonButton";
+
+// Assets
+import ProfileDefault from "../assets/ProfileDefault.jpg";
+import users from "../assets/AdminPanel/users.png";
+import coach from "../assets/AdminPanel/coach.png";
+
+// Tabs
 import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserManagement";
+import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
+
+// Packages
+import Swal from "sweetalert2";
+import useAxiosPublic from "../Hooks/useAxiosPublic";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "../Shared/Loading/Loading";
+import FetchingError from "../Shared/Component/FetchingError";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
+  const axiosPublic = useAxiosPublic();
   const navigate = useNavigate();
 
-  // Get initial tab from URL
+  // Initial tab logic
   const searchParams = new URLSearchParams(location.search);
-  const initialTab = searchParams.get("tab") || "Trainer_Dashboard";
+  const initialTab = searchParams.get("tab") || "All_Users";
 
-  // State Management
+  const [spinning, setSpinning] = useState(false);
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // Tab State
-  const [activeTab, setActiveTab] = useState(initialTab);
+  // 1. Fetch All Users
+  const {
+    data: AllUsersData,
+    isLoading: AllUsersDataIsLoading,
+    error: AllUsersDataError,
+    refetch: AllUsersRefetch,
+  } = useQuery({
+    queryKey: ["AllUsersData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(`/Users`);
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
 
-  // Logout function with confirmation
   const handleSignOut = async () => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -46,12 +70,12 @@ const AdminPanelLayout = () => {
       cancelButtonText: "Cancel",
     });
 
-    if (!result.isConfirmed) return; // Exit if user cancels
+    if (!result.isConfirmed) return;
 
     setIsLoggingOut(true);
     try {
       await logOut();
-      navigate("/"); // Redirect to home
+      navigate("/");
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -65,32 +89,50 @@ const AdminPanelLayout = () => {
     }
   };
 
+  // Handle Refetch Spin
+  const handleRefetch = () => {
+    if (spinning) return; // Prevent spam clicks
+    setSpinning(true);
+    refetchAll();
+
+    // Stop spinning after 1 second (adjust as needed)
+    setTimeout(() => setSpinning(false), 1000);
+  };
+
   const tabs = [
-    // Trainer Dashboard Tab
     {
       id: "All_Users",
-      Icon: Dashboard,
+      Icon: users,
       title: "All Users",
-      content: <AllUserManagement />,
+      content: <AllUserManagement AllUsersData={AllUsersData} />,
     },
-    // Trainer Dashboard Tab
     {
       id: "All_Trainers",
-      Icon: Dashboard,
+      Icon: coach,
       title: "All Trainers",
       content: <AllTrainersManagement />,
     },
   ];
 
+  // Unified refetch function
+  const refetchAll = async () => {
+    await AllUsersRefetch();
+  };
+
+  // Loading state
+  if (AllUsersDataIsLoading) return <Loading />;
+
+  // Error state
+  if (AllUsersDataError) return <FetchingError />;
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Admin Header */}
+      {/* Header */}
       <div className="flex justify-between items-center bg-gray-200 py-3 px-2 border-b-2 border-gray-300">
-        {/* Trainer Profile Picture */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <img
             src={ProfileDefault}
-            alt="Trainer Profile"
+            alt="Admin Profile"
             className="w-12 h-12 rounded-full border border-gray-300"
           />
           <div className="text-black">
@@ -98,9 +140,18 @@ const AdminPanelLayout = () => {
             <p className="text-sm font-light">Admin</p>
           </div>
         </div>
+        <div className="hidden md:flex justify-end gap-2">
+          <button
+            className="bg-gradient-to-bl from-yellow-300 to-yellow-600 hover:from-yellow-400 hover:to-yellow-700 p-2 rounded-lg cursor-pointer"
+            onClick={handleRefetch}
+          >
+            <img
+              src="https://i.ibb.co.com/Wp0ymPyY/refresh.png"
+              alt="Refresh Icon"
+              className={`w-[25px] h-[25px] ${spinning ? "animate-spin" : ""}`}
+            />
+          </button>
 
-        {/* Log out button */}
-        <div className="hidden md:flex w-full md:w-auto my-auto justify-end gap-2">
           <CommonButton
             text={isLoggingOut ? "Logging Out..." : "Log Out"}
             clickEvent={handleSignOut}
@@ -114,32 +165,41 @@ const AdminPanelLayout = () => {
         </div>
       </div>
 
-      {/* Admin Body */}
-      <div className="flex bg-white">
-        {/* Side Panel */}
-        <div className="w-1/6 bg-linear-to-bl from-gray-300 to-gray-100 border-r border-gray-300 min-h-screen">
-          {/* Title */}
+      {/* Body */}
+      <div className="flex">
+        {/* Sidebar */}
+        <div className="w-1/6 border-r border-gray-300 bg-gradient-to-bl from-gray-300 to-gray-100 min-h-screen">
           <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2">
             Admin Panel Options
           </p>
-
-          {/* Options */}
           {tabs.map((tab) => (
-            <p
+            <div
               key={tab.id}
-              className={`flex items-center gap-3 w-full text-left px-2 py-4 font-bold cursor-pointer text-black hover:text-gray-700 ${
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-3 px-2 py-4 font-bold cursor-pointer text-black hover:text-gray-700 ${
                 activeTab === tab.id ? "pl-5" : ""
               }`}
-              onClick={() => setActiveTab(tab.id)}
             >
-              <img src={tab.Icon} alt="Tab Icon" className="w-5" />
-              <p>{tab.title}</p>
-            </p>
+              {activeTab === tab.id && (
+                <FaLongArrowAltRight className="text-blue-500 text-xl" />
+              )}
+              <img src={tab.Icon} alt={`${tab.title} Icon`} className="w-5" />
+              <span>{tab.title}</span>
+            </div>
           ))}
         </div>
 
-        {/* Content */}
-        <div className="w-5/6"></div>
+        {/* Main Content */}
+        <div className="w-5/6">
+          {tabs.map(
+            (tab) =>
+              activeTab === tab.id && (
+                <div key={tab.id} className="w-full">
+                  {tab.content}
+                </div>
+              )
+          )}
+        </div>
       </div>
     </div>
   );

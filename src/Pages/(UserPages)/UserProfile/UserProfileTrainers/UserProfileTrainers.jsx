@@ -1,12 +1,15 @@
-/* eslint-disable react/prop-types */
 import { Link } from "react-router";
 
+// Import Packages
 import PropTypes from "prop-types";
 
+// Import Icons
 import USTrainer from "../../../../assets/UserProfile/USTrainer.png";
 
 // Component Import
 import UserProfileTrainerBasicInfo from "./UserProfileTrainerBasicInfo/UserProfileTrainerBasicInfo";
+
+// Import Buttons
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 const UserProfileTrainers = ({ TrainersBookingAcceptedData }) => {
@@ -94,15 +97,14 @@ const UserProfileTrainers = ({ TrainersBookingAcceptedData }) => {
   );
 };
 
-// PropTypes validation to ensure correct data structure
 UserProfileTrainers.propTypes = {
-  BookedTrainerData: PropTypes.arrayOf(
+  TrainersBookingAcceptedData: PropTypes.arrayOf(
     PropTypes.shape({
-      trainersID: PropTypes.string,
-      name: PropTypes.string.isRequired,
-      specialization: PropTypes.string,
-      experience: PropTypes.number,
-      photo: PropTypes.string,
+      trainerId: PropTypes.string.isRequired,
+      trainer: PropTypes.string.isRequired,
+      startAt: PropTypes.string.isRequired,
+      durationWeeks: PropTypes.number.isRequired,
+      sessions: PropTypes.arrayOf(PropTypes.object).isRequired,
     })
   ),
 };

@@ -1,6 +1,5 @@
-/* eslint-disable react/prop-types */
-
 import { Link } from "react-router";
+import PropTypes from "prop-types";
 
 // Function to return tier badge style
 const getTierBadge = (tier) => {
@@ -70,6 +69,19 @@ const ClassTrainersCard = ({ trainer, role }) => {
       </div>
     </div>
   );
+};
+
+// PropTypes validation
+ClassTrainersCard.propTypes = {
+  trainer: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    specialization: PropTypes.string,
+    experience: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    tier: PropTypes.string,
+    imageUrl: PropTypes.string,
+  }).isRequired,
+  role: PropTypes.string.isRequired,
 };
 
 export default ClassTrainersCard;
