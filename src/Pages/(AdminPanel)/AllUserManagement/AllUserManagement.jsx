@@ -2,12 +2,15 @@ import { useState, useEffect, useRef } from "react";
 
 import { FaSearch } from "react-icons/fa";
 import { HiDotsVertical } from "react-icons/hi";
+import AllUserManagementDetails from "./AllUserManagementDetails/AllUserManagementDetails";
 
 const AllUserManagement = ({ AllUsersData }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedUser, setSelectedUser] = useState(null);
   const [selectedTier, setSelectedTier] = useState("All");
   const [selectedGender, setSelectedGender] = useState("All");
   const [openDropdownId, setOpenDropdownId] = useState(null);
+
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -47,9 +50,10 @@ const AllUserManagement = ({ AllUsersData }) => {
 
     switch (action) {
       case "details":
-        console.log("Viewing details of", user);
-        document.getElementById("my_modal_1").showModal();
+        setSelectedUser(user); // Save the selected user
+        document.getElementById("User_Details").showModal();
         break;
+
       case "kick":
         console.log("Kicking user", user);
         break;
@@ -136,6 +140,7 @@ const AllUserManagement = ({ AllUsersData }) => {
               <tr key={user._id} className="hover:bg-gray-50">
                 {/* User index */}
                 <td>{index + 1}</td>
+                {/* User Profile Image */}
                 <td>
                   <img
                     src={user.profileImage}
@@ -143,6 +148,7 @@ const AllUserManagement = ({ AllUsersData }) => {
                     className="w-10 h-10 rounded-full object-cover"
                   />
                 </td>
+                {/* User Full Name */}
                 <td>
                   {searchTerm
                     ? (() => {
@@ -160,12 +166,21 @@ const AllUserManagement = ({ AllUsersData }) => {
                       })()
                     : user.fullName}
                 </td>
-
+                {/* User Email */}
                 <td>{user.email}</td>
+
+                {/* User Phone */}
                 <td>{user.phone}</td>
+
+                {/* User Gender */}
                 <td>{user.gender}</td>
+
+                {/* User Tier */}
                 <td>{user.tier}</td>
+
+                {/* User Btn */}
                 <td className="relative">
+                  {/* DropDown Icon  */}
                   <HiDotsVertical
                     className="cursor-pointer"
                     onClick={() =>
@@ -174,7 +189,7 @@ const AllUserManagement = ({ AllUsersData }) => {
                       )
                     }
                   />
-
+                  {/* Drop Down Content */}
                   {openDropdownId === user._id && (
                     <div
                       ref={dropdownRef}
@@ -213,6 +228,10 @@ const AllUserManagement = ({ AllUsersData }) => {
           <p className="text-center text-gray-500 mt-4">No users found.</p>
         )}
       </div>
+
+      <dialog id="User_Details" className="modal">
+        <AllUserManagementDetails user={selectedUser} />
+      </dialog>
     </div>
   );
 };
