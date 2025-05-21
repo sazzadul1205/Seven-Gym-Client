@@ -2,7 +2,10 @@ import { useState, useEffect, useRef } from "react";
 
 import { FaSearch } from "react-icons/fa";
 import { HiDotsVertical } from "react-icons/hi";
+
 import AllUserManagementDetails from "./AllUserManagementDetails/AllUserManagementDetails";
+
+import { getGenderIcon } from "../../../Utility/getGenderIcon";
 
 const AllUserManagement = ({ AllUsersData }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,9 +37,13 @@ const AllUserManagement = ({ AllUsersData }) => {
     .filter((user) =>
       selectedTier === "All" ? true : user.tier === selectedTier
     )
-    .filter((user) =>
-      selectedGender === "All" ? true : user.gender === selectedGender
-    );
+    .filter((user) => {
+      if (selectedGender === "All") return true;
+      const normalizedUserGender = user.gender?.toLowerCase() || "";
+      const normalizedSelectedGender = selectedGender.toLowerCase();
+
+      return normalizedUserGender.startsWith(normalizedSelectedGender);
+    });
 
   const uniqueTiers = [
     "All",
@@ -170,10 +177,22 @@ const AllUserManagement = ({ AllUsersData }) => {
                 <td>{user.email}</td>
 
                 {/* User Phone */}
-                <td>{user.phone}</td>
+                <td>
+                  {user.phone?.startsWith("+") ? user.phone : `+${user.phone}`}
+                </td>
 
                 {/* User Gender */}
-                <td>{user.gender}</td>
+                <td className="flex items-center gap-1">
+                  {(() => {
+                    const { icon, label } = getGenderIcon(user.gender);
+                    return (
+                      <>
+                        {icon}
+                        <span className="text-sm">{label}</span>
+                      </>
+                    );
+                  })()}
+                </td>
 
                 {/* User Tier */}
                 <td>{user.tier}</td>
