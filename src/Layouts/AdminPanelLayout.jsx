@@ -42,14 +42,33 @@ const AdminPanelLayout = () => {
   // 1. Fetch All Users
   const {
     data: AllUsersData,
-    isLoading: AllUsersDataIsLoading,
-    error: AllUsersDataError,
+    isLoading: AllUsersIsLoading,
+    error: AllUsersError,
     refetch: AllUsersRefetch,
   } = useQuery({
     queryKey: ["AllUsersData"],
     queryFn: async () => {
       try {
         const res = await axiosPublic.get(`/Users`);
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
+  // 2. Fetch All Trainers
+  const {
+    data: AllTrainersData,
+    isLoading: AllTrainersIsLoading,
+    error: AllTrainersError,
+    refetch: AllTrainersRefetch,
+  } = useQuery({
+    queryKey: ["AllTrainersData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(`/Trainers`);
         return res.data;
       } catch (err) {
         if (err.response?.status === 404) return [];
@@ -110,20 +129,21 @@ const AdminPanelLayout = () => {
       id: "All_Trainers",
       Icon: coach,
       title: "All Trainers",
-      content: <AllTrainersManagement />,
+      content: <AllTrainersManagement AllTrainersData={AllTrainersData} />,
     },
   ];
 
   // Unified refetch function
   const refetchAll = async () => {
     await AllUsersRefetch();
+    await AllTrainersRefetch();
   };
 
   // Loading state
-  if (AllUsersDataIsLoading) return <Loading />;
+  if (AllUsersIsLoading || AllTrainersIsLoading) return <Loading />;
 
   // Error state
-  if (AllUsersDataError) return <FetchingError />;
+  if (AllUsersError || AllTrainersError) return <FetchingError />;
 
   return (
     <div className="min-h-screen bg-white">
