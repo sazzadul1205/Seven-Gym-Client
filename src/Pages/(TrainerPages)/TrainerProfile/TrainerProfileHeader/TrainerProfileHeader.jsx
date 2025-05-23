@@ -12,7 +12,7 @@ import TrainerProfileHeaderUpdateModal from "./TrainerProfileHeaderUpdateModal.j
 import { getGenderIcon } from "../../../../Utility/getGenderIcon";
 
 // Function to get tier badge styles dynamically
-const getTierBadge = (tier) => {
+export const getTierBadge = (tier) => {
   const tierStyles = {
     Bronze: "bg-orange-600 text-white ring-2 ring-orange-300 shadow-lg",
     Silver: "bg-gray-400 text-white ring-2 ring-gray-200 shadow-lg",

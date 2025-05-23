@@ -1,20 +1,26 @@
+/* eslint-disable react/prop-types */
 import { useState, useRef, useEffect } from "react";
+
+// Import Packages
+import Swal from "sweetalert2";
 
 // Icons
 import { FaSearch } from "react-icons/fa";
 import { HiDotsVertical } from "react-icons/hi";
 
-// Gender Icons
+// Fetch Gender Icons
 import { getGenderIcon } from "../../../Utility/getGenderIcon";
+
+// Import Modal
 import AllTrainerManagementDetails from "./AllTrainerManagementDetails/AllTrainerManagementDetails";
-import Swal from "sweetalert2";
+import AllTrainerTierManagement from "./AllTrainerTierManagement/AllTrainerTierManagement";
 
 const AllTrainersManagement = ({ AllTrainersData }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTrainer, setSelectedTrainer] = useState(null);
   const [selectedTier, setSelectedTier] = useState("All");
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [selectedGender, setSelectedGender] = useState("All");
+  const [selectedTrainer, setSelectedTrainer] = useState(null);
   const [selectedSpecialization, setSelectedSpecialization] = useState("All");
   const dropdownRef = useRef(null);
 
@@ -74,6 +80,12 @@ const AllTrainersManagement = ({ AllTrainersData }) => {
         // Set the selected user and show their detail modal
         setSelectedTrainer(trainer);
         document.getElementById("Trainers_Details").showModal();
+        break;
+
+      case "tier_management":
+        // Manage Trainer Tier Data
+        setSelectedTrainer(trainer);
+        document.getElementById("Trainers_Tier_Management").showModal();
         break;
 
       case "kick":
@@ -228,6 +240,7 @@ const AllTrainersManagement = ({ AllTrainersData }) => {
               >
                 {/* Trainer Index */}
                 <td>{index + 1}</td>
+
                 {/* Trainer Avatar */}
                 <td>
                   <img
@@ -255,6 +268,7 @@ const AllTrainersManagement = ({ AllTrainersData }) => {
                       })()
                     : trainer.name}
                 </td>
+
                 {/* Trainer Email */}
                 <td>{trainer.email}</td>
 
@@ -319,24 +333,23 @@ const AllTrainersManagement = ({ AllTrainersData }) => {
                       className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-20"
                     >
                       <ul className="py-1 text-sm text-gray-700">
-                        <li
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                          onClick={() => handleUserAction("details", trainer)}
-                        >
-                          Details
-                        </li>
-                        <li
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                          onClick={() => handleUserAction("kick", trainer)}
-                        >
-                          Kick Trainer
-                        </li>
-                        <li
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                          onClick={() => handleUserAction("ban", trainer)}
-                        >
-                          Ban Trainer
-                        </li>
+                        {[
+                          { action: "details", label: "Details" },
+                          {
+                            action: "tier_management",
+                            label: "Tier Management",
+                          },
+                          { action: "kick", label: "Kick Trainer" },
+                          { action: "ban", label: "Ban Trainer" },
+                        ].map(({ action, label }) => (
+                          <li
+                            key={action}
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                            onClick={() => handleUserAction(action, trainer)}
+                          >
+                            {label}
+                          </li>
+                        ))}
                       </ul>
                     </div>
                   )}
@@ -354,6 +367,11 @@ const AllTrainersManagement = ({ AllTrainersData }) => {
       {/* Modal Popup */}
       <dialog id="Trainers_Details" className="modal">
         <AllTrainerManagementDetails trainer={selectedTrainer} />
+      </dialog>
+
+      {/* Modal Popup */}
+      <dialog id="Trainers_Tier_Management" className="modal">
+        <AllTrainerTierManagement trainer={selectedTrainer} />
       </dialog>
     </div>
   );
