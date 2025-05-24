@@ -17,6 +17,8 @@ const tierSettings = {
     ],
     colorClasses:
       "bg-gradient-to-br from-orange-600 to-orange-500 text-white ring-2 ring-orange-800",
+    CardClass:
+      "border border-3 border-orange-600 bg-linear-to-bl hover:bg-linear-to-tr from-orange-400/20 to-to-orange-500/20",
   },
   Silver: {
     label: "Silver",
@@ -31,6 +33,8 @@ const tierSettings = {
     ],
     colorClasses:
       "bg-gradient-to-br from-gray-400 to-gray-500 text-black ring-2 ring-gray-800",
+    CardClass:
+      "border border-3 border-gray-600 bg-linear-to-bl hover:bg-linear-to-tr from-gray-400/20 to-to-gray-500/20",
   },
   Gold: {
     label: "Gold",
@@ -46,6 +50,8 @@ const tierSettings = {
     ],
     colorClasses:
       "bg-gradient-to-br from-yellow-500 to-yellow-400 text-black ring-2 ring-yellow-800",
+    CardClass:
+      "border border-3 border-yellow-600 bg-linear-to-bl hover:bg-linear-to-tr from-yellow-400/20 to-to-yellow-500/20",
   },
   Diamond: {
     label: "Diamond",
@@ -61,6 +67,8 @@ const tierSettings = {
     ],
     colorClasses:
       "bg-gradient-to-br from-blue-600 to-blue-500 text-white ring-2 ring-blue-800",
+    CardClass:
+      "border border-3 border-blue-600 bg-linear-to-bl hover:bg-linear-to-tr from-blue-400/20 to-to-blue-500/20",
   },
   Platinum: {
     label: "Platinum",
@@ -77,6 +85,8 @@ const tierSettings = {
     ],
     colorClasses:
       "bg-gradient-to-br from-gray-800 to-gray-700 text-white ring-2 ring-gray-800",
+    CardClass:
+      "border border-3 border-gray-600 bg-linear-to-bl hover:bg-linear-to-tr from-gray-800/20 to-to-gray-700/20",
   },
 };
 
@@ -84,11 +94,14 @@ const AllTrainerTierManagement = ({ trainer }) => {
   const tiers = Object.entries(tierSettings);
   const [current, setCurrent] = useState(0);
   const [fade, setFade] = useState("fade-in");
+  const [selectedTierKey, setSelectedTierKey] = useState(null);
+  const [slideDirection, setSlideDirection] = useState("right");
 
   const closeModal = () =>
     document.getElementById("Trainers_Tier_Management")?.close();
 
   const handleSlide = (direction) => {
+    setSlideDirection(direction === "next" ? "right" : "left");
     setFade("fade-out");
     setTimeout(() => {
       setCurrent((prev) => {
@@ -99,30 +112,58 @@ const AllTrainerTierManagement = ({ trainer }) => {
     }, 300);
   };
 
+  const handleSelectTier = () => {
+    if (!selectedTierKey) {
+      alert("No tier selected.");
+      return;
+    }
+    const [key, tierData] = tiers.find(([key]) => key === selectedTierKey);
+    alert(`Selected Tier: ${key} - ${tierData.label}`);
+  };
+
   const [tierKey, tier] = tiers[current];
+  const isSelected = tierKey === selectedTierKey;
+
+  // Compose animation class dynamically based on fade and slideDirection
+  const animationClass = `${fade}-${slideDirection}`;
 
   return (
     <div className="modal-box p-0 bg-gradient-to-b from-white to-gray-300 text-black max-h-[90vh] overflow-y-auto rounded-lg shadow-xl relative">
       {/* CSS Animation Styles */}
       <style>{`
-        .fade-in {
-          animation: fadeIn 0.3s ease forwards;
+        .fade-in-left {
+          animation: fadeInLeft 0.3s ease forwards;
         }
-        .fade-out {
-          animation: fadeOut 0.3s ease forwards;
+        .fade-out-left {
+          animation: fadeOutLeft 0.3s ease forwards;
         }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
+        .fade-in-right {
+          animation: fadeInRight 0.3s ease forwards;
         }
-        @keyframes fadeOut {
-          from { opacity: 1; transform: translateY(0); }
-          to { opacity: 0; transform: translateY(10px); }
+        .fade-out-right {
+          animation: fadeOutRight 0.3s ease forwards;
+        }
+
+        @keyframes fadeInLeft {
+          from { opacity: 0; transform: translateX(-40px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeOutLeft {
+          from { opacity: 1; transform: translateX(0); }
+          to { opacity: 0; transform: translateX(40px); }
+        }
+        @keyframes fadeInRight {
+          from { opacity: 0; transform: translateX(40px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeOutRight {
+          from { opacity: 1; transform: translateX(0); }
+          to { opacity: 0; transform: translateX(-40px); }
         }
       `}</style>
 
       {/* Modal Header */}
-      <div className="flex items-center justify-between px-5 py-3 border-b border-gray-300 bg-white sticky top-0 z-10">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-gray-300 bg-white">
         <h2 className="font-semibold text-xl">
           Trainer {trainer?.name}&apos;s Tier Management
         </h2>
@@ -133,10 +174,10 @@ const AllTrainerTierManagement = ({ trainer }) => {
       </div>
 
       {/* Current Tier */}
-      <div className="text-center mt-4">
-        <p className="text-lg font-semibold">Current Tier</p>
+      <div className="text-center">
+        <p className=" font-semibold">Current Tier</p>
         <div
-          className={`inline-block mt-2 px-6 py-2 rounded-full text-sm font-bold transition duration-500 ease-in-out ${
+          className={`inline-block mt-1 px-10 py-2 rounded-full text-sm font-bold transition duration-500 ease-in-out ${
             tierSettings[trainer?.tier]?.colorClasses ||
             "bg-gray-300 text-gray-700 ring-2 ring-gray-400"
           }`}
@@ -146,29 +187,48 @@ const AllTrainerTierManagement = ({ trainer }) => {
       </div>
 
       {/* Slider with Animation */}
-      <div className="flex items-center justify-center p-6 space-x-4">
-        <button onClick={() => handleSlide("prev")}>
+      <div className="flex items-center justify-center p-6 space-x-2">
+        <button
+          onClick={() => handleSlide("prev")}
+          className="hover:bg-gray-300 rounded-full p-2 cursor-pointer"
+        >
           <FaChevronLeft className="text-2xl text-gray-600 hover:text-black" />
         </button>
 
         <div
-          className={`w-full max-w-md p-5 rounded-xl border-2 transition-all duration-500 ${fade} ${
-            tier.colorClasses
-              .split(" ")
-              .find((cls) => cls.startsWith("ring-")) || "border-gray-400"
+          className={`min-w-[400px] rounded-3xl border-l-4 border-r-4 ${
+            isSelected ? " border-green-500" : "border-gray-300"
           }`}
         >
-          <h3 className="text-xl font-bold mb-2">{tier.label} Tier</h3>
-          <p className="mb-2 font-medium">Gym Cut: {tier.cut}%</p>
-          <ul className="list-disc ml-5 text-sm space-y-1">
-            {tier.perks.map((perk, i) => (
-              <li key={i}>{perk}</li>
-            ))}
-          </ul>
+          <div
+            onClick={() => setSelectedTierKey(tierKey)}
+            className={`w-full p-4 rounded-3xl cursor-pointer transition duration-300 min-h-[300px] ${animationClass} ${tier.CardClass}`}
+          >
+            <h3 className="text-xl font-bold mb-2">{tier.label} Tier</h3>
+            <p className="mb-2 font-medium">Gym Cut: {tier.cut}%</p>
+            <ul className="list-disc ml-5 text-sm space-y-1">
+              {tier.perks.map((perk, i) => (
+                <li key={i}>{perk}</li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        <button onClick={() => handleSlide("next")}>
+        <button
+          onClick={() => handleSlide("next")}
+          className="hover:bg-gray-300 rounded-full p-2"
+        >
           <FaChevronRight className="text-2xl text-gray-600 hover:text-black" />
+        </button>
+      </div>
+
+      {/* Confirm Button */}
+      <div className="flex justify-center pb-4">
+        <button
+          onClick={handleSelectTier}
+          className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded"
+        >
+          Confirm Selection
         </button>
       </div>
     </div>
