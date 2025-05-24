@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 // Import Packages
 import Swal from "sweetalert2";
@@ -15,14 +15,22 @@ import { getGenderIcon } from "../../../Utility/getGenderIcon";
 import AllTrainerManagementDetails from "./AllTrainerManagementDetails/AllTrainerManagementDetails";
 import AllTrainerTierManagement from "./AllTrainerTierManagement/AllTrainerTierManagement";
 
-const AllTrainersManagement = ({ AllTrainersData }) => {
+const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTier, setSelectedTier] = useState("All");
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [selectedGender, setSelectedGender] = useState("All");
   const [selectedTrainer, setSelectedTrainer] = useState(null);
   const [selectedSpecialization, setSelectedSpecialization] = useState("All");
+
+  // Modal control states instead of direct DOM calls
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showTierModal, setShowTierModal] = useState(false);
+
   const dropdownRef = useRef(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const trainersPerPage = 10;
 
   const genderOptions = ["All", "Male", "Female", "Other"];
 
@@ -38,14 +46,22 @@ const AllTrainersManagement = ({ AllTrainersData }) => {
     ...Array.from(new Set(AllTrainersData.map((t) => t.tier).filter(Boolean))),
   ];
 
+  // Close dropdown if clicked outside or on scroll
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setOpenDropdownId(null);
       }
     };
+    const handleScroll = () => setOpenDropdownId(null);
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   const filteredUsers = AllTrainersData.filter((trainer) => {
@@ -70,26 +86,34 @@ const AllTrainersManagement = ({ AllTrainersData }) => {
     );
   });
 
-  // Handles actions (view details, kick, ban) on a user
+  // Pagination slice
+  const indexOfLastTrainer = currentPage * trainersPerPage;
+  const indexOfFirstTrainer = indexOfLastTrainer - trainersPerPage;
+  const currentTrainers = filteredUsers.slice(
+    indexOfFirstTrainer,
+    indexOfLastTrainer
+  );
+
+  // Reset page when filters/search change (avoid empty page)
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedGender, selectedSpecialization, selectedTier]);
+
   const handleUserAction = (action, trainer) => {
-    // Always close the dropdown after any action
     setOpenDropdownId(null);
 
     switch (action) {
       case "details":
-        // Set the selected user and show their detail modal
         setSelectedTrainer(trainer);
-        document.getElementById("Trainers_Details").showModal();
+        setShowDetailsModal(true);
         break;
 
       case "tier_management":
-        // Manage Trainer Tier Data
         setSelectedTrainer(trainer);
-        document.getElementById("Trainers_Tier_Management").showModal();
+        setShowTierModal(true);
         break;
 
       case "kick":
-        // Confirmation dialog before kicking the trainer
         Swal.fire({
           title: "Are you sure?",
           text: `You are about to kick ${trainer.fullName}`,
@@ -100,7 +124,7 @@ const AllTrainersManagement = ({ AllTrainersData }) => {
           confirmButtonText: "Yes, kick trainer",
         }).then((result) => {
           if (result.isConfirmed) {
-            // Perform kick logic here (e.g., API call)
+            // TODO: Add API call here
             Swal.fire(
               "Kicked!",
               `${trainer.fullName} has been kicked.`,
@@ -111,7 +135,6 @@ const AllTrainersManagement = ({ AllTrainersData }) => {
         break;
 
       case "ban":
-        // Confirmation dialog before banning the trainer
         Swal.fire({
           title: "Are you sure?",
           text: `You are about to ban ${trainer.fullName}`,
@@ -122,7 +145,7 @@ const AllTrainersManagement = ({ AllTrainersData }) => {
           confirmButtonText: "Yes, ban trainer",
         }).then((result) => {
           if (result.isConfirmed) {
-            // Perform ban logic here (e.g., API call)
+            // TODO: Add API call here
             Swal.fire(
               "Banned!",
               `${trainer.fullName} has been banned.`,
@@ -231,148 +254,164 @@ const AllTrainersManagement = ({ AllTrainersData }) => {
 
           {/* Table Body */}
           <tbody>
-            {filteredUsers.map((trainer, index) => (
-              <tr
-                key={trainer._id}
-                className={`hover:bg-gray-100 ${
-                  !trainer.tier ? "bg-red-100 hover:bg-red-200" : ""
-                }`}
-              >
-                {/* Trainer Index */}
-                <td>{index + 1}</td>
-
-                {/* Trainer Avatar */}
-                <td>
-                  <img
-                    src={trainer.imageUrl}
-                    alt={trainer.name}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                </td>
-
-                {/* Trainer Name */}
-                <td>
-                  {searchTerm
-                    ? (() => {
-                        const regex = new RegExp(`(${searchTerm})`, "i");
-                        const parts = trainer.name.split(regex);
-                        return parts.map((part, i) =>
-                          regex.test(part) ? (
-                            <span key={i} className="bg-yellow-300">
-                              {part}
-                            </span>
-                          ) : (
-                            <span key={i}>{part}</span>
-                          )
-                        );
-                      })()
-                    : trainer.name}
-                </td>
-
-                {/* Trainer Email */}
-                <td>{trainer.email}</td>
-
-                {/* Trainer Phone */}
-                <td>
-                  {trainer.contact?.phone
-                    ? trainer.contact.phone.startsWith("+")
-                      ? trainer.contact.phone
-                      : `+${trainer.contact.phone}`
-                    : "N/A"}
-                </td>
-
-                {/* Trainer Specialization */}
-                <td>
-                  {trainer.specialization ? (
-                    trainer.specialization
-                  ) : (
-                    <span className="text-red-600 font-semibold">
-                      Not set yet
-                    </span>
-                  )}
-                </td>
-
-                {/* Trainer Gender */}
-                <td className="flex items-center gap-1">
-                  {(() => {
-                    const { icon, label } = getGenderIcon(trainer.gender);
-                    return (
-                      <>
-                        {icon}
-                        <span className="text-sm">{label}</span>
-                      </>
-                    );
-                  })()}
-                </td>
-
-                {/* Trainer Tier */}
-                <td>
-                  {trainer.tier ? (
-                    trainer.tier
-                  ) : (
-                    <span className="text-red-600 font-semibold">New</span>
-                  )}
-                </td>
-
-                {/* Trainer Button */}
-                <td className="relative">
-                  <button
-                    className="border border-gray-400 rounded-full p-2 hover:bg-gray-300 transition cursor-pointer"
-                    onClick={() =>
-                      setOpenDropdownId(
-                        openDropdownId === trainer._id ? null : trainer._id
-                      )
-                    }
-                  >
-                    <HiDotsVertical className="text-gray-700" />
-                  </button>
-                  {openDropdownId === trainer._id && (
-                    <div
-                      ref={dropdownRef}
-                      onMouseLeave={() => setOpenDropdownId(null)}
-                      className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-20"
-                    >
-                      <ul className="py-1 text-sm text-gray-700">
-                        {[
-                          { action: "details", label: "Details" },
-                          {
-                            action: "tier_management",
-                            label: "Tier Management",
-                          },
-                          { action: "kick", label: "Kick Trainer" },
-                          { action: "ban", label: "Ban Trainer" },
-                        ].map(({ action, label }) => (
-                          <li
-                            key={action}
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleUserAction(action, trainer)}
-                          >
-                            {label}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+            {currentTrainers.length === 0 ? (
+              <tr>
+                <td colSpan="9" className="text-center text-gray-500 py-4">
+                  No trainers found.
                 </td>
               </tr>
-            ))}
+            ) : (
+              currentTrainers.map((trainer, index) => (
+                <tr
+                  key={trainer._id}
+                  className={`hover:bg-gray-100 items-center ${
+                    !trainer.tier ? "bg-red-100 hover:bg-red-200" : ""
+                  }`}
+                >
+                  <td>{indexOfFirstTrainer + index + 1}</td>
+
+                  <td>
+                    <img
+                      src={trainer.imageUrl}
+                      alt={trainer.name}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  </td>
+
+                  <td>
+                    {searchTerm
+                      ? (() => {
+                          const regex = new RegExp(`(${searchTerm})`, "i");
+                          const parts = trainer.name.split(regex);
+                          return parts.map((part, i) =>
+                            regex.test(part) ? (
+                              <span key={i} className="bg-yellow-300">
+                                {part}
+                              </span>
+                            ) : (
+                              part
+                            )
+                          );
+                        })()
+                      : trainer.name}
+                  </td>
+
+                  <td>{trainer.email}</td>
+                  <td>{trainer.phone}</td>
+                  <td>{trainer.specialization || "N/A"}</td>
+
+                  {/* Trainer Gender */}
+                  <td className="align-middle flex items-center gap-1">
+                    {(() => {
+                      const { icon, label } = getGenderIcon(trainer.gender);
+                      return (
+                        <>
+                          <span className="inline-flex w-6 h-6 items-center justify-center">
+                            {icon}
+                          </span>
+                          <span className="text-sm">{label}</span>
+                        </>
+                      );
+                    })()}
+                  </td>
+
+                  {/* Trainer Tier */}
+                  <td>
+                    {trainer.tier ? (
+                      trainer.tier
+                    ) : (
+                      <span className="text-red-600 font-semibold">New</span>
+                    )}
+                  </td>
+
+                  <td className="relative" ref={dropdownRef}>
+                    <button
+                      onClick={() =>
+                        setOpenDropdownId(
+                          openDropdownId === trainer._id ? null : trainer._id
+                        )
+                      }
+                      className="p-1 rounded hover:bg-gray-200 focus:outline-none"
+                      aria-label="Open actions dropdown"
+                    >
+                      <HiDotsVertical size={20} />
+                    </button>
+
+                    {openDropdownId === trainer._id && (
+                      <ul className="absolute right-0 top-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-50 w-40 text-sm">
+                        <li
+                          onClick={() => handleUserAction("details", trainer)}
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        >
+                          Details
+                        </li>
+                        <li
+                          onClick={() =>
+                            handleUserAction("tier_management", trainer)
+                          }
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        >
+                          Tier Management
+                        </li>
+                        <li
+                          onClick={() => handleUserAction("kick", trainer)}
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-red-600"
+                        >
+                          Kick
+                        </li>
+                        <li
+                          onClick={() => handleUserAction("ban", trainer)}
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-red-600"
+                        >
+                          Ban
+                        </li>
+                      </ul>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
 
-        {filteredUsers.length === 0 && (
-          <p className="text-center text-gray-500 mt-4">No trainers found.</p>
-        )}
+        {/* Pagination */}
+        <div className="mt-4 flex justify-center gap-2">
+          {Array.from(
+            { length: Math.ceil(filteredUsers.length / trainersPerPage) },
+            (_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`px-3 py-1 rounded border ${
+                  currentPage === i + 1
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
+                aria-label={`Go to page ${i + 1}`}
+              >
+                {i + 1}
+              </button>
+            )
+          )}
+        </div>
       </div>
 
-      {/* Modal Popup */}
-      <dialog id="Trainers_Details" className="modal">
-        <AllTrainerManagementDetails trainer={selectedTrainer} />
-      </dialog>
+      {/* Modals */}
+      {showDetailsModal && selectedTrainer && (
+        <AllTrainerManagementDetails
+          setShowDetailsModal={setShowDetailsModal}
+          trainerDetails={selectedTrainer}
+          Refetch={Refetch}
+        />
+      )}
 
-      {/* Modal Popup */}
-      <dialog id="Trainers_Tier_Management" className="modal">
-        <AllTrainerTierManagement trainer={selectedTrainer} />
-      </dialog>
+      {showTierModal && selectedTrainer && (
+        <AllTrainerTierManagement
+          setShowTierModal={setShowTierModal}
+          trainerDetails={selectedTrainer}
+          Refetch={Refetch}
+        />
+      )}
     </div>
   );
 };

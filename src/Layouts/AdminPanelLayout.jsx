@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 // Icons
@@ -28,16 +28,36 @@ import FetchingError from "../Shared/Component/FetchingError";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
-  const axiosPublic = useAxiosPublic();
   const navigate = useNavigate();
-
-  // Initial tab logic
-  const searchParams = new URLSearchParams(location.search);
-  const initialTab = searchParams.get("tab") || "All_Users";
+  const axiosPublic = useAxiosPublic();
 
   const [spinning, setSpinning] = useState(false);
-  const [activeTab, setActiveTab] = useState(initialTab);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Get initial tab from URL
+  const searchParams = new URLSearchParams(location.search);
+  const initialTab = searchParams.get("tab") || "Admin_Dashboard";
+
+  // Tab State
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  // Update URL when activeTab changes
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set("tab", activeTab);
+    navigate({ search: params.toString() }, { replace: true });
+    window.scrollTo(0, 0);
+  }, [activeTab, navigate]);
+
+  // Listen to URL changes and update activeTab
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const urlTab = params.get("tab") || "Admin_Dashboard";
+    if (urlTab !== activeTab) {
+      setActiveTab(urlTab);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
   // 1. Fetch All Users
   const {
@@ -108,6 +128,12 @@ const AdminPanelLayout = () => {
     }
   };
 
+  // Unified refetch function
+  const refetchAll = async () => {
+    await AllUsersRefetch();
+    await AllTrainersRefetch();
+  };
+
   // Handle Refetch Spin
   const handleRefetch = () => {
     if (spinning) return; // Prevent spam clicks
@@ -123,21 +149,22 @@ const AdminPanelLayout = () => {
       id: "All_Users",
       Icon: users,
       title: "All Users",
-      content: <AllUserManagement AllUsersData={AllUsersData} />,
+      content: (
+        <AllUserManagement AllUsersData={AllUsersData} Refetch={refetchAll} />
+      ),
     },
     {
       id: "All_Trainers",
       Icon: coach,
       title: "All Trainers",
-      content: <AllTrainersManagement AllTrainersData={AllTrainersData} />,
+      content: (
+        <AllTrainersManagement
+          AllTrainersData={AllTrainersData}
+          Refetch={refetchAll}
+        />
+      ),
     },
   ];
-
-  // Unified refetch function
-  const refetchAll = async () => {
-    await AllUsersRefetch();
-    await AllTrainersRefetch();
-  };
 
   // Loading state
   if (AllUsersIsLoading || AllTrainersIsLoading) return <Loading />;
