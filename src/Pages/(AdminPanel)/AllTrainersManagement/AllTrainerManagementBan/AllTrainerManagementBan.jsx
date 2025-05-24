@@ -159,7 +159,7 @@ const AllTrainerManagementBan = ({ trainer, Refetch }) => {
       {/* Header: Title with trainer name and close button */}
       <div className="flex items-center justify-between px-5 py-3 border-b border-gray-300 bg-white">
         <h2 className="font-semibold text-xl">
-          Ban Trainer: {trainer?.fullName || "Unnamed"}
+          Ban Trainer: {trainer?.name || "Unnamed"}
         </h2>
         {/* Close icon triggers modal close */}
         <ImCross
@@ -259,7 +259,7 @@ const AllTrainerManagementBan = ({ trainer, Refetch }) => {
 AllTrainerManagementBan.propTypes = {
   trainer: PropTypes.shape({
     _id: PropTypes.string.isRequired,
-    fullName: PropTypes.string,
+    name: PropTypes.string,
   }).isRequired,
   Refetch: PropTypes.func.isRequired,
 };

@@ -5,13 +5,22 @@ import PropTypes from "prop-types";
 import Swal from "sweetalert2";
 
 // Import Icons
+import {
+  FaBan,
+  FaClipboardList,
+  FaUserShield,
+  FaUserSlash,
+  FaExclamationTriangle,
+  FaUnlock,
+} from "react-icons/fa";
+
 import { HiDotsVertical } from "react-icons/hi";
 
 // import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 // Import Modals
-
+import AllTrainerManagementBanDetails from "../AllTrainerManagementBanDetails/AllTrainerManagementBanDetails";
 import AllTrainerManagementDetails from "../AllTrainerManagementDetails/AllTrainerManagementDetails";
 import AllTrainerManagementTier from "../AllTrainerManagementTier/AllTrainerManagementTier";
 import AllTrainerManagementBan from "../AllTrainerManagementBan/AllTrainerManagementBan";
@@ -46,7 +55,7 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
       case "kick":
         Swal.fire({
           title: "Are you sure?",
-          text: `You are about to kick ${trainer.fullName}`,
+          text: `You are about to kick ${trainer.name}`,
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#d33",
@@ -69,14 +78,14 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
 
               Swal.fire(
                 "Kicked!",
-                `${trainer.fullName} has been kicked and downgraded to Member.`,
+                `${trainer.name} has been kicked and downgraded to Member.`,
                 "success"
               );
             } catch (error) {
               console.error("Error kicking trainer:", error);
               Swal.fire(
                 "Error!",
-                `Failed to kick ${trainer.fullName}. Please try again.`,
+                `Failed to kick ${trainer.name}. Please try again.`,
                 "error"
               );
             }
@@ -88,7 +97,7 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
       case "ban":
         Swal.fire({
           title: "Are you sure?",
-          text: `You are about to ban ${trainer?.fullName || "this trainer"}`,
+          text: `You are about to ban ${trainer?.name || "this trainer"}`,
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#d33",
@@ -104,13 +113,13 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
 
       case "ban_details":
         setSelectedTrainer(trainer);
-        document.getElementById("Trainer_Ban").showModal(); // Show ban details modal
+        document.getElementById("Trainer_UnBan_Details").showModal();
         break;
 
       case "unBan":
         Swal.fire({
           title: "Are you sure?",
-          text: `You are about to UnBan ${trainer.fullName}`,
+          text: `You are about to UnBan ${trainer.name}`,
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
@@ -126,14 +135,14 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
 
               Swal.fire(
                 "Unbanned!",
-                `${trainer.fullName} has been unbanned.`,
+                `${trainer.name} has been unbanned.`,
                 "success"
               );
             } catch (error) {
               console.error("Error unbanning trainer:", error);
               Swal.fire(
                 "Error!",
-                `Failed to unBan ${trainer.fullName}. Please try again.`,
+                `Failed to unBan ${trainer.name}. Please try again.`,
                 "error"
               );
             }
@@ -184,20 +193,23 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
         >
           <li
             onClick={() => handleUserAction("details", trainer)}
-            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+            className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
           >
+            <FaClipboardList className="mr-2" />
             View Details
           </li>
           <li
             onClick={() => handleUserAction("tier_management", trainer)}
-            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+            className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
           >
+            <FaUserShield className="mr-2" />
             Tier Management
           </li>
           <li
             onClick={() => handleUserAction("kick", trainer)}
-            className="px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer"
+            className="flex items-center px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer"
           >
+            <FaUserSlash className="mr-2" />
             Kick Trainer
           </li>
 
@@ -206,22 +218,25 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
             <>
               <li
                 onClick={() => handleUserAction("ban_details", trainer)}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-yellow-600"
+                className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer text-yellow-600"
               >
+                <FaExclamationTriangle className="mr-2" />
                 Ban Details
               </li>
               <li
                 onClick={() => handleUserAction("unBan", trainer)}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-green-600"
+                className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer text-green-600"
               >
+                <FaUnlock className="mr-2" />
                 UnBan Trainer
               </li>
             </>
           ) : (
             <li
               onClick={() => handleUserAction("ban", trainer)}
-              className="px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer"
+              className="flex items-center px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer"
             >
+              <FaBan className="mr-2" />
               Ban Trainer
             </li>
           )}
@@ -243,6 +258,13 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
       <dialog id="Trainer_Ban" className="modal">
         <AllTrainerManagementBan trainer={selectedTrainer} Refetch={Refetch} />
       </dialog>
+
+      <dialog id="Trainer_UnBan_Details" className="modal">
+        <AllTrainerManagementBanDetails
+          trainer={selectedTrainer}
+          Refetch={Refetch}
+        />
+      </dialog>
     </div>
   );
 };
@@ -251,7 +273,9 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
 AllTrainerManagementDropdown.propTypes = {
   trainer: PropTypes.shape({
     _id: PropTypes.string.isRequired,
-    fullName: PropTypes.string,
+    name: PropTypes.string,
+    ban: PropTypes.bool,
+    email: PropTypes.string,
   }).isRequired,
   Refetch: PropTypes.func.isRequired,
 };
