@@ -10,8 +10,11 @@ import { HiDotsVertical } from "react-icons/hi";
 // Import Modals
 import AllTrainerTierManagement from "../AllTrainerTierManagement/AllTrainerTierManagement";
 import AllTrainerManagementDetails from "../AllTrainerManagementDetails/AllTrainerManagementDetails";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
+  const axiosPublic = useAxiosPublic();
+
   // State to manage open dropdown
   const [openDropdownId, setOpenDropdownId] = useState(null);
 
@@ -45,16 +48,37 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
           confirmButtonColor: "#d33",
           cancelButtonColor: "#3085d6",
           confirmButtonText: "Yes, kick trainer",
-        }).then((result) => {
+        }).then(async (result) => {
           if (result.isConfirmed) {
-            // TODO: Add actual API call for kicking trainer here
-            Swal.fire(
-              "Kicked!",
-              `${trainer.fullName} has been kicked.`,
-              "success"
-            );
+            try {
+              // 1. Delete Trainer by ID
+              await axiosPublic.delete(`/Trainers/${trainer._id}`);
+
+              // 2. Update User role to "Member"
+              // Assuming you update by email, adjust if you want to update by id
+              await axiosPublic.patch("/Users/UpdateRole", {
+                email: trainer?._id,
+                role: "Member",
+              });
+
+              Refetch();
+
+              Swal.fire(
+                "Kicked!",
+                `${trainer.fullName} has been kicked and downgraded to Member.`,
+                "success"
+              );
+            } catch (error) {
+              console.error("Error kicking trainer:", error);
+              Swal.fire(
+                "Error!",
+                `Failed to kick ${trainer.fullName}. Please try again.`,
+                "error"
+              );
+            }
           }
         });
+
         break;
 
       case "ban":
