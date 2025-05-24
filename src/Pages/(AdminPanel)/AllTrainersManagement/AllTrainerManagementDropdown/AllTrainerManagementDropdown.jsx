@@ -7,10 +7,14 @@ import Swal from "sweetalert2";
 // Import Icons
 import { HiDotsVertical } from "react-icons/hi";
 
-// Import Modals
-import AllTrainerTierManagement from "../AllTrainerTierManagement/AllTrainerTierManagement";
-import AllTrainerManagementDetails from "../AllTrainerManagementDetails/AllTrainerManagementDetails";
+// import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+
+// Import Modals
+
+import AllTrainerManagementDetails from "../AllTrainerManagementDetails/AllTrainerManagementDetails";
+import AllTrainerManagementTier from "../AllTrainerManagementTier/AllTrainerManagementTier";
+import AllTrainerManagementBan from "../AllTrainerManagementBan/AllTrainerManagementBan";
 
 const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
   const axiosPublic = useAxiosPublic();
@@ -84,7 +88,7 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
       case "ban":
         Swal.fire({
           title: "Are you sure?",
-          text: `You are about to ban ${trainer.fullName}`,
+          text: `You are about to ban ${trainer?.fullName || "this trainer"}`,
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#d33",
@@ -92,12 +96,8 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
           confirmButtonText: "Yes, ban trainer",
         }).then((result) => {
           if (result.isConfirmed) {
-            // TODO: Add actual API call for banning trainer here
-            Swal.fire(
-              "Banned!",
-              `${trainer.fullName} has been banned.`,
-              "success"
-            );
+            setSelectedTrainer(trainer);
+            document.getElementById("Trainer_Ban").showModal();
           }
         });
         break;
@@ -179,7 +179,11 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
       </dialog>
 
       <dialog id="Trainer_Tier_Management" className="modal">
-        <AllTrainerTierManagement trainer={selectedTrainer} Refetch={Refetch} />
+        <AllTrainerManagementTier trainer={selectedTrainer} Refetch={Refetch} />
+      </dialog>
+
+      <dialog id="Trainer_Ban" className="modal">
+        <AllTrainerManagementBan trainer={selectedTrainer} Refetch={Refetch} />
       </dialog>
     </div>
   );

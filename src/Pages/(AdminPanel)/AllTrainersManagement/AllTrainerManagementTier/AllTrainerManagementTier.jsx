@@ -102,7 +102,7 @@ const tierSettings = {
   },
 };
 
-const AllTrainerTierManagement = ({ trainer, Refetch }) => {
+const AllTrainerManagementTier = ({ trainer, Refetch }) => {
   const axiosPublic = useAxiosPublic();
   // Convert the tierSettings object into an array of [key, value] pairs
   const tiers = Object.entries(tierSettings);
@@ -352,7 +352,7 @@ const AllTrainerTierManagement = ({ trainer, Refetch }) => {
   );
 };
 
-AllTrainerTierManagement.propTypes = {
+AllTrainerManagementTier.propTypes = {
   trainer: PropTypes.shape({
     _id: PropTypes.string,
     name: PropTypes.string,
@@ -361,4 +361,4 @@ AllTrainerTierManagement.propTypes = {
   Refetch: PropTypes.func.isRequired,
 };
 
-export default AllTrainerTierManagement;
+export default AllTrainerManagementTier;
