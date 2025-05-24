@@ -357,7 +357,7 @@ AllTrainerManagementTier.propTypes = {
     _id: PropTypes.string,
     name: PropTypes.string,
     tier: PropTypes.string,
-  }).isRequired,
+  }),
   Refetch: PropTypes.func.isRequired,
 };
 

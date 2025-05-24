@@ -1,20 +1,35 @@
 import { useState } from "react";
+
+// Import Icons
 import { ImCross } from "react-icons/im";
 
+// Import Packages
+import PropTypes from "prop-types";
 import Swal from "sweetalert2";
+
+// import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+
+// Import Button
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
-const AllTrainerManagementBan = ({ trainer }) => {
+const AllTrainerManagementBan = ({ trainer, Refetch }) => {
   const axiosPublic = useAxiosPublic();
 
+  // State to hold ban reason input by user
   const [banReason, setBanReason] = useState("");
+
+  // State to hold selected ban duration (e.g., "7D", "Permanent", "Custom")
   const [banDuration, setBanDuration] = useState("");
+
+  // State and value for custom duration unit and value if "Custom" duration is chosen
   const [customUnit, setCustomUnit] = useState("Days");
   const [customValue, setCustomValue] = useState("");
 
+  // Close modal by targeting its ID and calling close()
   const closeModal = () => document.getElementById("Trainer_Ban")?.close();
 
+  // Predefined reasons user can select from for banning
   const predefinedReasons = [
     "Violation of code of conduct",
     "Inappropriate behavior",
@@ -23,6 +38,7 @@ const AllTrainerManagementBan = ({ trainer }) => {
     "Client complaints",
   ];
 
+  // Duration options user can select from including "Custom" and "Permanent"
   const durationOptions = [
     "1D",
     "7D",
@@ -36,16 +52,21 @@ const AllTrainerManagementBan = ({ trainer }) => {
     "Custom",
   ];
 
+  // Calculate end date of ban based on selected duration or custom input
   const calculateEndDate = () => {
     const now = new Date();
+
+    // If permanent, return string representing indefinite ban
     if (banDuration === "Permanent") return "Indefinite";
 
     let endDate = new Date(now);
 
     if (banDuration !== "Custom") {
+      // Extract numeric value and unit (D/W/M/Y) from predefined duration string
       const value = parseInt(banDuration.slice(0, -1));
       const unit = banDuration.slice(-1);
 
+      // Add corresponding time to now based on unit
       switch (unit) {
         case "D":
           endDate.setDate(endDate.getDate() + value);
@@ -61,6 +82,7 @@ const AllTrainerManagementBan = ({ trainer }) => {
           break;
       }
     } else {
+      // For custom duration, validate input and add time based on customUnit
       const val = parseInt(customValue);
       if (isNaN(val) || val <= 0) return "Invalid custom duration";
 
@@ -80,11 +102,15 @@ const AllTrainerManagementBan = ({ trainer }) => {
       }
     }
 
+    // Return the calculated end date as a formatted string
     return endDate.toLocaleString();
   };
 
+  // Function to handle confirming the ban action
   const handleConfirmBan = async () => {
     const now = new Date();
+
+    // Create ban object payload for API
     const ban = {
       Reason: banReason || "No reason provided",
       Duration:
@@ -94,11 +120,13 @@ const AllTrainerManagementBan = ({ trainer }) => {
     };
 
     try {
+      // Send ban data to server for specific trainer by ID
       const res = await axiosPublic.post(
         `/Trainers/AddBanElement/${trainer._id}`,
         ban
       );
 
+      // Check server response and notify user accordingly
       if (res.data?.message === "Ban added successfully.") {
         Swal.fire({
           icon: "success",
@@ -113,6 +141,7 @@ const AllTrainerManagementBan = ({ trainer }) => {
         });
       }
     } catch (error) {
+      // Handle network or server errors during API call
       Swal.fire({
         icon: "error",
         title: "Ban Failed",
@@ -120,29 +149,33 @@ const AllTrainerManagementBan = ({ trainer }) => {
       });
     }
 
+    // Close the modal regardless of success or failure
     closeModal();
+    Refetch();
   };
 
   return (
     <div className="modal-box p-0 bg-gradient-to-b from-white to-gray-300 text-black max-h-[90vh] overflow-y-auto rounded-lg shadow-xl relative">
-      {/* Header */}
+      {/* Header: Title with trainer name and close button */}
       <div className="flex items-center justify-between px-5 py-3 border-b border-gray-300 bg-white">
         <h2 className="font-semibold text-xl">
           Ban Trainer: {trainer?.fullName || "Unnamed"}
         </h2>
+        {/* Close icon triggers modal close */}
         <ImCross
           className="hover:text-red-600 cursor-pointer"
           onClick={closeModal}
         />
       </div>
 
-      {/* Body */}
+      {/* Body: Contains form inputs for ban reason and duration */}
       <div className="px-5 py-4 space-y-5">
-        {/* Reason input */}
+        {/* Ban Reason Input with predefined suggestions */}
         <div>
           <label className="block font-medium mb-1">
             Select or Write Ban Reason:
           </label>
+          {/* Input field with datalist for quick predefined reasons */}
           <input
             list="predefined-reasons"
             value={banReason}
@@ -157,13 +190,14 @@ const AllTrainerManagementBan = ({ trainer }) => {
           </datalist>
         </div>
 
-        {/* Duration options */}
+        {/* Ban Duration Selection Buttons */}
         <div>
           <label className="block font-medium mb-2">Ban Duration:</label>
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
             {durationOptions.map((duration, idx) => (
               <button
                 key={idx}
+                // Highlight selected duration with different styles
                 className={`border rounded py-2 px-3 text-sm cursor-pointer ${
                   banDuration === duration
                     ? "bg-blue-600 text-white border-blue-600"
@@ -177,11 +211,12 @@ const AllTrainerManagementBan = ({ trainer }) => {
           </div>
         </div>
 
-        {/* Custom duration input */}
+        {/* Custom Duration Input Fields: only show if "Custom" selected */}
         {banDuration === "Custom" && (
           <div>
             <h3 className="font-medium mb-1">Custom Duration</h3>
             <div className="flex gap-2">
+              {/* Number input for custom duration value */}
               <input
                 type="number"
                 value={customValue}
@@ -189,6 +224,7 @@ const AllTrainerManagementBan = ({ trainer }) => {
                 className="input input-bordered w-1/2 bg-white border-gray-600 py-3"
                 placeholder="Enter number"
               />
+              {/* Dropdown for custom duration unit */}
               <select
                 value={customUnit}
                 onChange={(e) => setCustomUnit(e.target.value)}
@@ -204,20 +240,28 @@ const AllTrainerManagementBan = ({ trainer }) => {
         )}
       </div>
 
-      {/* Footer */}
-      <div className="px-5 py-4 border-t border-gray-300 bg-white flex justify-end">
+      {/* Footer: Confirm ban button */}
+      <div className=" p-5 flex justify-end">
         <CommonButton
-          clickEvent={handleConfirmBan}
+          clickEvent={handleConfirmBan} // Trigger ban confirmation
           text="Confirm Ban"
           bgColor="DarkRed"
-          px="px-4"
-          py="py-2"
-          borderRadius="rounded"
+          px="px-10"
+          py="py-3"
+          borderRadius="rounded-xl"
           textColor="text-white"
         />
       </div>
     </div>
   );
+};
+
+AllTrainerManagementBan.propTypes = {
+  trainer: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    fullName: PropTypes.string,
+  }).isRequired,
+  Refetch: PropTypes.func.isRequired,
 };
 
 export default AllTrainerManagementBan;

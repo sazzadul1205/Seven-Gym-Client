@@ -102,6 +102,45 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
         });
         break;
 
+      case "ban_details":
+        setSelectedTrainer(trainer);
+        document.getElementById("Trainer_Ban").showModal(); // Show ban details modal
+        break;
+
+      case "unBan":
+        Swal.fire({
+          title: "Are you sure?",
+          text: `You are about to UnBan ${trainer.fullName}`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#aaa",
+          confirmButtonText: "Yes, UnBan trainer",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              // Example API call to UnBan trainer
+              await axiosPublic.patch(`/Trainers/UnBan/${trainer._id}`);
+
+              Refetch();
+
+              Swal.fire(
+                "Unbanned!",
+                `${trainer.fullName} has been unbanned.`,
+                "success"
+              );
+            } catch (error) {
+              console.error("Error unbanning trainer:", error);
+              Swal.fire(
+                "Error!",
+                `Failed to unBan ${trainer.fullName}. Please try again.`,
+                "error"
+              );
+            }
+          }
+        });
+        break;
+
       default:
         break;
     }
@@ -140,7 +179,7 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
       {/* Dropdown menu */}
       {openDropdownId === trainer._id && (
         <ul
-          onClick={(e) => e.stopPropagation()} // Prevent dropdown from closing when clicking inside
+          onClick={(e) => e.stopPropagation()}
           className="absolute right-0 z-10 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg"
         >
           <li
@@ -161,12 +200,31 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
           >
             Kick Trainer
           </li>
-          <li
-            onClick={() => handleUserAction("ban", trainer)}
-            className="px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer"
-          >
-            Ban Trainer
-          </li>
+
+          {/* Conditional Ban Options */}
+          {trainer.ban ? (
+            <>
+              <li
+                onClick={() => handleUserAction("ban_details", trainer)}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-yellow-600"
+              >
+                Ban Details
+              </li>
+              <li
+                onClick={() => handleUserAction("unBan", trainer)}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-green-600"
+              >
+                UnBan Trainer
+              </li>
+            </>
+          ) : (
+            <li
+              onClick={() => handleUserAction("ban", trainer)}
+              className="px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer"
+            >
+              Ban Trainer
+            </li>
+          )}
         </ul>
       )}
 
@@ -193,7 +251,7 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
 AllTrainerManagementDropdown.propTypes = {
   trainer: PropTypes.shape({
     _id: PropTypes.string.isRequired,
-    fullName: PropTypes.string.isRequired,
+    fullName: PropTypes.string,
   }).isRequired,
   Refetch: PropTypes.func.isRequired,
 };

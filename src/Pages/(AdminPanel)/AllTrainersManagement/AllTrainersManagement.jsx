@@ -214,7 +214,11 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
                 <tr
                   key={trainer._id}
                   className={`hover:bg-gray-100 items-center ${
-                    !trainer.tier ? "bg-red-100 hover:bg-red-200" : ""
+                    trainer.ban
+                      ? "bg-red-100 hover:bg-red-200"
+                      : !trainer.tier
+                      ? "bg-red-100 hover:bg-red-200"
+                      : ""
                   }`}
                 >
                   {/* Serial Number */}
@@ -263,8 +267,62 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
                   {/* Phone Number (formatted) */}
                   <td>{formatPhone(trainer.contact.phone)}</td>
 
-                  {/* Specialization */}
-                  <td>{trainer.specialization || "N/A"}</td>
+                  {/* Specialization or Ban Time Left */}
+                  <td>
+                    {trainer.ban
+                      ? (() => {
+                          const now = new Date();
+                          const end = new Date(trainer.ban.End);
+
+                          if (end <= now) {
+                            return (
+                              <span className="text-green-600 font-semibold">
+                                Ban expired
+                              </span>
+                            );
+                          }
+
+                          // Calculate difference in milliseconds
+                          const diffMs = end - now;
+
+                          // Calculate difference in years, months, days
+                          // eslint-disable-next-line no-unused-vars
+                          const diffDate = new Date(diffMs);
+
+                          // Rough calculation (not perfectly accurate for months, but good enough)
+                          const years = Math.floor(
+                            diffMs / (1000 * 60 * 60 * 24 * 365)
+                          );
+                          const months = Math.floor(
+                            (diffMs % (1000 * 60 * 60 * 24 * 365)) /
+                              (1000 * 60 * 60 * 24 * 30)
+                          );
+                          const days = Math.floor(
+                            (diffMs % (1000 * 60 * 60 * 24 * 30)) /
+                              (1000 * 60 * 60 * 24)
+                          );
+
+                          // Format string parts
+                          let timeLeftStr = "";
+                          if (years > 0)
+                            timeLeftStr += `${years} year${
+                              years > 1 ? "s" : ""
+                            } `;
+                          if (months > 0)
+                            timeLeftStr += `${months} month${
+                              months > 1 ? "s" : ""
+                            } `;
+                          if (days > 0)
+                            timeLeftStr += `${days} day${days > 1 ? "s" : ""}`;
+
+                          return (
+                            <span className="text-red-600 font-semibold">
+                              Unban in {timeLeftStr.trim() || "less than a day"}
+                            </span>
+                          );
+                        })()
+                      : trainer.specialization || "N/A"}
+                  </td>
 
                   {/* Gender with Icon and Label */}
                   <td className="flex items-center justify-center gap-1 py-2">
@@ -283,7 +341,9 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
 
                   {/* Tier Badge */}
                   <td>
-                    {trainer.tier ? (
+                    {trainer.ban ? (
+                      <span className="text-red-600 font-bold">Banned</span>
+                    ) : trainer.tier ? (
                       trainer.tier
                     ) : (
                       <span className="text-red-600 font-semibold">New</span>
@@ -302,43 +362,43 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
             )}
           </tbody>
         </table>
+      </div>
 
-        {/* ========== PAGINATION CONTROLS ========== */}
-        <div className="mt-6 flex justify-center items-center gap-4">
-          <div className="join">
-            {/* Previous Page Button */}
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className={`join-item bg-white btn btn-sm h-10 px-5 text-sm transition-all duration-200 ${
-                currentPage === 1
-                  ? "cursor-not-allowed opacity-50"
-                  : "hover:bg-blue-100 text-blue-600"
-              }`}
-            >
-              <FaAnglesLeft />
-            </button>
+      {/* ========== PAGINATION CONTROLS ========== */}
+      <div className="mt-6 flex justify-center items-center gap-4">
+        <div className="join">
+          {/* Previous Page Button */}
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={`join-item bg-white btn btn-sm h-10 px-5 text-sm transition-all duration-200 ${
+              currentPage === 1
+                ? "cursor-not-allowed opacity-50"
+                : "hover:bg-blue-100 text-blue-600"
+            }`}
+          >
+            <FaAnglesLeft />
+          </button>
 
-            {/* Current Page Indicator */}
-            <span className="join-item h-10 px-5 text-sm flex items-center justify-center border border-gray-300 bg-white text-gray-800 font-semibold">
-              Page {currentPage} / {totalPages}
-            </span>
+          {/* Current Page Indicator */}
+          <span className="join-item h-10 px-5 text-sm flex items-center justify-center border border-gray-300 bg-white text-gray-800 font-semibold">
+            Page {currentPage} / {totalPages}
+          </span>
 
-            {/* Next Page Button */}
-            <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-              className={`join-item bg-white btn btn-sm h-10 px-5 text-sm transition-all duration-200 ${
-                currentPage === totalPages
-                  ? "cursor-not-allowed opacity-50"
-                  : "hover:bg-blue-100 text-blue-600"
-              }`}
-            >
-              <FaAnglesRight />
-            </button>
-          </div>
+          {/* Next Page Button */}
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className={`join-item bg-white btn btn-sm h-10 px-5 text-sm transition-all duration-200 ${
+              currentPage === totalPages
+                ? "cursor-not-allowed opacity-50"
+                : "hover:bg-blue-100 text-blue-600"
+            }`}
+          >
+            <FaAnglesRight />
+          </button>
         </div>
       </div>
     </div>
@@ -360,7 +420,7 @@ AllTrainersManagement.propTypes = {
         phone: PropTypes.string.isRequired,
       }).isRequired,
     })
-  ).isRequired,
+  ),
   Refetch: PropTypes.func.isRequired,
 };
 
