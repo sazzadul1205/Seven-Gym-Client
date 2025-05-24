@@ -11,6 +11,7 @@ import {
   FaUserSlash,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
+import AllUserManagementBan from "../AllUserManagementBan/AllUserManagementBan";
 
 const AllUserManagementDropdown = ({ user, Refetch }) => {
   const axiosPublic = useAxiosPublic();
@@ -71,11 +72,10 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
         }).then((result) => {
           if (result.isConfirmed) {
             // Perform ban logic here (e.g., API call)
-            Swal.fire(
-              "Banned!",
-              `${user.fullName} has been banned.`,
-              "success"
-            );
+            if (result.isConfirmed) {
+              setSelectedUser(user);
+              document.getElementById("Users_Ban").showModal();
+            }
           }
         });
         break;
@@ -150,6 +150,11 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
       {/* Modal Popup */}
       <dialog id="User_Details" className="modal">
         <AllUserManagementDetails user={selectedUser} />
+      </dialog>
+
+      {/* Modal Popup */}
+      <dialog id="Users_Ban" className="modal">
+        <AllUserManagementBan user={selectedUser} Refetch={Refetch} />
       </dialog>
     </div>
   );
