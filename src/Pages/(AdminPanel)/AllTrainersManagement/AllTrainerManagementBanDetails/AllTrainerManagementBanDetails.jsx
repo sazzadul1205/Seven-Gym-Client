@@ -43,7 +43,7 @@ const AllTrainerManagementBanDetails = ({ trainer, Refetch }) => {
     } catch (error) {
       // Log any error that occurs during the API call
       console.error("Failed to UnBan trainer:", error);
-        alert("Error: Could not UnBan trainer. Please try again.");
+      alert("Error: Could not UnBan trainer. Please try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -166,7 +166,7 @@ AllTrainerManagementBanDetails.propTypes = {
       Start: PropTypes.string,
       End: PropTypes.string,
     }),
-  }).isRequired,
+  }),
   Refetch: PropTypes.func.isRequired,
 };
 

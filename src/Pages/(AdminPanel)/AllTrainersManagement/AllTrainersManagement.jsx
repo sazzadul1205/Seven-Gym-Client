@@ -13,7 +13,8 @@ import { getGenderIcon } from "../../../Utility/getGenderIcon";
 // Import Modal
 import AllTrainerManagementDropdown from "./AllTrainerManagementDropdown/AllTrainerManagementDropdown";
 
-const formatPhone = (phone) => {
+// eslint-disable-next-line react-refresh/only-export-components
+export const formatPhone = (phone) => {
   // Ensure phone starts with '+'
   const normalized = phone.startsWith("+") ? phone : `+${phone}`;
 
@@ -28,14 +29,24 @@ const formatPhone = (phone) => {
 
 const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
   // React state for filters
-  const [searchTerm, setSearchTerm] = useState(""); // Search text
-  const [selectedTier, setSelectedTier] = useState("All"); // Tier filter
-  const [selectedGender, setSelectedGender] = useState("All"); // Gender filter
-  const [selectedSpecialization, setSelectedSpecialization] = useState("All"); // Specialization filter
+
+  // Search text
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Tier filter
+  const [selectedTier, setSelectedTier] = useState("All");
+
+  // Gender filter
+  const [selectedGender, setSelectedGender] = useState("All");
+
+  // Specialization filter
+  const [selectedSpecialization, setSelectedSpecialization] = useState("All");
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const trainersPerPage = 10; // How many trainers to show per page
+
+  // How many trainers to show per page
+  const trainersPerPage = 10;
 
   // Static options for gender dropdown
   const genderOptions = ["All", "Male", "Female", "Other"];

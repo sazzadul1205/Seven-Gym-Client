@@ -260,7 +260,7 @@ AllTrainerManagementBan.propTypes = {
   trainer: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     name: PropTypes.string,
-  }).isRequired,
+  }),
   Refetch: PropTypes.func.isRequired,
 };
 

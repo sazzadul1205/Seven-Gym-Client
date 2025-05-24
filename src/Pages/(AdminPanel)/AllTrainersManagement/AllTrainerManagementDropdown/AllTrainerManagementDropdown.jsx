@@ -276,7 +276,7 @@ AllTrainerManagementDropdown.propTypes = {
     name: PropTypes.string,
     ban: PropTypes.bool,
     email: PropTypes.string,
-  }).isRequired,
+  }),
   Refetch: PropTypes.func.isRequired,
 };
 
