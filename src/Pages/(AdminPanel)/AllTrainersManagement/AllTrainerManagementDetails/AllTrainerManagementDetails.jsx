@@ -5,40 +5,12 @@ import PropTypes from "prop-types";
 import { ImCross } from "react-icons/im";
 
 // Fetch Trainer Tier Data
-import { getTierBadge } from "../../../(TrainerPages)/TrainerProfile/TrainerProfileHeader/TrainerProfileHeader"; // Utility for badge styling
-
-// Reusable info row component (label-value pair)
-const InfoRow = ({ label, value }) => (
-  <div className="flex justify-between text-sm py-0.5">
-    <span className="font-medium text-gray-700">{label}:</span>
-    <span className="text-gray-800">{value || "N/A"}</span>
-  </div>
-);
-
-InfoRow.propTypes = {
-  label: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-};
-
-// Reusable section component for consistent layout styling
-const Section = ({ title, children }) => (
-  <div className="px-5 py-4 border-t border-gray-300">
-    <h3 className="text-center font-semibold text-sm mb-3 text-gray-800 uppercase tracking-wide">
-      {title}
-    </h3>
-    <div className="space-y-1">{children}</div>
-  </div>
-);
-
-Section.propTypes = {
-  title: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
-};
+import { getTierBadge } from "../../../(TrainerPages)/TrainerProfile/TrainerProfileHeader/TrainerProfileHeader";
 
 // Main component to render all trainer details in a modal
 const AllTrainerManagementDetails = ({ trainer }) => {
   // Close modal utility
-  const closeModal = () => document.getElementById("Trainers_Details")?.close();
+  const closeModal = () => document.getElementById("Trainer_Details")?.close();
 
   return (
     <div className="modal-box p-0 bg-linear-to-b from-white to-gray-300 text-black">
@@ -279,3 +251,31 @@ AllTrainerManagementDetails.propTypes = {
 };
 
 export default AllTrainerManagementDetails;
+
+// Reusable info row component (label-value pair)
+const InfoRow = ({ label, value }) => (
+  <div className="flex justify-between text-sm py-0.5">
+    <span className="font-medium text-gray-700">{label}:</span>
+    <span className="text-gray-800">{value || "N/A"}</span>
+  </div>
+);
+
+InfoRow.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+};
+
+// Reusable section component for consistent layout styling
+const Section = ({ title, children }) => (
+  <div className="px-5 py-4 border-t border-gray-300">
+    <h3 className="text-center font-semibold text-sm mb-3 text-gray-800 uppercase tracking-wide">
+      {title}
+    </h3>
+    <div className="space-y-1">{children}</div>
+  </div>
+);
+
+Section.propTypes = {
+  title: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+};

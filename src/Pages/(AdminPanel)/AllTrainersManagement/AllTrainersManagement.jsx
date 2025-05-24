@@ -1,69 +1,66 @@
-/* eslint-disable react/prop-types */
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 // Import Packages
-import Swal from "sweetalert2";
+import PropTypes from "prop-types";
 
-// Icons
+// Import Icons
 import { FaSearch } from "react-icons/fa";
-import { HiDotsVertical } from "react-icons/hi";
+import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
 // Fetch Gender Icons
 import { getGenderIcon } from "../../../Utility/getGenderIcon";
 
 // Import Modal
-import AllTrainerManagementDetails from "./AllTrainerManagementDetails/AllTrainerManagementDetails";
-import AllTrainerTierManagement from "./AllTrainerTierManagement/AllTrainerTierManagement";
+import AllTrainerManagementDropdown from "./AllTrainerManagementDropdown/AllTrainerManagementDropdown";
+
+const formatPhone = (phone) => {
+  // Ensure phone starts with '+'
+  const normalized = phone.startsWith("+") ? phone : `+${phone}`;
+
+  // Format: +880 19 1733 5945
+  const country = normalized.slice(0, 4); // +880
+  const operator = normalized.slice(4, 6); // 19
+  const part1 = normalized.slice(6, 10); // 1733
+  const part2 = normalized.slice(10); // 5945
+
+  return `${country} ${operator} ${part1} ${part2}`;
+};
 
 const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTier, setSelectedTier] = useState("All");
-  const [openDropdownId, setOpenDropdownId] = useState(null);
-  const [selectedGender, setSelectedGender] = useState("All");
-  const [selectedTrainer, setSelectedTrainer] = useState(null);
-  const [selectedSpecialization, setSelectedSpecialization] = useState("All");
+  // React state for filters
+  const [searchTerm, setSearchTerm] = useState(""); // Search text
+  const [selectedTier, setSelectedTier] = useState("All"); // Tier filter
+  const [selectedGender, setSelectedGender] = useState("All"); // Gender filter
+  const [selectedSpecialization, setSelectedSpecialization] = useState("All"); // Specialization filter
 
-  // Modal control states instead of direct DOM calls
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [showTierModal, setShowTierModal] = useState(false);
-
-  const dropdownRef = useRef(null);
-
+  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const trainersPerPage = 10;
+  const trainersPerPage = 10; // How many trainers to show per page
 
+  // Static options for gender dropdown
   const genderOptions = ["All", "Male", "Female", "Other"];
 
+  // Dynamically generated unique specializations from data
   const uniqueSpecializations = [
     "All",
     ...Array.from(
-      new Set(AllTrainersData.map((t) => t.specialization).filter(Boolean))
+      new Set(
+        AllTrainersData.map((t) => t.specialization).filter(Boolean) // Remove undefined/null
+      )
     ),
   ];
 
+  // Dynamically generated unique tiers from data
   const uniqueTiers = [
     "All",
-    ...Array.from(new Set(AllTrainersData.map((t) => t.tier).filter(Boolean))),
+    ...Array.from(
+      new Set(
+        AllTrainersData.map((t) => t.tier).filter(Boolean) // Remove undefined/null
+      )
+    ),
   ];
 
-  // Close dropdown if clicked outside or on scroll
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setOpenDropdownId(null);
-      }
-    };
-    const handleScroll = () => setOpenDropdownId(null);
-
-    document.addEventListener("mousedown", handleClickOutside);
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
+  // Filter trainers based on current filter criteria
   const filteredUsers = AllTrainersData.filter((trainer) => {
     const matchesSearch = trainer.name
       .toLowerCase()
@@ -86,90 +83,40 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
     );
   });
 
-  // Pagination slice
+  // Pagination calculations
   const indexOfLastTrainer = currentPage * trainersPerPage;
   const indexOfFirstTrainer = indexOfLastTrainer - trainersPerPage;
+
+  // Current trainers to display on the current page
   const currentTrainers = filteredUsers.slice(
     indexOfFirstTrainer,
     indexOfLastTrainer
   );
 
-  // Reset page when filters/search change (avoid empty page)
+  // Total number of pages
+  const totalPages = Math.ceil(filteredUsers.length / trainersPerPage);
+
+  // Reset to page 1 whenever filters or search term changes
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedGender, selectedSpecialization, selectedTier]);
 
-  const handleUserAction = (action, trainer) => {
-    setOpenDropdownId(null);
-
-    switch (action) {
-      case "details":
-        setSelectedTrainer(trainer);
-        setShowDetailsModal(true);
-        break;
-
-      case "tier_management":
-        setSelectedTrainer(trainer);
-        setShowTierModal(true);
-        break;
-
-      case "kick":
-        Swal.fire({
-          title: "Are you sure?",
-          text: `You are about to kick ${trainer.fullName}`,
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#d33",
-          cancelButtonColor: "#3085d6",
-          confirmButtonText: "Yes, kick trainer",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // TODO: Add API call here
-            Swal.fire(
-              "Kicked!",
-              `${trainer.fullName} has been kicked.`,
-              "success"
-            );
-          }
-        });
-        break;
-
-      case "ban":
-        Swal.fire({
-          title: "Are you sure?",
-          text: `You are about to ban ${trainer.fullName}`,
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#d33",
-          cancelButtonColor: "#3085d6",
-          confirmButtonText: "Yes, ban trainer",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // TODO: Add API call here
-            Swal.fire(
-              "Banned!",
-              `${trainer.fullName} has been banned.`,
-              "success"
-            );
-          }
-        });
-        break;
-
-      default:
-        break;
-    }
-  };
+  // Scroll to top smoothly on page change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentPage]);
 
   return (
     <div className="text-black">
-      {/* Filters */}
+      {/* ========== FILTER SECTION ========== */}
       <div className="bg-gray-200 px-4 py-6 flex flex-col items-center space-y-1">
         <label className="text-gray-700 font-medium text-lg">
           All Trainers
         </label>
 
+        {/* Filter Controls (Gender, Specialization, Tier, Search) */}
         <div className="flex flex-wrap justify-center gap-4 w-full max-w-6xl">
-          {/* Gender Filter */}
+          {/* Gender Filter Dropdown */}
           <div className="flex flex-col">
             <label className="text-sm text-gray-600 mb-1">Gender</label>
             <select
@@ -185,7 +132,7 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
             </select>
           </div>
 
-          {/* Specialization Filter */}
+          {/* Specialization Filter Dropdown */}
           <div className="flex flex-col">
             <label className="text-sm text-gray-600 mb-1">Specialization</label>
             <select
@@ -201,7 +148,7 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
             </select>
           </div>
 
-          {/* Tier Filter */}
+          {/* Tier Filter Dropdown */}
           <div className="flex flex-col">
             <label className="text-sm text-gray-600 mb-1">Tier</label>
             <select
@@ -217,7 +164,7 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
             </select>
           </div>
 
-          {/* Search Input */}
+          {/* Search Input for Trainer Name */}
           <div className="flex flex-col flex-1 min-w-[250px]">
             <label className="text-sm text-gray-600 mb-1">Search By Name</label>
             <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
@@ -234,7 +181,7 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
         </div>
       </div>
 
-      {/* Table */}
+      {/* ========== TRAINERS TABLE ========== */}
       <div className="text-black">
         <table className="table w-full border border-gray-300">
           {/* Table Header */}
@@ -252,15 +199,17 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
             </tr>
           </thead>
 
-          {/* Table Body */}
+          {/* Table Body with Trainer Data */}
           <tbody>
             {currentTrainers.length === 0 ? (
+              // Fallback Row when no trainers match filters
               <tr>
                 <td colSpan="9" className="text-center text-gray-500 py-4">
                   No trainers found.
                 </td>
               </tr>
             ) : (
+              // Map through trainers and render table rows
               currentTrainers.map((trainer, index) => (
                 <tr
                   key={trainer._id}
@@ -268,8 +217,10 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
                     !trainer.tier ? "bg-red-100 hover:bg-red-200" : ""
                   }`}
                 >
+                  {/* Serial Number */}
                   <td>{indexOfFirstTrainer + index + 1}</td>
 
+                  {/* Trainer Profile Picture */}
                   <td>
                     <img
                       src={trainer.imageUrl}
@@ -278,6 +229,7 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
                     />
                   </td>
 
+                  {/* Full Name with Search Highlight */}
                   <td>
                     {searchTerm
                       ? (() => {
@@ -296,26 +248,40 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
                       : trainer.name}
                   </td>
 
-                  <td>{trainer.email}</td>
-                  <td>{trainer.phone}</td>
+                  {/* Email (clickable mail link) */}
+                  <td>
+                    <a
+                      href={`mailto:${trainer.email}`}
+                      className="text-blue-600 hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {trainer.email}
+                    </a>
+                  </td>
+
+                  {/* Phone Number (formatted) */}
+                  <td>{formatPhone(trainer.contact.phone)}</td>
+
+                  {/* Specialization */}
                   <td>{trainer.specialization || "N/A"}</td>
 
-                  {/* Trainer Gender */}
-                  <td className="align-middle flex items-center gap-1">
+                  {/* Gender with Icon and Label */}
+                  <td className="flex items-center justify-center gap-1 py-2">
                     {(() => {
                       const { icon, label } = getGenderIcon(trainer.gender);
                       return (
-                        <>
-                          <span className="inline-flex w-6 h-6 items-center justify-center">
+                        <div className="flex flex-col items-center justify-center text-center">
+                          <span className="w-6 h-6 flex items-center justify-center">
                             {icon}
                           </span>
-                          <span className="text-sm">{label}</span>
-                        </>
+                          <p className="text-sm">{label}</p>
+                        </div>
                       );
                     })()}
                   </td>
 
-                  {/* Trainer Tier */}
+                  {/* Tier Badge */}
                   <td>
                     {trainer.tier ? (
                       trainer.tier
@@ -324,49 +290,12 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
                     )}
                   </td>
 
-                  <td className="relative" ref={dropdownRef}>
-                    <button
-                      onClick={() =>
-                        setOpenDropdownId(
-                          openDropdownId === trainer._id ? null : trainer._id
-                        )
-                      }
-                      className="p-1 rounded hover:bg-gray-200 focus:outline-none"
-                      aria-label="Open actions dropdown"
-                    >
-                      <HiDotsVertical size={20} />
-                    </button>
-
-                    {openDropdownId === trainer._id && (
-                      <ul className="absolute right-0 top-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-50 w-40 text-sm">
-                        <li
-                          onClick={() => handleUserAction("details", trainer)}
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                        >
-                          Details
-                        </li>
-                        <li
-                          onClick={() =>
-                            handleUserAction("tier_management", trainer)
-                          }
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                        >
-                          Tier Management
-                        </li>
-                        <li
-                          onClick={() => handleUserAction("kick", trainer)}
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-red-600"
-                        >
-                          Kick
-                        </li>
-                        <li
-                          onClick={() => handleUserAction("ban", trainer)}
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-red-600"
-                        >
-                          Ban
-                        </li>
-                      </ul>
-                    )}
+                  {/* Action Dropdown */}
+                  <td>
+                    <AllTrainerManagementDropdown
+                      trainer={trainer}
+                      Refetch={Refetch}
+                    />
                   </td>
                 </tr>
               ))
@@ -374,46 +303,65 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
           </tbody>
         </table>
 
-        {/* Pagination */}
-        <div className="mt-4 flex justify-center gap-2">
-          {Array.from(
-            { length: Math.ceil(filteredUsers.length / trainersPerPage) },
-            (_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 rounded border ${
-                  currentPage === i + 1
-                    ? "bg-blue-600 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
-                }`}
-                aria-label={`Go to page ${i + 1}`}
-              >
-                {i + 1}
-              </button>
-            )
-          )}
+        {/* ========== PAGINATION CONTROLS ========== */}
+        <div className="mt-6 flex justify-center items-center gap-4">
+          <div className="join">
+            {/* Previous Page Button */}
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={`join-item bg-white btn btn-sm h-10 px-5 text-sm transition-all duration-200 ${
+                currentPage === 1
+                  ? "cursor-not-allowed opacity-50"
+                  : "hover:bg-blue-100 text-blue-600"
+              }`}
+            >
+              <FaAnglesLeft />
+            </button>
+
+            {/* Current Page Indicator */}
+            <span className="join-item h-10 px-5 text-sm flex items-center justify-center border border-gray-300 bg-white text-gray-800 font-semibold">
+              Page {currentPage} / {totalPages}
+            </span>
+
+            {/* Next Page Button */}
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className={`join-item bg-white btn btn-sm h-10 px-5 text-sm transition-all duration-200 ${
+                currentPage === totalPages
+                  ? "cursor-not-allowed opacity-50"
+                  : "hover:bg-blue-100 text-blue-600"
+              }`}
+            >
+              <FaAnglesRight />
+            </button>
+          </div>
         </div>
       </div>
-
-      {/* Modals */}
-      {showDetailsModal && selectedTrainer && (
-        <AllTrainerManagementDetails
-          setShowDetailsModal={setShowDetailsModal}
-          trainerDetails={selectedTrainer}
-          Refetch={Refetch}
-        />
-      )}
-
-      {showTierModal && selectedTrainer && (
-        <AllTrainerTierManagement
-          setShowTierModal={setShowTierModal}
-          trainerDetails={selectedTrainer}
-          Refetch={Refetch}
-        />
-      )}
     </div>
   );
+};
+
+// Add Prop Validation
+AllTrainersManagement.propTypes = {
+  AllTrainersData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
+      imageUrl: PropTypes.string,
+      gender: PropTypes.string,
+      tier: PropTypes.string,
+      specialization: PropTypes.string,
+      contact: PropTypes.shape({
+        phone: PropTypes.string.isRequired,
+      }).isRequired,
+    })
+  ).isRequired,
+  Refetch: PropTypes.func.isRequired,
 };
 
 export default AllTrainersManagement;

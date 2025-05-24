@@ -4,7 +4,7 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import Swal from "sweetalert2";
 
-// |Import Icons
+// Import Icons
 import { ImCross } from "react-icons/im";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
@@ -121,7 +121,7 @@ const AllTrainerTierManagement = ({ trainer, Refetch }) => {
 
   // Function to close the modal using DOM API
   const closeModal = () =>
-    document.getElementById("Trainers_Tier_Management")?.close();
+    document.getElementById("Trainer_Tier_Management")?.close();
 
   // Function to handle tier slide navigation
   const handleSlide = (direction) => {
@@ -142,6 +142,15 @@ const AllTrainerTierManagement = ({ trainer, Refetch }) => {
       setFade("fade-in");
     }, 300); // 300ms timeout to match CSS animation duration
   };
+
+  // Destructure the currently selected tier using index
+  const [tierKey, tier] = tiers[current];
+
+  // Boolean to check if current tier is the one selected
+  const isSelected = tierKey === selectedTierKey;
+
+  // Combine fade and slide direction into a single class name for animation
+  const animationClass = `${fade}-${slideDirection}`;
 
   // Function to handle tier selection and updating trainer's tier
   const handleSelectTier = async () => {
@@ -194,15 +203,6 @@ const AllTrainerTierManagement = ({ trainer, Refetch }) => {
       });
     }
   };
-
-  // Destructure the currently selected tier using index
-  const [tierKey, tier] = tiers[current];
-
-  // Boolean to check if current tier is the one selected
-  const isSelected = tierKey === selectedTierKey;
-
-  // Combine fade and slide direction into a single class name for animation
-  const animationClass = `${fade}-${slideDirection}`;
 
   return (
     <div className="modal-box p-0 bg-gradient-to-b from-white to-gray-300 text-black max-h-[90vh] overflow-y-auto rounded-lg shadow-xl relative">
