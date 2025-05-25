@@ -80,6 +80,40 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
         });
         break;
 
+      case "unBan":
+        Swal.fire({
+          title: "Are you sure?",
+          text: `You are about to UnBan ${user.fullName}`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#aaa",
+          confirmButtonText: "Yes, UnBan user",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              // Example API call to UnBan user
+              await axiosPublic.patch(`/Users/UnBan/${user._id}`);
+
+              Refetch();
+
+              Swal.fire(
+                "Unbanned!",
+                `${user.fullName} has been unbanned.`,
+                "success"
+              );
+            } catch (error) {
+              console.error("Error unbanning user:", error);
+              Swal.fire(
+                "Error!",
+                `Failed to unBan ${user.name}. Please try again.`,
+                "error"
+              );
+            }
+          }
+        });
+        break;
+
       default:
         break;
     }

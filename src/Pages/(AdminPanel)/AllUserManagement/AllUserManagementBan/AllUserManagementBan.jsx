@@ -127,7 +127,7 @@ const AllUserManagementBan = ({ user, Refetch }) => {
       );
 
       // Check server response and notify user accordingly
-      if (res.data?.message === "Ban added successfully.") {
+      if (res.status === 200) {
         Swal.fire({
           icon: "success",
           title: "Trainer Banned",
@@ -139,9 +139,13 @@ const AllUserManagementBan = ({ user, Refetch }) => {
           title: "Unexpected Response",
           text: res.data?.error || "Unknown error occurred.",
         });
+
+        console.log(res);
       }
     } catch (error) {
       // Handle network or server errors during API call
+      console.log(error);
+
       Swal.fire({
         icon: "error",
         title: "Ban Failed",

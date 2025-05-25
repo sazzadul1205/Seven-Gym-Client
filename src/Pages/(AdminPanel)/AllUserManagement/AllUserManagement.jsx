@@ -218,8 +218,16 @@ const AllUserManagement = ({ AllUsersData, Refetch }) => {
                     })()}
                   </td>
 
-                  {/* Membership Tier */}
-                  <td>{user.tier}</td>
+                  {/* Tier Badge */}
+                  <td>
+                    {user.ban ? (
+                      <span className="text-red-600 font-bold">Banned</span>
+                    ) : user.tier ? (
+                      user.tier
+                    ) : (
+                      <span className="text-red-600 font-semibold">New</span>
+                    )}
+                  </td>
 
                   {/* Action Dropdown */}
                   <td>
