@@ -121,7 +121,7 @@ const AllTrainerManagementTier = ({ trainer, Refetch }) => {
 
   // Function to close the modal using DOM API
   const closeModal = () =>
-    document.getElementById("Trainer_Tier_Management")?.close();
+    document.getElementById(`Trainer_Tier_Management_${trainer._id}`)?.close();
 
   // Function to handle tier slide navigation
   const handleSlide = (direction) => {

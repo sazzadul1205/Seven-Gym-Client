@@ -30,7 +30,7 @@ const AllTrainerManagementBanDetails = ({ trainer, Refetch }) => {
 
   // Function to close the modal
   const closeModal = () =>
-    document.getElementById("Trainer_UnBan_Details")?.close();
+    document.getElementById(`Trainer_UnBan_Details_${trainer._id}`)?.close();
 
   // Handler function to UnBan the trainer
   const handleUnBan = async () => {

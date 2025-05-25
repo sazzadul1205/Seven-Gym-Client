@@ -10,7 +10,8 @@ import { getTierBadge } from "../../../(TrainerPages)/TrainerProfile/TrainerProf
 // Main component to render all trainer details in a modal
 const AllTrainerManagementDetails = ({ trainer }) => {
   // Close modal utility
-  const closeModal = () => document.getElementById("Trainer_Details")?.close();
+  const closeModal = () =>
+    document.getElementById(`Trainer_Details_${trainer._id}`)?.close();
 
   return (
     <div className="modal-box p-0 bg-linear-to-b from-white to-gray-300 text-black">
@@ -199,6 +200,7 @@ const AllTrainerManagementDetails = ({ trainer }) => {
 // Define all expected prop types for validation and clarity
 AllTrainerManagementDetails.propTypes = {
   trainer: PropTypes.shape({
+    _id: PropTypes.string,
     name: PropTypes.string,
     imageUrl: PropTypes.string,
     tier: PropTypes.string,

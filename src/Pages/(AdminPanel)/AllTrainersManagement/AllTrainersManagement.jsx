@@ -328,7 +328,7 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
 
                           return (
                             <span className="text-red-600 font-semibold">
-                              Unban in {timeLeftStr.trim() || "less than a day"}
+                              Un Ban in {timeLeftStr.trim() || "less than a day"}
                             </span>
                           );
                         })()

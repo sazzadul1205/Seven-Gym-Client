@@ -27,7 +27,8 @@ const AllUserManagementBan = ({ user, Refetch }) => {
   const [customValue, setCustomValue] = useState("");
 
   // Close modal by targeting its ID and calling close()
-  const closeModal = () => document.getElementById("Users_Ban")?.close();
+  const closeModal = () =>
+    document.getElementById(`Users_Ban_${user?._id}`)?.close();
 
   // Predefined reasons user can select from for banning
   const predefinedReasons = [

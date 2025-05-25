@@ -44,12 +44,14 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
     switch (action) {
       case "details":
         setSelectedTrainer(trainer);
-        document.getElementById("Trainer_Details").showModal(); // Open details modal
+        document.getElementById(`Trainer_Details_${trainer._id}`).showModal(); // Open details modal
         break;
 
       case "tier_management":
         setSelectedTrainer(trainer);
-        document.getElementById("Trainer_Tier_Management").showModal(); // Open tier management modal
+        document
+          .getElementById(`Trainer_Tier_Management_${trainer._id}`)
+          .showModal(); // Open tier management modal
         break;
 
       case "kick":
@@ -106,14 +108,16 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
         }).then((result) => {
           if (result.isConfirmed) {
             setSelectedTrainer(trainer);
-            document.getElementById("Trainer_Ban").showModal();
+            document.getElementById(`Trainer_Ban_${trainer._id}`).showModal();
           }
         });
         break;
 
       case "ban_details":
         setSelectedTrainer(trainer);
-        document.getElementById("Trainer_UnBan_Details").showModal();
+        document
+          .getElementById(`Trainer_UnBan_Details_${trainer._id}`)
+          .showModal();
         break;
 
       case "unBan":
@@ -244,22 +248,22 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
       )}
 
       {/* Modals for details and tier management */}
-      <dialog id="Trainer_Details" className="modal">
+      <dialog id={`Trainer_Details_${trainer._id}`} className="modal">
         <AllTrainerManagementDetails
           trainer={selectedTrainer}
           Refetch={Refetch}
         />
       </dialog>
 
-      <dialog id="Trainer_Tier_Management" className="modal">
+      <dialog id={`Trainer_Tier_Management_${trainer._id}`} className="modal">
         <AllTrainerManagementTier trainer={selectedTrainer} Refetch={Refetch} />
       </dialog>
 
-      <dialog id="Trainer_Ban" className="modal">
+      <dialog id={`Trainer_Ban_${trainer._id}`} className="modal">
         <AllTrainerManagementBan trainer={selectedTrainer} Refetch={Refetch} />
       </dialog>
 
-      <dialog id="Trainer_UnBan_Details" className="modal">
+      <dialog id={`Trainer_UnBan_Details_${trainer._id}`} className="modal">
         <AllTrainerManagementBanDetails
           trainer={selectedTrainer}
           Refetch={Refetch}
@@ -274,7 +278,14 @@ AllTrainerManagementDropdown.propTypes = {
   trainer: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     name: PropTypes.string,
-    ban: PropTypes.bool,
+    ban: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.shape({
+        reason: PropTypes.string,
+        date: PropTypes.string,
+        active: PropTypes.bool, // optional if you use it
+      }),
+    ]),
     email: PropTypes.string,
   }),
   Refetch: PropTypes.func.isRequired,

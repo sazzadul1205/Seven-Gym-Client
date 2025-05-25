@@ -39,7 +39,8 @@ Section.propTypes = {
 };
 
 const AllUserManagementDetails = ({ user }) => {
-  const closeModal = () => document.getElementById("User_Details").close();
+  const closeModal = () =>
+    document.getElementById(`User_Details_${user?._id}`).close();
 
   return (
     <div className="modal-box p-0 bg-gradient-to-b from-white to-gray-200 text-black max-h-[90vh] overflow-y-auto rounded-lg shadow-xl">
@@ -169,6 +170,7 @@ const AllUserManagementDetails = ({ user }) => {
 // Add Prop Validation
 AllUserManagementDetails.propTypes = {
   user: PropTypes.shape({
+    _id: PropTypes.string,
     fullName: PropTypes.string,
     profileImage: PropTypes.string,
     tier: PropTypes.string,

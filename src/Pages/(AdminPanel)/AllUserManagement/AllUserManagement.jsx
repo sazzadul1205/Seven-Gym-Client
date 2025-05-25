@@ -73,6 +73,8 @@ const AllUserManagement = ({ AllUsersData, Refetch }) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
 
+  console.log("AllUsersData :", AllUsersData[0]);
+
   return (
     <div className="text-black">
       {/* ===== Filter Section ===== */}
@@ -141,6 +143,8 @@ const AllUserManagement = ({ AllUsersData, Refetch }) => {
               <th>Full Name</th>
               <th>Email</th>
               <th>Phone</th>
+              <th>Date of Birth</th>
+              <th>Tier Duration</th>
               <th>Gender</th>
               <th>Tier</th>
               <th>Action</th>
@@ -157,7 +161,16 @@ const AllUserManagement = ({ AllUsersData, Refetch }) => {
               </tr>
             ) : (
               currentUsers.map((user, index) => (
-                <tr key={user._id} className="hover:bg-gray-50">
+                <tr
+                  key={user._id}
+                  className={`hover:bg-gray-100 items-center ${
+                    user.ban
+                      ? "bg-red-100 hover:bg-red-200"
+                      : !user.tier
+                      ? "bg-red-100 hover:bg-red-200"
+                      : ""
+                  }`}
+                >
                   <td>{index + 1}</td>
 
                   {/* Profile Image */}
@@ -202,6 +215,78 @@ const AllUserManagement = ({ AllUsersData, Refetch }) => {
 
                   {/* Phone */}
                   <td>{formatPhone(user.phone)}</td>
+
+                  {/* Date of Birth */}
+                  <td>
+                    {(() => {
+                      const date = new Date(user.dob);
+                      const day = String(date.getDate()).padStart(2, "0");
+                      const month = date.toLocaleString("default", {
+                        month: "long",
+                      });
+                      const year = date.getFullYear();
+                      return `${day} - ${month} - ${year}`;
+                    })()}
+                  </td>
+
+                  {/* Tier Duration */}
+                  <td>
+                    {user.ban
+                      ? (() => {
+                          const now = new Date();
+                          const end = new Date(user.ban.End);
+
+                          if (end <= now) {
+                            return (
+                              <span className="text-green-600 font-semibold">
+                                Ban expired
+                              </span>
+                            );
+                          }
+
+                          // Calculate difference in milliseconds
+                          const diffMs = end - now;
+
+                          // Calculate difference in years, months, days
+                          // eslint-disable-next-line no-unused-vars
+                          const diffDate = new Date(diffMs);
+
+                          // Rough calculation (not perfectly accurate for months, but good enough)
+                          const years = Math.floor(
+                            diffMs / (1000 * 60 * 60 * 24 * 365)
+                          );
+                          const months = Math.floor(
+                            (diffMs % (1000 * 60 * 60 * 24 * 365)) /
+                              (1000 * 60 * 60 * 24 * 30)
+                          );
+                          const days = Math.floor(
+                            (diffMs % (1000 * 60 * 60 * 24 * 30)) /
+                              (1000 * 60 * 60 * 24)
+                          );
+
+                          // Format string parts
+                          let timeLeftStr = "";
+                          if (years > 0)
+                            timeLeftStr += `${years} year${
+                              years > 1 ? "s" : ""
+                            } `;
+                          if (months > 0)
+                            timeLeftStr += `${months} month${
+                              months > 1 ? "s" : ""
+                            } `;
+                          if (days > 0)
+                            timeLeftStr += `${days} day${days > 1 ? "s" : ""}`;
+
+                          return (
+                            <span className="text-red-600 font-semibold">
+                              Un Ban in {timeLeftStr.trim() || "less than a day"}
+                            </span>
+                          );
+                        })()
+                      : user?.tierDuration?.duration || (
+                          <p className="text-green-500 font-bold">Unlimited</p>
+                        )}
+                  </td>
 
                   {/* Gender with Icon */}
                   <td className="flex items-center justify-center gap-1 py-2">

@@ -1,8 +1,11 @@
+import { useEffect, useRef, useState } from "react";
 /* eslint-disable react/prop-types */
-import { useRef, useState } from "react";
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-import { HiDotsVertical } from "react-icons/hi";
-import AllUserManagementDetails from "../AllUserManagementDetails/AllUserManagementDetails";
+
+// Import Packages
+import PropTypes from "prop-types";
+import Swal from "sweetalert2";
+
+// import Icons
 import {
   FaBan,
   FaClipboardList,
@@ -10,8 +13,14 @@ import {
   FaUnlock,
   FaUserSlash,
 } from "react-icons/fa";
-import Swal from "sweetalert2";
+import { HiDotsVertical } from "react-icons/hi";
+
+// Import Hooks
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+
+// Import Modals
 import AllUserManagementBan from "../AllUserManagementBan/AllUserManagementBan";
+import AllUserManagementDetails from "../AllUserManagementDetails/AllUserManagementDetails";
 
 const AllUserManagementDropdown = ({ user, Refetch }) => {
   const axiosPublic = useAxiosPublic();
@@ -34,7 +43,7 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
       case "details":
         // Set the selected user and show their detail modal
         setSelectedUser(user);
-        document.getElementById("User_Details").showModal();
+        document.getElementById(`User_Details_${user?._id}`).showModal();
         break;
 
       case "kick":
@@ -74,7 +83,7 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
             // Perform ban logic here (e.g., API call)
             if (result.isConfirmed) {
               setSelectedUser(user);
-              document.getElementById("Users_Ban").showModal();
+              document.getElementById(`Users_Ban_${user?._id}`).showModal();
             }
           }
         });
@@ -118,6 +127,24 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
         break;
     }
   };
+
+  // Close dropdown when clicking outside or on scroll
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdownId(null); // Close dropdown
+      }
+    };
+    const handleScroll = () => setOpenDropdownId(null); // Close dropdown on scroll
+
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <div ref={dropdownRef} className="relative inline-block text-left">
@@ -182,16 +209,28 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
       )}
 
       {/* Modal Popup */}
-      <dialog id="User_Details" className="modal">
+      <dialog id={`User_Details_${user?._id}`} className="modal">
         <AllUserManagementDetails user={selectedUser} />
       </dialog>
 
       {/* Modal Popup */}
-      <dialog id="Users_Ban" className="modal">
+      <dialog id={`Users_Ban_${user?._id}`} className="modal">
         <AllUserManagementBan user={selectedUser} Refetch={Refetch} />
       </dialog>
     </div>
   );
+};
+
+// Prop Validation
+AllUserManagementDropdown.propTypes = {
+  user: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    fullName: PropTypes.string.isRequired,
+    ban: PropTypes.shape({
+      End: PropTypes.string, // or Date if it's a Date object already
+    }),
+  }).isRequired,
+  Refetch: PropTypes.func.isRequired,
 };
 
 export default AllUserManagementDropdown;
