@@ -247,7 +247,7 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
         </ul>
       )}
 
-      {/* Modals for details and tier management */}
+      {/* Modal : Trainer Details */}
       <dialog id={`Trainer_Details_${trainer._id}`} className="modal">
         <AllTrainerManagementDetails
           trainer={selectedTrainer}
@@ -255,14 +255,17 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
         />
       </dialog>
 
+      {/* Modal : Trainer Tier Management Details */}
       <dialog id={`Trainer_Tier_Management_${trainer._id}`} className="modal">
         <AllTrainerManagementTier trainer={selectedTrainer} Refetch={Refetch} />
       </dialog>
 
+      {/* Modal : Trainer Ban */}
       <dialog id={`Trainer_Ban_${trainer._id}`} className="modal">
         <AllTrainerManagementBan trainer={selectedTrainer} Refetch={Refetch} />
       </dialog>
 
+      {/* Modal : Trainer Ban Details */}
       <dialog id={`Trainer_UnBan_Details_${trainer._id}`} className="modal">
         <AllTrainerManagementBanDetails
           trainer={selectedTrainer}

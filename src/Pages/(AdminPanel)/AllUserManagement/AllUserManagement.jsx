@@ -73,8 +73,6 @@ const AllUserManagement = ({ AllUsersData, Refetch }) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
 
-  console.log("AllUsersData :", AllUsersData[0]);
-
   return (
     <div className="text-black">
       {/* ===== Filter Section ===== */}
@@ -233,6 +231,21 @@ const AllUserManagement = ({ AllUsersData, Refetch }) => {
                   <td>
                     {user.ban
                       ? (() => {
+                          // Check if ban is permanent by Duration or End values
+                          if (
+                            (user.ban.Duration &&
+                              user.ban.Duration.toLowerCase() ===
+                                "permanent") ||
+                            (user.ban.End &&
+                              user.ban.End.toLowerCase() === "indefinite")
+                          ) {
+                            return (
+                              <span className="text-red-800 font-bold">
+                                Permanent Ban
+                              </span>
+                            );
+                          }
+
                           const now = new Date();
                           const end = new Date(user.ban.End);
 
@@ -244,14 +257,8 @@ const AllUserManagement = ({ AllUsersData, Refetch }) => {
                             );
                           }
 
-                          // Calculate difference in milliseconds
                           const diffMs = end - now;
 
-                          // Calculate difference in years, months, days
-                          // eslint-disable-next-line no-unused-vars
-                          const diffDate = new Date(diffMs);
-
-                          // Rough calculation (not perfectly accurate for months, but good enough)
                           const years = Math.floor(
                             diffMs / (1000 * 60 * 60 * 24 * 365)
                           );
@@ -264,7 +271,6 @@ const AllUserManagement = ({ AllUsersData, Refetch }) => {
                               (1000 * 60 * 60 * 24)
                           );
 
-                          // Format string parts
                           let timeLeftStr = "";
                           if (years > 0)
                             timeLeftStr += `${years} year${
@@ -279,7 +285,7 @@ const AllUserManagement = ({ AllUsersData, Refetch }) => {
 
                           return (
                             <span className="text-red-600 font-semibold">
-                              Un Ban in {timeLeftStr.trim() || "less than a day"}
+                              Unban in {timeLeftStr.trim() || "less than a day"}
                             </span>
                           );
                         })()

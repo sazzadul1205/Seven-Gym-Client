@@ -21,6 +21,7 @@ import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 // Import Modals
 import AllUserManagementBan from "../AllUserManagementBan/AllUserManagementBan";
 import AllUserManagementDetails from "../AllUserManagementDetails/AllUserManagementDetails";
+import AllUserManagementBanDetails from "../AllUserManagementBanDetails/AllUserManagementBanDetails";
 
 const AllUserManagementDropdown = ({ user, Refetch }) => {
   const axiosPublic = useAxiosPublic();
@@ -81,12 +82,12 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
         // Confirmation dialog before banning the user
         Swal.fire({
           title: "Are you sure?",
-          text: `You are about to ban ${user.fullName}`,
+          text: `You are about to Ban User : ${user.fullName}`,
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#d33",
           cancelButtonColor: "#3085d6",
-          confirmButtonText: "Yes, ban user",
+          confirmButtonText: "Yes, Ban user",
         }).then((result) => {
           if (result.isConfirmed) {
             // Perform ban logic here (e.g., API call)
@@ -96,6 +97,11 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
             }
           }
         });
+        break;
+
+      case "ban_details":
+        setSelectedUser(user);
+        document.getElementById(`Users_UnBan_Details_${user._id}`).showModal();
         break;
 
       case "unBan":
@@ -116,8 +122,8 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
               Refetch();
 
               Swal.fire(
-                "Unbanned!",
-                `${user.fullName} has been unbanned.`,
+                "Un Banned!",
+                `${user.fullName} has been Un Banned.`,
                 "success"
               );
             } catch (error) {
@@ -157,8 +163,9 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
 
   return (
     <div ref={dropdownRef} className="relative inline-block text-left">
+      {/* Dropdown toggle button */}
       <button
-        className="border border-gray-400 rounded-full p-2 hover:bg-gray-300 transition cursor-pointer"
+        className="border-2 border-black  rounded-full p-2 hover:bg-gray-200 transition cursor-pointer"
         onClick={() =>
           setOpenDropdownId(openDropdownId === user._id ? null : user._id)
         }
@@ -166,6 +173,7 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
         <HiDotsVertical className="text-gray-700" />
       </button>
 
+      {/* Dropdown menu */}
       {openDropdownId === user._id && (
         <ul
           onClick={(e) => e.stopPropagation()}
@@ -217,14 +225,19 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
         </ul>
       )}
 
-      {/* Modal Popup */}
+      {/* Modal : User Details */}
       <dialog id={`User_Details_${user?._id}`} className="modal">
         <AllUserManagementDetails user={selectedUser} />
       </dialog>
 
-      {/* Modal Popup */}
+      {/* Modal : User Ban */}
       <dialog id={`Users_Ban_${user?._id}`} className="modal">
         <AllUserManagementBan user={selectedUser} Refetch={Refetch} />
+      </dialog>
+
+      {/* Modal : User Ban Details */}
+      <dialog id={`Users_UnBan_Details_${user?._id}`} className="modal">
+        <AllUserManagementBanDetails user={selectedUser} Refetch={Refetch} />
       </dialog>
     </div>
   );

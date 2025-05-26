@@ -20,8 +20,7 @@ import CommonButton from "../../../../Shared/Buttons/CommonButton";
 // Import Custom Axios Hook
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
-// Trainer Ban Details Modal Component
-const AllTrainerManagementBanDetails = ({ trainer, Refetch }) => {
+const AllUserManagementBanDetails = ({ user, Refetch }) => {
   const axiosPublic = useAxiosPublic();
 
   // State for handling loading state during UnBan action
@@ -29,20 +28,20 @@ const AllTrainerManagementBanDetails = ({ trainer, Refetch }) => {
 
   // Function to close the modal
   const closeModal = () =>
-    document.getElementById(`Trainer_UnBan_Details_${trainer._id}`)?.close();
+    document.getElementById(`Users_UnBan_Details_${user._id}`)?.close();
 
-  // Handler function to UnBan the trainer
+  // Handler function to UnBan the user
   const handleUnBan = async () => {
     setIsProcessing(true);
     try {
-      // Make PATCH request to UnBan the trainer
-      await axiosPublic.patch(`/Trainers/UnBan/${trainer._id}`);
+      // Make PATCH request to UnBan the user
+      await axiosPublic.patch(`/Users/UnBan/${user._id}`);
       Refetch();
       closeModal();
     } catch (error) {
       // Log any error that occurs during the API call
-      console.error("Failed to UnBan trainer:", error);
-      alert("Error: Could not UnBan trainer. Please try again.");
+      console.error("Failed to UnBan user:", error);
+      alert("Error: Could not UnBan user. Please try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -53,7 +52,7 @@ const AllTrainerManagementBanDetails = ({ trainer, Refetch }) => {
       {/* Modal Header */}
       <div className="flex items-center justify-between bg-white px-6 py-4 border-b">
         <h2 className="font-semibold text-xl">
-          Trainer: {trainer?.name || "Unnamed"}&apos;s Ban Details
+          user: {user?.name || "Unnamed"}&apos;s Ban Details
         </h2>
         {/* Close button (X icon) */}
         <ImCross
@@ -64,12 +63,12 @@ const AllTrainerManagementBanDetails = ({ trainer, Refetch }) => {
 
       {/* Ban Details Section */}
       <div className="px-6 py-4 space-y-4">
-        {trainer?.ban ? (
+        {user?.ban ? (
           // If ban data exists, display details
           [
             {
               label: "Reason",
-              value: trainer?.ban?.Reason,
+              value: user?.ban?.Reason,
               icon: (
                 <FaBan
                   key="icon-reason"
@@ -79,7 +78,7 @@ const AllTrainerManagementBanDetails = ({ trainer, Refetch }) => {
             },
             {
               label: "Duration",
-              value: trainer?.ban?.Duration,
+              value: user?.ban?.Duration,
               icon: (
                 <FaStopwatch
                   key="icon-duration"
@@ -89,7 +88,7 @@ const AllTrainerManagementBanDetails = ({ trainer, Refetch }) => {
             },
             {
               label: "Start Time",
-              value: trainer?.ban?.Start,
+              value: user?.ban?.Start,
               icon: (
                 <FaCalendarAlt
                   key="icon-start"
@@ -99,7 +98,7 @@ const AllTrainerManagementBanDetails = ({ trainer, Refetch }) => {
             },
             {
               label: "End Time",
-              value: trainer?.ban?.End,
+              value: user?.ban?.End,
               icon: (
                 <FaRegClock
                   key="icon-end"
@@ -138,10 +137,10 @@ const AllTrainerManagementBanDetails = ({ trainer, Refetch }) => {
           borderRadius="rounded-lg"
         />
 
-        {/* UnBan Trainer Button */}
+        {/* UnBan user Button */}
         <CommonButton
           clickEvent={handleUnBan}
-          text="UnBan Trainer"
+          text="UnBan user"
           isLoading={isProcessing}
           loadingText="Unbanning..."
           px="px-10"
@@ -155,8 +154,8 @@ const AllTrainerManagementBanDetails = ({ trainer, Refetch }) => {
 };
 
 // Define PropTypes for safety and clarity
-AllTrainerManagementBanDetails.propTypes = {
-  trainer: PropTypes.shape({
+AllUserManagementBanDetails.propTypes = {
+  user: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     name: PropTypes.string,
     ban: PropTypes.shape({
@@ -169,5 +168,4 @@ AllTrainerManagementBanDetails.propTypes = {
   Refetch: PropTypes.func.isRequired,
 };
 
-// Export the component
-export default AllTrainerManagementBanDetails;
+export default AllUserManagementBanDetails;

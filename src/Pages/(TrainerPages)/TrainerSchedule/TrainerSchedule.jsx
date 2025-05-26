@@ -341,7 +341,7 @@ TrainerSchedule.propTypes = {
     preferences: PropTypes.shape({
       classTypes: PropTypes.arrayOf(PropTypes.string),
     }),
-  }).isRequired,
+  }),
   TrainerProfileScheduleData: PropTypes.shape({
     trainerSchedule: PropTypes.objectOf(
       PropTypes.objectOf(
@@ -361,7 +361,7 @@ TrainerSchedule.propTypes = {
         })
       )
     ),
-  }).isRequired,
+  }),
 };
 
 export default TrainerSchedule;

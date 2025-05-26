@@ -1,26 +1,21 @@
 import { Navigate, useLocation } from "react-router";
-
-// Import Query
 import { useQuery } from "@tanstack/react-query";
-
-// import Validation
 import PropTypes from "prop-types";
 
-// Import Hooks
+// Auth and Axios hooks
 import useAuth from "../Hooks/useAuth";
 import useAxiosPublic from "../Hooks/useAxiosPublic";
 
-// Import Loading and Error
+// Shared components
 import Loading from "../Shared/Loading/Loading";
 import FetchingError from "../Shared/Component/FetchingError";
 
 const TrainerPrivateRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-  const location = useLocation();
+  const { user, loading } = useAuth(); // Get current user and loading status
+  const location = useLocation(); // For redirecting back after login
+  const axiosPublic = useAxiosPublic(); // Axios instance for public API calls
 
-  const axiosPublic = useAxiosPublic();
-
-  // Only run query when user and email are available
+  // Step 1: Fetch user's role based on their email
   const {
     data: UserRoleData,
     isLoading: UserRoleDataIsLoading,
@@ -31,32 +26,55 @@ const TrainerPrivateRoute = ({ children }) => {
       axiosPublic
         .get(`/Users/UserRole?email=${user.email}`)
         .then((res) => res.data),
-    enabled: !!user?.email, // ✅ important: only fetch when email is ready
+    enabled: !!user?.email, // Only run this query when the user's email is available
   });
 
-  if (loading || UserRoleDataIsLoading) {
+  // Step 2: If the role is Trainer, check if they're banned
+  const {
+    data: TrainerData,
+    isLoading: TrainerDataIsLoading,
+    error: TrainerDataError,
+  } = useQuery({
+    queryKey: ["TrainerBanData", user?.email],
+    queryFn: () =>
+      axiosPublic.get(`/Trainers?email=${user.email}`).then((res) => res.data),
+    enabled: !!user?.email && UserRoleData?.role === "Trainer", // Only run when user is a Trainer
+  });
+
+  // Show loading state if auth or any relevant data is still loading
+  if (
+    loading ||
+    UserRoleDataIsLoading ||
+    (UserRoleData?.role === "Trainer" && TrainerDataIsLoading)
+  ) {
     return <Loading />;
   }
 
+  // If not authenticated, redirect to login and preserve current location
   if (!user) {
-    // User is not authenticated
     return <Navigate to="/Login" state={{ from: location }} replace />;
   }
 
-  if (UserRoleDataError) {
-    <FetchingError />;
+  // If any query fails, show fetching error component
+  if (UserRoleDataError || TrainerDataError) {
+    return <FetchingError />;
   }
 
+  // If user is not a Trainer, redirect to Unauthorized page
   if (UserRoleData.role !== "Trainer") {
-    // User does not have the 'Trainer' role
     return <Navigate to="/Unauthorized" replace />;
   }
 
-  // User is authenticated and has the 'Trainer' role
+  // Fix: TrainerData is an array, check the first item for ban
+  if (TrainerData?.[0]?.ban) {
+    return <Navigate to={`/Banned/${user.email}`} replace />;
+  }
+
+  // All checks passed, render protected child component
   return children;
 };
 
-// Prop Type Validation
+// Validate prop types
 TrainerPrivateRoute.propTypes = {
   children: PropTypes.node.isRequired,
 };

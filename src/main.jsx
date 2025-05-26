@@ -51,8 +51,15 @@ import TrainerSettingsLayout from "./Layouts/TrainerSettingsLayout.jsx";
 // Private Route
 import MemberPrivateRoute from "./Routes/MemberPrivateRoute.jsx";
 import TrainerPrivateRoute from "./Routes/TrainerPrivateRoute.jsx";
+
+// UnAuthorizes Page
 import UnauthorizedPage from "./Pages/UnauthorizedPage/UnauthorizedPage.jsx";
+
+// Admin Panel Page
 import AdminPanelLayout from "./Layouts/AdminPanelLayout.jsx";
+
+// Banned Page
+import BannedPage from "./Pages/BannedPage/BannedPage.jsx";
 
 // React Query Client
 const queryClient = new QueryClient();
@@ -67,13 +74,16 @@ createRoot(document.getElementById("root")).render(
             {/* Page Not Found */}
             <Route path="*" element={<PageNotFound />} />
 
+            <Route path="/Banned/:email" element={<BannedPage />} />
+
+            <Route path="/Unauthorized" element={<UnauthorizedPage />} />
+
             {/* Home Page Layout */}
             <Route element={<HomePageLayout />}>
               {/* Auth Pages Links */}
               <Route path="/Login" element={<Login />} />
               <Route path="/SignUp" element={<SignUp />} />
               <Route path="/SignUp/Details" element={<SignUpDetails />} />
-              <Route path="/Unauthorized" element={<UnauthorizedPage />} />
 
               {/* Home Pages Link */}
               <Route path="/" element={<Home />} />

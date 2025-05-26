@@ -71,9 +71,9 @@ const UnauthorizedPage = () => {
                 />
               </Link>
 
-              {/* Login Button */}
+              {/* Log Out Button */}
               <CommonButton
-                text="Login"
+                text="Log Out"
                 bgColor="OriginalRed"
                 textColor="text-white"
                 width="[150px]"
