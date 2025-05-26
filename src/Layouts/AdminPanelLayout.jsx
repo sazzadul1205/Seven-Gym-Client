@@ -4,9 +4,6 @@ import { useNavigate } from "react-router";
 // Icons
 import { FaLongArrowAltRight, FaPowerOff } from "react-icons/fa";
 
-// Hooks
-import useAuth from "../Hooks/useAuth";
-
 // Shared Components
 import CommonButton from "../Shared/Buttons/CommonButton";
 
@@ -14,17 +11,22 @@ import CommonButton from "../Shared/Buttons/CommonButton";
 import ProfileDefault from "../assets/ProfileDefault.jpg";
 import users from "../assets/AdminPanel/users.png";
 import coach from "../assets/AdminPanel/coach.png";
-
-// Tabs
-import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserManagement";
-import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
+import invoice from "../assets/AdminPanel/invoice.png";
 
 // Packages
 import Swal from "sweetalert2";
 import useAxiosPublic from "../Hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
+
+// Hooks
+import useAuth from "../Hooks/useAuth";
 import Loading from "../Shared/Loading/Loading";
 import FetchingError from "../Shared/Component/FetchingError";
+
+// Tabs
+import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
+import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserManagement";
+import AllInvoices from "../Pages/(AdminPanel)/AllInvoices/AllInvoices";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -97,6 +99,44 @@ const AdminPanelLayout = () => {
     },
   });
 
+  // 3. Fetch All Tier Upgrade Payments
+  const {
+    data: TierUpgradePaymentData,
+    isLoading: TierUpgradePaymentIsLoading,
+    error: TierUpgradePaymentError,
+    refetch: TierUpgradePaymentRefetch,
+  } = useQuery({
+    queryKey: ["TierUpgradePaymentData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(`/Tier_Upgrade_Payment`);
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
+  // 4. Fetch All Tier Upgrade Payments
+  const {
+    data: TrainerSessionPaymentData,
+    isLoading: TrainerSessionPaymentIsLoading,
+    error: TrainerSessionPaymentError,
+    refetch: TrainerSessionPaymentRefetch,
+  } = useQuery({
+    queryKey: ["TrainerSessionPaymentData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(`/Trainer_Session_Payment`);
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
   const handleSignOut = async () => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -132,6 +172,8 @@ const AdminPanelLayout = () => {
   const refetchAll = async () => {
     await AllUsersRefetch();
     await AllTrainersRefetch();
+    await TierUpgradePaymentRefetch();
+    await TrainerSessionPaymentRefetch();
   };
 
   // Handle Refetch Spin
@@ -164,13 +206,37 @@ const AdminPanelLayout = () => {
         />
       ),
     },
+    {
+      id: "All_Invoices",
+      Icon: invoice,
+      title: "All Invoices",
+      content: (
+        <AllInvoices
+          TrainerSessionPaymentData={TrainerSessionPaymentData}
+          TierUpgradePaymentData={TierUpgradePaymentData}
+          Refetch={refetchAll}
+        />
+      ),
+    },
   ];
 
   // Loading state
-  if (AllUsersIsLoading || AllTrainersIsLoading) return <Loading />;
+  if (
+    AllUsersIsLoading ||
+    AllTrainersIsLoading ||
+    TierUpgradePaymentIsLoading ||
+    TrainerSessionPaymentIsLoading
+  )
+    return <Loading />;
 
   // Error state
-  if (AllUsersError || AllTrainersError) return <FetchingError />;
+  if (
+    AllUsersError ||
+    AllTrainersError ||
+    TierUpgradePaymentError ||
+    TrainerSessionPaymentError
+  )
+    return <FetchingError />;
 
   return (
     <div className="min-h-screen bg-white">

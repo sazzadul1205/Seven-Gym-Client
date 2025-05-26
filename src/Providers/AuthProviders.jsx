@@ -29,10 +29,9 @@ import useAxiosPublic from "../Hooks/useAxiosPublic";
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
 
-/**
- * Fetch server-side JWT after Firebase login and store it in localStorage.
- * Token includes a 10-day expiry timestamp.
- */
+// Fetch server-side JWT after Firebase login and store it in localStorage.
+// Token includes a 10-day expiry timestamp.
+
 const fetchServerToken = async (user, axiosPublic) => {
   try {
     const payload = {
@@ -54,27 +53,20 @@ const fetchServerToken = async (user, axiosPublic) => {
   }
 };
 
-/**
- * AuthProvider component - wraps around app to provide auth state and methods
- */
 const AuthProvider = ({ children }) => {
   const axiosPublic = useAxiosPublic();
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  /**
-   * Clears local auth state and localStorage token
-   */
+  // Clears local auth state and localStorage token
   const resetUserState = useCallback(() => {
     localStorage.removeItem("authData");
     setUser(null);
     setLoading(false);
   }, []);
 
-  /**
-   * Register user using Firebase Email/Password
-   */
+  // Register user using Firebase Email/Password
   const createUser = useCallback(
     async (email, password) => {
       setLoading(true);
@@ -97,9 +89,7 @@ const AuthProvider = ({ children }) => {
     [axiosPublic]
   );
 
-  /**
-   * Update Firebase profile (name, photo)
-   */
+  // Update Firebase profile (name, photo)
   const updateUser = useCallback(async (displayName, photoURL) => {
     try {
       if (!auth.currentUser) throw new Error("No current user found");
@@ -113,9 +103,7 @@ const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  /**
-   * Log in using Email/Password
-   */
+  // Log in using Email/Password
   const signIn = useCallback(
     async (email, password) => {
       setLoading(true);
@@ -138,9 +126,7 @@ const AuthProvider = ({ children }) => {
     [axiosPublic]
   );
 
-  /**
-   * Sign in with Google
-   */
+  // Sign in with Google
   const signInWithGoogle = useCallback(async () => {
     setLoading(true);
     try {
@@ -156,9 +142,7 @@ const AuthProvider = ({ children }) => {
     }
   }, [axiosPublic]);
 
-  /**
-   * Sign in with Facebook
-   */
+  // Sign in with Facebook
   const signInWithFacebook = useCallback(async () => {
     setLoading(true);
     try {
@@ -174,9 +158,7 @@ const AuthProvider = ({ children }) => {
     }
   }, [axiosPublic]);
 
-  /**
-   * Logout user and reset auth state
-   */
+  // Logout user and reset auth state
   const logOut = useCallback(async () => {
     setLoading(true);
     try {
@@ -191,9 +173,7 @@ const AuthProvider = ({ children }) => {
     }
   }, [resetUserState]);
 
-  /**
-   * Check Firebase auth + local token on mount
-   */
+  // Check Firebase auth + local token on mount
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
       const authData = JSON.parse(localStorage.getItem("authData"));
@@ -211,9 +191,7 @@ const AuthProvider = ({ children }) => {
     return () => unSubscribe();
   }, [resetUserState]);
 
-  /**
-   * Auto-logout when token expires (check every 1 min)
-   */
+  // Auto-logout when token expires (check every 1 min)
   useEffect(() => {
     const interval = setInterval(() => {
       const authData = JSON.parse(localStorage.getItem("authData"));
@@ -225,9 +203,7 @@ const AuthProvider = ({ children }) => {
     return () => clearInterval(interval);
   }, [logOut]);
 
-  /**
-   * Exported context value
-   */
+  // Exported context value
   const authInfo = {
     user,
     logOut,

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-/* eslint-disable react/prop-types */
 
 // Import Packages
 import PropTypes from "prop-types";
@@ -130,7 +129,7 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
               console.error("Error unbanning user:", error);
               Swal.fire(
                 "Error!",
-                `Failed to unBan ${user.name}. Please try again.`,
+                `Failed to unBan ${user.fullName}. Please try again.`,
                 "error"
               );
             }

@@ -145,6 +145,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         cardHolder: data.cardholderName,
         paymentMethod: "Card",
         stripePaymentID,
+        paymentTime: new Date().toISOString(),
       });
 
       // 10. Update the trainer’s schedule to reflect the newly accepted booking
@@ -261,6 +262,7 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         cardHolder: data.cardholderName,
         paymentMethod: "Free",
         stripePaymentID: dummyPaymentID,
+        paymentTime: new Date().toISOString(),
       });
 
       // 7. Update trainer schedule for accepted booking

@@ -55,18 +55,6 @@ const TierUpgradePaymentSubmit = ({
     return `${day}-${month}-${year}`;
   };
 
-  const getCurrentDateTime = () => {
-    const now = new Date();
-    const day = String(now.getDate()).padStart(2, "0");
-    const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-    const year = now.getFullYear();
-    const hours = String(now.getHours()).padStart(2, "0");
-    const minutes = String(now.getMinutes()).padStart(2, "0");
-    const seconds = String(now.getSeconds()).padStart(2, "0");
-
-    return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
-  };
-
   // Handle form submission and payment processing
   const onSubmit = async (data) => {
     // This code checks if the Stripe and elements objects are initialized. If either is not ready, it displays an error message using SweetAlert and exits the function to prevent further execution.
@@ -157,7 +145,6 @@ const TierUpgradePaymentSubmit = ({
       endDate.setMonth(startDate.getMonth() + durationInMonths);
 
       const paymentID = generatePaymentID(email);
-      const todayDateTime = getCurrentDateTime();
 
       const postPaymentData = {
         tier: CurrentTierData?.name,
@@ -170,7 +157,7 @@ const TierUpgradePaymentSubmit = ({
         stripePaymentID: stripePaymentID,
         paymentMethod: "Card",
         Payed: true,
-        dateTime: todayDateTime,
+        paymentTime: new Date().toISOString(),
       };
 
       await axiosPublic.post("/Tier_Upgrade_Payment", postPaymentData);
@@ -265,7 +252,7 @@ const TierUpgradePaymentSubmit = ({
             isLoading={isProcessing}
             loadingText="Processing..."
             bgColor="blue"
-            width="full sm:w-1/2 md:w-1/3" // Responsive width
+            width="full sm:w-1/2 md:w-1/3"
             borderRadius="rounded-lg"
             py="py-3"
             textColor="text-white"
@@ -283,6 +270,7 @@ const TierUpgradePaymentSubmit = ({
   );
 };
 
+// Prop Validation
 TierUpgradePaymentSubmit.propTypes = {
   setIsPaymentID: PropTypes.func.isRequired,
   CurrentTierData: PropTypes.shape({

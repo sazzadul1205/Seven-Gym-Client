@@ -248,7 +248,7 @@ const AllUserManagementBan = ({ user, Refetch }) => {
       {/* Footer: Confirm ban button */}
       <div className=" p-5 flex justify-end">
         <CommonButton
-          clickEvent={handleConfirmBan} // Trigger ban confirmation
+          clickEvent={handleConfirmBan}
           text="Confirm Ban"
           bgColor="DarkRed"
           px="px-10"
@@ -261,6 +261,7 @@ const AllUserManagementBan = ({ user, Refetch }) => {
   );
 };
 
+// Prop Validation
 AllUserManagementBan.propTypes = {
   user: PropTypes.shape({
     _id: PropTypes.string.isRequired,

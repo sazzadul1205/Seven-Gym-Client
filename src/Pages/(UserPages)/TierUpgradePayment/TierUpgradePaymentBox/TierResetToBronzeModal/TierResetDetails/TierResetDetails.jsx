@@ -40,18 +40,6 @@ const TierResetDetails = ({
     return `TUR${currentDate}${userEmail}${randomDigits}`;
   };
 
-  // Get current date and time in "DD-MM-YYYY HH:MM:SS" format.
-  const getCurrentDateTime = () => {
-    const now = new Date();
-    const day = String(now.getDate()).padStart(2, "0");
-    const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-based.
-    const year = now.getFullYear();
-    const hours = String(now.getHours()).padStart(2, "0");
-    const minutes = String(now.getMinutes()).padStart(2, "0");
-    const seconds = String(now.getSeconds()).padStart(2, "0");
-    return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
-  };
-
   // Process the refund request when the user confirms in our custom prompt.
   const processRefund = async () => {
     try {
@@ -66,7 +54,6 @@ const TierResetDetails = ({
       if (response.data.success) {
         // Generate a unique refund ID.
         const refundID = generateRefundID(payment?.email);
-        const todayDateTime = getCurrentDateTime();
 
         // Post refund details to the server.
         await axiosPublic.post("/Tier_Upgrade_Refund", {
@@ -78,7 +65,7 @@ const TierResetDetails = ({
           refundAmount: computedRefundValue,
           refundedReason: refundReason || "No reason provided",
           refunded: true,
-          dateTime: todayDateTime,
+          paymentTime: new Date().toISOString(),
         });
 
         // Update user data to reset the tier details.

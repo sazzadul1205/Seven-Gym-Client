@@ -196,6 +196,7 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
         refundedAt: todayDateTime,
         PaymentRefund,
         refundID,
+        refundTime: new Date().toISOString(),
       };
 
       // ✅ Reset trainer schedule (remove participant)
