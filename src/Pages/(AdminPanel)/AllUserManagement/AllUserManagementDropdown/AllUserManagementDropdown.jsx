@@ -47,7 +47,6 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
         break;
 
       case "kick":
-        // Confirmation dialog before kicking the user
         Swal.fire({
           title: "Are you sure?",
           text: `You are about to kick ${user.fullName}`,
@@ -56,14 +55,24 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
           confirmButtonColor: "#d33",
           cancelButtonColor: "#3085d6",
           confirmButtonText: "Yes, kick user",
-        }).then((result) => {
+        }).then(async (result) => {
           if (result.isConfirmed) {
-            // Perform kick logic here (e.g., API call)
-            Swal.fire(
-              "Kicked!",
-              `${user.fullName} has been kicked.`,
-              "success"
-            );
+            try {
+              // Call DELETE API
+              await axiosPublic.delete(`/Users/${user._id}`);
+
+              // Refetch updated user list
+              Refetch();
+
+              Swal.fire(
+                "Kicked!",
+                `${user.fullName} has been kicked.`,
+                "success"
+              );
+            } catch (error) {
+              console.error("Error kicking user:", error);
+              Swal.fire("Error!", "Failed to kick user. Try again.", "error");
+            }
           }
         });
         break;
