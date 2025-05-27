@@ -102,9 +102,9 @@ UserProfileTrainers.propTypes = {
     PropTypes.shape({
       trainerId: PropTypes.string.isRequired,
       trainer: PropTypes.string.isRequired,
-      startAt: PropTypes.string.isRequired,
+      startAt: PropTypes.string,
       durationWeeks: PropTypes.number.isRequired,
-      sessions: PropTypes.arrayOf(PropTypes.object).isRequired,
+      sessions: PropTypes.arrayOf(PropTypes.string).isRequired,
     })
   ),
 };

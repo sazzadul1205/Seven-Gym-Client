@@ -49,13 +49,12 @@ FeaturedTrainers.propTypes = {
     PropTypes.shape({
       _id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      tier: PropTypes.string.isRequired,
+      tier: PropTypes.string,
       imageUrl: PropTypes.string.isRequired,
       specialization: PropTypes.string.isRequired,
       experience: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
         .isRequired,
-      perSession: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-        .isRequired,
+      perSession: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       availableDays: PropTypes.arrayOf(PropTypes.string).isRequired,
     })
   ).isRequired,

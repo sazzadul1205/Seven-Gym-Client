@@ -83,11 +83,11 @@ TrainerPublicIdCard.propTypes = {
   trainer: PropTypes.shape({
     name: PropTypes.string.isRequired,
     specialization: PropTypes.string.isRequired,
-    tier: PropTypes.string.isRequired,
+    tier: PropTypes.string,
     imageUrl: PropTypes.string.isRequired,
-    experience: PropTypes.number.isRequired,
-    age: PropTypes.number.isRequired,
-    perSession: PropTypes.number.isRequired,
+    experience: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    age: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    perSession: PropTypes.number,
     availableDays: PropTypes.arrayOf(PropTypes.string).isRequired,
   }).isRequired,
 };

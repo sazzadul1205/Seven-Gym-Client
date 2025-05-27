@@ -158,7 +158,7 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
           {TrainersBookingAcceptedData.length > 0 ? (
             daysOfWeek.map((day) => (
               <div key={day} className="border border-gray-700 p-3">
-                <div className="flex justify-center items-center gap-2 py-2 border-b border-gray-700" >
+                <div className="flex justify-center items-center gap-2 py-2 border-b border-gray-700">
                   <FaDotCircle />
                   <h4>{day}</h4>
                 </div>
@@ -306,10 +306,16 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
                   <BookedTrainerBasicInfo trainerID={b.trainerId} py={3} />
 
                   {/* Start Time */}
-                  <p className="flex justify-between items-center pt-1">
-                    <span className="font-semibold">Start At:</span>{" "}
-                    {b.startAt || "Not started yet"}
-                  </p>
+                  <div className="flex justify-between items-center pt-1">
+                    <p className="font-semibold">Start At:</p>{" "}
+                    <p>
+                      {b.startAt || (
+                        <span className="text-red-500 font-bold">
+                          Not started yet
+                        </span>
+                      )}
+                    </p>
+                  </div>
 
                   {/* Total Price */}
                   <p className="flex justify-between items-center pt-1">

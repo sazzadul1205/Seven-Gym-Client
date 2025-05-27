@@ -322,7 +322,7 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
 TrainerDetailsSchedule.propTypes = {
   TrainerDetails: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    perSession: PropTypes.number.isRequired,
+    perSession: PropTypes.number,
     monthlyPackage: PropTypes.number.isRequired,
   }),
   TrainerSchedule: PropTypes.shape({
@@ -333,8 +333,8 @@ TrainerDetailsSchedule.propTypes = {
           end: PropTypes.string.isRequired,
           classType: PropTypes.string.isRequired,
           participant: PropTypes.oneOfType([
-            PropTypes.object, // handles { userId1: {}, userId2: {} }
-            PropTypes.arrayOf(PropTypes.object), // handles [{}, {}]
+            PropTypes.object,
+            PropTypes.arrayOf(PropTypes.object),
           ]),
           participantLimit: PropTypes.oneOfType([
             PropTypes.number,

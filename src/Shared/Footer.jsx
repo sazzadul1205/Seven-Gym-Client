@@ -1,9 +1,23 @@
 import { Link } from "react-router";
 import My_Social_Links from "../JSON/My_Social_Links.json";
 
-// Importing Tooltip from react-tooltip
-import { SocialIcon } from "react-social-icons";
+// Import icons from react-icons
+import {
+  FaGoogle,
+  FaFacebookF,
+  FaTwitter,
+  FaGithub,
+  FaLinkedinIn,
+} from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
+
+const socialIcons = {
+  google: FaGoogle,
+  facebook: FaFacebookF,
+  twitter: FaTwitter,
+  github: FaGithub,
+  linkedin: FaLinkedinIn,
+};
 
 const Footer = () => {
   return (
@@ -47,19 +61,26 @@ const Footer = () => {
             Social
           </h6>
           <div className="grid grid-cols-4 lg:grid-cols-5 gap-6 mt-4 justify-center">
-            {Object.entries(My_Social_Links).map(([platform, url]) => (
-              <Link
-                key={platform}
-                to={url}
-                rel="noopener noreferrer"
-                data-tooltip-id={`tooltip-${platform}`}
-                data-tooltip-content={platform.toUpperCase()}
-                className="hover:scale-110 transition-transform"
-              >
-                <SocialIcon url={url} target="_blank" />
-                <Tooltip id={`tooltip-${platform}`} place="top" />
-              </Link>
-            ))}
+            {Object.entries(My_Social_Links).map(([platform, url]) => {
+              const IconComponent = socialIcons[platform];
+              if (!IconComponent) return null; // skip unknown platforms
+
+              return (
+                <a
+                  key={platform}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-tooltip-id={`tooltip-${platform}`}
+                  data-tooltip-content={platform.toUpperCase()}
+                  className="hover:scale-110 transition-transform text-white text-2xl flex justify-center items-center"
+                  aria-label={platform}
+                >
+                  <IconComponent />
+                  <Tooltip id={`tooltip-${platform}`} place="top" />
+                </a>
+              );
+            })}
           </div>
         </nav>
       </div>

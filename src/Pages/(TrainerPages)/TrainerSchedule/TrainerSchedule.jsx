@@ -51,8 +51,6 @@ const TrainerSchedule = ({
   const [originalSchedule, setOriginalSchedule] = useState({});
   const [defaultTimeSlots, setDefaultTimeSlots] = useState([]);
 
-  console.log(ClassTypesData);
-
   // Extract trainer's preferred class types
   const TrainersClassType = TrainerProfileData?.preferences?.classTypes || [];
 
@@ -304,11 +302,11 @@ const TrainerSchedule = ({
 
         {/* Time Range Customize */}
         <TrainerScheduleRangeSelector
-          defaultTimeSlots={defaultTimeSlots}
-          hoursCount={timeRangeSlots.length || 6}
           onRangeChange={onRangeChange}
-          handleApplyRanges={handleApplyRanges}
           timeRangeSlots={timeRangeSlots}
+          defaultTimeSlots={defaultTimeSlots}
+          handleApplyRanges={handleApplyRanges}
+          hoursCount={timeRangeSlots.length || 6}
           TrainerProfileScheduleData={TrainerProfileScheduleData}
         />
       </div>
@@ -318,7 +316,6 @@ const TrainerSchedule = ({
         handleClear={handleClear}
         tempSchedule={tempSchedule}
         handleUpdate={handleUpdate}
-        // isValidClassType={isValidClassType}
         ClassTypesData={ClassTypesData}
         TrainersClassType={TrainersClassType}
       />
@@ -352,7 +349,7 @@ TrainerSchedule.propTypes = {
             PropTypes.number,
           ]),
           classPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-          participant: PropTypes.object,
+          participant: PropTypes.objectOf(PropTypes.object),
           time: PropTypes.string,
           start: PropTypes.string,
           end: PropTypes.string,

@@ -343,6 +343,7 @@ const UserTrainerManagement = () => {
                 TrainersBookingRequestData={TrainersBookingRequestData}
               />
             )}
+
             {/* User Session History Tab */}
             {activeTab === "User-Session-History" && (
               <UserTrainerSessionHistory
