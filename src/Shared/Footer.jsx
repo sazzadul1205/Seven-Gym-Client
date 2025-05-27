@@ -63,7 +63,7 @@ const Footer = () => {
           <div className="grid grid-cols-4 lg:grid-cols-5 gap-6 mt-4 justify-center">
             {Object.entries(My_Social_Links).map(([platform, url]) => {
               const IconComponent = socialIcons[platform];
-              if (!IconComponent) return null; // skip unknown platforms
+              if (!IconComponent) return null; // skip unknown platforms`
 
               return (
                 <a
@@ -89,3 +89,5 @@ const Footer = () => {
 };
 
 export default Footer;
+
+

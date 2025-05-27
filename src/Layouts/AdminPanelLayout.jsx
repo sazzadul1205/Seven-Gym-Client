@@ -9,14 +9,14 @@ import CommonButton from "../Shared/Buttons/CommonButton";
 
 // Assets
 import ProfileDefault from "../assets/ProfileDefault.jpg";
+import invoice from "../assets/AdminPanel/invoice.png";
 import users from "../assets/AdminPanel/users.png";
 import coach from "../assets/AdminPanel/coach.png";
-import invoice from "../assets/AdminPanel/invoice.png";
 
 // Packages
-import Swal from "sweetalert2";
 import useAxiosPublic from "../Hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
+import Swal from "sweetalert2";
 
 // Hooks
 import useAuth from "../Hooks/useAuth";
@@ -24,9 +24,9 @@ import Loading from "../Shared/Loading/Loading";
 import FetchingError from "../Shared/Component/FetchingError";
 
 // Tabs
-import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
 import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserManagement";
-import AllInvoices from "../Pages/(AdminPanel)/AllInvoices/AllInvoices";
+import TierUpgradeInvoices from "../Pages/(AdminPanel)/TierUpgradeInvoices/TierUpgradeInvoices";
+import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -118,9 +118,28 @@ const AdminPanelLayout = () => {
     },
   });
 
-  // 4. Fetch All Tier Upgrade Payments
+  // 4. Fetch All Tier Upgrade Refund
   const {
-    data: TrainerSessionPaymentData,
+    data: TierUpgradeRefundData,
+    isLoading: TierUpgradeRefundIsLoading,
+    error: TierUpgradeRefundError,
+    refetch: TierUpgradeRefundRefetch,
+  } = useQuery({
+    queryKey: ["TierUpgradeRefundData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(`/Tier_Upgrade_Refund`);
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
+  // 5. Fetch All Tier Upgrade Payments
+  const {
+    // data: TrainerSessionPaymentData,
     isLoading: TrainerSessionPaymentIsLoading,
     error: TrainerSessionPaymentError,
     refetch: TrainerSessionPaymentRefetch,
@@ -137,41 +156,11 @@ const AdminPanelLayout = () => {
     },
   });
 
-  const handleSignOut = async () => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you really want to log out?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, log me out",
-      cancelButtonText: "Cancel",
-    });
-
-    if (!result.isConfirmed) return;
-
-    setIsLoggingOut(true);
-    try {
-      await logOut();
-      navigate("/");
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Logout Failed",
-        text: `Error logging out: ${error.message}`,
-        confirmButtonColor: "#d33",
-        timer: 3000,
-      });
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
-
   // Unified refetch function
   const refetchAll = async () => {
     await AllUsersRefetch();
     await AllTrainersRefetch();
+    await TierUpgradeRefundRefetch();
     await TierUpgradePaymentRefetch();
     await TrainerSessionPaymentRefetch();
   };
@@ -207,13 +196,13 @@ const AdminPanelLayout = () => {
       ),
     },
     {
-      id: "All_Invoices",
+      id: "Tier_Upgrade_Invoices",
       Icon: invoice,
-      title: "All Invoices",
+      title: "Tier Upgrade Invoices",
       content: (
-        <AllInvoices
-          TrainerSessionPaymentData={TrainerSessionPaymentData}
+        <TierUpgradeInvoices
           TierUpgradePaymentData={TierUpgradePaymentData}
+          TierUpgradeRefundData={TierUpgradeRefundData}
           Refetch={refetchAll}
         />
       ),
@@ -224,6 +213,7 @@ const AdminPanelLayout = () => {
   if (
     AllUsersIsLoading ||
     AllTrainersIsLoading ||
+    TierUpgradeRefundIsLoading ||
     TierUpgradePaymentIsLoading ||
     TrainerSessionPaymentIsLoading
   )
@@ -233,10 +223,42 @@ const AdminPanelLayout = () => {
   if (
     AllUsersError ||
     AllTrainersError ||
+    TierUpgradeRefundError ||
     TierUpgradePaymentError ||
     TrainerSessionPaymentError
   )
     return <FetchingError />;
+
+  const handleSignOut = async () => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to log out?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, log me out",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!result.isConfirmed) return;
+
+    setIsLoggingOut(true);
+    try {
+      await logOut();
+      navigate("/");
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Logout Failed",
+        text: `Error logging out: ${error.message}`,
+        confirmButtonColor: "#d33",
+        timer: 3000,
+      });
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -249,7 +271,7 @@ const AdminPanelLayout = () => {
             className="w-12 h-12 rounded-full border border-gray-300"
           />
           <div className="text-black">
-            <p className="font-semibold">Sazzadul Isloam Molla</p>
+            <p className="font-semibold">Sazzadul Islam Molla</p>
             <p className="text-sm font-light">Admin</p>
           </div>
         </div>

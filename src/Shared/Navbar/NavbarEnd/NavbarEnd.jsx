@@ -15,10 +15,11 @@ import { MdDashboard } from "react-icons/md";
 import { AiTwotoneSchedule } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaStopwatch, FaUser } from "react-icons/fa";
+
+// Import Button
 import CommonButton from "../../Buttons/CommonButton";
 
 const NavbarEnd = ({ UsersData }) => {
-  // Fetch authentication state and logout function
   const { user, logOut } = useAuth();
 
   // State variables
@@ -26,8 +27,8 @@ const NavbarEnd = ({ UsersData }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Refs for handling outside clicks
-  const dropdownRef = useRef(null);
   const timerRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   // Role-based navigation links
   const roleBasedLinks = {
@@ -173,25 +174,32 @@ const NavbarEnd = ({ UsersData }) => {
           {/* Dropdown menu */}
           {isDropdownOpen && (
             <div
-              className="absolute right-0 mt-1 w-[280px] bg-white text-black z-10"
+              className="absolute right-0 mt-1 min-w-[280px] bg-white text-black z-10"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <ul>
+              <ul className="py-2">
                 {/* Render navigation links based on user role */}
                 {(roleBasedLinks[UsersData?.role] || []).map((link) => (
-                  <Link to={link.path} key={link.name}>
-                    <li className="flex py-3 px-5 gap-2 hover:bg-gray-100 border-b border-gray-300">
+                  <li
+                    key={link.name}
+                    className="flex py-2 px-5 gap-2 hover:bg-gray-100 border-b border-gray-300"
+                  >
+                    <Link
+                      to={link.path}
+                      className="flex items-center gap-2 w-full"
+                    >
                       <span className="border-r border-black pr-2">
                         {link.icon}
                       </span>
                       <span>{link.name}</span>
-                    </li>
-                  </Link>
+                    </Link>
+                  </li>
                 ))}
+
                 {/* Logout button */}
                 <li
-                  className="p-2 py-3 px-5 text-red-500 font-semibold hover:bg-gray-100 flex items-center justify-between cursor-pointer"
+                  className="p-2 py-2 px-5 text-red-500 font-semibold hover:bg-gray-100 flex items-center justify-between cursor-pointer"
                   onClick={handleLogOut}
                 >
                   {isLoggingOut ? (
