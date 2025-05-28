@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Import Packages
 import PropTypes from "prop-types";
@@ -27,12 +27,12 @@ const TearResetToBronzeModal = ({ userData, setRefundID }) => {
   const [remainingAmount, setRemainingAmount] = useState(0);
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
 
-  // Fetch Linked Recept ID
+  // Fetch Linked Receipt ID
   const linkedReceptID = userData?.tierDuration?.linkedReceptID;
 
   // Fetch payment data only if linkedReceptID exists
   const {
-    data: TierUpgradePaymentData = [],
+    data: TierUpgradePaymentData,
     isLoading: TierUpgradePaymentLoading,
     error: TierUpgradePaymentError,
   } = useQuery({
@@ -43,12 +43,13 @@ const TearResetToBronzeModal = ({ userData, setRefundID }) => {
             .get(`/Tier_Upgrade_Payment/search?paymentID=${linkedReceptID}`)
             .then((res) => res.data)
         : Promise.reject(new Error("No payment ID found")),
-    enabled: !!linkedReceptID, // Ensures query only runs if linkedReceptID is available
+    enabled: !!linkedReceptID,
   });
 
-  // Loading & Error Handling
-  if (TierUpgradePaymentLoading) return <Loading />;
-  if (TierUpgradePaymentError) return <FetchingError />;
+  // Run refund calculation whenever the payment data changes
+  useEffect(() => {
+    if (TierUpgradePaymentData) calculateRefund();
+  }, [TierUpgradePaymentData]);
 
   // Helper function to parse date strings in "DD-MM-YYYY" format
   const parseDate = (dateString) => {
@@ -59,27 +60,37 @@ const TearResetToBronzeModal = ({ userData, setRefundID }) => {
 
   // Calculate refund breakdown
   const calculateRefund = () => {
-    if (!TierUpgradePaymentData.length) return;
+    if (
+      !TierUpgradePaymentData ||
+      !TierUpgradePaymentData.totalPrice ||
+      !TierUpgradePaymentData.startDate ||
+      !TierUpgradePaymentData.duration
+    )
+      return;
 
-    const payment = TierUpgradePaymentData[0]; 
-    const totalPrice = payment.totalPrice;
-    const startDate = parseDate(payment.startDate);
+    const totalPrice = Number(TierUpgradePaymentData.totalPrice);
+    const startDate = parseDate(TierUpgradePaymentData.startDate);
     const currentDate = new Date();
 
     // Calculate days passed
     const calcDaysPassed = Math.floor(
       (currentDate - startDate) / (1000 * 60 * 60 * 24)
     );
-    setDaysPassed(calcDaysPassed);
+    setDaysPassed(calcDaysPassed >= 0 ? calcDaysPassed : 0);
 
     // Approximate total days based on duration in months
-    const durationMonths = parseInt(payment.duration.split(" ")[0], 10);
+    const durationMonths = parseInt(
+      TierUpgradePaymentData.duration.split(" ")[0],
+      10
+    );
     const totalDays = durationMonths * 30;
+
     const perDayCost = totalPrice / totalDays;
 
     // Calculate used and remaining amounts as numbers
-    const calcAmountUsed = calcDaysPassed * perDayCost;
+    const calcAmountUsed = calcDaysPassed > 0 ? calcDaysPassed * perDayCost : 0;
     setAmountUsed(Number(calcAmountUsed.toFixed(2)));
+
     const calcRemainingAmount = totalPrice - calcAmountUsed;
     setRemainingAmount(Number(calcRemainingAmount.toFixed(2)));
 
@@ -87,15 +98,17 @@ const TearResetToBronzeModal = ({ userData, setRefundID }) => {
     let finalRefund =
       calcDaysPassed <= 3 ? totalPrice : calcRemainingAmount * 0.9;
     setRefundAmount(Number(finalRefund.toFixed(2)));
+  };
 
+  const onReasonSelect = (reasonData) => {
+    const reason = reasonData.reason;
+    setRefundReason(reason);
     setShowPaymentDetails(true);
   };
 
-  // Handle refund reason selection
-  const onReasonSelect = (reasonData) => {
-    setRefundReason(reasonData.reason || reasonData.complaint);
-    calculateRefund();
-  };
+  // Loading & Error Handling
+  if (TierUpgradePaymentLoading) return <Loading />;
+  if (TierUpgradePaymentError) return <FetchingError />;
 
   return (
     <div className="modal-box bg-gray-100 p-0 rounded-xl">
@@ -132,7 +145,6 @@ const TearResetToBronzeModal = ({ userData, setRefundID }) => {
   );
 };
 
-// PropTypes for validation
 TearResetToBronzeModal.propTypes = {
   setRefundID: PropTypes.func,
   userData: PropTypes.shape({

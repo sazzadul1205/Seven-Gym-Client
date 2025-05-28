@@ -33,6 +33,8 @@ const TierResetRecept = ({ refundID }) => {
     enabled: !!refundID,
   });
 
+  console.log(TierUpgradeRefundData);
+
   // Fetch payment data based on linked payment ID
   const LinkedPaymentID = TierUpgradeRefundData[0]?.linkedPaymentReceptID;
 
@@ -51,15 +53,6 @@ const TierResetRecept = ({ refundID }) => {
         : Promise.reject(new Error("No payment ID found")),
     enabled: !!LinkedPaymentID,
   });
-
-  // Handle loading and errors
-  if (TierUpgradeRefundLoading || TierUpgradePaymentLoading) return <Loading />;
-  if (TierUpgradeRefundError || TierUpgradePaymentError)
-    return <FetchingError />;
-
-  // Extract payment and refund data
-  const payment = TierUpgradePaymentData[0] || {};
-  const refund = TierUpgradeRefundData[0] || {};
 
   // Helper function to parse dates
   const parseDate = (dateString) => {
@@ -81,17 +74,20 @@ const TierResetRecept = ({ refundID }) => {
   let hasPenalty = false;
 
   // Perform calculations if dates are available
-  if (payment.startDate && refund.dateTime) {
+  if (TierUpgradePaymentData.startDate && TierUpgradeRefundData.dateTime) {
     try {
-      const startDate = parseDate(payment.startDate);
-      const refundDate = parseDateTime(refund.dateTime);
+      const startDate = parseDate(TierUpgradePaymentData.startDate);
+      const refundDate = parseDateTime(TierUpgradeRefundData.dateTime);
 
       // Calculate days passed
       daysPassed = Math.floor((refundDate - startDate) / (1000 * 60 * 60 * 24));
 
       // Calculate refund breakdown
-      const totalPrice = payment.totalPrice;
-      const durationMonths = parseInt(payment.duration.split(" ")[0], 10);
+      const totalPrice = TierUpgradePaymentData.totalPrice;
+      const durationMonths = parseInt(
+        TierUpgradePaymentData.duration.split(" ")[0],
+        10
+      );
       const totalDays = durationMonths * 30;
       const perDayCost = totalPrice / totalDays;
 
@@ -130,7 +126,9 @@ const TierResetRecept = ({ refundID }) => {
         const pdf = new jsPDF("p", "mm", [pdfWidth, pdfHeight]);
 
         pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`RefundSessionReceipt_${payment?.paymentID}.pdf`);
+        pdf.save(
+          `RefundSessionReceipt_${TierUpgradePaymentData?.paymentID}.pdf`
+        );
 
         URL.revokeObjectURL(imgData); // Clean up
       };
@@ -139,85 +137,88 @@ const TierResetRecept = ({ refundID }) => {
     }
   };
 
+  // Handle loading and errors
+  if (TierUpgradeRefundLoading || TierUpgradePaymentLoading) return <Loading />;
+  if (TierUpgradeRefundError || TierUpgradePaymentError)
+    return <FetchingError />;
+
   return (
-    <div className="modal-box bg-[#ffffff] shadow-lg rounded-lg max-w-md mx-auto">
-      {/* Receipt Section */}
+    <div className="modal-box bg-white shadow-lg rounded-lg max-w-md mx-auto">
       <div ref={refundRef} id="Refund">
-        {/* Receipt Header */}
+        {/* Header */}
         <div className="text-center border-b pb-4 mb-1">
-          <h4 className="text-2xl font-bold text-[#1f2937]">Seven Gym</h4>
-          <p className="text-sm text-[#6b7280]">Tier Upgrade Refund Receipt</p>
-          <p className="text-sm text-[#6b7280]">www.SevenGym.com</p>
+          <h4 className="text-2xl font-bold text-gray-900">Seven Gym</h4>
+          <p className="text-sm text-gray-500">Tier Upgrade Refund Receipt</p>
+          <p className="text-sm text-gray-500">www.SevenGym.com</p>
         </div>
 
-        {/* Receipt Details */}
-        <div className="p-4 bg-[#f9fafb] border text-black">
-          {/* Top Part */}
-          <div className="pb-1 text-center border-b">
-            <p className="text-sm text-[#6b7280]">
-              Receipt #: SG-TURR-
-              <span>{TierUpgradeRefundData[0]?.RefundID}</span>
+        {/* Details */}
+        <div className="p-4 bg-gray-50 border text-black">
+          <div className="text-center border-b pb-1">
+            <p className="text-sm text-gray-500">
+              Receipt #: SG-TURR-{TierUpgradeRefundData[0]?.RefundID}
             </p>
-            <p className="text-sm font-semibold text-[#6b7280]">
-              Customer: <span>{TierUpgradeRefundData[0]?.email}</span>
+            <p className="text-sm font-semibold text-gray-500">
+              Customer: {TierUpgradeRefundData[0]?.email}
             </p>
-            <p className="text-sm text-[#6b7280]">
-              Transaction ID: TX-{" "}
-              <span>{TierUpgradeRefundData[0]?.RefundID?.slice(-6)}</span>
+            <p className="text-sm text-gray-500">
+              Transaction ID: TX-{TierUpgradeRefundData[0]?.RefundID?.slice(-6)}
             </p>
-            <p className="text-sm text-[#6b7280]">
-              Date & Time : <span>{TierUpgradeRefundData[0]?.dateTime}</span>
+            <p className="text-sm text-gray-500">
+              Date & Time : {TierUpgradeRefundData[0]?.dateTime}
             </p>
           </div>
 
-          {/* Tier Details */}
-          <div className="px-4 py-4">
-            <div className="flex justify-between">
-              <p className="text-sm font-semibold">Refunded Tier:</p>
-              <p className="text-black font-semibold">
-                {payment?.tier || "N/A"}
-              </p>
-            </div>
-            <div className="flex justify-between">
-              <p className="text-sm font-semibold">Refunded Duration:</p>
-              <p className="text-black font-semibold">
-                {payment?.duration || "N/A"}
-              </p>
-            </div>
-            <div className="flex justify-between">
-              <p className="text-sm font-semibold">Refunded Exp Date:</p>
-              <p className="text-black font-semibold">
-                {payment?.endDate || "N/A"}
-              </p>
-            </div>
+          {/* Tier Info */}
+          <div className="py-4 space-y-1">
+            {[
+              { label: "Refunded Tier", value: TierUpgradePaymentData?.tier },
+              {
+                label: "Refunded Duration",
+                value: TierUpgradePaymentData?.duration,
+              },
+              {
+                label: "Refunded Exp Date",
+                value: TierUpgradePaymentData?.endDate,
+              },
+            ].map((item, i) => (
+              <div key={i} className="flex justify-between px-4">
+                <p className="text-sm font-semibold">{item.label}:</p>
+                <p className="text-black font-semibold">
+                  {item.value || "N/A"}
+                </p>
+              </div>
+            ))}
           </div>
 
           {/* Refund Breakdown */}
-          <div className="px-4 py-4 space-y-2">
-            <div className="flex justify-between font-bold px-2">
+          <div className="py-4 space-y-2 px-2">
+            <div className="flex justify-between font-bold">
               <p className="text-md">Product</p>
               <p className="text-md">Price</p>
             </div>
-            <div className="flex justify-between font-semibold border-b border-[#9ca3af] pb-2 px-2">
-              <p className="text-md">{payment?.tier} Tier Upgrade</p>
+            <div className="flex justify-between font-semibold border-b border-gray-400 pb-2">
               <p className="text-md">
-                ${parseFloat(payment?.totalPrice).toFixed(2)}
+                {TierUpgradePaymentData?.tier} Tier Upgrade
+              </p>
+              <p className="text-md">
+                ${parseFloat(TierUpgradePaymentData?.totalPrice).toFixed(2)}
               </p>
             </div>
-            <div className="flex justify-between font-semibold px-2">
+            <div className="flex justify-between font-semibold">
               <p className="text-md">Total Paid</p>
               <p className="text-md">
-                ${parseFloat(payment?.totalPrice).toFixed(2)}
+                ${parseFloat(TierUpgradePaymentData?.totalPrice).toFixed(2)}
               </p>
             </div>
 
             {hasPenalty && (
               <>
-                <div className="flex justify-between font-semibold text-red-500 px-2">
+                <div className="flex justify-between font-semibold text-red-500">
                   <p className="text-md">Days Passed ({daysPassed} days)</p>
                   <p className="text-md">- ${amountUsed.toFixed(2)}</p>
                 </div>
-                <div className="flex justify-between font-semibold text-red-500 px-2">
+                <div className="flex justify-between font-semibold text-red-500">
                   <p className="text-md">Late Refund Fee (10%)</p>
                   <p className="text-md">
                     - ${(remainingAmount * 0.1).toFixed(2)}
@@ -226,43 +227,42 @@ const TierResetRecept = ({ refundID }) => {
               </>
             )}
 
-            <div className="flex justify-between font-semibold text-[#22c55e] px-2">
+            <div className="flex justify-between font-semibold text-green-500">
               <p className="text-md">Refund Amount</p>
               <p className="text-md font-bold">${computedRefundValue}</p>
             </div>
           </div>
 
-          {/* Refund Reason */}
+          {/* Reason */}
           <div className="px-4 py-4 border-t border-gray-300">
             <p className="text-sm font-semibold">Refund Reason:</p>
-            <p className="text-sm text-[#6b7280]">{refund?.refundedReason}</p>
+            <p className="text-sm text-gray-500">
+              {TierUpgradeRefundData?.refundedReason}
+            </p>
           </div>
 
-          {/* Thank You Message */}
+          {/* Footer */}
           <div className="text-center border-t pt-4">
-            <p className="text-sm text-[#6b7280]">
+            <p className="text-sm text-gray-500">
               Thank you for choosing Seven Gym. We appreciate your business!
             </p>
           </div>
         </div>
       </div>
 
-      {/* Close Button and PDF Generation Button */}
+      {/* Actions */}
       <div className="modal-action mt-6 flex justify-between">
-        {/* Close Button */}
         <form method="dialog">
           <Link to={`/User/TierUpgrade/${email}`}>
-            <button className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-400 to-blue-600 rounded-xl py-3 w-[150px] font-semibold cursor-pointer">
+            <button className="bg-gradient-to-bl from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 rounded-xl py-3 w-[150px] font-semibold">
               Close
             </button>
           </Link>
         </form>
-
-        {/* PDF Generate Button  */}
-        {payment && (
+        {TierUpgradePaymentData && (
           <button
             onClick={generatePDF}
-            className="bg-linear-to-bl hover:bg-linear-to-tr from-green-400 to-green-600 rounded-xl py-3 w-[150px] font-semibold cursor-pointer"
+            className="bg-gradient-to-bl from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-xl py-3 w-[150px] font-semibold"
           >
             Download PDF
           </button>

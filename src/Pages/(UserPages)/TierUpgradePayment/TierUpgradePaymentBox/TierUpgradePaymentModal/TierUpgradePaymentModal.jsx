@@ -22,11 +22,11 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
 
   // Fetch tier data only when PaymentID is provided
   const {
-    data: PaymentIDData,
-    isLoading: PaymentIDDataLoading,
-    error: PaymentIDDataError,
+    data: PaymentData,
+    isLoading: PaymentDataLoading,
+    error: PaymentDataError,
   } = useQuery({
-    queryKey: ["PaymentIDData", PaymentID],
+    queryKey: ["PaymentData", PaymentID],
     queryFn: () =>
       axiosPublic
         .get(`/Tier_Upgrade_Payment/search?paymentID=${PaymentID}`)
@@ -35,15 +35,15 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
   });
 
   // Show loading screen while fetching
-  if (PaymentIDDataLoading) return <Loading />;
+  if (PaymentDataLoading) return <Loading />;
 
   // Show error if fetching fails
-  if (PaymentIDDataError) return <FetchingError />;
+  if (PaymentDataError) return <FetchingError />;
 
   // Return nothing if data exists but empty or malformed
-  if (!PaymentIDData || PaymentIDData.length === 0) return null;
+  if (!PaymentData || PaymentData.length === 0) return null;
 
-  const payment = PaymentIDData[0]; // Extract first record
+  const payment = PaymentData[0]; // Extract first record
 
   // PDF generation function
   const generatePDF = async () => {
@@ -76,6 +76,8 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
       console.error("Error generating POS PDF:", error);
     }
   };
+
+  console.log(PaymentData);
 
   return (
     <div className="modal-box bg-[#ffffff] shadow-lg rounded-lg w-full max-w-md mx-auto p-4 sm:p-6 overflow-y-auto">

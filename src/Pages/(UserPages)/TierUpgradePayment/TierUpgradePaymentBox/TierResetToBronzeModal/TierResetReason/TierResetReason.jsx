@@ -3,57 +3,65 @@ import PropTypes from "prop-types";
 import CommonButton from "../../../../../../Shared/Buttons/CommonButton";
 
 const TierResetReason = ({ setRefundReason }) => {
-  // State for storing selected reason and custom complaint
   const [selectedReason, setSelectedReason] = useState("");
-  const [customComplaint, setCustomComplaint] = useState("");
+  const [customInput, setCustomInput] = useState("");
+  const [isCustom, setIsCustom] = useState(false);
 
-  // Predefined list of downgrade reasons
   const predefinedReasons = [
     "I no longer need the current plan",
     "It's too expensive",
     "I am unsatisfied with the service",
     "I found a better alternative",
+    "Custom reason", // Last option triggers custom input
   ];
 
-  // Handles selection of predefined reason
   const handleReasonChange = (e) => {
-    setSelectedReason(e.target.value);
+    const value = e.target.value;
+    if (value === "Custom reason") {
+      setIsCustom(true);
+      setSelectedReason("");
+    } else {
+      setIsCustom(false);
+      setSelectedReason(value);
+      setCustomInput("");
+    }
   };
 
-  // Handles input change for custom complaint
-  const handleComplaintChange = (e) => {
-    setCustomComplaint(e.target.value);
+  const handleCustomChange = (e) => {
+    setCustomInput(e.target.value);
   };
 
-  // Proceed to the next step if at least one input is provided
   const handleNext = () => {
-    if (selectedReason || customComplaint.trim()) {
-      setRefundReason({ reason: selectedReason, complaint: customComplaint });
+    const finalReason = isCustom ? customInput.trim() : selectedReason;
+
+    if (finalReason) {
+      const refundData = {
+        reason: finalReason,
+      };
+
+      setRefundReason(refundData);
     }
   };
 
   return (
     <div className="p-4">
-      {/* Modal Description */}
       <p className="py-2 text-black font-semibold text-center text-lg">
-        Please select a reason for downgrading your plan, or add a custom
-        complaint below.
+        Please choose or enter your reason for downgrading.
       </p>
 
-      {/* Modal Form */}
       <form className="pt-2 space-y-4">
-        {/* Reason Dropdown Selection */}
+        {/* Single Reason Input */}
         <div className="form-control w-full text-black space-y-2">
           <label className="label font-bold">
-            <span className="label-text">Reason for Downgrading</span>
+            <span className="label-text">Reason</span>
           </label>
           <select
-            value={selectedReason}
+            value={isCustom ? "Custom reason" : selectedReason}
             onChange={handleReasonChange}
             className="select select-bordered w-full bg-white border-black"
           >
             <option value="" disabled>
-              Select a reason
+              Select or enter a reason
             </option>
             {predefinedReasons.map((reason, index) => (
               <option key={index} value={reason}>
@@ -63,18 +71,20 @@ const TierResetReason = ({ setRefundReason }) => {
           </select>
         </div>
 
-        {/* Custom Complaint Input */}
-        <div className="form-control w-full text-black space-y-2">
-          <label className="label font-bold">
-            <span className="label-text">Custom Complaint (optional)</span>
-          </label>
-          <textarea
-            className="textarea textarea-bordered w-full bg-white border-black"
-            placeholder="Type your complaint here..."
-            value={customComplaint}
-            onChange={handleComplaintChange}
-          ></textarea>
-        </div>
+        {/* Custom Reason Input (conditional) */}
+        {isCustom && (
+          <div className="form-control w-full text-black space-y-2">
+            <label className="label font-bold">
+              <span className="label-text">Custom Reason</span>
+            </label>
+            <textarea
+              className="textarea textarea-bordered w-full bg-white border-black"
+              placeholder="Type your custom reason here..."
+              value={customInput}
+              onChange={handleCustomChange}
+            />
+          </div>
+        )}
 
         {/* Next Button */}
         <div className="flex justify-end">
@@ -83,11 +93,13 @@ const TierResetReason = ({ setRefundReason }) => {
             clickEvent={handleNext}
             text="Next"
             bgColor="emerald"
-            textColor="text-xl font-semibold"
             px="px-10"
             py="py-2"
             width="auto"
-            disabled={!selectedReason && !customComplaint.trim()}
+            disabled={
+              (!selectedReason && !isCustom) ||
+              (isCustom && !customInput.trim())
+            }
           />
         </div>
       </form>
@@ -95,7 +107,6 @@ const TierResetReason = ({ setRefundReason }) => {
   );
 };
 
-// PropTypes validation
 TierResetReason.propTypes = {
   setRefundReason: PropTypes.func.isRequired,
 };

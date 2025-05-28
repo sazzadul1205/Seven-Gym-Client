@@ -15,62 +15,64 @@ const TierResetDetails = ({
 }) => {
   const axiosPublic = useAxiosPublic();
 
-  // State Management
   const [isProcessing, setIsProcessing] = useState(false);
   const [showConfirmPrompt, setShowConfirmPrompt] = useState(false);
 
-  // Exit early if no payment data is available.
   if (!paymentData || paymentData.length === 0) return null;
 
-  // Use the first payment entry.
-  const payment = paymentData[0];
+  // Validate and safely parse totalPrice
+  const totalPrice = Number(paymentData?.totalPrice);
+  const validTotalPrice = !isNaN(totalPrice) ? totalPrice : 0;
 
-  // Determine if penalties apply and compute the refund value.
   const hasPenalty = daysPassed > 3;
-  const fullRefund = parseFloat(payment.totalPrice).toFixed(2);
-  const computedRefundValue = hasPenalty ? refundAmount : fullRefund;
 
-  // Generate a unique Refund ID using user email, current date, and random digits.
+  // Compute refund value safely
+  const parsedRefundAmount = Number(refundAmount);
+  const computedRefundValue = hasPenalty
+    ? isNaN(parsedRefundAmount)
+      ? 0
+      : parsedRefundAmount.toFixed(2)
+    : validTotalPrice.toFixed(2);
+
+  // Sanitize email for refund ID generation (only alphanumerics)
+  const sanitizeEmail = (email) =>
+    email ? email.replace(/[^a-z0-9]/gi, "").toUpperCase() : "UNKNOWN";
+
   const generateRefundID = (userEmail) => {
-    const randomDigits = Math.floor(10000 + Math.random() * 90000); // Generate 5 random digits.
+    const randomDigits = Math.floor(10000 + Math.random() * 90000);
     const currentDate = new Date()
-      .toLocaleDateString("en-GB") // Format: DD/MM/YYYY.
+      .toLocaleDateString("en-GB")
       .split("/")
-      .join(""); // Convert to DDMMYYYY format.
-    return `TUR${currentDate}${userEmail}${randomDigits}`;
+      .join(""); // DDMMYYYY
+    return `TUR${currentDate}${sanitizeEmail(userEmail)}${randomDigits}`;
   };
 
-  // Process the refund request when the user confirms in our custom prompt.
   const processRefund = async () => {
     try {
       setIsProcessing(true);
 
-      // Call the API to initiate a refund request.
       const response = await axiosPublic.post("/Stripe_Refund_Intent", {
-        stripePaymentID: payment.stripePaymentID,
+        stripePaymentID: paymentData?.stripePaymentID || "",
         refundAmount: parseFloat(computedRefundValue),
       });
 
       if (response.data.success) {
-        // Generate a unique refund ID.
-        const refundID = generateRefundID(payment?.email);
+        const refundID = generateRefundID(paymentData?.email);
 
-        // Post refund details to the server.
         await axiosPublic.post("/Tier_Upgrade_Refund", {
           RefundID: refundID,
           linkedPaymentReceptID: linkedReceptID,
           stripeRefundID: response.data.refundID,
-          email: payment?.email,
-          totalPrice: payment?.totalPrice,
-          refundAmount: computedRefundValue,
+          email: paymentData?.email || "",
+          totalPrice: validTotalPrice,
+          refundAmount: parseFloat(computedRefundValue),
           refundedReason: refundReason || "No reason provided",
           refunded: true,
           paymentTime: new Date().toISOString(),
         });
 
-        // Update user data to reset the tier details.
         await axiosPublic.put("/Users/Update_User_Tier", {
-          email: payment?.email,
+          email: paymentData?.email || "",
           tier: "Bronze",
           duration: "",
           updateTierStart: "",
@@ -78,16 +80,23 @@ const TierResetDetails = ({
           linkedReceptID: "",
         });
 
-        // Save the generated refund ID.
         setRefundID(refundID);
-        // Close the current modal and open the receipt modal.
-        document.getElementById("Tear_Reset_To_Bronze_Modal").close();
-        document.getElementById("Tear_Reset_Recept").showModal();
+
+        // Using DOM methods is fine if your modals are native dialogs,
+        // but consider React refs or state for better control.
+        const resetModal = document.getElementById(
+          "Tear_Reset_To_Bronze_Modal"
+        );
+        const receiptModal = document.getElementById("Tear_Reset_Recept");
+
+        if (resetModal?.close) resetModal.close();
+        if (receiptModal?.showModal) receiptModal.showModal();
       } else {
         throw new Error(response.data.message || "Refund request failed.");
       }
     } catch (error) {
       console.error("Refund Error:", error);
+      alert(`Refund failed: ${error.message}`); // Add user-friendly alert
     } finally {
       setIsProcessing(false);
       setShowConfirmPrompt(false);
@@ -97,7 +106,6 @@ const TierResetDetails = ({
   return (
     <div className="px-4 py-4">
       <div className="p-4 bg-[#f9fafb] border text-black rounded-lg shadow-md">
-        {/* Confirmation Prompt */}
         {showConfirmPrompt && (
           <div className="p-4 bg-yellow-200 border border-yellow-400 text-black rounded mb-4">
             <p className="mb-2 font-semibold text-center">
@@ -127,16 +135,14 @@ const TierResetDetails = ({
           </div>
         )}
 
-        {/* Refund Breakdown Title */}
         <h3 className="text-center text-black font-semibold text-xl">
           Refund Amount Breakdown
         </h3>
 
-        {/* Penalty Status Message */}
         {hasPenalty ? (
           <div className="block mt-2 text-center text-sm bg-red-500 py-2 text-white">
-            <p> 3 Days have passed, so penalties will apply. </p>
-            <p> Time Passed : {daysPassed} Days </p>
+            <p>3 Days have passed, so penalties will apply.</p>
+            <p>Time Passed: {daysPassed} Days</p>
           </div>
         ) : (
           <div className="mt-2 text-center text-sm bg-green-500 py-2 text-white">
@@ -144,43 +150,39 @@ const TierResetDetails = ({
           </div>
         )}
 
-        {/* Payment Details */}
         <div className="space-y-2 mt-4">
           <div className="flex justify-between">
             <p className="text-sm font-semibold">Current Tier:</p>
-            <p className="text-black font-semibold">{payment?.tier || "N/A"}</p>
+            <p className="text-black font-semibold">
+              {paymentData?.tier || "N/A"}
+            </p>
           </div>
           <div className="flex justify-between">
             <p className="text-sm font-semibold">Duration:</p>
             <p className="text-black font-semibold">
-              {payment?.duration || "N/A"}
+              {paymentData?.duration || "N/A"}
             </p>
           </div>
           <div className="flex justify-between">
             <p className="text-sm font-semibold">Exp Date:</p>
             <p className="text-black font-semibold">
-              {payment?.endDate || "N/A"}
+              {paymentData?.endDate || "N/A"}
             </p>
           </div>
         </div>
 
-        {/* Refund Calculation Breakdown */}
         <div className="space-y-2 mt-5">
           <div className="flex justify-between font-bold px-2">
             <p className="text-md">Product</p>
             <p className="text-md">Price</p>
           </div>
           <div className="flex justify-between font-semibold border-b border-[#9ca3af] pb-2 px-2">
-            <p className="text-md">{payment.tier} Tier Upgrade</p>
-            <p className="text-md">
-              ${parseFloat(payment.totalPrice).toFixed(2)}
-            </p>
+            <p className="text-md">{paymentData?.tier} Tier Upgrade</p>
+            <p className="text-md">${validTotalPrice.toFixed(2)}</p>
           </div>
           <div className="flex justify-between font-semibold px-2">
             <p className="text-md">Total Paid</p>
-            <p className="text-md">
-              ${parseFloat(payment.totalPrice).toFixed(2)}
-            </p>
+            <p className="text-md">${validTotalPrice.toFixed(2)}</p>
           </div>
 
           {hasPenalty && (
@@ -202,9 +204,12 @@ const TierResetDetails = ({
             <p className="text-md">Refund Amount</p>
             <p className="text-md font-bold">${computedRefundValue}</p>
           </div>
+          <div className="text-center py-2`">
+            <p className="text-md">Refund Reason</p>
+            <p className="text-md font-bold">{refundReason}</p>
+          </div>
         </div>
 
-        {/* Confirm Refund Button */}
         <div className="flex justify-center mt-6">
           <CommonButton
             clickEvent={() => setShowConfirmPrompt(true)}
