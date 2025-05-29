@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 
+import AllPayedInvoices from "./AllPayedInvoices/AllPayedInvoices";
 import AllActiveInvoices from "./AllActiveInvoices/AllActiveInvoices";
 import AllCompleatInvoices from "./AllCompleatInvoices/AllCompleatInvoices";
-import AllPayedInvoices from "./AllPayedInvoices/AllPayedInvoices";
 import AllRefundedInvoices from "./AllRefundedInvoices/AllRefundedInvoices";
 
 // Helper to parse 'dd-mm-yyyy' to a valid JS Date
@@ -28,21 +28,23 @@ const TierUpgradeInvoices = ({
   );
 
   // Split into active and completed
-  const activePayments = nonRefundedPayments?.filter((payment) => {
+  const ActiveTierPaymentData = nonRefundedPayments?.filter((payment) => {
     const endDate = parseDate(payment.endDate);
     return endDate >= today;
   });
 
-  const completedPayments = nonRefundedPayments?.filter((payment) => {
+  const CompletedTierPaymentData = nonRefundedPayments?.filter((payment) => {
     const endDate = parseDate(payment.endDate);
     return endDate < today;
   });
 
   return (
     <div className="text-black space-y-5 pb-5">
-      <AllActiveInvoices ActiveTierPaymentData={activePayments} />
+      <AllActiveInvoices ActiveTierPaymentData={ActiveTierPaymentData} />
 
-      <AllCompleatInvoices CompletedTierPaymentData={completedPayments} />
+      <AllCompleatInvoices
+        CompletedTierPaymentData={CompletedTierPaymentData}
+      />
 
       <AllPayedInvoices TierUpgradePaymentData={TierUpgradePaymentData} />
 

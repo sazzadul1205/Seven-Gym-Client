@@ -30,16 +30,8 @@ const TierUpgradePaymentInvoiceModal = ({ PaymentID, Close }) => {
     enabled: !!PaymentID, // Only fetch if PaymentID is defined
   });
 
-  // Show loading screen while fetching
-  if (PaymentIDDataLoading) return <Loading />;
-
-  // Show error if fetching fails
-  if (PaymentIDDataError) return <FetchingError />;
-
   // Return nothing if data exists but empty or malformed
   if (!PaymentIDData || PaymentIDData.length === 0) return null;
-
-  const payment = PaymentIDData[0]; // Extract first record
 
   // PDF generation function
   const generatePDF = async () => {
@@ -64,7 +56,7 @@ const TierUpgradePaymentInvoiceModal = ({ PaymentID, Close }) => {
         const pdf = new jsPDF("p", "mm", [pdfWidth, pdfHeight]);
 
         pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`PaymentSessionReceipt_${payment?.paymentID}.pdf`);
+        pdf.save(`PaymentSessionReceipt_${PaymentIDData?.paymentID}.pdf`);
 
         URL.revokeObjectURL(imgData); // Clean up
       };
@@ -72,6 +64,12 @@ const TierUpgradePaymentInvoiceModal = ({ PaymentID, Close }) => {
       console.error("Error generating POS PDF:", error);
     }
   };
+
+  // Show loading screen while fetching
+  if (PaymentIDDataLoading) return <Loading />;
+
+  // Show error if fetching fails
+  if (PaymentIDDataError) return <FetchingError />;
 
   return (
     <div className="modal-box p-0 md:p-4 bg-[#ffffff] shadow-lg rounded-lg max-w-md mx-auto">
@@ -90,16 +88,27 @@ const TierUpgradePaymentInvoiceModal = ({ PaymentID, Close }) => {
           {/* Top Part */}
           <div className="pb-1 text-center border-b">
             <p className="text-sm text-[#6b7280]">
-              Receipt : SG-TUPR-<span>{payment?.paymentID}</span>
+              Receipt : SG-TUPR-<span>{PaymentIDData?.paymentID}</span>
             </p>
             <p className="text-sm font-semibold text-[#6b7280]">
-              Customer: <span>{payment?.email}</span>
+              Customer: <span>{PaymentIDData?.email}</span>
             </p>
             <p className="text-sm text-[#6b7280]">
-              Transaction ID: TX- <span>{payment?.paymentID.slice(-6)}</span>
+              Transaction ID: TX-{" "}
+              <span>{PaymentIDData?.paymentID.slice(-6)}</span>
             </p>
-            <p className="text-sm text-[#6b7280]">
-              Date & Time : <span>{payment?.dateTime}</span>
+            <p className="text-sm text-gray-500">
+              Date & Time:{" "}
+              {PaymentIDData?.paymentTime
+                ? new Date(PaymentIDData.paymentTime).toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  })
+                : "N/A"}
             </p>
           </div>
 
@@ -109,23 +118,23 @@ const TierUpgradePaymentInvoiceModal = ({ PaymentID, Close }) => {
               <p className="text-sm font-semibold">Payment Status:</p>
               <p
                 className={`${
-                  payment?.Payed ? "text-[#22c55e]" : "text-[#ef4444]"
+                  PaymentIDData?.Payed ? "text-[#22c55e]" : "text-[#ef4444]"
                 } font-bold`}
               >
-                {payment?.Payed ? "Successful" : "Failed"}
+                {PaymentIDData?.Payed ? "Successful" : "Failed"}
               </p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm font-semibold">Duration:</p>
-              <p className="text-[#374151]">{payment?.duration}</p>
+              <p className="text-[#374151]">{PaymentIDData?.duration}</p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm font-semibold">Payment Method:</p>
-              <p className="text-[#374151]">{payment?.paymentMethod}</p>
+              <p className="text-[#374151]">{PaymentIDData?.paymentMethod}</p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm font-semibold">Exp Date:</p>
-              <p className="text-[#374151]">{payment?.endDate}</p>
+              <p className="text-[#374151]">{PaymentIDData?.endDate}</p>
             </div>
           </div>
 
@@ -136,12 +145,12 @@ const TierUpgradePaymentInvoiceModal = ({ PaymentID, Close }) => {
               <p className="text-md">Price</p>
             </div>
             <div className="flex justify-between font-semibold border-b border-[#9ca3af] pb-2 px-2">
-              <p className="text-md">{payment?.tier} Tier Upgrade</p>
-              <p className="text-md">${payment?.totalPrice.toFixed(2)}</p>
+              <p className="text-md">{PaymentIDData?.tier} Tier Upgrade</p>
+              <p className="text-md">${PaymentIDData?.totalPrice.toFixed(2)}</p>
             </div>
             <div className="flex justify-between font-semibold px-2">
               <p className="text-md">Total</p>
-              <p className="text-md">${payment?.totalPrice.toFixed(2)}</p>
+              <p className="text-md">${PaymentIDData?.totalPrice.toFixed(2)}</p>
             </div>
           </div>
 
@@ -177,7 +186,7 @@ const TierUpgradePaymentInvoiceModal = ({ PaymentID, Close }) => {
         />
 
         {/* Download PDF Button - Conditional render */}
-        {payment && (
+        {PaymentIDData && (
           <CommonButton
             clickEvent={generatePDF}
             text="Download PDF"

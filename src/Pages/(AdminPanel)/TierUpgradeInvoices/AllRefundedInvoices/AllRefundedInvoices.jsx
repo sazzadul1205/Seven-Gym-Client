@@ -1,16 +1,26 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import PropTypes from "prop-types";
 
+// import Packages
+import { Tooltip } from "react-tooltip";
+
 // Import Icons
+import { FaFileInvoiceDollar } from "react-icons/fa";
 import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
 // Import Basic Information
 import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
-import { FaFileInvoiceDollar } from "react-icons/fa";
-import { Tooltip } from "react-tooltip";
+
+// import Modal
+import TierUpgradeRefundInvoiceModal from "../../../(UserPages)/UserSettings/UserRefundInvoices/TierUpgradeRefundInvoiceModal/TierUpgradeRefundInvoiceModal";
 
 const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
+  const modalRefundInvoiceRef = useRef(null);
+
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedRefundInvoice, setSelectedRefundInvoice] = useState(null);
+
+  // Create a ref for the modal
   const refundsPerPage = 10;
 
   // Calculate total pages based on refund data length
@@ -23,6 +33,13 @@ const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
     const startIndex = (currentPage - 1) * refundsPerPage;
     return TierUpgradeRefundData.slice(startIndex, startIndex + refundsPerPage);
   }, [currentPage, TierUpgradeRefundData]);
+
+  // Close Modal Handler
+  const closeRefundInvoiceModal = () => {
+    modalRefundInvoiceRef.current?.close();
+    // Optionally, clear the selected booking if needed:
+    setSelectedRefundInvoice(null);
+  };
 
   return (
     <div>
@@ -105,9 +122,12 @@ const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
                   {/* Action */}
                   <td className="border px-4 py-2">
                     <button
-                      onClick={() => console.log("Refund clicked:", item._id)}
+                      onClick={() => {
+                        setSelectedRefundInvoice(item?.RefundID);
+                        modalRefundInvoiceRef.current?.showModal();
+                      }}
                       className="border-2 border-gray-500 bg-gray-100 hover:bg-gray-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform"
-                      id={`view-details-btn-${item._id}`} 
+                      id={`view-details-btn-${item._id}`}
                     >
                       <FaFileInvoiceDollar className="text-gray-500" />
                     </button>
@@ -167,6 +187,14 @@ const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
           </p>
         </div>
       )}
+
+      {/* Tier Upgrade Refund Invoices */}
+      <dialog ref={modalRefundInvoiceRef} className="modal">
+        <TierUpgradeRefundInvoiceModal
+          RefundID={selectedRefundInvoice}
+          Close={closeRefundInvoiceModal}
+        />
+      </dialog>
     </div>
   );
 };

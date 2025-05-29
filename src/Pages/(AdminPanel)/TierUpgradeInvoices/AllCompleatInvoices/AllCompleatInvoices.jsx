@@ -1,17 +1,26 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import PropTypes from "prop-types";
 
-// Import icons for pagination arrows
+// import Packages
+import { Tooltip } from "react-tooltip";
+
+// Import Icons
+import { FaFileInvoiceDollar } from "react-icons/fa";
 import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
-// Import component to display user basic info by email
+// Import Basic Information
 import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
-import { FaFileInvoiceDollar } from "react-icons/fa";
-import { Tooltip } from "react-tooltip";
+
+// Import Modal
+import TierUpgradePaymentInvoiceModal from "../../../(UserPages)/UserSettings/UserPaymentInvoices/TierUpgradePaymentInvoiceModal/TierUpgradePaymentInvoiceModal";
 
 const AllCompleatInvoices = ({ CompletedTierPaymentData }) => {
   // Local state to track current page for pagination
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedPaymentInvoice, setSelectedPaymentInvoice] = useState(null);
+
+  // Create a ref for the modal
+  const modalPaymentInvoiceRef = useRef(null);
 
   // Fixed number of items per page for pagination
   const itemsPerPage = 10;
@@ -27,6 +36,13 @@ const AllCompleatInvoices = ({ CompletedTierPaymentData }) => {
     currentPage * itemsPerPage
   );
 
+  // Close Modal Handler
+  const closePaymentInvoiceModal = () => {
+    modalPaymentInvoiceRef.current?.close();
+    // Optionally, clear the selected booking if needed:
+    setSelectedPaymentInvoice(null);
+  };
+
   return (
     <div>
       <div className="bg-gray-400 py-2">
@@ -40,12 +56,12 @@ const AllCompleatInvoices = ({ CompletedTierPaymentData }) => {
         <div className="overflow-x-auto">
           {/* Table for displaying invoices */}
           <table className="min-w-full table-auto border border-gray-300 text-sm">
-            {/* Table : Header */}
+        {/* Table : Header */}
             <thead>
               <tr className="bg-gray-100 text-left">
                 {/* Table headers */}
                 <th className="px-4 py-2 border">#</th>
-                <th className="px-4 py-2 border">Email</th>
+                <th className="px-4 py-2 border">User</th>
                 <th className="px-4 py-2 border">Tier</th>
                 <th className="px-4 py-2 border">Duration</th>
                 <th className="px-4 py-2 border">Start Date</th>
@@ -108,7 +124,10 @@ const AllCompleatInvoices = ({ CompletedTierPaymentData }) => {
                   {/* Action */}
                   <td className="border px-4 py-2">
                     <button
-                      onClick={() => console.log("Refund clicked:", item._id)}
+                      onClick={() => {
+                        setSelectedPaymentInvoice(item?.paymentID);
+                        modalPaymentInvoiceRef.current?.showModal();
+                      }}
                       className="border-2 border-gray-500 bg-gray-100 hover:bg-gray-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform"
                       id={`view-details-btn-${item._id}`}
                     >
@@ -170,6 +189,14 @@ const AllCompleatInvoices = ({ CompletedTierPaymentData }) => {
           </p>
         </div>
       )}
+
+      {/* Payment success modal */}
+      <dialog ref={modalPaymentInvoiceRef} className="modal">
+        <TierUpgradePaymentInvoiceModal
+          PaymentID={selectedPaymentInvoice}
+          Close={closePaymentInvoiceModal}
+        />
+      </dialog>
     </div>
   );
 };
