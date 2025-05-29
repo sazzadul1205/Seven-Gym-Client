@@ -14,11 +14,7 @@ const parseDate = (str) => {
 const TierUpgradeInvoices = ({
   TierUpgradePaymentData,
   TierUpgradeRefundData,
-  // Refetch,
 }) => {
-  console.log("Tier Upgrade Payment Data :", TierUpgradePaymentData);
-  console.log("Tier Upgrade Refund Data :", TierUpgradeRefundData);
-
   // Create a Set of refunded payment IDs
   const refundedPaymentIDs = new Set(
     TierUpgradeRefundData?.map((refund) => refund.linkedPaymentReceptID)
@@ -42,13 +38,10 @@ const TierUpgradeInvoices = ({
     return endDate < today;
   });
 
-  console.log("active Payments :", activePayments);
-  console.log("completed Payments :", completedPayments);
-
   return (
     <div className="text-black space-y-5 pb-5">
-      {/* If needed: */}
       <AllActiveInvoices ActiveTierPaymentData={activePayments} />
+
       <AllCompleatInvoices CompletedTierPaymentData={completedPayments} />
 
       <AllPayedInvoices TierUpgradePaymentData={TierUpgradePaymentData} />

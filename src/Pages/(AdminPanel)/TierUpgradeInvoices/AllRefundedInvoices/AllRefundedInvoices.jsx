@@ -6,6 +6,8 @@ import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
 // Import Basic Information
 import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+import { FaFileInvoiceDollar } from "react-icons/fa";
+import { Tooltip } from "react-tooltip";
 
 const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,6 +38,7 @@ const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
       TierUpgradeRefundData.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="min-w-full table-auto border border-gray-300 text-sm">
+            {/* Table : Header */}
             <thead>
               <tr className="bg-gray-100 text-left">
                 <th className="px-4 py-2 border">#</th>
@@ -49,28 +52,45 @@ const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
                 <th className="px-4 py-2 border">Action</th>
               </tr>
             </thead>
+
+            {/* Table : Body */}
             <tbody>
               {currentRefunds.map((item, index) => (
                 <tr key={item._id} className="hover:bg-gray-50">
+                  {/* index */}
                   <td className="border px-4 py-2">
                     {(currentPage - 1) * refundsPerPage + index + 1}
                   </td>
+
+                  {/* User */}
                   <td className="border px-4 py-2">
                     <TrainerBookingRequestUserBasicInfo email={item.email} />
                   </td>
+
+                  {/* Recept ID */}
                   <td className="border px-4 py-2">
                     {item.linkedPaymentReceptID}
                   </td>
+
+                  {/* Payed Amount */}
                   <td className="border px-4 py-2">
                     ${item.totalPrice.toFixed(2)}
                   </td>
+
+                  {/* Refunded Amount */}
                   <td className="border px-4 py-2">
                     ${parseFloat(item.refundAmount).toFixed(2)}
                   </td>
+
+                  {/* Refunded Reason */}
                   <td className="border px-4 py-2">{item.refundedReason}</td>
+
+                  {/* Refunded True/False */}
                   <td className="border px-4 py-2">
                     {item.refunded ? "Yes" : "No"}
                   </td>
+
+                  {/* Refunded Time */}
                   <td className="border px-4 py-2">
                     {new Date(item.paymentTime).toLocaleString("en-GB", {
                       day: "2-digit",
@@ -81,13 +101,20 @@ const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
                       hour12: true,
                     })}
                   </td>
+
+                  {/* Action */}
                   <td className="border px-4 py-2">
                     <button
                       onClick={() => console.log("Refund clicked:", item._id)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1 px-3 rounded"
+                      className="border-2 border-gray-500 bg-gray-100 hover:bg-gray-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform"
+                      id={`view-details-btn-${item._id}`} 
                     >
-                      View
+                      <FaFileInvoiceDollar className="text-gray-500" />
                     </button>
+                    <Tooltip
+                      anchorSelect={`#view-details-btn-${item._id}`}
+                      content="View Tier Upgrade Refunded Invoice"
+                    />
                   </td>
                 </tr>
               ))}

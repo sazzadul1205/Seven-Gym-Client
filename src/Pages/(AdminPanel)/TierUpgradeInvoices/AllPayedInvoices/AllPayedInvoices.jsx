@@ -6,6 +6,8 @@ import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
 // Import component to display user basic info by email
 import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+import { FaFileInvoiceDollar } from "react-icons/fa";
+import { Tooltip } from "react-tooltip";
 
 const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
   // Local state to track current page for pagination
@@ -40,6 +42,7 @@ const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
         <div className="overflow-x-auto">
           {/* Table for displaying invoices */}
           <table className="min-w-full table-auto border border-gray-300 text-sm">
+            {/* Table : Header */}
             <thead>
               <tr className="bg-gray-100 text-left">
                 {/* Table headers */}
@@ -55,37 +58,44 @@ const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
                 <th className="px-4 py-2 border">Action</th>
               </tr>
             </thead>
+
+            {/* Table : Body */}
             <tbody>
-              {/* Render current page data rows */}
               {currentData.map((item, index) => (
                 <tr key={item._id} className="hover:bg-gray-50">
-                  {/* Serial number based on page and index */}
+                  {/* Index */}
                   <td className="border px-4 py-2">
                     {(currentPage - 1) * itemsPerPage + index + 1}
                   </td>
 
-                  {/* Email with user basic info component */}
+                  {/* User */}
                   <td className="border px-4 py-2">
                     <TrainerBookingRequestUserBasicInfo email={item.email} />
                   </td>
 
-                  {/* Other data columns */}
+                  {/* Tier */}
                   <td className="border px-4 py-2">{item.tier}</td>
+
+                  {/* Duration */}
                   <td className="border px-4 py-2">{item.duration}</td>
+
+                  {/* Start Date */}
                   <td className="border px-4 py-2">{item.startDate}</td>
+
+                  {/* End date */}
                   <td className="border px-4 py-2">{item.endDate}</td>
 
-                  {/* Format price to 2 decimal places */}
+                  {/* Payed Price */}
                   <td className="border px-4 py-2">
                     ${item.totalPrice.toFixed(2)}
                   </td>
 
-                  {/* Paid status shown as Yes/No */}
+                  {/* Payed True / False */}
                   <td className="border px-4 py-2">
                     {item.Payed ? "Yes" : "No"}
                   </td>
 
-                  {/* Format paymentTime date */}
+                  {/* Payed Time  */}
                   <td className="border px-4 py-2">
                     {new Date(item.paymentTime).toLocaleString("en-GB", {
                       day: "2-digit",
@@ -97,14 +107,19 @@ const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
                     })}
                   </td>
 
-                  {/* Action button (currently logs ID on click) */}
+                  {/* Action */}
                   <td className="border px-4 py-2">
                     <button
-                      onClick={() => console.log("Clicked on", item._id)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1 px-3 rounded"
+                      onClick={() => console.log("Refund clicked:", item._id)}
+                      className="border-2 border-gray-500 bg-gray-100 hover:bg-gray-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform"
+                      id={`view-details-btn-${item._id}`}
                     >
-                      View
+                      <FaFileInvoiceDollar className="text-gray-500" />
                     </button>
+                    <Tooltip
+                      anchorSelect={`#view-details-btn-${item._id}`}
+                      content="View Tier Upgrade Payment Invoice"
+                    />
                   </td>
                 </tr>
               ))}
