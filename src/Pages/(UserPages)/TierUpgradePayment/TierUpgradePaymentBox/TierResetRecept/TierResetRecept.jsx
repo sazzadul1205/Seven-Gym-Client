@@ -1,175 +1,218 @@
-import { useRef } from "react";
 import { Link, useParams } from "react-router";
+import { useRef } from "react";
 
-// Import Package
+// Import Packages
 import { jsPDF } from "jspdf";
 import PropTypes from "prop-types";
 import domToImage from "dom-to-image";
 import { useQuery } from "@tanstack/react-query";
 
-// Import Hooks
+// Import Hooks & Shared
 import Loading from "../../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../../Shared/Component/FetchingError";
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
 const TierResetRecept = ({ refundID }) => {
+  // Custom Axios instance for public API calls
   const axiosPublic = useAxiosPublic();
-  const refundRef = useRef();
+
+  // Get the `email` parameter from the URL
   const { email } = useParams();
 
-  // Fetch refund data using
+  // Create a reference to the refund section for PDF generation
+  const refundRef = useRef();
+
+  // ============================
+  // Fetch Refund Data by refundID
+  // ============================
   const {
     data: TierUpgradeRefundData = [],
     isLoading: TierUpgradeRefundLoading,
     error: TierUpgradeRefundError,
   } = useQuery({
-    queryKey: ["TierUpgradeRefundData", refundID],
-    queryFn: () =>
-      refundID
-        ? axiosPublic
-            .get(`/Tier_Upgrade_Refund/search?refundID=${refundID}`)
-            .then((res) => res.data)
-        : Promise.reject(new Error("No Refund ID found")),
-    enabled: !!refundID,
+    queryKey: ["TierUpgradeRefundData", refundID], // Unique cache key
+    queryFn: async () => {
+      if (!refundID) throw new Error("No Refund ID provided"); // Guard clause
+      const response = await axiosPublic.get(
+        `/Tier_Upgrade_Refund/search?refundID=${refundID}`
+      );
+      return response.data || []; // Default to empty array if no data
+    },
+    enabled: !!refundID, // Run query only if refundID exists
   });
 
-  console.log(TierUpgradeRefundData);
+  // Extract first refund record (assuming only one per ID)
+  const refundInfo = TierUpgradeRefundData[0];
 
-  // Fetch payment data based on linked payment ID
-  const LinkedPaymentID = TierUpgradeRefundData[0]?.linkedPaymentReceptID;
+  // Get the associated payment receipt ID from the refund info
+  const LinkedPaymentID = refundInfo?.linkedPaymentReceptID;
 
-  // Fetch Payment data
+  // ================================
+  // Fetch Payment Data by paymentID
+  // ================================
   const {
-    data: TierUpgradePaymentData = [],
+    data: TierUpgradePaymentData = {},
     isLoading: TierUpgradePaymentLoading,
     error: TierUpgradePaymentError,
   } = useQuery({
     queryKey: ["TierUpgradePaymentData", LinkedPaymentID],
     queryFn: () =>
-      LinkedPaymentID
-        ? axiosPublic
-            .get(`/Tier_Upgrade_Payment/search?paymentID=${LinkedPaymentID}`)
-            .then((res) => res.data)
-        : Promise.reject(new Error("No payment ID found")),
-    enabled: !!LinkedPaymentID,
+      axiosPublic
+        .get(`/Tier_Upgrade_Payment/search?paymentID=${LinkedPaymentID}`)
+        .then((res) => res.data),
+    enabled: !!LinkedPaymentID, // Run only if linked ID is available
   });
 
-  // Helper function to parse dates
+  // ==============================
+  // Date Parsing Utilities
+  // ==============================
+
+  // Parse a date in format "dd-mm-yyyy" into a Date object
   const parseDate = (dateString) => {
     const [day, month, year] = dateString.split("-");
-    return new Date(year, month - 1, day);
+    return new Date(year, month - 1, day); // Month is 0-based
   };
 
-  // Fetch Date & Time
+  // Extract and parse the date portion from a full datetime string
   const parseDateTime = (dateTimeString) => {
-    const [datePart] = dateTimeString.split(" ");
-    return parseDate(datePart);
+    const [datePart] = dateTimeString.split(" "); // Split datetime into date and time
+    return parseDate(datePart); // Reuse existing function
   };
 
-  // Initialize calculation variables
-  let daysPassed = 0;
-  let amountUsed = 0;
-  let remainingAmount = 0;
-  let computedRefundValue = 0;
-  let hasPenalty = false;
+  // ==============================
+  // Refund Calculation Logic
+  // ==============================
+  let daysPassed = 0,
+    amountUsed = 0,
+    remainingAmount = 0,
+    computedRefundValue = 0,
+    hasPenalty = false;
 
-  // Perform calculations if dates are available
-  if (TierUpgradePaymentData.startDate && TierUpgradeRefundData.dateTime) {
-    try {
-      const startDate = parseDate(TierUpgradePaymentData.startDate);
-      const refundDate = parseDateTime(TierUpgradeRefundData.dateTime);
+  try {
+    // Convert start and refund dates to Date objects
+    const startDate = parseDate(TierUpgradePaymentData?.startDate || "");
+    const refundDate = parseDateTime(refundInfo?.dateTime || "");
 
-      // Calculate days passed
-      daysPassed = Math.floor((refundDate - startDate) / (1000 * 60 * 60 * 24));
+    // Calculate number of days between start and refund dates
+    daysPassed = Math.floor((refundDate - startDate) / (1000 * 60 * 60 * 24));
 
-      // Calculate refund breakdown
-      const totalPrice = TierUpgradePaymentData.totalPrice;
-      const durationMonths = parseInt(
-        TierUpgradePaymentData.duration.split(" ")[0],
-        10
-      );
-      const totalDays = durationMonths * 30;
-      const perDayCost = totalPrice / totalDays;
+    const totalPrice = parseFloat(TierUpgradePaymentData?.totalPrice || 0);
 
-      amountUsed = daysPassed * perDayCost;
-      remainingAmount = totalPrice - amountUsed;
-      hasPenalty = daysPassed > 3;
+    // Extract number of months from string like "3 months"
+    const durationMonths = parseInt(
+      TierUpgradePaymentData?.duration?.split(" ")[0] || "1",
+      10
+    );
+    const totalDays = durationMonths * 30; // Assume 30 days per month
+    const perDayCost = totalPrice / totalDays;
 
-      computedRefundValue = hasPenalty
-        ? (remainingAmount * 0.9).toFixed(2)
-        : totalPrice.toFixed(2);
-    } catch (error) {
-      console.error("Error calculating refund:", error);
-    }
+    // Cost used up till refund date
+    amountUsed = daysPassed * perDayCost;
+    remainingAmount = totalPrice - amountUsed;
+
+    // Apply penalty if refund is after 3 days
+    hasPenalty = daysPassed > 3;
+
+    // Calculate actual refund value (90% refund if penalty applies)
+    computedRefundValue = hasPenalty
+      ? (remainingAmount * 0.9).toFixed(2)
+      : totalPrice.toFixed(2);
+  } catch (err) {
+    console.error("Refund calculation failed:", err);
   }
 
-  // Generate PDF from the receipt content
+  // ==============================
+  // Generate PDF from DOM element
+  // ==============================
   const generatePDF = async () => {
-    if (!refundRef.current) return;
+    if (!refundRef.current) return; // Ensure the element exists
 
     try {
+      // Convert DOM to image blob
       const blob = await domToImage.toBlob(refundRef.current);
-      const imgData = URL.createObjectURL(blob);
+      const imgData = URL.createObjectURL(blob); // Create URL from blob
 
+      // Create image object and wait for load
       const img = new Image();
       img.src = imgData;
       img.onload = () => {
-        // Measure image size
-        const pxToMm = (px) => px * 0.264583; // convert px to mm (1px = 0.264583mm)
+        // Convert pixels to millimeters (for jsPDF)
+        const pxToMm = (px) => px * 0.264583;
+        const imgWidth = img.width;
+        const imgHeight = img.height;
 
-        const imgWidthPx = img.width;
-        const imgHeightPx = img.height;
+        // Define PDF dimensions based on image size
+        const pdfWidth = 80;
+        const pdfHeight = pxToMm(imgHeight) * (pdfWidth / pxToMm(imgWidth));
 
-        const pdfWidth = 80; // POS paper width in mm (commonly 58 or 80)
-        const pdfHeight = pxToMm(imgHeightPx) * (pdfWidth / pxToMm(imgWidthPx)); // maintain aspect ratio
-
+        // Create a new PDF document
         const pdf = new jsPDF("p", "mm", [pdfWidth, pdfHeight]);
 
+        // Add image to the PDF
         pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
+
+        // Save the PDF file
         pdf.save(
           `RefundSessionReceipt_${TierUpgradePaymentData?.paymentID}.pdf`
         );
 
-        URL.revokeObjectURL(imgData); // Clean up
+        // Clean up the object URL
+        URL.revokeObjectURL(imgData);
       };
     } catch (error) {
-      console.error("Error generating POS PDF:", error);
+      console.error("PDF generation failed:", error);
     }
   };
 
-  // Handle loading and errors
+  // ==============================
+  // Handle loading or error states
+  // ==============================
   if (TierUpgradeRefundLoading || TierUpgradePaymentLoading) return <Loading />;
   if (TierUpgradeRefundError || TierUpgradePaymentError)
     return <FetchingError />;
 
   return (
+    // Modal container for the refund receipt
     <div className="modal-box bg-white shadow-lg rounded-lg max-w-md mx-auto">
+      {/* Reference element for generating the PDF */}
       <div ref={refundRef} id="Refund">
-        {/* Header */}
+        {/* Header section with branding */}
         <div className="text-center border-b pb-4 mb-1">
           <h4 className="text-2xl font-bold text-gray-900">Seven Gym</h4>
           <p className="text-sm text-gray-500">Tier Upgrade Refund Receipt</p>
           <p className="text-sm text-gray-500">www.SevenGym.com</p>
         </div>
 
-        {/* Details */}
+        {/* Refund info container */}
         <div className="p-4 bg-gray-50 border text-black">
+          {/* Receipt basic details: ID, email, transaction ID, date */}
           <div className="text-center border-b pb-1">
             <p className="text-sm text-gray-500">
-              Receipt #: SG-TURR-{TierUpgradeRefundData[0]?.RefundID}
+              Receipt #: SG-TURR-{refundInfo?.RefundID}
             </p>
             <p className="text-sm font-semibold text-gray-500">
-              Customer: {TierUpgradeRefundData[0]?.email}
+              Customer: {refundInfo?.email}
             </p>
             <p className="text-sm text-gray-500">
-              Transaction ID: TX-{TierUpgradeRefundData[0]?.RefundID?.slice(-6)}
+              Transaction ID: TX-{refundInfo?.RefundID?.slice(-6)}
             </p>
             <p className="text-sm text-gray-500">
-              Date & Time : {TierUpgradeRefundData[0]?.dateTime}
+              Date & Time:{" "}
+              {refundInfo?.paymentTime
+                ? new Date(refundInfo.paymentTime).toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  })
+                : "N/A"}
             </p>
           </div>
 
-          {/* Tier Info */}
+          {/* Refunded Tier, Duration, Expiry Date */}
           <div className="py-4 space-y-1">
             {[
               { label: "Refunded Tier", value: TierUpgradePaymentData?.tier },
@@ -181,8 +224,8 @@ const TierResetRecept = ({ refundID }) => {
                 label: "Refunded Exp Date",
                 value: TierUpgradePaymentData?.endDate,
               },
-            ].map((item, i) => (
-              <div key={i} className="flex justify-between px-4">
+            ].map((item, idx) => (
+              <div key={idx} className="flex justify-between px-4">
                 <p className="text-sm font-semibold">{item.label}:</p>
                 <p className="text-black font-semibold">
                   {item.value || "N/A"}
@@ -193,10 +236,13 @@ const TierResetRecept = ({ refundID }) => {
 
           {/* Refund Breakdown */}
           <div className="py-4 space-y-2 px-2">
+            {/* Table headers */}
             <div className="flex justify-between font-bold">
               <p className="text-md">Product</p>
               <p className="text-md">Price</p>
             </div>
+
+            {/* Product & total price row */}
             <div className="flex justify-between font-semibold border-b border-gray-400 pb-2">
               <p className="text-md">
                 {TierUpgradePaymentData?.tier} Tier Upgrade
@@ -205,6 +251,8 @@ const TierResetRecept = ({ refundID }) => {
                 ${parseFloat(TierUpgradePaymentData?.totalPrice).toFixed(2)}
               </p>
             </div>
+
+            {/* Total paid row */}
             <div className="flex justify-between font-semibold">
               <p className="text-md">Total Paid</p>
               <p className="text-md">
@@ -212,6 +260,7 @@ const TierResetRecept = ({ refundID }) => {
               </p>
             </div>
 
+            {/* Penalty details if applicable */}
             {hasPenalty && (
               <>
                 <div className="flex justify-between font-semibold text-red-500">
@@ -227,21 +276,22 @@ const TierResetRecept = ({ refundID }) => {
               </>
             )}
 
+            {/* Final computed refund value */}
             <div className="flex justify-between font-semibold text-green-500">
               <p className="text-md">Refund Amount</p>
               <p className="text-md font-bold">${computedRefundValue}</p>
             </div>
           </div>
 
-          {/* Reason */}
+          {/* Refund reason section */}
           <div className="px-4 py-4 border-t border-gray-300">
             <p className="text-sm font-semibold">Refund Reason:</p>
             <p className="text-sm text-gray-500">
-              {TierUpgradeRefundData?.refundedReason}
+              {refundInfo?.refundedReason}
             </p>
           </div>
 
-          {/* Footer */}
+          {/* Footer note */}
           <div className="text-center border-t pt-4">
             <p className="text-sm text-gray-500">
               Thank you for choosing Seven Gym. We appreciate your business!
@@ -250,29 +300,43 @@ const TierResetRecept = ({ refundID }) => {
         </div>
       </div>
 
-      {/* Actions */}
+      {/* Modal actions (Close & Download PDF) */}
       <div className="modal-action mt-6 flex justify-between">
+        {/* Close button navigates user back */}
         <form method="dialog">
           <Link to={`/User/TierUpgrade/${email}`}>
-            <button className="bg-gradient-to-bl from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 rounded-xl py-3 w-[150px] font-semibold">
-              Close
-            </button>
+            <CommonButton
+              text="Close"
+              type="button"
+              bgColor="blue"
+              textColor="text-white"
+              width="[150px]"
+              borderRadius="rounded-xl"
+              px="px-5"
+              py="py-3"
+            />
           </Link>
         </form>
-        {TierUpgradePaymentData && (
-          <button
-            onClick={generatePDF}
-            className="bg-gradient-to-bl from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-xl py-3 w-[150px] font-semibold"
-          >
-            Download PDF
-          </button>
+
+        {/* Conditionally show PDF download if payment ID exists */}
+        {TierUpgradePaymentData?.paymentID && (
+          <CommonButton
+            clickEvent={generatePDF}
+            text="Download PDF"
+            type="button"
+            bgColor="green"
+            textColor="text-white"
+            width="[150px]"
+            borderRadius="rounded-xl"
+            px="px-5"
+            py="py-3"
+          />
         )}
       </div>
     </div>
   );
 };
 
-// Add PropTypes to validate props
 TierResetRecept.propTypes = {
   refundID: PropTypes.string,
 };

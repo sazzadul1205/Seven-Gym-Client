@@ -17,8 +17,8 @@ import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
 const TierUpgradePaymentModal = ({ PaymentID }) => {
   const axiosPublic = useAxiosPublic();
-  const receiptRef = useRef();
   const { email } = useParams();
+  const receiptRef = useRef();
 
   // Fetch tier data only when PaymentID is provided
   const {
@@ -34,16 +34,10 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
     enabled: !!PaymentID, // Only fetch if PaymentID is defined
   });
 
-  // Show loading screen while fetching
-  if (PaymentDataLoading) return <Loading />;
-
-  // Show error if fetching fails
-  if (PaymentDataError) return <FetchingError />;
-
   // Return nothing if data exists but empty or malformed
   if (!PaymentData || PaymentData.length === 0) return null;
 
-  const payment = PaymentData[0]; // Extract first record
+  const payment = PaymentData;
 
   // PDF generation function
   const generatePDF = async () => {
@@ -77,7 +71,11 @@ const TierUpgradePaymentModal = ({ PaymentID }) => {
     }
   };
 
-  console.log(PaymentData);
+  // Show loading screen while fetching
+  if (PaymentDataLoading) return <Loading />;
+
+  // Show error if fetching fails
+  if (PaymentDataError) return <FetchingError />;
 
   return (
     <div className="modal-box bg-[#ffffff] shadow-lg rounded-lg w-full max-w-md mx-auto p-4 sm:p-6 overflow-y-auto">

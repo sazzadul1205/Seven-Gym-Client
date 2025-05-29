@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 // Import Packages
 import PropTypes from "prop-types";
@@ -27,10 +27,10 @@ const TearResetToBronzeModal = ({ userData, setRefundID }) => {
   const [remainingAmount, setRemainingAmount] = useState(0);
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
 
-  // Fetch Linked Receipt ID
+  // Extract linked receipt ID from user data
   const linkedReceptID = userData?.tierDuration?.linkedReceptID;
 
-  // Fetch payment data only if linkedReceptID exists
+  // Fetch payment data only if receipt ID is available
   const {
     data: TierUpgradePaymentData,
     isLoading: TierUpgradePaymentLoading,
@@ -46,39 +46,35 @@ const TearResetToBronzeModal = ({ userData, setRefundID }) => {
     enabled: !!linkedReceptID,
   });
 
-  // Run refund calculation whenever the payment data changes
-  useEffect(() => {
-    if (TierUpgradePaymentData) calculateRefund();
-  }, [TierUpgradePaymentData]);
-
-  // Helper function to parse date strings in "DD-MM-YYYY" format
+  // Parse date in "DD-MM-YYYY" format
   const parseDate = (dateString) => {
     if (!dateString) return new Date();
     const [day, month, year] = dateString.split("-").map(Number);
     return new Date(year, month - 1, day);
   };
 
-  // Calculate refund breakdown
-  const calculateRefund = () => {
+  // Refund calculation (wrapped in useCallback to avoid stale reference issues)
+  const calculateRefund = useCallback(() => {
     if (
       !TierUpgradePaymentData ||
       !TierUpgradePaymentData.totalPrice ||
       !TierUpgradePaymentData.startDate ||
       !TierUpgradePaymentData.duration
-    )
+    ) {
       return;
+    }
 
     const totalPrice = Number(TierUpgradePaymentData.totalPrice);
     const startDate = parseDate(TierUpgradePaymentData.startDate);
     const currentDate = new Date();
 
-    // Calculate days passed
+    // Calculate how many days have passed since the start date
     const calcDaysPassed = Math.floor(
       (currentDate - startDate) / (1000 * 60 * 60 * 24)
     );
     setDaysPassed(calcDaysPassed >= 0 ? calcDaysPassed : 0);
 
-    // Approximate total days based on duration in months
+    // Estimate total number of days based on duration in months (approx. 30 days per month)
     const durationMonths = parseInt(
       TierUpgradePaymentData.duration.split(" ")[0],
       10
@@ -87,26 +83,33 @@ const TearResetToBronzeModal = ({ userData, setRefundID }) => {
 
     const perDayCost = totalPrice / totalDays;
 
-    // Calculate used and remaining amounts as numbers
+    // Calculate amount used and remaining
     const calcAmountUsed = calcDaysPassed > 0 ? calcDaysPassed * perDayCost : 0;
     setAmountUsed(Number(calcAmountUsed.toFixed(2)));
 
     const calcRemainingAmount = totalPrice - calcAmountUsed;
     setRemainingAmount(Number(calcRemainingAmount.toFixed(2)));
 
-    // Refund calculation: Full refund if within 3 days, otherwise 90% of the remaining amount
-    let finalRefund =
+    // If within 3 days, give full refund; otherwise, 90% of remaining
+    const finalRefund =
       calcDaysPassed <= 3 ? totalPrice : calcRemainingAmount * 0.9;
     setRefundAmount(Number(finalRefund.toFixed(2)));
-  };
+  }, [TierUpgradePaymentData]);
 
+  // Recalculate refund whenever payment data is fetched
+  useEffect(() => {
+    if (TierUpgradePaymentData) {
+      calculateRefund();
+    }
+  }, [TierUpgradePaymentData, calculateRefund]);
+
+  // Called when user selects a reason
   const onReasonSelect = (reasonData) => {
-    const reason = reasonData.reason;
-    setRefundReason(reason);
+    setRefundReason(reasonData.reason);
     setShowPaymentDetails(true);
   };
 
-  // Loading & Error Handling
+  // Handle loading or error state
   if (TierUpgradePaymentLoading) return <Loading />;
   if (TierUpgradePaymentError) return <FetchingError />;
 

@@ -1,6 +1,10 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
+
+// import Hooks
 import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
+
+// Import Button
 import CommonButton from "../../../../../../Shared/Buttons/CommonButton";
 
 const TierResetDetails = ({
@@ -13,20 +17,26 @@ const TierResetDetails = ({
   linkedReceptID,
   remainingAmount,
 }) => {
+  // Get an instance of the Axios public client (custom hook)
   const axiosPublic = useAxiosPublic();
 
+  // Local state to manage refund processing and confirmation prompt visibility
   const [isProcessing, setIsProcessing] = useState(false);
   const [showConfirmPrompt, setShowConfirmPrompt] = useState(false);
 
-  if (!paymentData || paymentData.length === 0) return null;
+  // Guard clause: Do not render the component if payment data is missing
+  if (!paymentData) return null;
 
-  // Validate and safely parse totalPrice
+  // Safely convert totalPrice from string/number to a valid number
   const totalPrice = Number(paymentData?.totalPrice);
+  // Use 0 if parsing failed (NaN)
   const validTotalPrice = !isNaN(totalPrice) ? totalPrice : 0;
 
+  // Determine if the user is subject to a penalty based on days passed
   const hasPenalty = daysPassed > 3;
 
-  // Compute refund value safely
+  // Safely parse refundAmount (could be string/number)
+  // If under penalty, use manually calculated refund; else return full amount
   const parsedRefundAmount = Number(refundAmount);
   const computedRefundValue = hasPenalty
     ? isNaN(parsedRefundAmount)
@@ -34,31 +44,36 @@ const TierResetDetails = ({
       : parsedRefundAmount.toFixed(2)
     : validTotalPrice.toFixed(2);
 
-  // Sanitize email for refund ID generation (only alphanumerics)
+  // Function to clean email address and make it safe for ID generation
   const sanitizeEmail = (email) =>
     email ? email.replace(/[^a-z0-9]/gi, "").toUpperCase() : "UNKNOWN";
 
+  // Generate a unique refund ID using sanitized email and current date
   const generateRefundID = (userEmail) => {
-    const randomDigits = Math.floor(10000 + Math.random() * 90000);
+    const randomDigits = Math.floor(10000 + Math.random() * 90000); // 5-digit random number
     const currentDate = new Date()
       .toLocaleDateString("en-GB")
       .split("/")
-      .join(""); // DDMMYYYY
+      .join(""); // Format: DDMMYYYY
     return `TUR${currentDate}${sanitizeEmail(userEmail)}${randomDigits}`;
   };
 
+  // Main function to process the refund and reset user tier
   const processRefund = async () => {
     try {
-      setIsProcessing(true);
+      setIsProcessing(true); // Disable buttons or show loader during process
 
+      // Step 1: Create a refund intent with Stripe
       const response = await axiosPublic.post("/Stripe_Refund_Intent", {
         stripePaymentID: paymentData?.stripePaymentID || "",
         refundAmount: parseFloat(computedRefundValue),
       });
 
       if (response.data.success) {
+        // Step 2: Generate refund ID
         const refundID = generateRefundID(paymentData?.email);
 
+        // Step 3: Log refund details in your own database
         await axiosPublic.post("/Tier_Upgrade_Refund", {
           RefundID: refundID,
           linkedPaymentReceptID: linkedReceptID,
@@ -71,6 +86,7 @@ const TierResetDetails = ({
           paymentTime: new Date().toISOString(),
         });
 
+        // Step 4: Downgrade user tier in your system
         await axiosPublic.put("/Users/Update_User_Tier", {
           email: paymentData?.email || "",
           tier: "Bronze",
@@ -80,24 +96,22 @@ const TierResetDetails = ({
           linkedReceptID: "",
         });
 
+        // Step 5: Update parent component with refund ID
         setRefundID(refundID);
 
-        // Using DOM methods is fine if your modals are native dialogs,
-        // but consider React refs or state for better control.
-        const resetModal = document.getElementById(
-          "Tear_Reset_To_Bronze_Modal"
-        );
-        const receiptModal = document.getElementById("Tear_Reset_Recept");
-
-        if (resetModal?.close) resetModal.close();
-        if (receiptModal?.showModal) receiptModal.showModal();
+        // Optional UI updates: close tier reset modal and open receipt modal
+        document.getElementById("Tear_Reset_To_Bronze_Modal").close();
+        document.getElementById("Tear_Reset_Recept").showModal();
       } else {
+        // Handle API error response
         throw new Error(response.data.message || "Refund request failed.");
       }
     } catch (error) {
+      // Log and show error to user
       console.error("Refund Error:", error);
-      alert(`Refund failed: ${error.message}`); // Add user-friendly alert
+      alert(`Refund failed: ${error.message}`);
     } finally {
+      // Cleanup: reset UI state
       setIsProcessing(false);
       setShowConfirmPrompt(false);
     }
@@ -105,13 +119,16 @@ const TierResetDetails = ({
 
   return (
     <div className="px-4 py-4">
+      {/* Container card */}
       <div className="p-4 bg-[#f9fafb] border text-black rounded-lg shadow-md">
+        {/* Confirm refund prompt */}
         {showConfirmPrompt && (
           <div className="p-4 bg-yellow-200 border border-yellow-400 text-black rounded mb-4">
             <p className="mb-2 font-semibold text-center">
               Are you sure you want to request a refund?
             </p>
             <div className="flex justify-between space-x-2 pt-3">
+              {/* Confirm refund button */}
               <CommonButton
                 clickEvent={processRefund}
                 text="Yes"
@@ -121,7 +138,7 @@ const TierResetDetails = ({
                 py="py-2"
                 disabled={isProcessing}
               />
-
+              {/* Cancel refund prompt */}
               <CommonButton
                 clickEvent={() => setShowConfirmPrompt(false)}
                 text="No"
@@ -135,10 +152,12 @@ const TierResetDetails = ({
           </div>
         )}
 
+        {/* Refund Title */}
         <h3 className="text-center text-black font-semibold text-xl">
           Refund Amount Breakdown
         </h3>
 
+        {/* Penalty Notice */}
         {hasPenalty ? (
           <div className="block mt-2 text-center text-sm bg-red-500 py-2 text-white">
             <p>3 Days have passed, so penalties will apply.</p>
@@ -150,6 +169,7 @@ const TierResetDetails = ({
           </div>
         )}
 
+        {/* Tier Information */}
         <div className="space-y-2 mt-4">
           <div className="flex justify-between">
             <p className="text-sm font-semibold">Current Tier:</p>
@@ -171,6 +191,7 @@ const TierResetDetails = ({
           </div>
         </div>
 
+        {/* Price Breakdown */}
         <div className="space-y-2 mt-5">
           <div className="flex justify-between font-bold px-2">
             <p className="text-md">Product</p>
@@ -185,6 +206,7 @@ const TierResetDetails = ({
             <p className="text-md">${validTotalPrice.toFixed(2)}</p>
           </div>
 
+          {/* Conditional penalties if refund is late */}
           {hasPenalty && (
             <>
               <div className="flex justify-between font-semibold text-red-500 px-2">
@@ -200,16 +222,20 @@ const TierResetDetails = ({
             </>
           )}
 
+          {/* Final refund value */}
           <div className="flex justify-between font-semibold text-[#22c55e] px-2">
             <p className="text-md">Refund Amount</p>
             <p className="text-md font-bold">${computedRefundValue}</p>
           </div>
-          <div className="text-center py-2`">
+
+          {/* Refund Reason */}
+          <div className="text-center py-2">
             <p className="text-md">Refund Reason</p>
             <p className="text-md font-bold">{refundReason}</p>
           </div>
         </div>
 
+        {/* Submit refund button */}
         <div className="flex justify-center mt-6">
           <CommonButton
             clickEvent={() => setShowConfirmPrompt(true)}
@@ -230,8 +256,17 @@ const TierResetDetails = ({
   );
 };
 
+// Prop Validation
 TierResetDetails.propTypes = {
-  paymentData: PropTypes.array.isRequired,
+  paymentData: PropTypes.shape({
+    tier: PropTypes.string.isRequired,
+    duration: PropTypes.string.isRequired,
+    endDate: PropTypes.string.isRequired,
+    totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+      .isRequired,
+    stripePaymentID: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+  }).isRequired,
   daysPassed: PropTypes.number.isRequired,
   amountUsed: PropTypes.number.isRequired,
   setRefundID: PropTypes.func.isRequired,
