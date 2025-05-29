@@ -46,14 +46,11 @@ const TrainerAddModalBasicInformation = () => {
 
   // If user changes the image again, reset the state
   const handleImageChange = (newImage) => {
-    console.log("New image cropped:", newImage); // Log cropped image
     setProfileImage(newImage);
     setImageSet(false); // reset the state
   };
 
   const handleSetImage = async () => {
-    console.log("handleSetImage triggered"); // Debugging log
-
     // Ensure we're working with a Blob (or File) object
     if (!profileImage || !(profileImage instanceof Blob)) {
       console.error("Invalid image format"); // Log to see the type of the image
@@ -70,8 +67,6 @@ const TrainerAddModalBasicInformation = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-
-      console.log("API Response:", res.data);
 
       const uploadedUrl = res.data.data.display_url;
       setProfileImage(uploadedUrl);
@@ -115,7 +110,6 @@ const TrainerAddModalBasicInformation = () => {
     };
 
     localStorage.setItem("trainerBasicInfo", JSON.stringify(fullTrainerData));
-    console.log("Saved Trainer Info:", fullTrainerData); // Log saved trainer info
   };
 
   const isNextDisabled =

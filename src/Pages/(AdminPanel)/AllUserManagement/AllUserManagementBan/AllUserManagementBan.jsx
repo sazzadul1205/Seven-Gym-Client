@@ -140,8 +140,6 @@ const AllUserManagementBan = ({ user, Refetch }) => {
           title: "Unexpected Response",
           text: res.data?.error || "Unknown error occurred.",
         });
-
-        console.log(res);
       }
     } catch (error) {
       // Handle network or server errors during API call
