@@ -1,37 +1,45 @@
-// Import custom Axios hook
+import PropTypes from "prop-types";
+import { useQuery } from "@tanstack/react-query";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
-// Import React Query
-import { useQuery } from "@tanstack/react-query";
-
-// Import PropTypes for prop validation
-import PropTypes from "prop-types";
-
-const TrainerBookingRequestUserBasicInfo = ({ email }) => {
-  // Initialize Axios instance
+const TrainerBookingRequestUserBasicInfo = ({
+  email,
+  renderLoading,
+  renderError,
+  renderUserInfo,
+}) => {
   const axiosPublic = useAxiosPublic();
 
-  // Fetch user basic info using email
   const { data, isLoading, error } = useQuery({
     queryKey: ["UserBasicInfo", email],
     queryFn: () =>
       axiosPublic
-        .get(`/Users/BasicProfile?email=${email}`) 
+        .get(`/Users/BasicProfile?email=${email}`)
         .then((res) => res.data),
-    enabled: !!email, 
+    enabled: !!email,
   });
 
-  // Show loading state
-  if (isLoading)
-    return <span className="text-xs text-gray-500">Loading...</span>;
+  if (isLoading) {
+    return renderLoading ? (
+      renderLoading()
+    ) : (
+      <span className="text-xs text-gray-500">Loading...</span>
+    );
+  }
 
-  // Handle error or missing data
-  if (error || !data) return <span className="text-xs">{email}</span>;
+  if (error || !data) {
+    return renderError ? (
+      renderError(error)
+    ) : (
+      <span className="text-xs">{email}</span>
+    );
+  }
 
-  // Render user profile image and name
+  if (renderUserInfo) return renderUserInfo(data);
+
   return (
     <div className="flex items-center gap-2">
-      {/* Avatar section */}
+      {/* Avatar */}
       <div className="border-r-2 pr-2 border-black">
         <img
           src={data.profileImage}
@@ -40,15 +48,20 @@ const TrainerBookingRequestUserBasicInfo = ({ email }) => {
         />
       </div>
 
-      {/* User full name */}
-      <span className="font-medium">{data.fullName}</span>
+      {/* Name + Email */}
+      <div>
+        <span className="font-medium block leading-tight">{data.fullName}</span>
+        <span className="text-xs ">{email}</span>
+      </div>
     </div>
   );
 };
 
-// Define expected prop types
 TrainerBookingRequestUserBasicInfo.propTypes = {
   email: PropTypes.string.isRequired,
+  renderLoading: PropTypes.func,
+  renderError: PropTypes.func,
+  renderUserInfo: PropTypes.func,
 };
 
 export default TrainerBookingRequestUserBasicInfo;
