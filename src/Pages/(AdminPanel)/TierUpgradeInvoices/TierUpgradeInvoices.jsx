@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AllPayedInvoices from "./AllPayedInvoices/AllPayedInvoices";
 import AllActiveInvoices from "./AllActiveInvoices/AllActiveInvoices";
 import AllCompleatInvoices from "./AllCompleatInvoices/AllCompleatInvoices";
@@ -27,9 +27,7 @@ const TierUpgradeInvoices = ({
   TierUpgradeRefundData,
 }) => {
   const [activeTab, setActiveTab] = useState("active");
-
-  console.log("Daily Tier Upgrade Payment Data", DailyTierUpgradePaymentData);
-  console.log("Daily Tier Upgrade Refund Data", DailyTierUpgradeRefundData);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Create a Set of refunded payment IDs
   const refundedPaymentIDs = new Set(
@@ -53,6 +51,37 @@ const TierUpgradeInvoices = ({
     const endDate = parseDate(payment.endDate);
     return endDate < today;
   });
+
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => setIsLoading(false), 300); // Adjust delay if needed
+    return () => clearTimeout(timer);
+  }, [activeTab]);
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "active":
+        return (
+          <AllActiveInvoices ActiveTierPaymentData={ActiveTierPaymentData} />
+        );
+      case "completed":
+        return (
+          <AllCompleatInvoices
+            CompletedTierPaymentData={CompletedTierPaymentData}
+          />
+        );
+      case "paid":
+        return (
+          <AllPayedInvoices TierUpgradePaymentData={TierUpgradePaymentData} />
+        );
+      case "refunded":
+        return (
+          <AllRefundedInvoices TierUpgradeRefundData={TierUpgradeRefundData} />
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="text-black space-y-5 pb-5">
@@ -78,21 +107,15 @@ const TierUpgradeInvoices = ({
         ))}
       </div>
 
-      {/* Tab Content */}
-      <div>
-        {activeTab === "active" && (
-          <AllActiveInvoices ActiveTierPaymentData={ActiveTierPaymentData} />
-        )}
-        {activeTab === "completed" && (
-          <AllCompleatInvoices
-            CompletedTierPaymentData={CompletedTierPaymentData}
-          />
-        )}
-        {activeTab === "paid" && (
-          <AllPayedInvoices TierUpgradePaymentData={TierUpgradePaymentData} />
-        )}
-        {activeTab === "refunded" && (
-          <AllRefundedInvoices TierUpgradeRefundData={TierUpgradeRefundData} />
+      {/* Tab Content or Loading */}
+      <div className="min-h-[500px]">
+        {isLoading ? (
+          <div className="flex flex-col items-center gap-2 text-blue-600">
+            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <span className="text-sm">Loading...</span>
+          </div>
+        ) : (
+          renderTabContent()
         )}
       </div>
     </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 // Icons
-import { FaLongArrowAltRight, FaPowerOff } from "react-icons/fa";
+import { FaPowerOff } from "react-icons/fa";
 
 // Shared Components
 import CommonButton from "../Shared/Buttons/CommonButton";
@@ -27,6 +27,8 @@ import FetchingError from "../Shared/Component/FetchingError";
 import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserManagement";
 import TierUpgradeInvoices from "../Pages/(AdminPanel)/TierUpgradeInvoices/TierUpgradeInvoices";
 import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
+import { FaRegCircleDot } from "react-icons/fa6";
+import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -229,6 +231,12 @@ const AdminPanelLayout = () => {
         />
       ),
     },
+    {
+      id: "Trainer_Sessions_Invoices",
+      Icon: invoice,
+      title: "Trainer Sessions Invoices",
+      content: <TrainerSessionsInvoices />,
+    },
   ];
 
   // Loading state
@@ -340,7 +348,7 @@ const AdminPanelLayout = () => {
               }`}
             >
               {activeTab === tab.id && (
-                <FaLongArrowAltRight className="text-blue-500 text-xl" />
+                <FaRegCircleDot className="text-blue-500 text-xl" />
               )}
               <img src={tab.Icon} alt={`${tab.title} Icon`} className="w-5" />
               <span>{tab.title}</span>

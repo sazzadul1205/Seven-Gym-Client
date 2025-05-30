@@ -154,30 +154,33 @@ const TierUpgradeChart = ({
   return (
     <div className="w-full">
       {/* Header and month selector */}
-      <div className="flex  justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">
+      <div className="flex bg-gray-400 justify-between items-center mb-4 px-5 py-2">
+        <h3 className="font-semibold text-white text-center text-lg">
           {monthLabel} - Tier Upgrade Summary
-        </h2>
-        <select
-          className="border rounded px-2 py-1"
-          value={selectedMonth}
-          onChange={(e) => setSelectedMonth(e.target.value)}
-        >
-          {availableMonths.map((key) => {
-            const [year, month] = key.split("-");
-            const label = `${new Date(
-              year,
-              parseInt(month, 10) - 1
-            ).toLocaleString("default", {
-              month: "long",
-            })} ${year}`;
-            return (
-              <option key={key} value={key}>
-                {label}
-              </option>
-            );
-          })}
-        </select>
+        </h3>
+        <div className="flex flex-col" >
+          <label className="text-white">Select Month</label>
+          <select
+            className="border rounded min-w-[250px] bg-white hover:cursor-pointer px-2 py-1"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+          >
+            {availableMonths.map((key) => {
+              const [year, month] = key.split("-");
+              const label = `${new Date(
+                year,
+                parseInt(month, 10) - 1
+              ).toLocaleString("default", {
+                month: "long",
+              })} ${year}`;
+              return (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              );
+            })}
+          </select>
+        </div>
       </div>
 
       {/* Line Chart for revenue and refunded amounts */}
