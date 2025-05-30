@@ -137,17 +137,36 @@ const AdminPanelLayout = () => {
     },
   });
 
-  // 5. Fetch All Tier Upgrade Payments
+  // 5. Fetch Daily Tier Upgrade Payment
   const {
-    // data: TrainerSessionPaymentData,
-    isLoading: TrainerSessionPaymentIsLoading,
-    error: TrainerSessionPaymentError,
-    refetch: TrainerSessionPaymentRefetch,
+    data: DailyTierUpgradePaymentData,
+    isLoading: DailyTierUpgradePaymentIsLoading,
+    error: DailyTierUpgradePaymentError,
+    refetch: DailyTierUpgradePaymentRefetch,
   } = useQuery({
-    queryKey: ["TrainerSessionPaymentData"],
+    queryKey: ["DailyTierUpgradePaymentData"],
     queryFn: async () => {
       try {
-        const res = await axiosPublic.get(`/Trainer_Session_Payment`);
+        const res = await axiosPublic.get(`/Tier_Upgrade_Payment/DailyTotals`);
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
+  // 6. Fetch Daily Tier Upgrade Refund
+  const {
+    data: DailyTierUpgradeRefundData,
+    isLoading: DailyTierUpgradeRefundIsLoading,
+    error: DailyTierUpgradeRefundError,
+    refetch: DailyTierUpgradeRefundRefetch,
+  } = useQuery({
+    queryKey: ["DailyTierUpgradeRefundData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(`/Tier_Upgrade_Refund/DailyTotals`);
         return res.data;
       } catch (err) {
         if (err.response?.status === 404) return [];
@@ -162,7 +181,8 @@ const AdminPanelLayout = () => {
     await AllTrainersRefetch();
     await TierUpgradeRefundRefetch();
     await TierUpgradePaymentRefetch();
-    await TrainerSessionPaymentRefetch();
+    await DailyTierUpgradeRefundRefetch();
+    await DailyTierUpgradePaymentRefetch();
   };
 
   // Handle Refetch Spin
@@ -201,6 +221,8 @@ const AdminPanelLayout = () => {
       title: "Tier Upgrade Invoices",
       content: (
         <TierUpgradeInvoices
+          DailyTierUpgradePaymentData={DailyTierUpgradePaymentData}
+          DailyTierUpgradeRefundData={DailyTierUpgradeRefundData}
           TierUpgradePaymentData={TierUpgradePaymentData}
           TierUpgradeRefundData={TierUpgradeRefundData}
           Refetch={refetchAll}
@@ -215,7 +237,8 @@ const AdminPanelLayout = () => {
     AllTrainersIsLoading ||
     TierUpgradeRefundIsLoading ||
     TierUpgradePaymentIsLoading ||
-    TrainerSessionPaymentIsLoading
+    DailyTierUpgradePaymentIsLoading ||
+    DailyTierUpgradeRefundIsLoading
   )
     return <Loading />;
 
@@ -225,7 +248,8 @@ const AdminPanelLayout = () => {
     AllTrainersError ||
     TierUpgradeRefundError ||
     TierUpgradePaymentError ||
-    TrainerSessionPaymentError
+    DailyTierUpgradePaymentError ||
+    DailyTierUpgradeRefundError
   )
     return <FetchingError />;
 
