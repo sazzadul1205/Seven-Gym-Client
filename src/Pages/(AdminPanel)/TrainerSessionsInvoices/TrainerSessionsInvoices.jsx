@@ -1,11 +1,12 @@
-import React from 'react';
+/* eslint-disable react/prop-types */
+const TrainerSessionsInvoices = ({
+  TrainerSessionRefundData,
+  TrainerSessionPaymentData,
+}) => {
+  console.log("Trainer Session Refund Data :", TrainerSessionRefundData);
+  console.log("Trainer Session Payment Data :", TrainerSessionPaymentData);
 
-const TrainerSessionsInvoices = () => {
-    return (
-        <div>
-            
-        </div>
-    );
+  return <div></div>;
 };
 
 export default TrainerSessionsInvoices;

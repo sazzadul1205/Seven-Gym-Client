@@ -4,10 +4,10 @@ import { useLocation, useNavigate } from "react-router";
 // Import Packages
 import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
-import { useQuery } from "@tanstack/react-query";
 
 // Import Tab Content
 import UserTrainerTestimonials from "./UserTrainerTestimonials/UserTrainerTestimonials";
+import useUserTrainerManagementData from "../../../Utility/useUserTrainerManagementData";
 import UserTrainerActiveSession from "./UserTrainerActiveSession/UserTrainerActiveSession";
 import UserTrainerSessionHistory from "./UserTrainerSessionHistory/UserTrainerSessionHistory";
 import UserTrainerBookingSession from "./UserTrainerBookingSession/UserTrainerBookingSession";
@@ -15,7 +15,6 @@ import UserTrainerBookingSession from "./UserTrainerBookingSession/UserTrainerBo
 // Import Hooks
 import useAuth from "../../../Hooks/useAuth";
 import Loading from "../../../Shared/Loading/Loading";
-import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
 import UserSessionInvoice from "./UserSessionInvoice/UserSessionInvoice";
 import UserTrainerAnnouncement from "./UserTrainerAnnouncement/UserTrainerAnnouncement";
@@ -73,7 +72,41 @@ const icons = [
 
 const UserTrainerManagement = () => {
   const { user } = useAuth();
-  const axiosPublic = useAxiosPublic();
+  const {
+    //  IsLoading
+    UserBasicIsLoading,
+    TrainerAnnouncementIsLoading,
+    SessionRefundInvoicesIsLoading,
+    TrainerStudentHistoryIsLoading,
+    TrainersBookingRequestIsLoading,
+    TrainersBookingHistoryIsLoading,
+    SessionPaymentInvoicesIsLoading,
+    TrainersBookingAcceptedIsLoading,
+
+    // Errors
+    UserBasicError,
+    TrainerAnnouncementError,
+    SessionRefundInvoicesError,
+    TrainerStudentHistoryError,
+    TrainersBookingRequestError,
+    TrainersBookingHistoryError,
+    SessionPaymentInvoicesError,
+    TrainersBookingAcceptedError,
+
+    // Fetched Data
+
+    UserBasicData,
+    TrainerAnnouncementData,
+    SessionRefundInvoicesData,
+    TrainerStudentHistoryData,
+    TrainersBookingRequestData,
+    TrainersBookingHistoryData,
+    SessionPaymentInvoicesData,
+    TrainersBookingAcceptedData,
+
+    // Refetch
+    refetchAll,
+  } = useUserTrainerManagementData();
 
   // Use Cases Call
   const navigate = useNavigate();
@@ -91,192 +124,18 @@ const UserTrainerManagement = () => {
     const params = new URLSearchParams();
     params.set("tab", activeTab);
     navigate({ search: params.toString() }, { replace: true });
-    window.scrollTo(0, 0); // Scroll to top
+    window.scrollTo(0, 0);
   }, [activeTab, navigate]);
 
-  // Fetch all Trainer Booking Request Request
-  const {
-    data: TrainersBookingRequestData = [],
-    isLoading: TrainersBookingRequestIsLoading,
-    error: TrainersBookingRequestError,
-    refetch: TrainersBookingRequestRefetch,
-  } = useQuery({
-    enabled: !!user?.email,
-    queryKey: ["TrainersBookingRequestData", user?.email],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Booking_Request/Booker/${user.email}`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response && err.response.status === 404) {
-          // No bookings found — not a real error
-          return [];
-        }
-
-        throw err;
-      }
-    },
-  });
-
-  // Fetch all Trainer Booking History Request
-  const {
-    data: TrainersBookingHistoryData = [],
-    isLoading: TrainersBookingHistoryIsLoading,
-    error: TrainersBookingHistoryError,
-    refetch: TrainersBookingHistoryRefetch,
-  } = useQuery({
-    enabled: !!user?.email,
-    queryKey: ["TrainersBookingHistoryData", user?.email],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Booking_History?email=${user.email}`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response && err.response.status === 404) {
-          // No bookings found — not a real error
-          return [];
-        }
-        throw err;
-      }
-    },
-  });
-
-  // Fetch all Trainer Booking History Request
-  const {
-    data: TrainersBookingAcceptedData = [],
-    isLoading: TrainersBookingAcceptedIsLoading,
-    error: TrainersBookingAcceptedError,
-    refetch: TrainersBookingAcceptedRefetch,
-  } = useQuery({
-    enabled: !!user?.email,
-    queryKey: ["TrainersBookingAcceptedData", user?.email],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Booking_Accepted?email=${user.email}`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response && err.response.status === 404) {
-          // No bookings found — not a real error
-          return [];
-        }
-        throw err;
-      }
-    },
-  });
-
-  // Fetch User Trainer Profile
-  const {
-    data: TrainerStudentHistoryData = [],
-    isLoading: TrainerStudentHistoryIsLoading,
-    error: TrainerStudentHistoryError,
-    refetch: TrainerStudentHistoryRefetch,
-  } = useQuery({
-    enabled: !!user?.email,
-    queryKey: ["TrainerStudentHistoryData", user?.email],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Student_History/ByBooker?bookerEmail=${user?.email}`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response && err.response.status === 404) {
-          // No bookings found — not a real error
-          return [];
-        }
-        throw err;
-      }
-    },
-  });
-
-  // Fetch user basic data
-  const {
-    data: UserBasicData,
-    isLoading: UserBasicIsLoading,
-    error: UserBasicError,
-    refetch: UserBasicRefetch,
-  } = useQuery({
-    queryKey: ["UserBasicData", user?.email],
-    queryFn: async () => {
-      const res = await axiosPublic.get(
-        `/Users/BasicProfile?email=${user?.email}`
-      );
-      return res.data;
-    },
-  });
-
-  // Fetch Session Payment Invoice
-  const {
-    data: SessionPaymentInvoicesData,
-    isLoading: SessionPaymentInvoicesIsLoading,
-    error: SessionPaymentInvoicesError,
-    refetch: SessionPaymentInvoicesRefetch,
-  } = useQuery({
-    queryKey: ["SessionPaymentInvoices", user?.email],
-    queryFn: async () => {
-      const res = await axiosPublic.get(
-        `/Trainer_Session_Payment?bookerEmail=${user?.email}`
-      );
-      return res.data;
-    },
-  });
-
-  // Fetch Session Refund Invoices Data
-  const {
-    data: SessionRefundInvoicesData,
-    isLoading: SessionRefundInvoicesIsLoading,
-    error: SessionRefundInvoicesError,
-    refetch: SessionRefundInvoicesRefetch,
-  } = useQuery({
-    queryKey: ["SessionRefundInvoices", user?.email],
-    queryFn: async () => {
-      const res = await axiosPublic.get(
-        `/Trainer_Session_Refund?bookerEmail=${user?.email}`
-      );
-      return res.data;
-    },
-  });
-
-  // Ensure trainerIds is always defined
-  const trainerIds = Array.isArray(TrainersBookingAcceptedData)
-    ? [...new Set(TrainersBookingAcceptedData.map((b) => b.trainerId))]
-    : [];
-
-  // Build query string
-  const queryString = trainerIds.map((id) => `trainerID=${id}`).join("&");
-
-  // Hook must run unconditionally
-  const {
-    data: TrainerAnnouncementData,
-    isLoading: TrainerAnnouncementIsLoading,
-    error: TrainerAnnouncementError,
-    refetch: TrainerAnnouncementRefetch,
-  } = useQuery({
-    queryKey: ["TrainerAnnouncement", trainerIds],
-    queryFn: async () => {
-      const res = await axiosPublic.get(`/Trainer_Announcement?${queryString}`);
-      return res.data;
-    },
-    enabled: trainerIds.length > 0,
-  });
-
-  // Refetch Everything
-  const refetch = async () => {
-    await UserBasicRefetch?.();
-    await TrainerAnnouncementRefetch?.();
-    await TrainerStudentHistoryRefetch?.();
-    await SessionRefundInvoicesRefetch?.();
-    await TrainersBookingHistoryRefetch?.();
-    await TrainersBookingRequestRefetch?.();
-    await SessionPaymentInvoicesRefetch?.();
-    await TrainersBookingAcceptedRefetch?.();
-  };
+  // Listen to URL changes and update activeTab
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const urlTab = params.get("tab") || "User-Active-Session";
+    if (urlTab !== activeTab) {
+      setActiveTab(urlTab);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
   // Load State
   if (
@@ -331,7 +190,7 @@ const UserTrainerManagement = () => {
             {/* User Active Session Tab */}
             {activeTab === "User-Active-Session" && (
               <UserTrainerActiveSession
-                refetch={refetch}
+                refetch={refetchAll}
                 TrainersBookingAcceptedData={TrainersBookingAcceptedData}
               />
             )}
@@ -339,7 +198,7 @@ const UserTrainerManagement = () => {
             {/* User Booking Session Tab */}
             {activeTab === "User-Booking-Session" && (
               <UserTrainerBookingSession
-                refetch={refetch}
+                refetch={refetchAll}
                 TrainersBookingRequestData={TrainersBookingRequestData}
               />
             )}
@@ -353,7 +212,7 @@ const UserTrainerManagement = () => {
             {/* User Trainer Review Tab */}
             {activeTab === "User-Trainer-Review" && (
               <UserTrainerTestimonials
-                refetch={refetch}
+                refetch={refetchAll}
                 UserEmail={user?.email}
                 UserBasicData={UserBasicData}
                 TrainerStudentHistoryData={TrainerStudentHistoryData}

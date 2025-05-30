@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 
 // Icons
 import { FaPowerOff } from "react-icons/fa";
+import { FaRegCircleDot } from "react-icons/fa6";
 
 // Shared Components
 import CommonButton from "../Shared/Buttons/CommonButton";
@@ -12,6 +13,7 @@ import ProfileDefault from "../assets/ProfileDefault.jpg";
 import invoice from "../assets/AdminPanel/invoice.png";
 import users from "../assets/AdminPanel/users.png";
 import coach from "../assets/AdminPanel/coach.png";
+import trainerInvoice from "../assets/AdminPanel/trainerInvoice.png";
 
 // Packages
 import useAxiosPublic from "../Hooks/useAxiosPublic";
@@ -27,7 +29,6 @@ import FetchingError from "../Shared/Component/FetchingError";
 import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserManagement";
 import TierUpgradeInvoices from "../Pages/(AdminPanel)/TierUpgradeInvoices/TierUpgradeInvoices";
 import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
-import { FaRegCircleDot } from "react-icons/fa6";
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
 
 const AdminPanelLayout = () => {
@@ -177,12 +178,52 @@ const AdminPanelLayout = () => {
     },
   });
 
+  // 7. Fetch Trainer Session Payment
+  const {
+    data: TrainerSessionPaymentData,
+    isLoading: TrainerSessionPaymentIsLoading,
+    error: TrainerSessionPaymentError,
+    refetch: TrainerSessionPaymentRefetch,
+  } = useQuery({
+    queryKey: ["TrainerSessionPayment"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(`/Trainer_Session_Payment`);
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
+  // 8. Fetch Trainer Session Refund
+  const {
+    data: TrainerSessionRefundData,
+    isLoading: TrainerSessionRefundIsLoading,
+    error: TrainerSessionRefundError,
+    refetch: TrainerSessionRefundRefetch,
+  } = useQuery({
+    queryKey: ["TrainerSessionRefund"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(`/Trainer_Session_Refund`);
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
   // Unified refetch function
   const refetchAll = async () => {
     await AllUsersRefetch();
     await AllTrainersRefetch();
     await TierUpgradeRefundRefetch();
     await TierUpgradePaymentRefetch();
+    await TrainerSessionRefundRefetch();
+    await TrainerSessionPaymentRefetch();
     await DailyTierUpgradeRefundRefetch();
     await DailyTierUpgradePaymentRefetch();
   };
@@ -233,9 +274,14 @@ const AdminPanelLayout = () => {
     },
     {
       id: "Trainer_Sessions_Invoices",
-      Icon: invoice,
+      Icon: trainerInvoice,
       title: "Trainer Sessions Invoices",
-      content: <TrainerSessionsInvoices />,
+      content: (
+        <TrainerSessionsInvoices
+          TrainerSessionRefundData={TrainerSessionRefundData}
+          TrainerSessionPaymentData={TrainerSessionPaymentData}
+        />
+      ),
     },
   ];
 
@@ -245,8 +291,10 @@ const AdminPanelLayout = () => {
     AllTrainersIsLoading ||
     TierUpgradeRefundIsLoading ||
     TierUpgradePaymentIsLoading ||
-    DailyTierUpgradePaymentIsLoading ||
-    DailyTierUpgradeRefundIsLoading
+    TrainerSessionRefundIsLoading ||
+    TrainerSessionPaymentIsLoading ||
+    DailyTierUpgradeRefundIsLoading ||
+    DailyTierUpgradePaymentIsLoading
   )
     return <Loading />;
 
@@ -256,8 +304,10 @@ const AdminPanelLayout = () => {
     AllTrainersError ||
     TierUpgradeRefundError ||
     TierUpgradePaymentError ||
-    DailyTierUpgradePaymentError ||
-    DailyTierUpgradeRefundError
+    TrainerSessionRefundError ||
+    TrainerSessionPaymentError ||
+    DailyTierUpgradeRefundError ||
+    DailyTierUpgradePaymentError
   )
     return <FetchingError />;
 

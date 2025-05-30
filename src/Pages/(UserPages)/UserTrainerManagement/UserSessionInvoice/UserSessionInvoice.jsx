@@ -314,12 +314,12 @@ const UserSessionInvoice = ({
                         {item?.bookingDataForHistory?.RefundPercentage} (
                         {item?.bookingDataForHistory?.RefundAmount !==
                           undefined && (
-                          <span>
+                          <p>
                             {Number(
                               item.bookingDataForHistory.RefundAmount
                             ).toFixed(2)}{" "}
                             $
-                          </span>
+                          </p>
                         )}
                         )
                       </td>

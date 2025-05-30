@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import PropTypes from "prop-types";
 
 // import Packages
@@ -15,53 +15,162 @@ import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerB
 import TierUpgradePaymentInvoiceModal from "../../../(UserPages)/UserSettings/UserPaymentInvoices/TierUpgradePaymentInvoiceModal/TierUpgradePaymentInvoiceModal";
 
 const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
-  // Local state to track current page for pagination
+  // State for current page number
   const [currentPage, setCurrentPage] = useState(1);
+
+  // State for selected invoice (for the modal)
   const [selectedPaymentInvoice, setSelectedPaymentInvoice] = useState(null);
 
-  // Create a ref for the modal
+  // State for search input
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // State for selected tier filter
+  const [selectedTier, setSelectedTier] = useState("");
+
+  // State for selected duration filter
+  const [selectedDuration, setSelectedDuration] = useState("");
+
+  // Ref to control the modal
   const modalPaymentInvoiceRef = useRef(null);
 
-  // Fixed number of items per page for pagination
+  // Items to show per page
   const itemsPerPage = 10;
 
-  // Calculate total number of pages needed
-  const totalPages = Math.ceil(
-    (TierUpgradePaymentData?.length || 0) / itemsPerPage
-  );
+  // Get unique tier options for filter dropdown
+  const tierOptions = useMemo(() => {
+    return [...new Set(TierUpgradePaymentData?.map((item) => item.tier))];
+  }, [TierUpgradePaymentData]);
 
-  // Slice the data array to only show items for the current page
-  const currentData = TierUpgradePaymentData?.slice(
+  // Get unique duration options for filter dropdown
+  const durationOptions = useMemo(() => {
+    return [...new Set(TierUpgradePaymentData?.map((item) => item.duration))];
+  }, [TierUpgradePaymentData]);
+
+  // Filter data by search term, selected tier, and duration
+  const filteredData =
+    TierUpgradePaymentData?.filter((item) => {
+      const matchesSearch = item.email
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+      const matchesTier = selectedTier ? item.tier === selectedTier : true;
+
+      const matchesDuration = selectedDuration
+        ? item.duration === selectedDuration
+        : true;
+
+      return matchesSearch && matchesTier && matchesDuration;
+    }) || [];
+
+  // Calculate total number of pages
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  // Get current page's data
+  const currentData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Close Modal Handler
+  // Close modal and reset selected invoice
   const closePaymentInvoiceModal = () => {
     modalPaymentInvoiceRef.current?.close();
-    // Optionally, clear the selected booking if needed:
     setSelectedPaymentInvoice(null);
   };
 
   return (
     <div>
-      {/* Header section */}
+      {/* Page Header */}
       <div className="bg-gray-400 py-2">
         <h3 className="font-semibold text-white text-center text-lg">
           Tier Upgrade Payment&apos;s
         </h3>
       </div>
 
-      {/* Check if data exists and has length > 0 */}
-      {Array.isArray(TierUpgradePaymentData) &&
-      TierUpgradePaymentData.length > 0 ? (
+      {/* Filter Section: Search, Tier, Duration */}
+      <div className="flex flex-wrap justify-center gap-4 w-full p-4 bg-gray-400 border border-t-white">
+        {/* Search by Email */}
+        <div className="flex flex-col flex-1 max-w-[500px]">
+          <label className="text-sm text-white mb-1">Search by Email</label>
+          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+            {/* Search Icon */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 text-gray-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-4.35-4.35M15 11a4 4 0 11-8 0 4 4 0 018 0z"
+              />
+            </svg>
+
+            {/* Search Input Field */}
+            <input
+              type="text"
+              placeholder="Search users..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full outline-none text-gray-700 placeholder-gray-400 bg-transparent"
+            />
+          </div>
+        </div>
+
+        {/* Filter by Tier */}
+        <div className="flex flex-col min-w-[180px]">
+          <label className="text-sm text-white mb-1">Tier</label>
+          <select
+            value={selectedTier}
+            onChange={(e) => {
+              setSelectedTier(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="bg-white border border-gray-300 rounded-md px-4 py-2 text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Tiers</option>
+            {tierOptions.map((tier) => (
+              <option key={tier} value={tier}>
+                {tier}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Filter by Duration */}
+        <div className="flex flex-col min-w-[180px]">
+          <label className="text-sm text-white mb-1">Duration</label>
+          <select
+            value={selectedDuration}
+            onChange={(e) => {
+              setSelectedDuration(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="bg-white border border-gray-300 rounded-md px-4 py-2 text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Durations</option>
+            {durationOptions.map((duration) => (
+              <option key={duration} value={duration}>
+                {duration}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Table or Message if No Data */}
+      {filteredData.length > 0 ? (
         <div className="overflow-x-auto">
-          {/* Table for displaying invoices */}
+          {/* Data Table */}
           <table className="min-w-full table-auto border border-gray-300 text-sm">
-            {/* Table : Header */}
+            {/* Table Header */}
             <thead>
               <tr className="bg-gray-100 text-left">
-                {/* Table headers */}
                 <th className="px-4 py-2 border">#</th>
                 <th className="px-4 py-2 border">User</th>
                 <th className="px-4 py-2 border">Tier</th>
@@ -75,16 +184,16 @@ const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
               </tr>
             </thead>
 
-            {/* Table : Body */}
+            {/* Table Body */}
             <tbody>
               {currentData.map((item, index) => (
                 <tr key={item._id} className="hover:bg-gray-50">
-                  {/* Index */}
+                  {/* Serial Number */}
                   <td className="border px-4 py-2">
                     {(currentPage - 1) * itemsPerPage + index + 1}
                   </td>
 
-                  {/* User */}
+                  {/* User Info */}
                   <td className="border px-4 py-2">
                     <TrainerBookingRequestUserBasicInfo email={item.email} />
                   </td>
@@ -98,20 +207,20 @@ const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
                   {/* Start Date */}
                   <td className="border px-4 py-2">{item.startDate}</td>
 
-                  {/* End date */}
+                  {/* End Date */}
                   <td className="border px-4 py-2">{item.endDate}</td>
 
-                  {/* Payed Price */}
+                  {/* Total Price */}
                   <td className="border px-4 py-2">
                     ${item.totalPrice.toFixed(2)}
                   </td>
 
-                  {/* Payed True / False */}
+                  {/* Paid Status */}
                   <td className="border px-4 py-2">
                     {item.Payed ? "Yes" : "No"}
                   </td>
 
-                  {/* Payed Time  */}
+                  {/* Payment Time (Formatted) */}
                   <td className="border px-4 py-2">
                     {new Date(item.paymentTime).toLocaleString("en-GB", {
                       day: "2-digit",
@@ -123,7 +232,7 @@ const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
                     })}
                   </td>
 
-                  {/* Action */}
+                  {/* View Invoice Action */}
                   <td className="border px-4 py-2">
                     <button
                       onClick={() => {
@@ -135,6 +244,7 @@ const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
                     >
                       <FaFileInvoiceDollar className="text-gray-500" />
                     </button>
+                    {/* Tooltip for button */}
                     <Tooltip
                       anchorSelect={`#view-details-btn-${item._id}`}
                       content="View Tier Upgrade Payment Invoice"
@@ -148,7 +258,7 @@ const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
           {/* Pagination Controls */}
           <div className="mt-6 flex justify-center items-center gap-4">
             <div className="join">
-              {/* Previous page button */}
+              {/* Previous Page Button */}
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
@@ -161,12 +271,12 @@ const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
                 <FaAnglesLeft />
               </button>
 
-              {/* Page indicator */}
+              {/* Page Info */}
               <span className="join-item h-10 px-5 text-sm flex items-center justify-center border border-gray-300 bg-white text-gray-800 font-semibold">
                 Page {currentPage} / {totalPages}
               </span>
 
-              {/* Next page button */}
+              {/* Next Page Button */}
               <button
                 onClick={() =>
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
@@ -184,15 +294,14 @@ const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
           </div>
         </div>
       ) : (
-        // Fallback message if no data available
-        <div className=" bg-gray-200  p-4">
+        <div className="bg-gray-200 p-4">
           <p className="text-center font-semibold text-black">
-            No refund data available.
+            No Payment data available.
           </p>
         </div>
       )}
 
-      {/* Payment success modal */}
+      {/* Modal for Payment Invoice */}
       <dialog ref={modalPaymentInvoiceRef} className="modal">
         <TierUpgradePaymentInvoiceModal
           PaymentID={selectedPaymentInvoice}

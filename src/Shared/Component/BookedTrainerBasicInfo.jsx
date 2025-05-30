@@ -23,7 +23,7 @@ const BookedTrainerBasicInfo = ({ trainerID, showName = true, py = 0 }) => {
   if (error || !data) return <span className="text-xs">{trainerID}</span>;
 
   return (
-    <td>
+    <div>
       <div className={`flex items-center gap-2 py-${py}`}>
         <div className="border-r-2 pr-2 mr-5 border-black">
           <img
@@ -35,7 +35,7 @@ const BookedTrainerBasicInfo = ({ trainerID, showName = true, py = 0 }) => {
 
         {showName && <span className="font-medium">{data.name}</span>}
       </div>
-    </td>
+    </div>
   );
 };
 
@@ -43,7 +43,7 @@ const BookedTrainerBasicInfo = ({ trainerID, showName = true, py = 0 }) => {
 BookedTrainerBasicInfo.propTypes = {
   trainerID: PropTypes.string.isRequired,
   showName: PropTypes.bool,
-  py: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), 
+  py: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 export default BookedTrainerBasicInfo;

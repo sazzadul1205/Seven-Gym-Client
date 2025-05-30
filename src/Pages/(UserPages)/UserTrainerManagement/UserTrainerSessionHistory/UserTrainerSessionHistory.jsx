@@ -128,7 +128,7 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
 
                       {/* Table : Remaining Time */}
                       <td className="px-4 py-2 font-semibold text-sm">
-                        {booking?.reason && <span>{booking.reason}</span>}
+                        {booking?.reason && <p>{booking.reason}</p>}
                       </td>
 
                       {/* Table : Buttons */}

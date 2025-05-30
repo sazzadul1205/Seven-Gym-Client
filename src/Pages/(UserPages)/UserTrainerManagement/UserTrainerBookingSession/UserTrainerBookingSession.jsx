@@ -71,14 +71,14 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
       <div className="mx-auto bg-black w-1/3 p-[1px]" />
 
       {/* Bookings List */}
-      <div className="py-4">
+      <div className="py-1">
         {TrainersBookingRequestData.length > 0 ? (
           <div>
             {/*  Bookings List : Desktop View */}
             <div className="overflow-x-auto hidden md:flex">
               <table className="min-w-full table-auto bg-white border-collapse">
                 {/* Table Header */}
-                <thead className="bg-[#A1662F] text-white">
+                <thead className="bg-[#A1662F] border-l-2 border-r-2 border-amber-950 text-white">
                   <tr>
                     {[
                       "Trainer",
@@ -106,10 +106,12 @@ const UserTrainerBookingSession = ({ TrainersBookingRequestData, refetch }) => {
                       )}`}
                     >
                       {/* Trainer Name */}
-                      <BookedTrainerBasicInfo
-                        trainerID={booking.trainerId}
-                        py={3}
-                      />
+                      <td className="px-2">
+                        <BookedTrainerBasicInfo
+                          trainerID={booking.trainerId}
+                          py={2}
+                        />
+                      </td>
 
                       {/* Booked At */}
                       <td className="px-4 py-2">

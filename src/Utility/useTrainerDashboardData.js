@@ -1,4 +1,7 @@
+// import Packages
 import { useQuery } from "@tanstack/react-query";
+
+// Import Hooks
 import useAuth from "../Hooks/useAuth";
 import useAxiosPublic from "../Hooks/useAxiosPublic";
 
@@ -242,38 +245,45 @@ const useTrainerDashboardData = () => {
   };
 
   return {
-    TrainerData,
+    // IsLoading
     TrainerDataIsLoading,
+    ClassTypesDataIsLoading,
+    TrainerScheduleIsLoading,
+    TrainerAnnouncementIsLoading,
+    TrainerBookingRequestIsLoading,
+    TrainerBookingHistoryIsLoading,
+    TrainerStudentHistoryIsLoading,
+    TrainerBookingAcceptedIsLoading,
+    TrainerBookingHistoryDailyStatsIsLoading,
+    TrainerBookingAcceptedDailyStatsIsLoading,
+
+    // Error
     TrainerDataError,
+    ClassTypesDataError,
+    TrainerScheduleError,
+    TrainerAnnouncementError,
+    TrainerBookingRequestError,
+    TrainerBookingHistoryError,
+    TrainerStudentHistoryError,
+    TrainerBookingAcceptedError,
+    TrainerBookingHistoryDailyStatsError,
+    TrainerBookingAcceptedDailyStatsError,
+
+    // Fetched Data
+    TrainerData,
+    ClassTypesData,
     TrainerProfileData,
     TrainerScheduleData,
-    TrainerScheduleIsLoading,
-    TrainerScheduleError,
-    TrainerProfileScheduleData,
-    ClassTypesData,
-    ClassTypesDataIsLoading,
-    ClassTypesDataError,
-    TrainerBookingRequestData,
-    TrainerBookingRequestIsLoading,
-    TrainerBookingRequestError,
-    TrainerBookingAcceptedData,
-    TrainerBookingAcceptedIsLoading,
-    TrainerBookingAcceptedError,
-    TrainerBookingHistoryData,
-    TrainerBookingHistoryIsLoading,
-    TrainerBookingHistoryError,
-    TrainerStudentHistoryData,
-    TrainerStudentHistoryIsLoading,
-    TrainerStudentHistoryError,
-    TrainerBookingHistoryDailyStatsData,
-    TrainerBookingHistoryDailyStatsIsLoading,
-    TrainerBookingHistoryDailyStatsError,
-    TrainerBookingAcceptedDailyStatsData,
-    TrainerBookingAcceptedDailyStatsIsLoading,
-    TrainerBookingAcceptedDailyStatsError,
     TrainerAnnouncementData,
-    TrainerAnnouncementIsLoading,
-    TrainerAnnouncementError,
+    TrainerStudentHistoryData,
+    TrainerBookingRequestData,
+    TrainerBookingHistoryData,
+    TrainerBookingAcceptedData,
+    TrainerProfileScheduleData,
+    TrainerBookingHistoryDailyStatsData,
+    TrainerBookingAcceptedDailyStatsData,
+
+    // Refetch
     refetchAll,
   };
 };

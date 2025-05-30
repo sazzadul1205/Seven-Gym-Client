@@ -84,7 +84,7 @@ const TierUpgradeInvoices = ({
   };
 
   return (
-    <div className="text-black space-y-5 pb-5">
+    <div className="text-black space-y-1 pb-5">
       <TierUpgradeChart
         DailyTierUpgradePaymentData={DailyTierUpgradePaymentData}
         DailyTierUpgradeRefundData={DailyTierUpgradeRefundData}

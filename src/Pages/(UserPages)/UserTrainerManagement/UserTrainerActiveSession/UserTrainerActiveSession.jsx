@@ -234,7 +234,12 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
                       className="border-b border-gray-500 bg-gray-50 hover:bg-gray-200 px-5"
                     >
                       {/* Trainer Name */}
-                      <BookedTrainerBasicInfo trainerID={b.trainerId} py={3} />
+                      <td>
+                        <BookedTrainerBasicInfo
+                          trainerID={b.trainerId}
+                          py={3}
+                        />
+                      </td>
 
                       {/* Start Time */}
                       <td>
