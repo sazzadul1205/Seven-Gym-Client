@@ -1,12 +1,22 @@
 /* eslint-disable react/prop-types */
+import TrainerSessionPaymentInvoice from "./TrainerSessionPaymentInvoice/TrainerSessionPaymentInvoice";
+import TrainerSessionRefundInvoice from "./TrainerSessionRefundInvoice/TrainerSessionRefundInvoice";
+
 const TrainerSessionsInvoices = ({
   TrainerSessionRefundData,
   TrainerSessionPaymentData,
 }) => {
-  console.log("Trainer Session Refund Data :", TrainerSessionRefundData);
-  console.log("Trainer Session Payment Data :", TrainerSessionPaymentData);
+  return (
+    <div className="text-black">
+      <TrainerSessionPaymentInvoice
+        TrainerSessionPaymentData={TrainerSessionPaymentData}
+      />
 
-  return <div></div>;
+      <TrainerSessionRefundInvoice
+        TrainerSessionRefundData={TrainerSessionRefundData}
+      />
+    </div>
+  );
 };
 
 export default TrainerSessionsInvoices;

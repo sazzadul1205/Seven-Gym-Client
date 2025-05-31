@@ -214,6 +214,8 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
                       "Total Price",
                       "Duration",
                       "Session End",
+                      "Status",
+                      "Paid",
                       "Action",
                     ].map((h) => (
                       <th
@@ -234,7 +236,7 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
                       className="border-b border-gray-500 bg-gray-50 hover:bg-gray-200 px-5"
                     >
                       {/* Trainer Name */}
-                      <td>
+                      <td className="px-2">
                         <BookedTrainerBasicInfo
                           trainerID={b.trainerId}
                           py={3}
@@ -274,6 +276,12 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
                             ).toLocaleDateString("en-GB")
                           : "--/--"}
                       </td>
+
+                      {/* Booking Status */}
+                      <td>{b.status}</td>
+
+                      {/* Payment Status */}
+                      <td>{b.paid ? "Paid" : "Unpaid"}</td>
 
                       {/* View Details Button */}
                       <td>

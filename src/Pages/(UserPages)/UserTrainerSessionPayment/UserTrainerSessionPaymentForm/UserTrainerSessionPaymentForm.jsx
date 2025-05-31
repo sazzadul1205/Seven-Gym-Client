@@ -18,7 +18,7 @@ import CommonButton from "../../../../Shared/Buttons/CommonButton";
 const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
   const axiosPublic = useAxiosPublic();
   const navigate = useNavigate();
-
+  
   // Get Element & Stripe from Stripe hooks
   const stripe = useStripe();
   const elements = useElements();
@@ -46,60 +46,52 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
     .toString()
     .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 
-  // Handle form submission and payment processing
   const onSubmit = async (data) => {
-    // 1. Ensure Stripe.js and Elements are initialized
-    if (!stripe || !elements) {
-      return Swal.fire(
-        "Error",
-        "Stripe not ready. Refresh and try again.",
-        "error"
-      );
-    }
-
-    // 2. Check that the user has ticked the confirmation box before proceeding
-    if (!isConfirmed) {
-      return Swal.fire("Warning", "Please confirm before paying.", "warning");
-    }
-
-    // 3. Prompt user with a final confirmation: “Are you sure?”
-    const { isConfirmed: userOk } = await Swal.fire({
-      title: "Proceed with payment?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Yes, pay now",
-      cancelButtonText: "Cancel",
-    });
-
-    // Exit early if the user cancels
-    if (!userOk) return;
-
-    // 4. Parse and validate the total price (ensure it's a valid number)
-    const totalPrice = Number(TrainerBookingRequestByIDData?.totalPrice);
-    if (isNaN(totalPrice)) {
-      return Swal.fire("Error", "Invalid total price.", "error");
-    }
-
+    let stepName = "Initial Setup";
     setIsProcessing(true);
 
     try {
-      // 5. Create a PaymentIntent on the server to initiate the payment process
+      // 1. Ensure Stripe.js and Elements are initialized
+      if (!stripe || !elements) {
+        throw new Error("Stripe is not ready. Check Stripe.js initialization.");
+      }
+
+      // 2. Check confirmation
+      if (!isConfirmed) {
+        return Swal.fire("Warning", "Please confirm before paying.", "warning");
+      }
+
+      // 3. User confirmation popup
+      stepName = "User Confirmation";
+      const { isConfirmed: userOk } = await Swal.fire({
+        title: "Proceed with payment?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, pay now",
+        cancelButtonText: "Cancel",
+      });
+      if (!userOk) return;
+
+      // 4. Validate price
+      stepName = "Total Price Validation";
+      const totalPrice = Number(TrainerBookingRequestByIDData?.totalPrice);
+      if (isNaN(totalPrice)) {
+        throw new Error("Total price is invalid or missing.");
+      }
+
+      // 5. Create PaymentIntent
+      stepName = "Creating Stripe PaymentIntent";
       const { data: { clientSecret } = {} } = await axiosPublic.post(
         "/Stripe_Payment_Intent",
         { totalPrice }
       );
-
-      // Handle missing client secret error
       if (!clientSecret) {
-        return Swal.fire(
-          "Error",
-          "Missing client secret. Cannot proceed.",
-          "error"
-        );
+        throw new Error("Server did not return a client secret.");
       }
 
-      // 6. Confirm the card payment with Stripe
-      const cardElement = elements.getElement(CardElement); // Get card element from Stripe Elements
+      // 6. Confirm card payment
+      stepName = "Confirming Stripe Payment";
+      const cardElement = elements.getElement(CardElement);
       const { paymentIntent, error: stripeError } =
         await stripe.confirmCardPayment(clientSecret, {
           payment_method: {
@@ -107,29 +99,29 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
             billing_details: { name: data.cardholderName },
           },
         });
-
-      // Handle payment errors from Stripe
       if (stripeError) {
-        return Swal.fire("Payment Failed", stripeError.message, "error");
+        throw new Error(`Stripe Error: ${stripeError.message}`);
       }
 
       const stripePaymentID = paymentIntent.id;
+      const formattedDateAndTime = new Date().toISOString();
 
-      // 7. Mark the booking as paid and accepted in the backend
+      // 7. Mark booking as paid
+      stepName = "Marking Booking as Paid";
       const acceptedPayload = {
         ...TrainerBookingRequestByIDData,
         paid: true,
-        paidAt: formattedDateAndTime, // Format date/time when payment was successful
-        paymentID: stripePaymentID, // Attach the payment ID
+        paidAt: formattedDateAndTime,
+        paymentID: stripePaymentID,
       };
 
-      // Update the booking status to "Accepted"
       const { data: updatedBooking } = await axiosPublic.post(
         "/Trainer_Booking_Accepted",
         acceptedPayload
       );
 
-      // 8. Fetch full session details using session IDs from the updated booking
+      // 8. Get session info
+      stepName = "Fetching Session Info";
       const sessionQuery = updatedBooking.sessions
         .map((id) => `ids=${encodeURIComponent(id)}`)
         .join("&");
@@ -138,7 +130,8 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         `/Trainers_Schedule/BasicInfoByID?${sessionQuery}`
       );
 
-      // 9. Persist the payment record in the backend
+      // 9. Store payment info
+      stepName = "Storing Payment Info in Backend";
       await axiosPublic.post("/Trainer_Session_Payment", {
         BookingInfo: updatedBooking,
         sessionInfo,
@@ -148,46 +141,58 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         paymentTime: new Date().toISOString(),
       });
 
-      // 10. Update the trainer’s schedule to reflect the newly accepted booking
+      // 10. Update trainer schedule
+      stepName = "Updating Trainer Schedule";
       await axiosPublic.patch("/Trainers_Schedule/AcceptBooking", {
         sessionIds: updatedBooking.sessions,
-        acceptedAt: formattedDateAndTime, // Timestamp of acceptance
+        acceptedAt: formattedDateAndTime,
         stripePaymentID,
         bookerEmail: TrainerBookingRequestByIDData.bookerEmail,
       });
 
-      // 11. Log the trainer-student interaction for record-keeping
+      // 11. Log trainer-student interaction
+      stepName = "Logging Trainer-Student History";
       await axiosPublic.post("/Trainer_Student_History", {
         trainerId: TrainerBookingRequestByIDData?.trainerId,
+        trainer: TrainerBookingRequestByIDData?.trainer,
         studentEntry: {
           bookerEmail: TrainerBookingRequestByIDData?.bookerEmail,
           ActiveTime: formattedDateAndTime,
         },
       });
 
-      // 12. Notify the user that payment was successful and booking is confirmed
-      Swal.fire(
+      // 12. Notify success
+      stepName = "Success Notification";
+      await Swal.fire(
         "Success",
         "Payment successful and booking confirmed!",
         "success"
       );
 
-      // 13. Clean up: Delete the original booking request and redirect the user
+      // 13. Delete original request
+      stepName = "Deleting Original Booking Request";
       await axiosPublic.delete(
         `/Trainer_Booking_Request?id=${TrainerBookingRequestByIDData._id}`
       );
 
-      // Redirect to the active session management page
+      // 14. Redirect
+      stepName = "Redirecting to Active Sessions";
       navigate("/User/UserTrainerManagement?tab=User-Active-Session");
-    } catch {
-      // Handle any errors that occur during payment or booking confirmation
-      Swal.fire(
-        "Error",
-        "Something went wrong during payment or booking confirmation.",
-        "error"
-      );
+    } catch (error) {
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        JSON.stringify(error, null, 2) ||
+        "Unknown error occurred";
+
+      await Swal.fire({
+        icon: "error",
+        title: `Error at Step: ${stepName}`,
+        html: `<pre style="text-align:left; white-space:pre-wrap;">${errorMessage}</pre>`,
+      });
+
+      console.error(`❌ Error at "${stepName}":`, error);
     } finally {
-      // Disable the processing flag regardless of success or failure
       setIsProcessing(false);
     }
   };
@@ -291,11 +296,22 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
       navigate("/User/UserTrainerManagement?tab=User-Active-Session");
     } catch (err) {
       console.error("Booking error:", err);
-      Swal.fire(
-        "Error",
-        "Something went wrong during booking confirmation.",
-        "error"
-      );
+
+      let errorMessage = "Something went wrong during booking confirmation.";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.data) {
+        errorMessage = JSON.stringify(err.response.data, null, 2);
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      Swal.fire({
+        icon: "error",
+        title: "Booking Error",
+        html: `<pre style="text-align:left; white-space:pre-wrap;">${errorMessage}</pre>`,
+      });
     } finally {
       setIsProcessing(false);
     }

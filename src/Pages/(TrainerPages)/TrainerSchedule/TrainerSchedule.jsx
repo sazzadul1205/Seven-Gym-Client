@@ -349,7 +349,7 @@ TrainerSchedule.propTypes = {
             PropTypes.number,
           ]),
           classPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-          participant: PropTypes.objectOf(PropTypes.object),
+          participant: PropTypes.arrayOf(PropTypes.object),
           time: PropTypes.string,
           start: PropTypes.string,
           end: PropTypes.string,

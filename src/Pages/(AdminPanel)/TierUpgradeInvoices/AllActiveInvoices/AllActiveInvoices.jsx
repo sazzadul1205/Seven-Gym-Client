@@ -76,6 +76,7 @@ const AllActiveInvoices = ({ ActiveTierPaymentData }) => {
     modalPaymentInvoiceRef.current?.close();
     setSelectedPaymentInvoice(null);
   };
+  
   return (
     <div>
       {/* Page Header */}
