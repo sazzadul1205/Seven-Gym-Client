@@ -11,19 +11,6 @@ import TrainerProfileHeaderUpdateModal from "./TrainerProfileHeaderUpdateModal.j
 // Import Utility
 import { getGenderIcon } from "../../../../Utility/getGenderIcon";
 
-// Function to get tier badge styles dynamically
-export const getTierBadge = (tier) => {
-  const tierStyles = {
-    Bronze: "bg-orange-600 text-white ring-2 ring-orange-300 shadow-lg",
-    Silver: "bg-gray-400 text-white ring-2 ring-gray-200 shadow-lg",
-    Gold: "bg-yellow-500 text-white ring-2 ring-yellow-300 shadow-lg",
-    Diamond: "bg-blue-600 text-white ring-2 ring-blue-300 shadow-lg",
-    Platinum: "bg-gray-800 text-white ring-2 ring-gray-500 shadow-lg",
-  };
-
-  return tierStyles[tier] || "bg-gray-200 text-gray-700 ring-2 ring-gray-300";
-};
-
 const TrainerProfileHeader = ({ TrainerDetails, refetch }) => {
   // Get gender details (icon + label)
   const { icon } = getGenderIcon(TrainerDetails?.gender);
@@ -109,3 +96,16 @@ TrainerProfileHeader.propTypes = {
 };
 
 export default TrainerProfileHeader;
+
+// Function to get tier badge styles dynamically
+export const getTierBadge = (tier) => {
+  const tierStyles = {
+    Bronze: "bg-orange-600 text-white ring-2 ring-orange-300 shadow-lg",
+    Silver: "bg-gray-400 text-white ring-2 ring-gray-200 shadow-lg",
+    Gold: "bg-yellow-500 text-white ring-2 ring-yellow-300 shadow-lg",
+    Diamond: "bg-blue-600 text-white ring-2 ring-blue-300 shadow-lg",
+    Platinum: "bg-gray-800 text-white ring-2 ring-gray-500 shadow-lg",
+  };
+
+  return tierStyles[tier] || "bg-gray-200 text-gray-700 ring-2 ring-gray-300";
+};

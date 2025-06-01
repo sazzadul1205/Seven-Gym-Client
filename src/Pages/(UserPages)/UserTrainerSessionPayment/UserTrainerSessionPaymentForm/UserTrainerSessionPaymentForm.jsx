@@ -18,7 +18,7 @@ import CommonButton from "../../../../Shared/Buttons/CommonButton";
 const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
   const axiosPublic = useAxiosPublic();
   const navigate = useNavigate();
-  
+
   // Get Element & Stripe from Stripe hooks
   const stripe = useStripe();
   const elements = useElements();
@@ -34,18 +34,6 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  // Format the current date and time as "dd-mm-yyyyThh:mm"
-  const date = new Date();
-  const formattedDateAndTime = `${date
-    .getDate()
-    .toString()
-    .padStart(2, "0")}-${(date.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}-${date.getFullYear()}T${date
-    .getHours()
-    .toString()
-    .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
-
   const onSubmit = async (data) => {
     let stepName = "Initial Setup";
     setIsProcessing(true);
@@ -56,51 +44,59 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         throw new Error("Stripe is not ready. Check Stripe.js initialization.");
       }
 
-      // 2. Check confirmation
+      // 2. Check confirmation checkbox
       if (!isConfirmed) {
         return Swal.fire("Warning", "Please confirm before paying.", "warning");
       }
 
-      // 3. User confirmation popup
-      stepName = "User Confirmation";
-      const { isConfirmed: userOk } = await Swal.fire({
-        title: "Proceed with payment?",
+      // 3. Final user confirmation modal before proceeding
+      stepName = "Final User Confirmation";
+      const { isConfirmed: proceed } = await Swal.fire({
+        title: "Proceed with booking?",
+        text: "Are you sure you want to confirm this booking and proceed with payment?",
         icon: "question",
         showCancelButton: true,
-        confirmButtonText: "Yes, pay now",
+        confirmButtonText: "Yes, proceed",
         cancelButtonText: "Cancel",
       });
-      if (!userOk) return;
+      if (!proceed) return;
 
-      // 4. Validate price
-      stepName = "Total Price Validation";
+      // 4. Validate total price
+      stepName = "Validating Total Price";
       const totalPrice = Number(TrainerBookingRequestByIDData?.totalPrice);
-      if (isNaN(totalPrice)) {
+      if (isNaN(totalPrice) || totalPrice <= 0) {
         throw new Error("Total price is invalid or missing.");
       }
 
-      // 5. Create PaymentIntent
-      stepName = "Creating Stripe PaymentIntent";
+      // 5. Create Stripe PaymentIntent
+      stepName = "Creating Payment Intent";
       const { data: { clientSecret } = {} } = await axiosPublic.post(
         "/Stripe_Payment_Intent",
         { totalPrice }
       );
       if (!clientSecret) {
-        throw new Error("Server did not return a client secret.");
+        throw new Error("Failed to obtain client secret from server.");
       }
 
       // 6. Confirm card payment
-      stepName = "Confirming Stripe Payment";
+      stepName = "Confirming Card Payment";
       const cardElement = elements.getElement(CardElement);
+      if (!cardElement) {
+        throw new Error("Card element not found.");
+      }
+
       const { paymentIntent, error: stripeError } =
         await stripe.confirmCardPayment(clientSecret, {
           payment_method: {
             card: cardElement,
-            billing_details: { name: data.cardholderName },
+            billing_details: { name: data.cardholderName || "Unknown" },
           },
         });
       if (stripeError) {
-        throw new Error(`Stripe Error: ${stripeError.message}`);
+        throw new Error(`Stripe error: ${stripeError.message}`);
+      }
+      if (!paymentIntent) {
+        throw new Error("PaymentIntent confirmation failed.");
       }
 
       const stripePaymentID = paymentIntent.id;
@@ -114,34 +110,32 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         paidAt: formattedDateAndTime,
         paymentID: stripePaymentID,
       };
-
       const { data: updatedBooking } = await axiosPublic.post(
         "/Trainer_Booking_Accepted",
         acceptedPayload
       );
 
-      // 8. Get session info
+      // 8. Fetch session info
       stepName = "Fetching Session Info";
       const sessionQuery = updatedBooking.sessions
         .map((id) => `ids=${encodeURIComponent(id)}`)
         .join("&");
-
       const { data: sessionInfo } = await axiosPublic.get(
         `/Trainers_Schedule/BasicInfoByID?${sessionQuery}`
       );
 
-      // 9. Store payment info
-      stepName = "Storing Payment Info in Backend";
+      // 9. Store payment info in backend
+      stepName = "Recording Payment Info";
       await axiosPublic.post("/Trainer_Session_Payment", {
         BookingInfo: updatedBooking,
         sessionInfo,
         cardHolder: data.cardholderName,
         paymentMethod: "Card",
         stripePaymentID,
-        paymentTime: new Date().toISOString(),
+        paymentTime: formattedDateAndTime,
       });
 
-      // 10. Update trainer schedule
+      // 10. Update trainer schedule with accepted booking
       stepName = "Updating Trainer Schedule";
       await axiosPublic.patch("/Trainers_Schedule/AcceptBooking", {
         sessionIds: updatedBooking.sessions,
@@ -169,13 +163,13 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         "success"
       );
 
-      // 13. Delete original request
+      // 13. Delete original booking request
       stepName = "Deleting Original Booking Request";
       await axiosPublic.delete(
         `/Trainer_Booking_Request?id=${TrainerBookingRequestByIDData._id}`
       );
 
-      // 14. Redirect
+      // 14. Redirect user to active sessions page
       stepName = "Redirecting to Active Sessions";
       navigate("/User/UserTrainerManagement?tab=User-Active-Session");
     } catch (error) {
@@ -199,47 +193,50 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
 
   // New onSubmit handler that bypasses Stripe payments
   const onSubmitWithoutPayment = async (data) => {
-    // 1. Verify user confirmation checkbox
-    if (!isConfirmed) {
-      return Swal.fire(
-        "Warning",
-        "Please confirm before proceeding.",
-        "warning"
-      );
-    }
-
-    // 2. Final “Are you sure?” prompt
-    const { isConfirmed: proceed } = await Swal.fire({
-      title: "Proceed with booking?",
-      text: "Do you really want to confirm this booking?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Yes, proceed",
-      cancelButtonText: "Cancel",
-    });
-
-    if (!proceed) return;
-
-    // 3. Validate total price
-    const totalPrice = Number(TrainerBookingRequestByIDData?.totalPrice);
-
-    if (isNaN(totalPrice)) {
-      return Swal.fire("Error", "Invalid total price.", "error");
-    }
-
-    // 4. Generate a dummy payment ID
-    const now = new Date();
-
-    const dateString = now.toISOString().slice(0, 10).replace(/-/g, "");
-
-    const dummyPaymentID = `DUMMY_${dateString}_${Math.floor(
-      Math.random() * 1e6
-    )}_Free`;
-
+    let stepName = "Initial Setup";
     setIsProcessing(true);
 
     try {
-      // 5. Mark booking as accepted (paid with dummy ID)
+      // 1. Verify user confirmation checkbox
+      stepName = "User Confirmation Checkbox Validation";
+      if (!isConfirmed) {
+        return Swal.fire(
+          "Warning",
+          "Please confirm before proceeding.",
+          "warning"
+        );
+      }
+
+      // 2. Final confirmation modal
+      stepName = "Final User Prompt";
+      const { isConfirmed: proceed } = await Swal.fire({
+        title: "Proceed with booking?",
+        text: "Do you really want to confirm this booking?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, proceed",
+        cancelButtonText: "Cancel",
+      });
+      if (!proceed) return;
+
+      // 3. Validate total price
+      stepName = "Validating Total Price";
+      const totalPrice = Number(TrainerBookingRequestByIDData?.totalPrice);
+      if (isNaN(totalPrice)) {
+        throw new Error("Total price is invalid or missing.");
+      }
+
+      // 4. Generate dummy payment ID
+      stepName = "Generating Dummy Payment ID";
+      const now = new Date();
+      const dateString = now.toISOString().slice(0, 10).replace(/-/g, "");
+      const dummyPaymentID = `DUMMY_${dateString}_${Math.floor(
+        Math.random() * 1e6
+      )}_Free`;
+      const formattedDateAndTime = now.toISOString();
+
+      // 5. Mark booking as accepted
+      stepName = "Marking Booking as Accepted";
       const acceptPayload = {
         ...TrainerBookingRequestByIDData,
         paid: true,
@@ -252,6 +249,8 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         acceptPayload
       );
 
+      // 6. Fetch associated session information
+      stepName = "Fetching Session Details";
       const sessionQuery = updatedBooking.sessions
         .map((id) => `ids=${encodeURIComponent(id)}`)
         .join("&");
@@ -260,17 +259,19 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         `/Trainers_Schedule/BasicInfoByID?${sessionQuery}`
       );
 
-      // 6. Record the “payment” on server
+      // 7. Log the free payment on server
+      stepName = "Logging Free Payment";
       await axiosPublic.post("/Trainer_Session_Payment", {
         BookingInfo: updatedBooking,
         sessionInfo,
-        cardHolder: data.cardholderName,
+        cardHolder: data.cardholderName || "N/A",
         paymentMethod: "Free",
         stripePaymentID: dummyPaymentID,
         paymentTime: new Date().toISOString(),
       });
 
-      // 7. Update trainer schedule for accepted booking
+      // 8. Update trainer's schedule
+      stepName = "Updating Trainer Schedule";
       await axiosPublic.patch("/Trainers_Schedule/AcceptBooking", {
         sessionIds: updatedBooking.sessions,
         acceptedAt: formattedDateAndTime,
@@ -278,40 +279,48 @@ const UserTrainerSessionPaymentForm = ({ TrainerBookingRequestByIDData }) => {
         bookerEmail: TrainerBookingRequestByIDData.bookerEmail,
       });
 
-      // 8. Log trainer–student interaction
+      // 9. Log trainer-student interaction
+      stepName = "Logging Trainer-Student History";
       await axiosPublic.post("/Trainer_Student_History", {
         trainerId: TrainerBookingRequestByIDData?.trainerId,
+        trainer: TrainerBookingRequestByIDData?.trainer,
         studentEntry: {
           bookerEmail: TrainerBookingRequestByIDData?.bookerEmail,
           ActiveTime: formattedDateAndTime,
         },
       });
 
-      Swal.fire("Success", "Booking confirmed without payment!", "success");
+      // 10. Notify user of success
+      stepName = "Showing Success Message";
+      await Swal.fire(
+        "Success",
+        "Booking confirmed without payment!",
+        "success"
+      );
 
-      // 9. Clean up original booking request and navigate
+      // 11. Remove original request
+      stepName = "Deleting Original Booking Request";
       await axiosPublic.delete(
         `/Trainer_Booking_Request?id=${TrainerBookingRequestByIDData._id}`
       );
+
+      // 12. Redirect to Active Sessions
+      stepName = "Redirecting to Active Sessions Page";
       navigate("/User/UserTrainerManagement?tab=User-Active-Session");
     } catch (err) {
-      console.error("Booking error:", err);
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.message ||
+        JSON.stringify(err, null, 2) ||
+        "Unknown error occurred";
 
-      let errorMessage = "Something went wrong during booking confirmation.";
-
-      if (err.response?.data?.message) {
-        errorMessage = err.response.data.message;
-      } else if (err.response?.data) {
-        errorMessage = JSON.stringify(err.response.data, null, 2);
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-
-      Swal.fire({
+      await Swal.fire({
         icon: "error",
-        title: "Booking Error",
+        title: `Error at Step: ${stepName}`,
         html: `<pre style="text-align:left; white-space:pre-wrap;">${errorMessage}</pre>`,
       });
+
+      console.error(`❌ Error at "${stepName}":`, err);
     } finally {
       setIsProcessing(false);
     }
@@ -485,6 +494,7 @@ UserTrainerSessionPaymentForm.propTypes = {
     paid: PropTypes.bool.isRequired,
     paidAt: PropTypes.string,
     paymentID: PropTypes.string,
+    trainer: PropTypes.string,
   }).isRequired,
 };
 

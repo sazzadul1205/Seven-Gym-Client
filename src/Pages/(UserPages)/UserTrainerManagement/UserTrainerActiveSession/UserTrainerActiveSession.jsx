@@ -64,15 +64,15 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <div className="text-center pt-5 pb-2">
-        <h3 className="text-xl font-semibold">My Active Sessions</h3>
+      <div className="text-center pt-2">
+        <h3 className="text-xl font-semibold pb-1">My Active Sessions</h3>
+        <div className="mx-auto bg-black w-1/3 p-[1px]" />
       </div>
 
       {/* Divider */}
-      <div className="mx-auto bg-black w-1/3 p-[1px]" />
 
       {/* Weekly Session Section */}
-      <div className="py-2">
+      <div>
         {/* Section Title */}
         <h3 className="bg-[#A1662F] text-white flex items-center gap-2 text-lg font-semibold px-5 py-2 ">
           <FaDotCircle />
@@ -193,7 +193,7 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
       </div>
 
       {/* Attending Trainer */}
-      <div className="py-3">
+      <div>
         {/* Section Header */}
         <h3 className="bg-[#A1662F] text-white text-lg border border-white font-semibold text-center py-2">
           Attending Trainer Table
@@ -278,10 +278,28 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
                       </td>
 
                       {/* Booking Status */}
-                      <td>{b.status}</td>
+                      <td
+                        className={
+                          b.status === "Accepted"
+                            ? "text-green-600 font-bold"
+                            : b.status === "Pending"
+                            ? "text-yellow-600"
+                            : "text-red-600"
+                        }
+                      >
+                        {b.status}
+                      </td>
 
                       {/* Payment Status */}
-                      <td>{b.paid ? "Paid" : "Unpaid"}</td>
+                      <td
+                        className={
+                          b.paid
+                            ? "text-green-600 font-semibold"
+                            : "text-red-600 font-semibold"
+                        }
+                      >
+                        {b.paid ? "Paid" : "Unpaid"}
+                      </td>
 
                       {/* View Details Button */}
                       <td>

@@ -72,11 +72,11 @@ const UserTrainerSessionPayment = () => {
 
   return (
     <div
-      className="min-h-screen bg-fixed bg-cover bg-center"
+      className="min-h-screen items-center bg-fixed bg-cover bg-center"
       style={{ backgroundImage: `url(${UserTrainerManagementBackground})` }}
     >
       <div className="bg-gradient-to-b from-gray-500/50 to-gray-800/50 min-h-screen">
-        <div className="mx-auto max-w-7xl text-black">
+        <div className="mx-auto max-w-7xl items-center text-black">
           {/* Booking Details and Payment Info */}
           <div className="flex flex-col sm:flex-row py-5 gap-5">
             {/* Details */}
@@ -183,7 +183,7 @@ const UserTrainerSessionPayment = () => {
           </div>
 
           {/* Sessions Table */}
-          <div className="bg-white px-5 ">
+          <div className="bg-white px-5 py-3 rounded-2xl ">
             <BookedSessionTable ScheduleByIDData={ScheduleByIDData} />
           </div>
         </div>

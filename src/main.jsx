@@ -192,3 +192,43 @@ createRoot(document.getElementById("root")).render(
     </AuthProvider>
   </StrictMode>
 );
+
+// const FAKE_DATE_STRING = "2025-05-23"; // 👈 your custom date (YYYY-MM-DD)
+
+// (function overrideDateWithRealTime() {
+//   const OriginalDate = Date;
+
+//   class MixedDate extends OriginalDate {
+//     constructor(...args) {
+//       if (args.length === 0) {
+//         const now = new OriginalDate();
+//         const fakeDateTimeString = `${FAKE_DATE_STRING}T${now.toTimeString().split(" ")[0]}`;
+//         return new OriginalDate(fakeDateTimeString);
+//       }
+//       return new OriginalDate(...args);
+//     }
+
+//     static now() {
+//       const now = new OriginalDate();
+//       const fakeDateTimeString = `${FAKE_DATE_STRING}T${now.toTimeString().split(" ")[0]}`;
+//       return new OriginalDate(fakeDateTimeString).getTime();
+//     }
+
+//     static parse(...args) {
+//       return OriginalDate.parse(...args);
+//     }
+
+//     static UTC(...args) {
+//       return OriginalDate.UTC(...args);
+//     }
+//   }
+
+//   window.Date = MixedDate;
+
+//   console.warn(
+//     "📆 Date is now faked to:",
+//     new Date().toString(),
+//     "| Date Part:", FAKE_DATE_STRING,
+//     "| Time Part: Real system time"
+//   );
+// })();

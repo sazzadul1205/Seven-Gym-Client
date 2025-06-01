@@ -45,7 +45,6 @@ const TrainerScheduleDisplay = ({
             className="bg-gradient-to-bl from-gray-100 to-gray-300 border border-gray-400 p-4 rounded-lg shadow"
           >
             {/* Day Header */}
-
             <h3 className="text-xl font-semibold text-black">{day}</h3>
 
             {/* Desktop View */}

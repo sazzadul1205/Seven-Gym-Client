@@ -28,36 +28,31 @@ const TrainerTierCard = ({ tier = "bronze", baseEarnings = 0 }) => {
     bronze: {
       label: "Bronze",
       discount: 0.4,
-      colorClasses:
-        "bg-linear-to-bl hover:bg-linear-to-tr from-orange-600 to-orange-500 text-white ring-2 ring-orange-800",
+      colorClasses: "bg-orange-600 text-white ring-2 ring-orange-300 shadow-lg",
       borderClass: "border-orange-600",
     },
     silver: {
       label: "Silver",
       discount: 0.35,
-      colorClasses:
-        "bg-linear-to-bl hover:bg-linear-to-tr from-gray-400 to-gray-500 text-black ring-2 ring-gray-800",
+      colorClasses: "bg-gray-400 text-white ring-2 ring-gray-200 shadow-lg",
       borderClass: "border-gray-400",
     },
     gold: {
       label: "Gold",
       discount: 0.3,
-      colorClasses:
-        "bg-linear-to-bl hover:bg-linear-to-tr from-yellow-500 to-yellow-400 text-black ring-2 ring-yellow-800",
+      colorClasses: "bg-yellow-500 text-white ring-2 ring-yellow-300 shadow-lg",
       borderClass: "border-yellow-300",
     },
     diamond: {
       label: "Diamond",
       discount: 0.25,
-      colorClasses:
-        "bg-linear-to-bl hover:bg-linear-to-tr from-blue-600 to-blue-500 text-black ring-2 ring-blue-800",
+      colorClasses: "bg-blue-600 text-white ring-2 ring-blue-300 shadow-lg",
       borderClass: "border-blue-300",
     },
     platinum: {
       label: "Platinum",
       discount: 0.2,
-      colorClasses:
-        "bg-linear-to-bl hover:bg-linear-to-tr from-gray-800 to-gray-700 text-black ring-2 ring-gray-800",
+      colorClasses: "bg-gray-800 text-white ring-2 ring-gray-500 shadow-lg",
       borderClass: "border-gray-500",
     },
   };

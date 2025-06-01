@@ -257,8 +257,8 @@ const TrainerScheduleEditModal = ({
 
         {/* Class Information Section */}
         {showClassInfo && (
-          <div className="p-2 md:p-4 transition-opacity duration-300 ease-in-out">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-1 md:pt-2 transition-opacity duration-300 ease-in-out">
+            <div className="grid grid-cols-1 md:grid-cols-2 pt-2 border-t-4 border-gray-500 gap-4">
               {filteredClasses.map((item, index) => {
                 // Extract minimum price from "Paid, $50 - $100 per session"
                 let minPrice = 0;

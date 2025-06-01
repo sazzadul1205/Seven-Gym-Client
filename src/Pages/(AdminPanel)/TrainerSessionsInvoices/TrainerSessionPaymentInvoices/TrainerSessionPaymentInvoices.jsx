@@ -14,7 +14,7 @@ import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerB
 // Import Modal
 import UserSessionPaymentInvoiceModal from "../../../(UserPages)/UserTrainerManagement/UserSessionInvoice/UserSessionPaymentInvoiceModal/UserSessionPaymentInvoiceModal";
 
-const TrainerSessionPaymentInvoice = ({ TrainerSessionPaymentData }) => {
+const TrainerSessionPaymentInvoices = ({ TrainerSessionPaymentData }) => {
   const modalPaymentInvoiceRef = useRef(null);
 
   // State for selected invoice (for the modal)
@@ -149,7 +149,7 @@ const TrainerSessionPaymentInvoice = ({ TrainerSessionPaymentData }) => {
 };
 
 // Prop Validation
-TrainerSessionPaymentInvoice.propTypes = {
+TrainerSessionPaymentInvoices.propTypes = {
   TrainerSessionPaymentData: PropTypes.arrayOf(
     PropTypes.shape({
       _id: PropTypes.string.isRequired,
@@ -167,4 +167,4 @@ TrainerSessionPaymentInvoice.propTypes = {
   ).isRequired,
 };
 
-export default TrainerSessionPaymentInvoice;
+export default TrainerSessionPaymentInvoices;

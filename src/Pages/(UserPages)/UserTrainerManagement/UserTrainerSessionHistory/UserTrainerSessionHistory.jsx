@@ -97,10 +97,12 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                       <td className="px-4 py-2"># {index + 1}</td>
 
                       {/* Table : Trainer */}
-                      <BookedTrainerBasicInfo
-                        trainerID={booking.trainerId}
-                        py={3}
-                      />
+                      <td>
+                        <BookedTrainerBasicInfo
+                          trainerID={booking.trainerId}
+                          py={3}
+                        />
+                      </td>
 
                       {/* Table : Booked At */}
                       <td className="px-4 py-2">
@@ -116,13 +118,11 @@ const UserTrainerSessionHistory = ({ TrainersBookingHistoryData }) => {
                       </td>
 
                       {/* Table : Status */}
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-2 font-semibold">
                         {booking.status === "Ended" ? (
-                          <p className="text-green-500 font-semibold">
-                            Completed
-                          </p>
+                          <span className="text-green-600">Completed</span>
                         ) : (
-                          booking.status
+                          <span className="text-red-600">{booking.status}</span>
                         )}
                       </td>
 

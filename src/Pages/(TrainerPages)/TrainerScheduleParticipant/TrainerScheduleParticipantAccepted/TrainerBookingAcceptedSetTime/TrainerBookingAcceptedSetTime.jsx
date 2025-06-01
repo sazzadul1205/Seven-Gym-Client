@@ -18,92 +18,93 @@ const TrainerBookingAcceptedSetTime = ({
 }) => {
   const axiosPublic = useAxiosPublic();
 
-  // State to manage selected start date and calculated end date
-  const [selectedDate, setSelectedDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Extract duration in weeks; default to 0 if not available
   const durationWeeks = selectedAcceptedBooking?.durationWeeks || 0;
 
-  // Handle date input change and auto-calculate end date
+  // Handle date input and calculate end date
   const handleDateChange = (e) => {
     const start = e.target.value;
     setSelectedDate(start);
     setEndDate(start && durationWeeks > 0 ? calculateEndDate(start) : "");
+    setErrorMessage(""); // Clear error if user selects a new date
   };
 
-  // Calculate the end date based on the selected start date and duration
   const calculateEndDate = (start) => {
     const startDateObj = new Date(start);
     const resultDate = new Date(startDateObj);
     resultDate.setDate(startDateObj.getDate() + durationWeeks * 7);
-    return resultDate.toISOString().split("T")[0]; // Format: yyyy-mm-dd
+    return resultDate.toISOString().split("T")[0];
   };
 
-  // Handle start date submission and update both booking and participant records
   const handleSubmit = async () => {
-    // Guard clause: Ensure a date is selected
     if (!selectedDate) {
-      return Swal.fire("Error", "Please select a start date", "error");
+      setErrorMessage("⚠ Please select a start date before submitting.");
+      return;
     }
 
-    // Payload to update the booking with the selected start date
-    const payload = {
-      startAt: selectedDate,
-    };
-
-    setLoading(true); // Begin loading state
+    setLoading(true);
 
     try {
-      // 1️⃣ Update the accepted booking with the start date
+      const payload = { startAt: selectedDate };
+
+      // 1️⃣ Update the accepted booking
       const response = await axiosPublic.put(
         `/Trainer_Booking_Accepted/Update/${selectedAcceptedBooking._id}`,
         payload
       );
 
-      // Proceed only if booking update was successful
       if (response.status === 200) {
-        // 2️⃣ Prepare payload for updating participant's schedule
+        // 2️⃣ Update participant session schedule
         const participantPayload = {
           startAt: selectedDate,
           stripePaymentID:
             selectedAcceptedBooking?.stripePaymentID ||
-            selectedAcceptedBooking?.paymentID, // Use fallback if necessary
+            selectedAcceptedBooking?.paymentID,
         };
 
-        // Attempt to update the participant's schedule
         const participantResponse = await axiosPublic.post(
           "/Trainers_Schedule/UpdateParticipant",
           participantPayload
         );
 
         if (participantResponse.status === 200) {
-          // ✅ Both updates successful
-          Swal.fire("Success", "Start date set successfully!", "success");
-          handleClose(); // Close modal/dialog
-          refetch(); // Refresh parent data view
+          setErrorMessage("");
+          handleClose();
+
+          // ✅ Toast success notification
+          await Swal.fire({
+            icon: "success",
+            title: "Start Date Set",
+            text: "The booking start date was successfully saved and synced.",
+            timer: 2500,
+            showConfirmButton: false,
+          });
+
+          refetch();
         } else {
-          // ⚠️ Booking updated, but participant record was not found
-          Swal.fire(
-            "Warning",
-            "Start date updated, but participant not found.",
-            "warning"
+          setErrorMessage(
+            "⚠ Start date saved, but participant session was not updated."
           );
         }
       }
     } catch (error) {
       console.error("Failed to update booking or participant:", error);
-      Swal.fire("Error", "Failed to update booking or participant", "error");
+      setErrorMessage(
+        "❌ Failed to update booking or participant. Please try again."
+      );
     } finally {
-      setLoading(false); // End loading state
+      setLoading(false);
     }
   };
 
-  // Close modal and reset state
   const handleClose = async () => {
     setSelectedDate("");
     setEndDate("");
+    setErrorMessage("");
     await closeClockModal();
   };
 
@@ -117,6 +118,13 @@ const TrainerBookingAcceptedSetTime = ({
           onClick={handleClose}
         />
       </div>
+
+      {/* Error message if any */}
+      {errorMessage && (
+        <div className="text-red-600 text-sm px-5 pt-3 pb-0 font-medium">
+          {errorMessage}
+        </div>
+      )}
 
       {/* Modal Content */}
       <div className="p-5 space-y-5">

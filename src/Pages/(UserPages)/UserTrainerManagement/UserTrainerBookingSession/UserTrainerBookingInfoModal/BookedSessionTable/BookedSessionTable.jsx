@@ -6,7 +6,7 @@ import { formatTimeTo12Hour } from "../../../../../../Utility/formatTimeTo12Hour
 
 const BookedSessionTable = ({ ScheduleByIDData }) => {
   return (
-    <div className="px-1 md:px-5" >
+    <div className="" >
       {/* Title */}
       <h3 className="text-lg font-bold p-2">Session Bookings</h3>
 
