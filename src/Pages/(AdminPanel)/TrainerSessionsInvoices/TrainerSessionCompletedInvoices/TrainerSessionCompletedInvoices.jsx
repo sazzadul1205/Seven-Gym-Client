@@ -14,23 +14,24 @@ import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerB
 // Import Modal
 import UserSessionPaymentInvoiceModal from "../../../(UserPages)/UserTrainerManagement/UserSessionInvoice/UserSessionPaymentInvoiceModal/UserSessionPaymentInvoiceModal";
 
-const TrainerSessionPaymentInvoices = ({ TrainerSessionPaymentData }) => {
-  const modalPaymentInvoiceRef = useRef(null);
+const TrainerSessionCompletedInvoices = ({ TrainerSessionCompletedData }) => {
+  const modalCompletedInvoiceRef = useRef(null);
 
   // State for selected invoice (for the modal)
-  const [selectedPaymentInvoice, setSelectedPaymentInvoice] = useState(null);
+  const [selectedCompletedInvoice, setSelectedCompletedInvoice] =
+    useState(null);
 
   // Close modal and reset selected invoice
-  const closePaymentInvoiceModal = () => {
-    modalPaymentInvoiceRef.current?.close();
-    setSelectedPaymentInvoice(null);
+  const closeActiveCompletedModal = () => {
+    modalCompletedInvoiceRef.current?.close();
+    setSelectedCompletedInvoice(null);
   };
   return (
     <>
       {/* Page Header */}
       <div className="bg-gray-400 py-2">
         <h3 className="font-semibold text-white text-center text-lg">
-          Trainer Sessions Payment&apos;s Invoices
+          Completed Trainer Session&apos;s Invoices
         </h3>
       </div>
 
@@ -55,7 +56,7 @@ const TrainerSessionPaymentInvoices = ({ TrainerSessionPaymentData }) => {
 
           {/* Table Body */}
           <tbody>
-            {TrainerSessionPaymentData?.map((item, index) => (
+            {TrainerSessionCompletedData?.map((item, index) => (
               <tr key={item._id} className="hover:bg-gray-50">
                 {/* Serial Number */}
                 <td className="px-4 py-2 border">{index + 1}</td>
@@ -116,8 +117,8 @@ const TrainerSessionPaymentInvoices = ({ TrainerSessionPaymentData }) => {
                 <td className="border px-4 py-2">
                   <button
                     onClick={() => {
-                      setSelectedPaymentInvoice(item);
-                      modalPaymentInvoiceRef.current?.showModal();
+                      setSelectedCompletedInvoice(item);
+                      modalCompletedInvoiceRef.current?.showModal();
                     }}
                     className="border-2 border-gray-500 bg-gray-100 hover:bg-gray-200 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform"
                     id={`view-details-btn-${item._id}`}
@@ -138,10 +139,10 @@ const TrainerSessionPaymentInvoices = ({ TrainerSessionPaymentData }) => {
       </div>
 
       {/* Modal for Invoice */}
-      <dialog ref={modalPaymentInvoiceRef} className="modal">
+      <dialog ref={modalCompletedInvoiceRef} className="modal">
         <UserSessionPaymentInvoiceModal
-          closeModal={closePaymentInvoiceModal}
-          selectedPaymentInvoice={selectedPaymentInvoice}
+          closeModal={closeActiveCompletedModal}
+          selectedPaymentInvoice={selectedCompletedInvoice}
         />
       </dialog>
     </>
@@ -149,22 +150,24 @@ const TrainerSessionPaymentInvoices = ({ TrainerSessionPaymentData }) => {
 };
 
 // Prop Validation
-TrainerSessionPaymentInvoices.propTypes = {
-  TrainerSessionPaymentData: PropTypes.arrayOf(
+TrainerSessionCompletedInvoices.propTypes = {
+  TrainerSessionCompletedData: PropTypes.arrayOf(
     PropTypes.shape({
       _id: PropTypes.string.isRequired,
       cardHolder: PropTypes.string,
-      paymentTime: PropTypes.string.isRequired,
-      stripePaymentID: PropTypes.string.isRequired,
+      paymentMethod: PropTypes.string,
+      stripePaymentID: PropTypes.string,
+      paymentTime: PropTypes.string,
       BookingInfo: PropTypes.shape({
-        bookerEmail: PropTypes.string.isRequired,
-        trainerId: PropTypes.string.isRequired,
-        totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-          .isRequired,
-        durationWeeks: PropTypes.number.isRequired,
-      }).isRequired,
+        bookerEmail: PropTypes.string,
+        trainer: PropTypes.string,
+        trainerId: PropTypes.string,
+        totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        durationWeeks: PropTypes.number,
+        paidAt: PropTypes.string,
+      }),
     })
-  ).isRequired,
+  ),
 };
 
-export default TrainerSessionPaymentInvoices;
+export default TrainerSessionCompletedInvoices;

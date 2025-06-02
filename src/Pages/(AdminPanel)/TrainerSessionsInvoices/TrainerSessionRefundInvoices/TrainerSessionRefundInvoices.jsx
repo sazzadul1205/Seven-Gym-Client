@@ -31,7 +31,7 @@ const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
       {/* Page Header */}
       <div className="bg-gray-400 py-2">
         <h3 className="font-semibold text-white text-center text-lg">
-          Trainer Sessions Refund&apos;s
+          Trainer Sessions Refund&apos;s Invoices
         </h3>
       </div>
 
