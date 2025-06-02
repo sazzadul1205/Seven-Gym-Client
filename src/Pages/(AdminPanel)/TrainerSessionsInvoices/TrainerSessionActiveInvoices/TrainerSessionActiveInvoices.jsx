@@ -15,67 +15,114 @@ import UserSessionPaymentInvoiceModal from "../../../(UserPages)/UserTrainerMana
 import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 import { FaFileInvoiceDollar, FaSearch } from "react-icons/fa";
 
+// Helper to generate Month-Year options
+const generateMonthYearOptions = (data) => {
+  const monthYearSet = new Set();
+
+  data.forEach((item) => {
+    const date = new Date(item.paymentTime);
+    if (!isNaN(date)) {
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      const value = `${month}-${year}`;
+      const label = `${date.toLocaleString("default", {
+        month: "long",
+      })}, ${year}`;
+      monthYearSet.add(JSON.stringify({ value, label }));
+    }
+  });
+
+  // Convert Set of JSON strings back to sorted array of objects
+  return Array.from(monthYearSet)
+    .map((item) => JSON.parse(item))
+    .sort((a, b) => {
+      const [am, ay] = a.value.split("-").map(Number);
+      const [bm, by] = b.value.split("-").map(Number);
+      return ay === by ? am - bm : ay - by;
+    });
+};
+
 const TrainerSessionActiveInvoices = ({ TrainerSessionActiveData }) => {
+  // Ref to control the modal for viewing an active invoice
   const modalActiveInvoiceRef = useRef(null);
 
-  // State for selected invoice (for the modal)
+  // State to store the selected invoice for the modal
   const [selectedActiveInvoice, setSelectedActiveInvoice] = useState(null);
 
+  // Search filters for user name, trainer name, and payment ID
   const [userSearchTerm, setUserSearchTerm] = useState("");
   const [trainerSearchTerm, setTrainerSearchTerm] = useState("");
   const [paymentIdSearchTerm, setPaymentIdSearchTerm] = useState("");
 
-  // Cache to store user info for quicker lookup
+  // Dropdown filter for selected month and year (e.g., "03-2025")
+  const [selectedMonthYear, setSelectedMonthYear] = useState("");
+
+  // Cache to store loaded user data by email for reuse
   const [userInfoCache, setUserInfoCache] = useState({});
 
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState(1); // Current page number
-  const itemsPerPage = 10; // Number of items to display per page
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Number of rows per page
 
-  // Close modal and reset selected invoice
+  // Function to close the modal and clear the selected invoice
   const closeActiveInvoiceModal = () => {
     modalActiveInvoiceRef.current?.close();
     setSelectedActiveInvoice(null);
   };
 
-  // Normalize search terms for case-insensitive comparison
+  // Normalize search input strings for case-insensitive matching
   const normalizedUserSearch = userSearchTerm.trim().toLowerCase();
   const normalizedTrainerSearch = trainerSearchTerm.trim().toLowerCase();
   const normalizedPaymentIdSearch = paymentIdSearchTerm.trim().toLowerCase();
 
-  // Filter data based on search terms
+  // Filtered data based on search input and month-year selection
   const filteredData = useMemo(() => {
     return TrainerSessionActiveData.filter((item) => {
-      const user = userInfoCache[item?.BookingInfo?.bookerEmail];
+      const booking = item?.BookingInfo;
+
+      // Get cached user info (if available)
+      const user = userInfoCache[booking?.bookerEmail];
       const userFullName = user?.fullName?.toLowerCase();
-      const trainerName = item?.BookingInfo?.trainer?.toLowerCase();
+      const trainerName = booking?.trainer?.toLowerCase();
       const paymentId = item?.stripePaymentID?.toLowerCase();
 
+      // Apply search filters
       const matchesUser =
         !normalizedUserSearch || userFullName?.includes(normalizedUserSearch);
-
       const matchesTrainer =
         !normalizedTrainerSearch ||
         (trainerName && trainerName.includes(normalizedTrainerSearch));
-
       const matchesPaymentId =
         !normalizedPaymentIdSearch ||
         (paymentId && paymentId.includes(normalizedPaymentIdSearch));
 
-      return matchesUser && matchesTrainer && matchesPaymentId;
+      // Extract month and year from paymentTime for dropdown filter
+      const paidDate = new Date(item.paymentTime);
+      const itemMonth = String(paidDate.getMonth() + 1).padStart(2, "0"); // "03"
+      const itemYear = String(paidDate.getFullYear()); // "2025"
+      const itemMonthYear = `${itemMonth}-${itemYear}`; // "03-2025"
+
+      const matchesMonthYear =
+        !selectedMonthYear || itemMonthYear === selectedMonthYear;
+
+      // Return true if all filters match
+      return (
+        matchesUser && matchesTrainer && matchesPaymentId && matchesMonthYear
+      );
     });
   }, [
     TrainerSessionActiveData,
     normalizedUserSearch,
     normalizedTrainerSearch,
     normalizedPaymentIdSearch,
+    selectedMonthYear,
     userInfoCache,
   ]);
 
-  // Calculate total number of pages based on filtered data
+  // Calculate total pages based on filtered data
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
-  // Slice data to get items for the current page
+  // Slice data for current page
   const currentData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -90,57 +137,78 @@ const TrainerSessionActiveInvoices = ({ TrainerSessionActiveData }) => {
         </h3>
       </div>
 
-      {/* Filter */}
+      {/* Filters */}
       <div className="flex flex-wrap justify-center gap-4 w-full p-4 bg-gray-400 border border-t-white">
         {/* Search by User Name */}
-        <div className="flex flex-col flex-1 max-w-[400px]">
+        <div className="flex flex-col flex-1 max-w-[300px]">
           <label className="text-sm font-semibold text-white mb-1">
             Search by User Name
           </label>
-          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm">
             <FaSearch className="h-4 w-4 text-gray-500" />
             <input
               type="text"
               placeholder="Search user..."
               value={userSearchTerm}
               onChange={(e) => setUserSearchTerm(e.target.value)}
-              className="w-full outline-none text-gray-700 placeholder-gray-400 bg-transparent"
+              className="w-full outline-none text-gray-700 bg-transparent"
             />
           </div>
         </div>
 
         {/* Search by Trainer Name */}
-        <div className="flex flex-col flex-1 max-w-[400px]">
+        <div className="flex flex-col flex-1 max-w-[300px]">
           <label className="text-sm font-semibold text-white mb-1">
             Search by Trainer Name
           </label>
-          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm">
             <FaSearch className="h-4 w-4 text-gray-500" />
             <input
               type="text"
               placeholder="Search trainer..."
               value={trainerSearchTerm}
               onChange={(e) => setTrainerSearchTerm(e.target.value)}
-              className="w-full outline-none text-gray-700 placeholder-gray-400 bg-transparent"
+              className="w-full outline-none text-gray-700 bg-transparent"
             />
           </div>
         </div>
 
         {/* Search by Payment ID */}
-        <div className="flex flex-col flex-1 max-w-[400px]">
+        <div className="flex flex-col flex-1 max-w-[300px]">
           <label className="text-sm font-semibold text-white mb-1">
             Search by Payment ID
           </label>
-          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm">
             <FaSearch className="h-4 w-4 text-gray-500" />
             <input
               type="text"
               placeholder="Search payment ID..."
               value={paymentIdSearchTerm}
               onChange={(e) => setPaymentIdSearchTerm(e.target.value)}
-              className="w-full outline-none text-gray-700 placeholder-gray-400 bg-transparent"
+              className="w-full outline-none text-gray-700 bg-transparent"
             />
           </div>
+        </div>
+
+        {/* Month-Year Filter */}
+        <div className="flex flex-col flex-1 max-w-[250px]">
+          <label className="text-sm font-semibold text-white mb-1">
+            Filter by Month & Year
+          </label>
+          <select
+            value={selectedMonthYear}
+            onChange={(e) => setSelectedMonthYear(e.target.value)}
+            className="bg-white border border-gray-300 rounded-md px-4 py-2 text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All</option>
+            {generateMonthYearOptions(TrainerSessionActiveData).map(
+              (option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              )
+            )}
+          </select>
         </div>
       </div>
 

@@ -90,6 +90,11 @@ const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
     currentPage * itemsPerPage
   );
 
+  console.log(
+    "Trainer Session Refund Data (Example) :",
+    TrainerSessionRefundData[0]
+  );
+
   return (
     <>
       <div className="bg-gray-400 py-2">
@@ -245,9 +250,9 @@ const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
                           : `$ ${item.PaymentRefund.refundAmount} (${info.RefundPercentage})`}
                       </td>
 
-                      {/* Paid At */}
+                      {/* Refund At */}
                       <td className="px-4 py-2 border">
-                        {new Date(info?.paidAt).toLocaleString("en-US", {
+                        {new Date(info?.refundTime).toLocaleString("en-US", {
                           dateStyle: "medium",
                           timeStyle: "short",
                         })}
