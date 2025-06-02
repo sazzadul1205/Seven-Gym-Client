@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
 
 // import Icons
-import { FaFileInvoiceDollar } from "react-icons/fa";
+import { FaFileInvoiceDollar, FaSearch } from "react-icons/fa";
 import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
 // Import Basic User Info
@@ -79,19 +79,7 @@ const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
         <div className="flex flex-col flex-1 max-w-[500px]">
           <label className="text-sm text-white mb-1">Search by Email</label>
           <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
-            <svg
-              className="h-4 w-4 text-gray-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-4.35-4.35M15 11a4 4 0 11-8 0 4 4 0 018 0z"
-              />
-            </svg>
+            <FaSearch className="h-4 w-4 text-gray-500" />
             <input
               type="text"
               placeholder="Search email..."
@@ -111,19 +99,7 @@ const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
             Search by Linked Payment
           </label>
           <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
-            <svg
-              className="h-4 w-4 text-gray-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-4.35-4.35M15 11a4 4 0 11-8 0 4 4 0 018 0z"
-              />
-            </svg>
+            <FaSearch className="h-4 w-4 text-gray-500" />
             <input
               type="text"
               placeholder="Search payment ID..."
