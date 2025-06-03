@@ -5,6 +5,7 @@ import TrainerSessionActiveInvoices from "./TrainerSessionActiveInvoices/Trainer
 import TrainerSessionCompletedInvoices from "./TrainerSessionCompletedInvoices/TrainerSessionCompletedInvoices";
 import TrainerSessionPaymentInvoices from "./TrainerSessionPaymentInvoices/TrainerSessionPaymentInvoices";
 import TrainerSessionRefundInvoices from "./TrainerSessionRefundInvoices/TrainerSessionRefundInvoices";
+import TrainerSessionChart from "./TrainerSessionChart/TrainerSessionChart";
 
 const TABS = [
   { key: "active", label: "Active Invoices" },
@@ -27,23 +28,6 @@ const TrainerSessionsInvoices = ({
 }) => {
   const [activeTab, setActiveTab] = useState("active");
   const [isLoading, setIsLoading] = useState(false);
-
-  console.log(
-    "Trainer Session Active Status Data",
-    TrainerSessionActiveStatusData
-  );
-  console.log(
-    "Trainer Session Refund Status Data",
-    TrainerSessionRefundStatusData
-  );
-  console.log(
-    "Trainer Session Payment Status Data",
-    TrainerSessionPaymentStatusData
-  );
-  console.log(
-    "Trainer Session Completed Status Data",
-    TrainerSessionCompletedStatusData
-  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -84,6 +68,13 @@ const TrainerSessionsInvoices = ({
 
   return (
     <div className="text-black space-y-1 pb-5">
+      <TrainerSessionChart
+        TrainerSessionActiveStatusData={TrainerSessionActiveStatusData}
+        TrainerSessionRefundStatusData={TrainerSessionRefundStatusData}
+        TrainerSessionPaymentStatusData={TrainerSessionPaymentStatusData}
+        TrainerSessionCompletedStatusData={TrainerSessionCompletedStatusData}
+      />
+
       {/* Tab Buttons */}
       <div className="flex gap-2 border-b">
         {TABS.map((tab) => (

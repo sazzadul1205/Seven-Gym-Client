@@ -55,8 +55,8 @@ const generateAllDays = (year, month) => {
 };
 
 const TierUpgradeChart = ({
-  DailyTierUpgradePaymentData,
-  DailyTierUpgradeRefundData,
+  DailyTierUpgradePaymentData = [],
+  DailyTierUpgradeRefundData = [],
 }) => {
   // Memoized merge of payment and refund data by month for efficient re-renders
   const mergedDataByMonth = useMemo(() => {
@@ -152,13 +152,13 @@ const TierUpgradeChart = ({
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-10 bg-gray-200/20">
       {/* Header and month selector */}
       <div className="flex bg-gray-400 justify-between items-center mb-4 px-5 py-2">
         <h3 className="font-semibold text-white text-center text-lg">
           {monthLabel} - Tier Upgrade Summary
         </h3>
-        <div className="flex flex-col" >
+        <div className="flex flex-col">
           <label className="text-white">Select Month</label>
           <select
             className="border rounded min-w-[250px] bg-white hover:cursor-pointer px-2 py-1"
@@ -184,56 +184,52 @@ const TierUpgradeChart = ({
       </div>
 
       {/* Line Chart for revenue and refunded amounts */}
-      <div className="mb-6 px-5">
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={selectedData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="timestamp"
-              type="number"
-              domain={["dataMin", "dataMax"]}
-              tickFormatter={xAxisTickFormatter}
-              scale="time"
-            />
-            <YAxis />
-            <Tooltip labelFormatter={tooltipLabelFormatter} />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="totalRevenue"
-              stroke="#00C49F"
-              name="Revenue"
-            />
-            <Line
-              type="monotone"
-              dataKey="totalRefunded"
-              stroke="#FF8042"
-              name="Refunded"
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={selectedData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="timestamp"
+            type="number"
+            domain={["dataMin", "dataMax"]}
+            tickFormatter={xAxisTickFormatter}
+            scale="time"
+          />
+          <YAxis />
+          <Tooltip labelFormatter={tooltipLabelFormatter} />
+          <Legend />
+          <Line
+            type="monotone"
+            dataKey="totalRevenue"
+            stroke="#00C49F"
+            name="Revenue"
+          />
+          <Line
+            type="monotone"
+            dataKey="totalRefunded"
+            stroke="#FF8042"
+            name="Refunded"
+          />
+        </LineChart>
+      </ResponsiveContainer>
 
       {/* Bar Chart for payment and refund counts */}
-      <div>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={selectedData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="timestamp"
-              type="number"
-              domain={["dataMin", "dataMax"]}
-              tickFormatter={xAxisTickFormatter}
-              scale="time"
-            />
-            <YAxis />
-            <Tooltip labelFormatter={tooltipLabelFormatter} />
-            <Legend />
-            <Bar dataKey="paymentCount" fill="#8884d8" name="Payment Count" />
-            <Bar dataKey="refundCount" fill="#82ca9d" name="Refund Count" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={selectedData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="timestamp"
+            type="number"
+            domain={["dataMin", "dataMax"]}
+            tickFormatter={xAxisTickFormatter}
+            scale="time"
+          />
+          <YAxis />
+          <Tooltip labelFormatter={tooltipLabelFormatter} />
+          <Legend />
+          <Bar dataKey="paymentCount" fill="#8884d8" name="Payment Count" />
+          <Bar dataKey="refundCount" fill="#82ca9d" name="Refund Count" />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 };
