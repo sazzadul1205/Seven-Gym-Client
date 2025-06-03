@@ -15,6 +15,33 @@ import UserSessionRefundInvoiceModal from "../../../(UserPages)/UserTrainerManag
 import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 import { FaFileInvoiceDollar, FaSearch } from "react-icons/fa";
 
+// Helper to generate Month-Year options
+const generateMonthYearOptions = (data) => {
+  const monthYearSet = new Set();
+
+  data.forEach((item) => {
+    const date = new Date(item.refundTime);
+    if (!isNaN(date)) {
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      const value = `${month}-${year}`;
+      const label = `${date.toLocaleString("default", {
+        month: "long",
+      })}, ${year}`;
+      monthYearSet.add(JSON.stringify({ value, label }));
+    }
+  });
+
+  // Convert Set of JSON strings back to sorted array of objects
+  return Array.from(monthYearSet)
+    .map((item) => JSON.parse(item))
+    .sort((a, b) => {
+      const [am, ay] = a.value.split("-").map(Number);
+      const [bm, by] = b.value.split("-").map(Number);
+      return ay === by ? am - bm : ay - by;
+    });
+};
+
 const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
   // Ref for controlling the refund invoice modal
   const modalRefundInvoiceRef = useRef(null);
@@ -26,6 +53,9 @@ const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
   const [userSearchTerm, setUserSearchTerm] = useState("");
   const [trainerSearchTerm, setTrainerSearchTerm] = useState("");
   const [refundIdSearchTerm, setRefundIdSearchTerm] = useState("");
+
+  // Dropdown filter for selected month and year (e.g., "03-2025")
+  const [selectedMonthYear, setSelectedMonthYear] = useState("");
 
   // Cache to store user info to avoid redundant fetches
   const [userInfoCache, setUserInfoCache] = useState({});
@@ -70,14 +100,26 @@ const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
         !normalizedRefundIdSearch ||
         (refundId && refundId.includes(normalizedRefundIdSearch));
 
-      // Return true if all conditions match
-      return matchesUser && matchesTrainer && matchesRefundId;
+      // Extract month and year from refundTime for dropdown filter
+      const paidDate = new Date(item.refundTime);
+      const itemMonth = String(paidDate.getMonth() + 1).padStart(2, "0"); // "03"
+      const itemYear = String(paidDate.getFullYear()); // "2025"
+      const itemMonthYear = `${itemMonth}-${itemYear}`; // "03-2025"
+
+      const matchesMonthYear =
+        !selectedMonthYear || itemMonthYear === selectedMonthYear;
+
+      // Return true if all filters match
+      return (
+        matchesUser && matchesTrainer && matchesRefundId && matchesMonthYear
+      );
     });
   }, [
     TrainerSessionRefundData,
     normalizedUserSearch,
     normalizedTrainerSearch,
     normalizedRefundIdSearch,
+    selectedMonthYear,
     userInfoCache,
   ]);
 
@@ -90,10 +132,7 @@ const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
     currentPage * itemsPerPage
   );
 
-  console.log(
-    "Trainer Session Refund Data (Example) :",
-    TrainerSessionRefundData[0]
-  );
+  console.log(TrainerSessionRefundData[0].refundTime);
 
   return (
     <>
@@ -106,7 +145,7 @@ const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
       {/* Filters */}
       <div className="flex flex-wrap justify-center gap-4 w-full p-4 bg-gray-400 border border-t-white">
         {/* User Name Search */}
-        <div className="flex flex-col flex-1 max-w-[400px]">
+        <div className="flex flex-col flex-1 max-w-[300px]">
           <label className="text-sm font-semibold text-white mb-1">
             Search by User Name
           </label>
@@ -123,7 +162,7 @@ const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
         </div>
 
         {/* Trainer Name Search */}
-        <div className="flex flex-col flex-1 max-w-[400px]">
+        <div className="flex flex-col flex-1 max-w-[300px]">
           <label className="text-sm font-semibold text-white mb-1">
             Search by Trainer Name
           </label>
@@ -140,7 +179,7 @@ const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
         </div>
 
         {/* Refund ID Search */}
-        <div className="flex flex-col flex-1 max-w-[400px]">
+        <div className="flex flex-col flex-1 max-w-[300px]">
           <label className="text-sm font-semibold text-white mb-1">
             Search by Refund ID
           </label>
@@ -154,6 +193,27 @@ const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
               className="w-full outline-none text-gray-700 placeholder-gray-400 bg-transparent"
             />
           </div>
+        </div>
+
+        {/* Month-Year Filter */}
+        <div className="flex flex-col flex-1 max-w-[250px]">
+          <label className="text-sm font-semibold text-white mb-1">
+            Filter by Month & Year
+          </label>
+          <select
+            value={selectedMonthYear}
+            onChange={(e) => setSelectedMonthYear(e.target.value)}
+            className="bg-white border border-gray-300 rounded-md px-4 py-2 text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All</option>
+            {generateMonthYearOptions(TrainerSessionRefundData).map(
+              (option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              )
+            )}
+          </select>
         </div>
       </div>
 
@@ -252,7 +312,7 @@ const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
 
                       {/* Refund At */}
                       <td className="px-4 py-2 border">
-                        {new Date(info?.refundTime).toLocaleString("en-US", {
+                        {new Date(item?.refundTime).toLocaleString("en-US", {
                           dateStyle: "medium",
                           timeStyle: "short",
                         })}

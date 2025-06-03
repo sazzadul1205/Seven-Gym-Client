@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react";
 /* eslint-disable react/prop-types */
 
-import { useEffect, useState } from "react";
 import TrainerSessionActiveInvoices from "./TrainerSessionActiveInvoices/TrainerSessionActiveInvoices";
 import TrainerSessionCompletedInvoices from "./TrainerSessionCompletedInvoices/TrainerSessionCompletedInvoices";
 import TrainerSessionPaymentInvoices from "./TrainerSessionPaymentInvoices/TrainerSessionPaymentInvoices";
@@ -15,59 +15,35 @@ const TABS = [
 
 const TrainerSessionsInvoices = ({
   TrainerSessionRefundData = [],
+  TrainerSessionActiveData = [],
   TrainerSessionPaymentData = [],
+  TrainerSessionCompletedData = [],
+
+  // Status Data
+  TrainerSessionActiveStatusData = [],
+  TrainerSessionRefundStatusData = [],
+  TrainerSessionPaymentStatusData = [],
+  TrainerSessionCompletedStatusData = [],
 }) => {
   const [activeTab, setActiveTab] = useState("active");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Step 1: Get all refunded stripePaymentIDs
-  const refundedIDs = new Set(
-    TrainerSessionRefundData.map(
-      (refund) => refund?.PaymentRefund?.stripePaymentID
-    )
+  console.log(
+    "Trainer Session Active Status Data",
+    TrainerSessionActiveStatusData
   );
-
-  // Step 2: Get all active sessions (non-refunded)
-  const activeSessions = TrainerSessionPaymentData.filter(
-    (payment) => !refundedIDs.has(payment?.stripePaymentID)
+  console.log(
+    "Trainer Session Refund Status Data",
+    TrainerSessionRefundStatusData
   );
-
-  // Step 3: Categorize sessions into completed and ongoing
-  const TrainerSessionCompletedData = [];
-  const TrainerSessionActiveData = [];
-
-  const today = new Date();
-
-  activeSessions.forEach((session) => {
-    const paidAtStr = session?.BookingInfo?.paidAt;
-    const durationWeeks = session?.BookingInfo?.durationWeeks || 0;
-
-    if (!paidAtStr || durationWeeks === 0) {
-      TrainerSessionActiveData.push(session);
-      return;
-    }
-
-    let paidAt;
-
-    // Try to handle both "31-05-2025T07:38" and ISO format "2025-05-31T12:40:36.556Z"
-    if (/^\d{2}-\d{2}-\d{4}T\d{2}:\d{2}$/.test(paidAtStr)) {
-      // Format: DD-MM-YYYYTHH:mm → convert to ISO
-      const [datePart, timePart] = paidAtStr.split("T");
-      const [day, month, year] = datePart.split("-");
-      paidAt = new Date(`${year}-${month}-${day}T${timePart}:00Z`);
-    } else {
-      paidAt = new Date(paidAtStr);
-    }
-
-    const endDate = new Date(paidAt);
-    endDate.setDate(endDate.getDate() + durationWeeks * 7);
-
-    if (endDate < today) {
-      TrainerSessionCompletedData.push(session);
-    } else {
-      TrainerSessionActiveData.push(session);
-    }
-  });
+  console.log(
+    "Trainer Session Payment Status Data",
+    TrainerSessionPaymentStatusData
+  );
+  console.log(
+    "Trainer Session Completed Status Data",
+    TrainerSessionCompletedStatusData
+  );
 
   useEffect(() => {
     setIsLoading(true);

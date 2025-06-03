@@ -185,7 +185,7 @@ const AdminPanelLayout = () => {
     error: TrainerSessionPaymentError,
     refetch: TrainerSessionPaymentRefetch,
   } = useQuery({
-    queryKey: ["TrainerSessionPayment"],
+    queryKey: ["TrainerSessionPaymentData"],
     queryFn: async () => {
       try {
         const res = await axiosPublic.get(`/Trainer_Session_Payment`);
@@ -204,10 +204,134 @@ const AdminPanelLayout = () => {
     error: TrainerSessionRefundError,
     refetch: TrainerSessionRefundRefetch,
   } = useQuery({
-    queryKey: ["TrainerSessionRefund"],
+    queryKey: ["TrainerSessionRefundData"],
     queryFn: async () => {
       try {
         const res = await axiosPublic.get(`/Trainer_Session_Refund`);
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
+  // 9. Fetch Trainer Session Active
+  const {
+    data: TrainerSessionActiveData,
+    isLoading: TrainerSessionActiveIsLoading,
+    error: TrainerSessionActiveError,
+    refetch: TrainerSessionActiveRefetch,
+  } = useQuery({
+    queryKey: ["TrainerSessionActiveData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainer_Session_Completed_&_Active/ActiveSessions`
+        );
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
+  // 10. Fetch Trainer Session Completed
+  const {
+    data: TrainerSessionCompletedData,
+    isLoading: TrainerSessionCompletedIsLoading,
+    error: TrainerSessionCompletedError,
+    refetch: TrainerSessionCompletedRefetch,
+  } = useQuery({
+    queryKey: ["TrainerSessionCompletedData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainer_Session_Completed_&_Active/CompletedSessions`
+        );
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
+  // 11. Fetch Trainer Session Payed Status
+  const {
+    data: TrainerSessionPaymentStatusData,
+    isLoading: TrainerSessionPaymentStatusIsLoading,
+    error: TrainerSessionPaymentStatusError,
+    refetch: TrainerSessionPaymentStatusRefetch,
+  } = useQuery({
+    queryKey: ["TrainerSessionPaymentStatusData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainer_Session_Payment/DailyStats`
+        );
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
+  // 12. Fetch Trainer Session Refund Status
+  const {
+    data: TrainerSessionRefundStatusData,
+    isLoading: TrainerSessionRefundStatusIsLoading,
+    error: TrainerSessionRefundStatusError,
+    refetch: TrainerSessionRefundStatusRefetch,
+  } = useQuery({
+    queryKey: ["TrainerSessionRefundStatusData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(`/Trainer_Session_Refund/DailyStats`);
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
+  // 13. Fetch Trainer Session Active Status
+  const {
+    data: TrainerSessionActiveStatusData,
+    isLoading: TrainerSessionActiveStatusIsLoading,
+    error: TrainerSessionActiveStatusError,
+    refetch: TrainerSessionActiveStatusRefetch,
+  } = useQuery({
+    queryKey: ["TrainerSessionActiveStatusData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainer_Session_Completed_&_Active/ActiveSessions/DailyStatus`
+        );
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
+  // 13. Fetch Trainer Session Completed Status
+  const {
+    data: TrainerSessionCompletedStatusData,
+    isLoading: TrainerSessionCompletedStatusIsLoading,
+    error: TrainerSessionCompletedStatusError,
+    refetch: TrainerSessionCompletedStatusRefetch,
+  } = useQuery({
+    queryKey: ["TrainerSessionCompletedStatusData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainer_Session_Completed_&_Active/CompletedSessions/DailyStatus`
+        );
         return res.data;
       } catch (err) {
         if (err.response?.status === 404) return [];
@@ -223,9 +347,15 @@ const AdminPanelLayout = () => {
     await TierUpgradeRefundRefetch();
     await TierUpgradePaymentRefetch();
     await TrainerSessionRefundRefetch();
+    await TrainerSessionActiveRefetch();
     await TrainerSessionPaymentRefetch();
     await DailyTierUpgradeRefundRefetch();
     await DailyTierUpgradePaymentRefetch();
+    await TrainerSessionCompletedRefetch();
+    await TrainerSessionRefundStatusRefetch();
+    await TrainerSessionActiveStatusRefetch();
+    await TrainerSessionPaymentStatusRefetch();
+    await TrainerSessionCompletedStatusRefetch();
   };
 
   // Handle Refetch Spin
@@ -278,8 +408,15 @@ const AdminPanelLayout = () => {
       title: "Trainer Sessions Invoices",
       content: (
         <TrainerSessionsInvoices
+          TrainerSessionActiveData={TrainerSessionActiveData}
           TrainerSessionRefundData={TrainerSessionRefundData}
           TrainerSessionPaymentData={TrainerSessionPaymentData}
+          TrainerSessionCompletedData={TrainerSessionCompletedData}
+          // Status Data
+          TrainerSessionRefundStatusData={TrainerSessionRefundStatusData}
+          TrainerSessionActiveStatusData={TrainerSessionActiveStatusData}
+          TrainerSessionPaymentStatusData={TrainerSessionPaymentStatusData}
+          TrainerSessionCompletedStatusData={TrainerSessionCompletedStatusData}
         />
       ),
     },
@@ -292,9 +429,15 @@ const AdminPanelLayout = () => {
     TierUpgradeRefundIsLoading ||
     TierUpgradePaymentIsLoading ||
     TrainerSessionRefundIsLoading ||
+    TrainerSessionActiveIsLoading ||
     TrainerSessionPaymentIsLoading ||
     DailyTierUpgradeRefundIsLoading ||
-    DailyTierUpgradePaymentIsLoading
+    TrainerSessionCompletedIsLoading ||
+    DailyTierUpgradePaymentIsLoading ||
+    TrainerSessionRefundStatusIsLoading ||
+    TrainerSessionActiveStatusIsLoading ||
+    TrainerSessionPaymentStatusIsLoading ||
+    TrainerSessionCompletedStatusIsLoading
   )
     return <Loading />;
 
@@ -305,9 +448,15 @@ const AdminPanelLayout = () => {
     TierUpgradeRefundError ||
     TierUpgradePaymentError ||
     TrainerSessionRefundError ||
+    TrainerSessionActiveError ||
     TrainerSessionPaymentError ||
     DailyTierUpgradeRefundError ||
-    DailyTierUpgradePaymentError
+    TrainerSessionCompletedError ||
+    DailyTierUpgradePaymentError ||
+    TrainerSessionRefundStatusError ||
+    TrainerSessionActiveStatusError ||
+    TrainerSessionPaymentStatusError ||
+    TrainerSessionCompletedStatusError
   )
     return <FetchingError />;
 
