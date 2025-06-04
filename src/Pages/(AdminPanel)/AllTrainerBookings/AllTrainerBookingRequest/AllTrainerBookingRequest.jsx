@@ -1,13 +1,25 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
 import BookedTrainerBasicInfo from "../../../../Shared/Component/BookedTrainerBasicInfo";
 import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+import AllTrainerBookingModal from "../AllTrainerBookingModal/AllTrainerBookingModal";
 
 const AllTrainerBookingRequest = ({ AllTrainerBookingRequestData }) => {
+  const modalTrainerBookingRef = useRef(null);
+
   // Cache to store loaded user data by email for reuse
   const [userInfoCache, setUserInfoCache] = useState({});
+
+  // State to store the selected invoice for the modal
+  const [selectedBooking, setSelectedBooking] = useState(null);
+
+  // Function to close the modal and clear the selected invoice
+  const closeTrainerBookingModal = () => {
+    modalTrainerBookingRef.current?.close();
+    setSelectedBooking(null);
+  };
   return (
     <>
       {/* Page Header */}
@@ -137,15 +149,15 @@ const AllTrainerBookingRequest = ({ AllTrainerBookingRequestData }) => {
                       id={`view-details-btn-${booking._id}`}
                       className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
                       onClick={() => {
-                        // setSelectedBooking(booking);
-                        // modalRef.current?.showModal();
+                        setSelectedBooking(booking);
+                        modalTrainerBookingRef.current?.showModal();
                       }}
                     >
                       <FaInfo className="text-yellow-500" />
                     </button>
                     <Tooltip
                       anchorSelect={`#view-details-btn-${booking._id}`}
-                      content="View Detailed Booking Info"
+                      content="View Detailed TrainerBookings "
                     />
                   </td>
                 </tr>
@@ -160,6 +172,13 @@ const AllTrainerBookingRequest = ({ AllTrainerBookingRequestData }) => {
           </p>
         </div>
       )}
+
+      <dialog ref={modalTrainerBookingRef} className="modal">
+        <AllTrainerBookingModal
+          closeModal={closeTrainerBookingModal}
+          selectedBooking={selectedBooking}
+        />
+      </dialog>
     </>
   );
 };

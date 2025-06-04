@@ -9,9 +9,6 @@ import { useState } from "react";
 const AllTrainerBookingAccepted = ({ AllTrainerBookingAcceptedData }) => {
   // Cache to store loaded user data by email for reuse
   const [userInfoCache, setUserInfoCache] = useState({});
-
-  console.log(AllTrainerBookingAcceptedData[0]);
-
   return (
     <>
       {/* Page Header */}

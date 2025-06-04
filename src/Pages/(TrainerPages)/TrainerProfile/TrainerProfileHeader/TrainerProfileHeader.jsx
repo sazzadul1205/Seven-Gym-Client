@@ -105,7 +105,9 @@ export const getTierBadge = (tier) => {
     Gold: "bg-yellow-500 text-white ring-2 ring-yellow-300 shadow-lg",
     Diamond: "bg-blue-600 text-white ring-2 ring-blue-300 shadow-lg",
     Platinum: "bg-gray-800 text-white ring-2 ring-gray-500 shadow-lg",
+    None: "bg-gray-200 text-gray-700 ring-2 ring-gray-300 shadow-md", // default style
   };
 
-  return tierStyles[tier] || "bg-gray-200 text-gray-700 ring-2 ring-gray-300";
+  // Use "None" if no tier is passed or tier is invalid
+  return tierStyles[tier] || tierStyles["None"];
 };
