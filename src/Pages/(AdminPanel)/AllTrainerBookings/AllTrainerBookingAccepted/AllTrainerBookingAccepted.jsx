@@ -9,6 +9,9 @@ import { useState } from "react";
 const AllTrainerBookingAccepted = ({ AllTrainerBookingAcceptedData }) => {
   // Cache to store loaded user data by email for reuse
   const [userInfoCache, setUserInfoCache] = useState({});
+
+  console.log(AllTrainerBookingAcceptedData[0]);
+
   return (
     <>
       {/* Page Header */}
@@ -19,7 +22,7 @@ const AllTrainerBookingAccepted = ({ AllTrainerBookingAcceptedData }) => {
       </div>
 
       {/* Table Section */}
-      <div className="overflow-x-auto p-4">
+      <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-300 text-sm text-left">
           <thead>
             <tr className="bg-gray-100 border-b">
@@ -29,16 +32,17 @@ const AllTrainerBookingAccepted = ({ AllTrainerBookingAcceptedData }) => {
               <th className="px-4 py-2">Sessions</th>
               <th className="px-4 py-2">Duration</th>
               <th className="px-4 py-2">Price</th>
-              <th className="px-4 py-2">Status</th>
+              <th className="px-4 py-2">Booked At</th>
               <th className="px-4 py-2">Start Date</th>
-              <th className="px-4 py-2">Payment</th>
+              <th className="px-4 py-2">Est. End Date</th>
               <th className="px-4 py-2">Action</th>
             </tr>
           </thead>
 
           <tbody>
             {AllTrainerBookingAcceptedData?.map((booking, idx) => (
-              <tr key={booking._id} className="border-b hover:bg-gray-50">
+              <tr key={booking._id} className="hover:bg-gray-50">
+                {/* Serial Number */}
                 <td className="border px-4 py-2">{idx + 1}</td>
 
                 {/* Booker User Information */}
@@ -85,16 +89,19 @@ const AllTrainerBookingAccepted = ({ AllTrainerBookingAcceptedData }) => {
                   />
                 </td>
 
+                {/* Sessions Count */}
                 <td className="border px-4 py-2">
                   {booking.sessions?.length} session
                   {booking.sessions?.length > 1 ? "s" : ""}
                 </td>
 
+                {/* Duration */}
                 <td className="border px-4 py-2">
                   {booking.durationWeeks}{" "}
                   {booking.durationWeeks === 1 ? "week" : "weeks"}
                 </td>
 
+                {/* Total Price */}
                 <td className="border px-4 py-2">
                   {booking.totalPrice === "Free" ||
                   parseFloat(booking.totalPrice) === 0
@@ -102,30 +109,53 @@ const AllTrainerBookingAccepted = ({ AllTrainerBookingAcceptedData }) => {
                     : `$ ${booking.totalPrice}`}
                 </td>
 
-                <td className="border px-4 py-2">{booking.status}</td>
+                {/* Booked At */}
+                <td className="border px-4 py-2">
+                  {(() => {
+                    const raw = booking.bookedAt;
+                    const fixed = raw.length === 16 ? raw + ":00" : raw; // Ensure seconds
+                    const [datePart, timePart] = fixed.split("T");
+                    const [day, month, year] = datePart.split("-"); // FIXED: DD-MM-YYYY
+                    const iso = `${year}-${month}-${day}T${timePart}`;
+                    const date = new Date(iso);
+                    return date.toLocaleString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hour12: true,
+                    });
+                  })()}
+                </td>
 
+                {/* Start At */}
                 <td className="border px-4 py-2">
                   {dayjs(booking.startAt).format("MMM D, YYYY")}
                 </td>
 
+                {/* Estimated End Date */}
                 <td className="border px-4 py-2">
-                  {booking.paid ? (
-                    <span className="text-green-600 font-medium">Paid</span>
-                  ) : (
-                    <span className="text-red-600 font-medium">Unpaid</span>
-                  )}
+                  {dayjs(booking.startAt)
+                    .add(booking.durationWeeks, "week")
+                    .format("MMM D, YYYY")}
                 </td>
 
+                {/* Action */}
                 <td className="border px-4 py-2">
                   <button
-                    id={`view-accepted-${booking._id}`}
-                    className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
+                    id={`view-details-btn-${booking._id}`}
+                    className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
+                    onClick={() => {
+                      // setSelectedBooking(booking);
+                      // modalRef.current?.showModal();
+                    }}
                   >
-                    <FaInfo className="text-blue-500" />
+                    <FaInfo className="text-yellow-500" />
                   </button>
                   <Tooltip
-                    anchorSelect={`#view-accepted-${booking._id}`}
-                    content="View Accepted Booking Details"
+                    anchorSelect={`#view-details-btn-${booking._id}`}
+                    content="View Detailed Booking Info"
                   />
                 </td>
               </tr>

@@ -81,6 +81,8 @@ const AdminPanelLayout = () => {
     AllTrainerBookingAcceptedIsLoading,
     TrainerSessionRefundStatusIsLoading,
     TrainerSessionActiveStatusIsLoading,
+    AllTrainerBookingCompletedIsLoading,
+    AllTrainerBookingCancelledIsLoading,
     TrainerSessionPaymentStatusIsLoading,
     TrainerSessionCompletedStatusIsLoading,
 
@@ -100,6 +102,8 @@ const AdminPanelLayout = () => {
     AllTrainerBookingAcceptedError,
     TrainerSessionRefundStatusError,
     TrainerSessionActiveStatusError,
+    AllTrainerBookingCompletedError,
+    AllTrainerBookingCancelledError,
     TrainerSessionPaymentStatusError,
     TrainerSessionCompletedStatusError,
 
@@ -119,6 +123,8 @@ const AdminPanelLayout = () => {
     AllTrainerBookingAcceptedData,
     TrainerSessionRefundStatusData,
     TrainerSessionActiveStatusData,
+    AllTrainerBookingCompletedData,
+    AllTrainerBookingCancelledData,
     TrainerSessionPaymentStatusData,
     TrainerSessionCompletedStatusData,
 
@@ -196,6 +202,8 @@ const AdminPanelLayout = () => {
           AllTrainerBookingRequestData={AllTrainerBookingRequestData}
           AllTrainerBookingHistoryData={AllTrainerBookingHistoryData}
           AllTrainerBookingAcceptedData={AllTrainerBookingAcceptedData}
+          AllTrainerBookingCompletedData={AllTrainerBookingCompletedData}
+          AllTrainerBookingCancelledData={AllTrainerBookingCancelledData}
         />
       ),
     },
@@ -218,6 +226,8 @@ const AdminPanelLayout = () => {
     AllTrainerBookingAcceptedIsLoading ||
     TrainerSessionRefundStatusIsLoading ||
     TrainerSessionActiveStatusIsLoading ||
+    AllTrainerBookingCompletedIsLoading ||
+    AllTrainerBookingCancelledIsLoading ||
     TrainerSessionPaymentStatusIsLoading ||
     TrainerSessionCompletedStatusIsLoading
   )
@@ -240,6 +250,8 @@ const AdminPanelLayout = () => {
     AllTrainerBookingAcceptedError ||
     TrainerSessionRefundStatusError ||
     TrainerSessionActiveStatusError ||
+    AllTrainerBookingCompletedError ||
+    AllTrainerBookingCancelledError ||
     TrainerSessionPaymentStatusError ||
     TrainerSessionCompletedStatusError
   )

@@ -9,6 +9,8 @@ const AllTrainerBookings = ({
   AllTrainerBookingRequestData,
   AllTrainerBookingHistoryData,
   AllTrainerBookingAcceptedData,
+  AllTrainerBookingCompletedData,
+  AllTrainerBookingCancelledData,
 }) => {
   return (
     <div className="text-black">
@@ -22,10 +24,10 @@ const AllTrainerBookings = ({
         AllTrainerBookingAcceptedData={AllTrainerBookingAcceptedData}
       />
       <AllTrainerBookingCanceled
-        AllTrainerBookingAcceptedData={AllTrainerBookingAcceptedData}
+        AllTrainerBookingCancelledData={AllTrainerBookingCancelledData}
       />
       <AllTrainerBookingCompleted
-        AllTrainerBookingAcceptedData={AllTrainerBookingAcceptedData}
+        AllTrainerBookingCompletedData={AllTrainerBookingCompletedData}
       />
     </div>
   );
