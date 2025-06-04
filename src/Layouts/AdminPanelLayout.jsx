@@ -30,7 +30,7 @@ import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserMa
 import TierUpgradeInvoices from "../Pages/(AdminPanel)/TierUpgradeInvoices/TierUpgradeInvoices";
 import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
-import TrainerSessionBookings from "../Pages/(AdminPanel)/TrainerSessionBookings/TrainerSessionBookings";
+import AllTrainerBookings from "../Pages/(AdminPanel)/AllTrainerBookings/AllTrainerBookings";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -76,6 +76,9 @@ const AdminPanelLayout = () => {
     DailyTierUpgradeRefundIsLoading,
     TrainerSessionCompletedIsLoading,
     DailyTierUpgradePaymentIsLoading,
+    AllTrainerBookingRequestIsLoading,
+    AllTrainerBookingHistoryIsLoading,
+    AllTrainerBookingAcceptedIsLoading,
     TrainerSessionRefundStatusIsLoading,
     TrainerSessionActiveStatusIsLoading,
     TrainerSessionPaymentStatusIsLoading,
@@ -92,6 +95,9 @@ const AdminPanelLayout = () => {
     DailyTierUpgradeRefundError,
     TrainerSessionCompletedError,
     DailyTierUpgradePaymentError,
+    AllTrainerBookingRequestError,
+    AllTrainerBookingHistoryError,
+    AllTrainerBookingAcceptedError,
     TrainerSessionRefundStatusError,
     TrainerSessionActiveStatusError,
     TrainerSessionPaymentStatusError,
@@ -108,6 +114,9 @@ const AdminPanelLayout = () => {
     DailyTierUpgradeRefundData,
     DailyTierUpgradePaymentData,
     TrainerSessionCompletedData,
+    AllTrainerBookingRequestData,
+    AllTrainerBookingHistoryData,
+    AllTrainerBookingAcceptedData,
     TrainerSessionRefundStatusData,
     TrainerSessionActiveStatusData,
     TrainerSessionPaymentStatusData,
@@ -182,7 +191,13 @@ const AdminPanelLayout = () => {
       id: "Trainer_Sessions_Bookings",
       Icon: booking,
       title: "Trainer Sessions Bookings",
-      content: <TrainerSessionBookings />,
+      content: (
+        <AllTrainerBookings
+          AllTrainerBookingRequestData={AllTrainerBookingRequestData}
+          AllTrainerBookingHistoryData={AllTrainerBookingHistoryData}
+          AllTrainerBookingAcceptedData={AllTrainerBookingAcceptedData}
+        />
+      ),
     },
   ];
 
@@ -198,6 +213,9 @@ const AdminPanelLayout = () => {
     DailyTierUpgradeRefundIsLoading ||
     TrainerSessionCompletedIsLoading ||
     DailyTierUpgradePaymentIsLoading ||
+    AllTrainerBookingHistoryIsLoading ||
+    AllTrainerBookingRequestIsLoading ||
+    AllTrainerBookingAcceptedIsLoading ||
     TrainerSessionRefundStatusIsLoading ||
     TrainerSessionActiveStatusIsLoading ||
     TrainerSessionPaymentStatusIsLoading ||
@@ -217,6 +235,9 @@ const AdminPanelLayout = () => {
     DailyTierUpgradeRefundError ||
     TrainerSessionCompletedError ||
     DailyTierUpgradePaymentError ||
+    AllTrainerBookingRequestError ||
+    AllTrainerBookingHistoryError ||
+    AllTrainerBookingAcceptedError ||
     TrainerSessionRefundStatusError ||
     TrainerSessionActiveStatusError ||
     TrainerSessionPaymentStatusError ||
