@@ -6,7 +6,7 @@ import { formatTimeTo12Hour } from "../../../../../../Utility/formatTimeTo12Hour
 
 const BookedSessionTable = ({ ScheduleByIDData }) => {
   return (
-    <div className="" >
+    <>
       {/* Title */}
       <h3 className="text-lg font-bold p-2">Session Bookings</h3>
 
@@ -20,11 +20,18 @@ const BookedSessionTable = ({ ScheduleByIDData }) => {
               {/* Table Header */}
               <thead>
                 <tr className="border-b bg-gray-700 text-white">
-                  <th className="px-4 py-2">Day</th>
-                  <th className="px-4 py-2">Class Code</th>
-                  <th className="px-4 py-2">Class Type</th>
-                  <th className="px-4 py-2 text-center">Time</th>
-                  <th className="px-4 py-2">Price</th>
+                  {[
+                    "#",
+                    "Day",
+                    "Class Code",
+                    "Class Type",
+                    "Time",
+                    "Price",
+                  ].map((title, i) => (
+                    <th key={i} className="px-4 py-2 text-center">
+                      {title}
+                    </th>
+                  ))}
                 </tr>
               </thead>
 
@@ -35,17 +42,20 @@ const BookedSessionTable = ({ ScheduleByIDData }) => {
                     key={`${s.id}-${idx}`}
                     className="bg-gray-50 hover:bg-gray-200 border border-gray-300 cursor-pointer"
                   >
+                    {/* Index */}
+                    <td className="border px-4 py-2">{idx + 1} .</td>
+
                     {/* Day */}
-                    <td className="px-4 py-2">{s.day}</td>
+                    <td className="border px-4 py-2">{s.day}</td>
 
                     {/* Class Code */}
-                    <td className="px-4 py-2">{s.id}</td>
+                    <td className="border px-4 py-2">{s.id}</td>
 
                     {/* Class Type */}
-                    <td className="px-4 py-2">{s.classType}</td>
+                    <td className="border px-4 py-2">{s.classType}</td>
 
                     {/* Time */}
-                    <td className="px-4 py-2 text-center">
+                    <td className="border px-4 py-2 text-center">
                       <div className="flex items-center justify-center gap-2">
                         <p className="w-16 md:w-20">
                           {formatTimeTo12Hour(s.start)}
@@ -58,7 +68,7 @@ const BookedSessionTable = ({ ScheduleByIDData }) => {
                     </td>
 
                     {/* Price */}
-                    <td className="px-4 py-2">
+                    <td className="border px-4 py-2">
                       {s.classPrice === "free" || s.classPrice === "Free"
                         ? "Free"
                         : `$ ${s.classPrice}`}
@@ -106,7 +116,7 @@ const BookedSessionTable = ({ ScheduleByIDData }) => {
         // If No Session Available
         <p className="text-center text-xl">No sessions available</p>
       )}
-    </div>
+    </>
   );
 };
 

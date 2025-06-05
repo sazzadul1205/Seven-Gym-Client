@@ -1,14 +1,26 @@
 /* eslint-disable react/prop-types */
-import { ImCross } from "react-icons/im";
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+
+// Import Packages
 import { useQuery } from "@tanstack/react-query";
-import Loading from "../../../../Shared/Loading/Loading";
+
+// import Icons
+import { ImCross } from "react-icons/im";
+
+// Import Hooks
 import FetchingError from "../../../../Shared/Component/FetchingError";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import Loading from "../../../../Shared/Loading/Loading";
+
+// Import Utilities
 import { getGenderIcon } from "../../../../Utility/getGenderIcon";
 import { getTierBadge } from "../../../(TrainerPages)/TrainerProfile/TrainerProfileHeader/TrainerProfileHeader";
 
+// import Components
+import BookedSessionTable from "../../../(UserPages)/UserTrainerManagement/UserTrainerBookingSession/UserTrainerBookingInfoModal/BookedSessionTable/BookedSessionTable";
+import BookingActivityTable from "../../../(UserPages)/UserTrainerManagement/UserTrainerBookingSession/UserTrainerBookingInfoModal/BookingActivityTable/BookingActivityTable";
+import BookingDetails from "./BookingDetails/BookingDetails";
+
 const AllTrainerBookingModal = ({ closeModal, selectedBooking }) => {
-  console.log(selectedBooking);
   const axiosPublic = useAxiosPublic();
 
   // Fetch Booker Data
@@ -39,20 +51,44 @@ const AllTrainerBookingModal = ({ closeModal, selectedBooking }) => {
     enabled: !!selectedBooking?.trainerId,
   });
 
+  // Use selectedBooking.sessions directly
+  const sessionQuery =
+    selectedBooking?.sessions
+      ?.map((id) => `ids=${encodeURIComponent(id)}`)
+      .join("&") || "";
+
+  // Fetch session details by ID
+  const {
+    data: ScheduleByIDData,
+    isLoading: ScheduleByIDDataIsLoading,
+    error: ScheduleByIDDataError,
+  } = useQuery({
+    queryKey: ["ScheduleByIDData", selectedBooking?.sessions],
+    enabled: !!selectedBooking?.sessions?.length,
+    queryFn: () =>
+      axiosPublic
+        .get(`/Trainers_Schedule/ByID?${sessionQuery}`)
+        .then((res) => res.data),
+  });
+
   // Loading state
-  if (BookerBasicIsLoading || TrainerBasicIsLoading) return <Loading />;
+  if (
+    BookerBasicIsLoading ||
+    TrainerBasicIsLoading ||
+    ScheduleByIDDataIsLoading
+  )
+    return <Loading />;
 
   // Error handling
-  if (BookerBasicDataError || TrainerBasicError) return <FetchingError />;
-
-  console.log("TrainerBasicData:", TrainerBasicData?.gender);
+  if (BookerBasicDataError || TrainerBasicError || ScheduleByIDDataError)
+    return <FetchingError />;
 
   // Get the gender userIcon for the user
   const { icon: userIcon } = getGenderIcon(BookerBasicData?.gender);
   const { icon: trainerIcon } = getGenderIcon(TrainerBasicData?.gender);
 
   return (
-    <div className="modal-box max-w-5xl w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black">
+    <div className="modal-box max-w-5xl w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black pb-5">
       {/* Header */}
       <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
         <h3 className="font-bold text-lg">Trainer booking Details</h3>
@@ -61,6 +97,12 @@ const AllTrainerBookingModal = ({ closeModal, selectedBooking }) => {
           onClick={() => closeModal()}
         />
       </div>
+
+      {selectedBooking?.reason && (
+        <div className="px-5 py-2 text-red-600 font-semibold italic border-b border-red-300 bg-red-100">
+          Reason: {selectedBooking.reason}
+        </div>
+      )}
 
       {/* Basic Information : Booker Info , Booking Details */}
       <div className="overflow-auto">
@@ -162,6 +204,15 @@ const AllTrainerBookingModal = ({ closeModal, selectedBooking }) => {
           </div>
         </div>
       </div>
+
+      {/* Booking Details */}
+      <BookingDetails booking={selectedBooking} />
+
+      {/* Sessions Table */}
+      <BookedSessionTable ScheduleByIDData={ScheduleByIDData} />
+
+      {/* Activity Table */}
+      <BookingActivityTable ScheduleByIDData={ScheduleByIDData} />
     </div>
   );
 };
