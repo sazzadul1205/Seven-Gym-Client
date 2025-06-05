@@ -380,6 +380,90 @@ const useAdminPanelData = () => {
     },
   });
 
+  // 19. Fetch Trainer Booking Accepted Stratus Data
+  const {
+    data: TrainerBookingAcceptedStatusData,
+    isLoading: TrainerBookingAcceptedStatusIsLoading,
+    error: TrainerBookingAcceptedStatusError,
+    refetch: TrainerBookingAcceptedStatusRefetch,
+  } = useQuery({
+    queryKey: ["TrainerBookingAcceptedStatusData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainer_Booking_Accepted/DailyStatus`
+        );
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
+  // 20. Fetch Trainer Booking Request Status Data
+  const {
+    data: TrainerBookingRequestStatusData,
+    isLoading: TrainerBookingRequestStatusIsLoading,
+    error: TrainerBookingRequestStatusError,
+    refetch: TrainerBookingRequestStatusRefetch,
+  } = useQuery({
+    queryKey: ["TrainerBookingRequestStatusData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainer_Booking_Request/DailyStatus`
+        );
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
+  // 21. Fetch Trainer Booking Completed Status Data
+  const {
+    data: TrainerBookingCompletedStatusData,
+    isLoading: TrainerBookingCompletedStatusIsLoading,
+    error: TrainerBookingCompletedStatusError,
+    refetch: TrainerBookingCompletedStatusRefetch,
+  } = useQuery({
+    queryKey: ["TrainerBookingCompletedStatusData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainer_Booking_History/Completed/DailyStatus`
+        );
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
+  // 21. Fetch Trainer Booking Cancelled Status Data
+  const {
+    data: TrainerBookingCancelledStatusData,
+    isLoading: TrainerBookingCancelledStatusIsLoading,
+    error: TrainerBookingCancelledStatusError,
+    refetch: TrainerBookingCancelledStatusRefetch,
+  } = useQuery({
+    queryKey: ["TrainerBookingCancelledStatusData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(
+          `/Trainer_Booking_History/Cancelled/DailyStatus`
+        );
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
   // Unified refetch function
   const refetchAll = async () => {
     await AllUsersRefetch();
@@ -399,8 +483,12 @@ const useAdminPanelData = () => {
     await TrainerSessionActiveStatusRefetch();
     await AllTrainerBookingCompletedRefetch();
     await AllTrainerBookingCancelledRefetch();
+    await TrainerBookingRequestStatusRefetch();
     await TrainerSessionPaymentStatusRefetch();
+    await TrainerBookingAcceptedStatusRefetch();
     await TrainerSessionCompletedStatusRefetch();
+    await TrainerBookingCompletedStatusRefetch();
+    await TrainerBookingCancelledStatusRefetch();
   };
 
   return {
@@ -424,6 +512,10 @@ const useAdminPanelData = () => {
     AllTrainerBookingCancelledIsLoading,
     TrainerSessionPaymentStatusIsLoading,
     TrainerSessionCompletedStatusIsLoading,
+    TrainerBookingAcceptedStatusIsLoading,
+    TrainerBookingRequestStatusIsLoading,
+    TrainerBookingCompletedStatusIsLoading,
+    TrainerBookingCancelledStatusIsLoading,
 
     // Error States
     AllUsersError,
@@ -444,7 +536,11 @@ const useAdminPanelData = () => {
     AllTrainerBookingCompletedError,
     AllTrainerBookingCancelledError,
     TrainerSessionPaymentStatusError,
+    TrainerBookingRequestStatusError,
+    TrainerBookingAcceptedStatusError,
     TrainerSessionCompletedStatusError,
+    TrainerBookingCompletedStatusError,
+    TrainerBookingCancelledStatusError,
 
     // Data State
     // Send All Users Data
@@ -452,7 +548,7 @@ const useAdminPanelData = () => {
 
     // Send All Trainers Data
     AllTrainersData,
-    
+
     // Send All Tier Upgrade Refund Data
     TierUpgradeRefundData,
 
@@ -500,9 +596,21 @@ const useAdminPanelData = () => {
 
     // Send All Trainer Booking Completed Data
     TrainerSessionPaymentStatusData,
+    
+    // Send Booking Request Status Data
+    TrainerBookingRequestStatusData,
+
+    // Send Booking Accepted Status Data    
+    TrainerBookingAcceptedStatusData,
 
     // Send All Trainer Booking Cancelled Data
     TrainerSessionCompletedStatusData,
+
+    // Send Booking Completed Status Data
+    TrainerBookingCompletedStatusData,
+
+    // Send Booking Cancelled Status Data
+    TrainerBookingCancelledStatusData,
 
     // Refetch Function
     refetchAll,

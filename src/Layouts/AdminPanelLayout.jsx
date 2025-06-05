@@ -84,6 +84,10 @@ const AdminPanelLayout = () => {
     AllTrainerBookingCompletedIsLoading,
     AllTrainerBookingCancelledIsLoading,
     TrainerSessionPaymentStatusIsLoading,
+    TrainerBookingRequestStatusIsLoading,
+    TrainerBookingAcceptedStatusIsLoading,
+    TrainerBookingCompletedStatusIsLoading,
+    TrainerBookingCancelledStatusIsLoading,
     TrainerSessionCompletedStatusIsLoading,
 
     // Error States
@@ -105,6 +109,10 @@ const AdminPanelLayout = () => {
     AllTrainerBookingCompletedError,
     AllTrainerBookingCancelledError,
     TrainerSessionPaymentStatusError,
+    TrainerBookingRequestStatusError,
+    TrainerBookingAcceptedStatusError,
+    TrainerBookingCompletedStatusError,
+    TrainerBookingCancelledStatusError,
     TrainerSessionCompletedStatusError,
 
     // Data States
@@ -126,6 +134,10 @@ const AdminPanelLayout = () => {
     AllTrainerBookingCompletedData,
     AllTrainerBookingCancelledData,
     TrainerSessionPaymentStatusData,
+    TrainerBookingRequestStatusData,
+    TrainerBookingAcceptedStatusData,
+    TrainerBookingCompletedStatusData,
+    TrainerBookingCancelledStatusData,
     TrainerSessionCompletedStatusData,
 
     // Refetch Function
@@ -186,7 +198,6 @@ const AdminPanelLayout = () => {
           TrainerSessionRefundData={TrainerSessionRefundData}
           TrainerSessionPaymentData={TrainerSessionPaymentData}
           TrainerSessionCompletedData={TrainerSessionCompletedData}
-
           // Status Data
           TrainerSessionRefundStatusData={TrainerSessionRefundStatusData}
           TrainerSessionActiveStatusData={TrainerSessionActiveStatusData}
@@ -206,6 +217,11 @@ const AdminPanelLayout = () => {
           AllTrainerBookingAcceptedData={AllTrainerBookingAcceptedData}
           AllTrainerBookingCompletedData={AllTrainerBookingCompletedData}
           AllTrainerBookingCancelledData={AllTrainerBookingCancelledData}
+          // Status Data
+          TrainerBookingRequestStatusData={TrainerBookingRequestStatusData}
+          TrainerBookingAcceptedStatusData={TrainerBookingAcceptedStatusData}
+          TrainerBookingCompletedStatusData={TrainerBookingCompletedStatusData}
+          TrainerBookingCancelledStatusData={TrainerBookingCancelledStatusData}
         />
       ),
     },
@@ -231,7 +247,11 @@ const AdminPanelLayout = () => {
     AllTrainerBookingCompletedIsLoading ||
     AllTrainerBookingCancelledIsLoading ||
     TrainerSessionPaymentStatusIsLoading ||
-    TrainerSessionCompletedStatusIsLoading
+    TrainerBookingRequestStatusIsLoading ||
+    TrainerBookingAcceptedStatusIsLoading ||
+    TrainerBookingCompletedStatusIsLoading ||
+    TrainerSessionCompletedStatusIsLoading ||
+    TrainerBookingCancelledStatusIsLoading
   )
     return <Loading />;
 
@@ -254,7 +274,11 @@ const AdminPanelLayout = () => {
     TrainerSessionActiveStatusError ||
     AllTrainerBookingCompletedError ||
     AllTrainerBookingCancelledError ||
+    TrainerBookingRequestStatusError ||
     TrainerSessionPaymentStatusError ||
+    TrainerBookingAcceptedStatusError ||
+    TrainerBookingCompletedStatusError ||
+    TrainerBookingCancelledStatusError ||
     TrainerSessionCompletedStatusError
   )
     return <FetchingError />;

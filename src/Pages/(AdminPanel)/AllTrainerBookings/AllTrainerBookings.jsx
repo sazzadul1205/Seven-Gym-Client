@@ -22,6 +22,12 @@ const AllTrainerBookings = ({
   AllTrainerBookingAcceptedData,
   AllTrainerBookingCompletedData,
   AllTrainerBookingCancelledData,
+
+  // Status Data
+  TrainerBookingRequestStatusData,
+  TrainerBookingAcceptedStatusData,
+  TrainerBookingCompletedStatusData,
+  TrainerBookingCancelledStatusData,
 }) => {
   const [activeTab, setActiveTab] = useState("request");
   const [isLoading, setIsLoading] = useState(false);
@@ -70,6 +76,23 @@ const AllTrainerBookings = ({
         return null;
     }
   };
+
+  // console.log(
+  //   "Trainer Booking Request Status Data :",
+  //   TrainerBookingRequestStatusData
+  // );
+  // console.log(
+  //   "Trainer Booking Accepted Status Data :",
+  //   TrainerBookingAcceptedStatusData
+  // );
+  // console.log(
+  //   "Trainer Booking Completed Status Data :",
+  //   TrainerBookingCompletedStatusData
+  // );
+  // console.log(
+  //   "Trainer Booking Cancelled Status Data :",
+  //   TrainerBookingCancelledStatusData
+  // );
 
   return (
     <div className="text-black">

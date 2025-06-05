@@ -9,13 +9,16 @@ import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 import dayjs from "dayjs";
 import { Tooltip } from "react-tooltip";
 
+// import Utility
+import { isBookingInMonthYear } from "../../../../Utility/bookingDateFilter";
+
 // import Shared
 import BookedTrainerBasicInfo from "../../../../Shared/Component/BookedTrainerBasicInfo";
 
 // import Modals & Components
 import AllTrainerBookingModal from "../AllTrainerBookingModal/AllTrainerBookingModal";
 import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
-import { isBookingInMonthYear } from "../../../../Utility/bookingDateFilter";
+import CachedUserInfo from "../CachedUserInfo";
 
 const AllTrainerBookingHistory = ({ AllTrainerBookingHistoryData }) => {
   const modalTrainerBookingRef = useRef(null);
@@ -285,35 +288,14 @@ const AllTrainerBookingHistory = ({ AllTrainerBookingHistoryData }) => {
                   <td className="border px-4 py-2">
                     <TrainerBookingRequestUserBasicInfo
                       email={booking.bookerEmail}
-                      renderUserInfo={(user) => {
-                        // Cache user info
-                        if (!userInfoCache[booking.bookerEmail]) {
-                          setUserInfoCache((prev) => ({
-                            ...prev,
-                            [booking.bookerEmail]: user,
-                          }));
-                        }
-                        return (
-                          <div className="flex items-center gap-2">
-                            {/* Avatar */}
-                            <div className="border-r-2 pr-2 border-black">
-                              <img
-                                src={user.profileImage}
-                                alt={user.fullName}
-                                className="w-16 h-16 rounded-full object-cover"
-                              />
-                            </div>
-
-                            {/* Name + Email */}
-                            <div>
-                              <span className="font-medium block leading-tight">
-                                {user.fullName}
-                              </span>
-                              <span className="text-xs ">{user.email}</span>
-                            </div>
-                          </div>
-                        );
-                      }}
+                      renderUserInfo={(user) => (
+                        <CachedUserInfo
+                          user={user}
+                          email={booking.bookerEmail}
+                          setUserInfoCache={setUserInfoCache}
+                          userInfoCache={userInfoCache}
+                        />
+                      )}
                     />
                   </td>
 

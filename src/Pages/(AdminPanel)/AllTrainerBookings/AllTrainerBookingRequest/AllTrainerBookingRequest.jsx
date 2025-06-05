@@ -8,7 +8,7 @@ import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 // Import Packages
 import { Tooltip } from "react-tooltip";
 
-// import Utility
+// Import Utility
 import { isBookingInMonthYear } from "../../../../Utility/bookingDateFilter";
 
 // import Shared
@@ -17,34 +17,35 @@ import BookedTrainerBasicInfo from "../../../../Shared/Component/BookedTrainerBa
 // import Modals & Components
 import AllTrainerBookingModal from "../AllTrainerBookingModal/AllTrainerBookingModal";
 import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+import CachedUserInfo from "../CachedUserInfo";
 
 const AllTrainerBookingRequest = ({ AllTrainerBookingRequestData }) => {
-  const modalTrainerBookingRef = useRef(null); 
+  const modalTrainerBookingRef = useRef(null);
 
-  // State to store the currently selected booking for modal display
+  // State to store the selected booking request for modal view
   const [selectedBooking, setSelectedBooking] = useState(null);
 
-  // Search input states for user and trainer
+  // Search filters
   const [userSearchTerm, setUserSearchTerm] = useState("");
   const [trainerSearchTerm, setTrainerSearchTerm] = useState("");
 
-  // Dropdown filter states
+  // Dropdown filters
   const [sessionFilter, setSessionFilter] = useState("");
   const [durationFilter, setDurationFilter] = useState("");
   const [monthYearFilter, setMonthYearFilter] = useState("");
 
-  // Cache to store loaded user info by email to avoid repeated fetches
+  // Cache to store loaded user data by email
   const [userInfoCache, setUserInfoCache] = useState({});
 
-  // Pagination state and fixed items per page
+  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Normalize search terms for case-insensitive matching
+  // Normalized search strings
   const normalizedUserSearch = userSearchTerm.trim().toLowerCase();
   const normalizedTrainerSearch = trainerSearchTerm.trim().toLowerCase();
 
-  // Extract unique session counts from all booking requests for dropdown options
+  // Extracted dropdown options
   const sessionOptions = useMemo(() => {
     const uniqueSessions = new Set(
       AllTrainerBookingRequestData.map((b) => b.sessions.length)
@@ -52,7 +53,6 @@ const AllTrainerBookingRequest = ({ AllTrainerBookingRequestData }) => {
     return Array.from(uniqueSessions).sort((a, b) => a - b);
   }, [AllTrainerBookingRequestData]);
 
-  // Extract unique duration weeks from all booking requests for dropdown options
   const durationOptions = useMemo(() => {
     const uniqueDurations = new Set(
       AllTrainerBookingRequestData.map((b) => b.durationWeeks)
@@ -60,14 +60,12 @@ const AllTrainerBookingRequest = ({ AllTrainerBookingRequestData }) => {
     return Array.from(uniqueDurations).sort((a, b) => a - b);
   }, [AllTrainerBookingRequestData]);
 
-  // Extract unique Year-Month strings from booking dates for dropdown options
   const monthYearOptions = useMemo(() => {
     const unique = new Set();
 
     AllTrainerBookingRequestData.forEach(({ bookedAt }) => {
       if (!bookedAt) return;
 
-      // Fix format if seconds missing, then split date and time
       const fixed = bookedAt.length === 16 ? bookedAt + ":00" : bookedAt;
       const [datePart] = fixed.split("T");
 
@@ -75,43 +73,34 @@ const AllTrainerBookingRequest = ({ AllTrainerBookingRequestData }) => {
       const [day, month, year] = datePart.split("-");
 
       if (year && month) {
-        unique.add(`${year}-${month}`); // Format: YYYY-MM
+        unique.add(`${year}-${month}`);
       }
     });
 
-    return Array.from(unique).sort().reverse(); // Sort newest first
+    return Array.from(unique).sort().reverse();
   }, [AllTrainerBookingRequestData]);
 
-  // Filter booking requests by all active filters and search terms
   const filteredData = useMemo(() => {
     return AllTrainerBookingRequestData.filter((booking) => {
       const user = userInfoCache[booking.bookerEmail];
       const userFullName = user?.fullName?.toLowerCase() || "";
       const trainer = booking.trainer?.toLowerCase() || "";
 
-      // Check user name search match
       const matchesUser =
         !normalizedUserSearch || userFullName.includes(normalizedUserSearch);
-
-      // Check trainer name search match
       const matchesTrainer =
         !normalizedTrainerSearch || trainer.includes(normalizedTrainerSearch);
 
-      // Check session count filter match
       const matchesSessions =
         !sessionFilter || booking.sessions.length === Number(sessionFilter);
-
-      // Check duration weeks filter match
       const matchesDuration =
         !durationFilter || booking.durationWeeks === Number(durationFilter);
 
-      // Check month-year filter using external helper function
       const matchesMonthYear = isBookingInMonthYear(
         booking.bookedAt,
         monthYearFilter
       );
 
-      // Return true only if all filters match
       return (
         matchesUser &&
         matchesTrainer &&
@@ -130,16 +119,14 @@ const AllTrainerBookingRequest = ({ AllTrainerBookingRequestData }) => {
     userInfoCache,
   ]);
 
-  // Calculate total number of pages based on filtered data and items per page
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
-  // Get current page slice of data to display
   const currentData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Close modal and clear selected booking when modal closes
+  // Function to close the modal and clear the selected invoice
   const closeTrainerBookingModal = () => {
     modalTrainerBookingRef.current?.close();
     setSelectedBooking(null);
@@ -283,35 +270,14 @@ const AllTrainerBookingRequest = ({ AllTrainerBookingRequestData }) => {
                   <td className="border px-4 py-2">
                     <TrainerBookingRequestUserBasicInfo
                       email={booking.bookerEmail}
-                      renderUserInfo={(user) => {
-                        // Cache user info
-                        if (!userInfoCache[booking.bookerEmail]) {
-                          setUserInfoCache((prev) => ({
-                            ...prev,
-                            [booking.bookerEmail]: user,
-                          }));
-                        }
-                        return (
-                          <div className="flex items-center gap-2">
-                            {/* Avatar */}
-                            <div className="border-r-2 pr-2 border-black">
-                              <img
-                                src={user.profileImage}
-                                alt={user.fullName}
-                                className="w-16 h-16 rounded-full object-cover"
-                              />
-                            </div>
-
-                            {/* Name + Email */}
-                            <div>
-                              <span className="font-medium block leading-tight">
-                                {user.fullName}
-                              </span>
-                              <span className="text-xs ">{user.email}</span>
-                            </div>
-                          </div>
-                        );
-                      }}
+                      renderUserInfo={(user) => (
+                        <CachedUserInfo
+                          user={user}
+                          email={booking.bookerEmail}
+                          setUserInfoCache={setUserInfoCache}
+                          userInfoCache={userInfoCache}
+                        />
+                      )}
                     />
                   </td>
 
