@@ -12,9 +12,9 @@ import CommonButton from "../Shared/Buttons/CommonButton";
 import users from "../assets/AdminPanel/users.png";
 import coach from "../assets/AdminPanel/coach.png";
 import invoice from "../assets/AdminPanel/invoice.png";
+import booking from "../assets/AdminPanel/booking.png";
 import ProfileDefault from "../assets/ProfileDefault.jpg";
 import trainerInvoice from "../assets/AdminPanel/trainerInvoice.png";
-import booking from "../assets/AdminPanel/booking.png";
 
 // Import Packages
 import Swal from "sweetalert2";
@@ -27,10 +27,10 @@ import FetchingError from "../Shared/Component/FetchingError";
 
 // import Tabs Components
 import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserManagement";
+import AllTrainerBookings from "../Pages/(AdminPanel)/AllTrainerBookings/AllTrainerBookings";
 import TierUpgradeInvoices from "../Pages/(AdminPanel)/TierUpgradeInvoices/TierUpgradeInvoices";
 import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
-import AllTrainerBookings from "../Pages/(AdminPanel)/AllTrainerBookings/AllTrainerBookings";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -186,6 +186,8 @@ const AdminPanelLayout = () => {
           TrainerSessionRefundData={TrainerSessionRefundData}
           TrainerSessionPaymentData={TrainerSessionPaymentData}
           TrainerSessionCompletedData={TrainerSessionCompletedData}
+
+          // Status Data
           TrainerSessionRefundStatusData={TrainerSessionRefundStatusData}
           TrainerSessionActiveStatusData={TrainerSessionActiveStatusData}
           TrainerSessionPaymentStatusData={TrainerSessionPaymentStatusData}

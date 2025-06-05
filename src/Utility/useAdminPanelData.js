@@ -95,7 +95,7 @@ const useAdminPanelData = () => {
     queryKey: ["DailyTierUpgradePaymentData"],
     queryFn: async () => {
       try {
-        const res = await axiosPublic.get(`/Tier_Upgrade_Payment/DailyTotals`);
+        const res = await axiosPublic.get(`/Tier_Upgrade_Payment/DailyStatus`);
         return res.data;
       } catch (err) {
         if (err.response?.status === 404) return [];
@@ -114,7 +114,7 @@ const useAdminPanelData = () => {
     queryKey: ["DailyTierUpgradeRefundData"],
     queryFn: async () => {
       try {
-        const res = await axiosPublic.get(`/Tier_Upgrade_Refund/DailyTotals`);
+        const res = await axiosPublic.get(`/Tier_Upgrade_Refund/DailyStatus`);
         return res.data;
       } catch (err) {
         if (err.response?.status === 404) return [];

@@ -39,7 +39,9 @@ const UserTrainerSessionPayment = () => {
   } = useQuery({
     queryKey: ["TrainerBookingRequestByID", id],
     queryFn: () =>
-      axiosPublic.get(`/Trainer_Booking_Request/${id}`).then((res) => res.data),
+      axiosPublic
+        .get(`/Trainer_Booking_Request?id=${id}`)
+        .then((res) => res.data),
   });
 
   // Use selectedBooking.sessions directly
