@@ -6,6 +6,7 @@ import AllTrainerBookingRequest from "./AllTrainerBookingRequest/AllTrainerBooki
 import AllTrainerBookingCanceled from "./AllTrainerBookingCanceled/AllTrainerBookingCanceled";
 import AllTrainerBookingAccepted from "./AllTrainerBookingAccepted/AllTrainerBookingAccepted";
 import AllTrainerBookingCompleted from "./AllTrainerBookingCompleted/AllTrainerBookingCompleted";
+import TrainerBookingChart from "../TrainerSessionsInvoices/TrainerBookingChart/TrainerBookingChart";
 
 // Define all tabs clearly
 const TABS = [
@@ -77,25 +78,15 @@ const AllTrainerBookings = ({
     }
   };
 
-  // console.log(
-  //   "Trainer Booking Request Status Data :",
-  //   TrainerBookingRequestStatusData
-  // );
-  // console.log(
-  //   "Trainer Booking Accepted Status Data :",
-  //   TrainerBookingAcceptedStatusData
-  // );
-  // console.log(
-  //   "Trainer Booking Completed Status Data :",
-  //   TrainerBookingCompletedStatusData
-  // );
-  // console.log(
-  //   "Trainer Booking Cancelled Status Data :",
-  //   TrainerBookingCancelledStatusData
-  // );
-
   return (
     <div className="text-black">
+      <TrainerBookingChart
+        TrainerBookingRequestStatusData={TrainerBookingRequestStatusData}
+        TrainerBookingAcceptedStatusData={TrainerBookingAcceptedStatusData}
+        TrainerBookingCompletedStatusData={TrainerBookingCompletedStatusData}
+        TrainerBookingCancelledStatusData={TrainerBookingCancelledStatusData}
+      />
+
       {/* Tab Buttons */}
       <div className="flex gap-2 border-b">
         {TABS.map((tab) => (

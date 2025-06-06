@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useMemo, useRef, useState } from "react";
 
 // Import Icons
@@ -7,6 +6,7 @@ import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
 // Import Packages
 import { Tooltip } from "react-tooltip";
+import PropTypes from "prop-types";
 
 // Import Utility
 import { isBookingInMonthYear } from "../../../../Utility/bookingDateFilter";
@@ -15,9 +15,9 @@ import { isBookingInMonthYear } from "../../../../Utility/bookingDateFilter";
 import BookedTrainerBasicInfo from "../../../../Shared/Component/BookedTrainerBasicInfo";
 
 // import Modals & Components
+import CachedUserInfo from "../CachedUserInfo";
 import AllTrainerBookingModal from "../AllTrainerBookingModal/AllTrainerBookingModal";
 import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
-import CachedUserInfo from "../CachedUserInfo";
 
 const AllTrainerBookingRequest = ({ AllTrainerBookingRequestData }) => {
   const modalTrainerBookingRef = useRef(null);
@@ -409,6 +409,23 @@ const AllTrainerBookingRequest = ({ AllTrainerBookingRequestData }) => {
       </dialog>
     </>
   );
+};
+
+// Prop Validation
+AllTrainerBookingRequest.propTypes = {
+  AllTrainerBookingRequestData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      bookerEmail: PropTypes.string.isRequired,
+      trainerId: PropTypes.string.isRequired,
+      trainer: PropTypes.string,
+      bookedAt: PropTypes.string,
+      sessions: PropTypes.arrayOf(PropTypes.string).isRequired,
+      durationWeeks: PropTypes.number.isRequired,
+      totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+        .isRequired,
+    })
+  ).isRequired,
 };
 
 export default AllTrainerBookingRequest;

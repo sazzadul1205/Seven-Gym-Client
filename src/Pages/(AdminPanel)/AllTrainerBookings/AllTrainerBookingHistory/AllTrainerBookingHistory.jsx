@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useMemo, useRef, useState } from "react";
 
 // Import Icons
@@ -7,6 +6,8 @@ import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
 // Import Packages
 import dayjs from "dayjs";
+
+import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
 
 // import Utility
@@ -444,6 +445,22 @@ const AllTrainerBookingHistory = ({ AllTrainerBookingHistoryData }) => {
       </dialog>
     </>
   );
+};
+
+AllTrainerBookingHistory.propTypes = {
+  AllTrainerBookingHistoryData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      bookerEmail: PropTypes.string.isRequired,
+      trainer: PropTypes.string.isRequired,
+      sessions: PropTypes.arrayOf(PropTypes.string).isRequired,
+      durationWeeks: PropTypes.number.isRequired,
+      price: PropTypes.number,
+      bookedAt: PropTypes.string,
+      status: PropTypes.string,
+      reason: PropTypes.string,
+    })
+  ).isRequired,
 };
 
 export default AllTrainerBookingHistory;

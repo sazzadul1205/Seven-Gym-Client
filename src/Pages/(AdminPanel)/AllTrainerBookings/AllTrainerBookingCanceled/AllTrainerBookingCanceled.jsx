@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useMemo, useRef, useState } from "react";
 
 // Import Icons
@@ -7,6 +6,7 @@ import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
 // Import Packages
 import dayjs from "dayjs";
+import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
 
 // Import Utility
@@ -443,6 +443,20 @@ const AllTrainerBookingCanceled = ({ AllTrainerBookingCancelledData }) => {
       </dialog>
     </>
   );
+};
+
+// At the bottom of your file
+AllTrainerBookingCanceled.propTypes = {
+  AllTrainerBookingCancelledData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      bookerEmail: PropTypes.string.isRequired,
+      bookedAt: PropTypes.string,
+      durationWeeks: PropTypes.number.isRequired,
+      sessions: PropTypes.arrayOf(PropTypes.string).isRequired,
+      trainer: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
 
 export default AllTrainerBookingCanceled;

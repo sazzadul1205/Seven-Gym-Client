@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useMemo, useRef, useState } from "react";
 
 // Import Icons
@@ -7,6 +6,7 @@ import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
 // Import Packages
 import dayjs from "dayjs";
+import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
 
 // Import Utility
@@ -288,14 +288,14 @@ const AllTrainerBookingCompleted = ({ AllTrainerBookingCompletedData }) => {
                   <td className="border px-4 py-2">
                     <TrainerBookingRequestUserBasicInfo
                       email={booking.bookerEmail}
-            renderUserInfo={(user) => (
-      <CachedUserInfo
-        user={user}
-        email={booking.bookerEmail}
-        setUserInfoCache={setUserInfoCache}
-        userInfoCache={userInfoCache}
-      />
-    )}
+                      renderUserInfo={(user) => (
+                        <CachedUserInfo
+                          user={user}
+                          email={booking.bookerEmail}
+                          setUserInfoCache={setUserInfoCache}
+                          userInfoCache={userInfoCache}
+                        />
+                      )}
                     />
                   </td>
 
@@ -445,6 +445,22 @@ const AllTrainerBookingCompleted = ({ AllTrainerBookingCompletedData }) => {
       </dialog>
     </>
   );
+};
+
+AllTrainerBookingCompleted.propTypes = {
+  AllTrainerBookingCompletedData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      bookerEmail: PropTypes.string.isRequired,
+      trainer: PropTypes.string,
+      sessions: PropTypes.arrayOf(PropTypes.string).isRequired,
+      durationWeeks: PropTypes.number.isRequired,
+      price: PropTypes.number,
+      status: PropTypes.string,
+      bookedAt: PropTypes.string,
+      endedAt: PropTypes.string,
+    })
+  ).isRequired,
 };
 
 export default AllTrainerBookingCompleted;
