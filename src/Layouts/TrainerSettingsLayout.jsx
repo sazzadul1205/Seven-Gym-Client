@@ -279,6 +279,8 @@ const TrainerSettingsLayout = () => {
   )
     return <FetchingError />;
 
+  console.log(TrainerData._id);
+
   return (
     <div className="min-h-screen bg-white ">
       {/* Trainer Settings Header */}
@@ -430,7 +432,7 @@ const TrainerSettingsLayout = () => {
 
       {/* Add Trainer Data Modal */}
       <dialog id="Add_Trainer_Data" className="modal">
-        <TrainerAddModal refetch={refetchAll} />
+        <TrainerAddModal refetch={refetchAll} TrainerData={TrainerData} />
       </dialog>
     </div>
   );

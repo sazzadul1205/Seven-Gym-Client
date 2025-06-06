@@ -464,10 +464,30 @@ const useAdminPanelData = () => {
     },
   });
 
+  // 22. Fetch Trainers Schedule Data
+  const {
+    data: TrainersScheduleData,
+    isLoading: TrainersScheduleIsLoading,
+    error: TrainersScheduleError,
+    refetch: TrainersScheduleRefetch,
+  } = useQuery({
+    queryKey: ["TrainersScheduleData"],
+    queryFn: async () => {
+      try {
+        const res = await axiosPublic.get(`/Trainers_Schedule`);
+        return res.data;
+      } catch (err) {
+        if (err.response?.status === 404) return [];
+        throw err;
+      }
+    },
+  });
+
   // Unified refetch function
   const refetchAll = async () => {
     await AllUsersRefetch();
     await AllTrainersRefetch();
+    await TrainersScheduleRefetch();
     await TierUpgradeRefundRefetch();
     await TierUpgradePaymentRefetch();
     await TrainerSessionRefundRefetch();
@@ -495,6 +515,7 @@ const useAdminPanelData = () => {
     // Is Loading States
     AllUsersIsLoading,
     AllTrainersIsLoading,
+    TrainersScheduleIsLoading,
     TierUpgradeRefundIsLoading,
     TierUpgradePaymentIsLoading,
     TrainerSessionRefundIsLoading,
@@ -520,6 +541,7 @@ const useAdminPanelData = () => {
     // Error States
     AllUsersError,
     AllTrainersError,
+    TrainersScheduleError,
     TierUpgradeRefundError,
     TierUpgradePaymentError,
     TrainerSessionRefundError,
@@ -548,6 +570,9 @@ const useAdminPanelData = () => {
 
     // Send All Trainers Data
     AllTrainersData,
+
+    // Send All Schedule Data
+    TrainersScheduleData,
 
     // Send All Tier Upgrade Refund Data
     TierUpgradeRefundData,
@@ -596,11 +621,11 @@ const useAdminPanelData = () => {
 
     // Send All Trainer Booking Completed Data
     TrainerSessionPaymentStatusData,
-    
+
     // Send Booking Request Status Data
     TrainerBookingRequestStatusData,
 
-    // Send Booking Accepted Status Data    
+    // Send Booking Accepted Status Data
     TrainerBookingAcceptedStatusData,
 
     // Send All Trainer Booking Cancelled Data

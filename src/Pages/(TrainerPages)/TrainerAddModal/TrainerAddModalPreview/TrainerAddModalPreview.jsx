@@ -53,17 +53,28 @@ const TrainerAddModalPreview = ({ refetch }) => {
         email: user.email,
       };
 
-      const scheduleWithEmail = {
-        ...trainerSchedule,
-        email: user.email,
-      };
-
       try {
-        // Add trainer
-        await axiosPublic.post("/Trainers", basicInfoWithEmail);
+        // Add trainer and capture the inserted ID
+        const trainerResponse = await axiosPublic.post(
+          "/Trainers",
+          basicInfoWithEmail
+        );
+        const newTrainerId =
+          trainerResponse.data.insertedId || trainerResponse.data._id;
+
+        if (!newTrainerId) {
+          throw new Error("Failed to get new trainer ID");
+        }
+
+        // Prepare schedule with the new trainer ID
+        const scheduleWithTrainerId = {
+          ...trainerSchedule,
+          email: user.email,
+          trainerId: newTrainerId,
+        };
 
         // Add trainer schedule
-        await axiosPublic.post("/Trainers_Schedule", scheduleWithEmail);
+        await axiosPublic.post("/Trainers_Schedule", scheduleWithTrainerId);
 
         // Success alert
         Swal.fire({
@@ -72,13 +83,14 @@ const TrainerAddModalPreview = ({ refetch }) => {
           text: "Trainer and schedule submitted successfully.",
         });
 
-        refetch(); // Refetch the parent data
+        refetch(); // Refetch parent data
       } catch (error) {
         Swal.fire({
           icon: "error",
           title: "Submission Failed",
           text:
             error.response?.data?.error ||
+            error.message ||
             "Something went wrong while submitting.",
         });
       }

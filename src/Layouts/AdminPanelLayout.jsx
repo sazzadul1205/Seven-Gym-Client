@@ -11,6 +11,7 @@ import CommonButton from "../Shared/Buttons/CommonButton";
 // Import Assets
 import users from "../assets/AdminPanel/users.png";
 import coach from "../assets/AdminPanel/coach.png";
+import weekly from "../assets/AdminPanel/weekly.png";
 import invoice from "../assets/AdminPanel/invoice.png";
 import booking from "../assets/AdminPanel/booking.png";
 import ProfileDefault from "../assets/ProfileDefault.jpg";
@@ -25,9 +26,10 @@ import Loading from "../Shared/Loading/Loading";
 import useAdminPanelData from "../Utility/useAdminPanelData";
 import FetchingError from "../Shared/Component/FetchingError";
 
-// import Tabs Components
+// Import Tabs Components
 import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserManagement";
 import AllTrainerBookings from "../Pages/(AdminPanel)/AllTrainerBookings/AllTrainerBookings";
+import AllTrainerSchedule from "../Pages/(AdminPanel)/AllTrainerSchedule/AllTrainerSchedule";
 import TierUpgradeInvoices from "../Pages/(AdminPanel)/TierUpgradeInvoices/TierUpgradeInvoices";
 import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
@@ -118,6 +120,7 @@ const AdminPanelLayout = () => {
     // Data States
     AllUsersData,
     AllTrainersData,
+    TrainersScheduleData,
     TierUpgradeRefundData,
     TierUpgradePaymentData,
     TrainerSessionRefundData,
@@ -223,6 +226,14 @@ const AdminPanelLayout = () => {
           TrainerBookingCompletedStatusData={TrainerBookingCompletedStatusData}
           TrainerBookingCancelledStatusData={TrainerBookingCancelledStatusData}
         />
+      ),
+    },
+    {
+      id: "Trainer_Schedule",
+      Icon: weekly,
+      title: "Trainer Schedule",
+      content: (
+        <AllTrainerSchedule TrainersScheduleData={TrainersScheduleData} />
       ),
     },
   ];
