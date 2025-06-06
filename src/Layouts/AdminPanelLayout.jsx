@@ -29,10 +29,10 @@ import FetchingError from "../Shared/Component/FetchingError";
 // Import Tabs Components
 import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserManagement";
 import AllTrainerBookings from "../Pages/(AdminPanel)/AllTrainerBookings/AllTrainerBookings";
-import AllTrainerSchedule from "../Pages/(AdminPanel)/AllTrainerSchedule/AllTrainerSchedule";
 import TierUpgradeInvoices from "../Pages/(AdminPanel)/TierUpgradeInvoices/TierUpgradeInvoices";
 import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
+import AllTrainerSchedule from "../Pages/(AdminPanel)/AllTrainerSchedule/AllTrainerSchedule";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
