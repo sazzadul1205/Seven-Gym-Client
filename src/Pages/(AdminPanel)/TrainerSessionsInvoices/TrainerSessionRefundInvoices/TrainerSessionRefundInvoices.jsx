@@ -132,8 +132,6 @@ const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
     currentPage * itemsPerPage
   );
 
-  console.log(TrainerSessionRefundData[0].refundTime);
-
   return (
     <>
       <div className="bg-gray-400 py-2">

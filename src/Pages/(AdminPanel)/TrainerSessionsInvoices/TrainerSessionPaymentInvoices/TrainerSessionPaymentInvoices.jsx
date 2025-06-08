@@ -14,6 +14,7 @@ import UserSessionPaymentInvoiceModal from "../../../(UserPages)/UserTrainerMana
 // Import Icons
 import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 import { FaFileInvoiceDollar, FaSearch } from "react-icons/fa";
+import CachedUserInfo from "../../AllTrainerBookings/CachedUserInfo";
 
 // Helper to generate Month-Year options
 const generateMonthYearOptions = (data) => {
@@ -245,35 +246,14 @@ const TrainerSessionPaymentInvoices = ({ TrainerSessionPaymentData }) => {
                   <td className="border px-4 py-2">
                     <TrainerBookingRequestUserBasicInfo
                       email={item?.BookingInfo?.bookerEmail}
-                      renderUserInfo={(user) => {
-                        // Cache user info
-                        if (!userInfoCache[item.BookingInfo.bookerEmail]) {
-                          setUserInfoCache((prev) => ({
-                            ...prev,
-                            [item.BookingInfo.bookerEmail]: user,
-                          }));
-                        }
-                        return (
-                          <div className="flex items-center gap-2">
-                            {/* Avatar */}
-                            <div className="border-r-2 pr-2 border-black">
-                              <img
-                                src={user.profileImage}
-                                alt={user.fullName}
-                                className="w-16 h-16 rounded-full object-cover"
-                              />
-                            </div>
-
-                            {/* Name + Email */}
-                            <div>
-                              <span className="font-medium block leading-tight">
-                                {user.fullName}
-                              </span>
-                              <span className="text-xs ">{user.email}</span>
-                            </div>
-                          </div>
-                        );
-                      }}
+                      renderUserInfo={(user) => (
+                        <CachedUserInfo
+                          user={user}
+                          email={item?.BookingInfo?.bookerEmail}
+                          setUserInfoCache={setUserInfoCache}
+                          userInfoCache={userInfoCache}
+                        />
+                      )}
                     />
                   </td>
 
