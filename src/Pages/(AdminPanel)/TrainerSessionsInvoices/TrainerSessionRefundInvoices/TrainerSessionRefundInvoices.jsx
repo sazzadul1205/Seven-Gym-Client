@@ -5,8 +5,9 @@ import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
 
 // Import Basic Information
-import BookedTrainerBasicInfo from "../../../../Shared/Component/BookedTrainerBasicInfo";
 import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+import BookedTrainerBasicInfo from "../../../../Shared/Component/BookedTrainerBasicInfo";
+import CachedUserInfo from "../../AllTrainerBookings/CachedUserInfo";
 
 // Import Modal
 import UserSessionRefundInvoiceModal from "../../../(UserPages)/UserTrainerManagement/UserSessionInvoice/UserSessionRefundInvoiceModal/UserSessionRefundInvoiceModal";
@@ -251,35 +252,15 @@ const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
                       {/* Booker Info */}
                       <td className="border px-4 py-2">
                         <TrainerBookingRequestUserBasicInfo
-                          email={info?.bookerEmail}
-                          renderUserInfo={(user) => {
-                            if (!userInfoCache[info?.bookerEmail]) {
-                              setUserInfoCache((prev) => ({
-                                ...prev,
-                                [info?.bookerEmail]: user,
-                              }));
-                            }
-                            return (
-                              <div className="flex items-center gap-2">
-                                {/* Avatar */}
-                                <div className="border-r-2 pr-2 border-black">
-                                  <img
-                                    src={user.profileImage}
-                                    alt={user.fullName}
-                                    className="w-16 h-16 rounded-full object-cover"
-                                  />
-                                </div>
-
-                                {/* Name + Email */}
-                                <div>
-                                  <span className="font-medium block leading-tight">
-                                    {user.fullName}
-                                  </span>
-                                  <span className="text-xs ">{user.email}</span>
-                                </div>
-                              </div>
-                            );
-                          }}
+                          email={item?.BookingInfo?.bookerEmail}
+                          renderUserInfo={(user) => (
+                            <CachedUserInfo
+                              user={user}
+                              email={item?.BookingInfo?.bookerEmail}
+                              setUserInfoCache={setUserInfoCache}
+                              userInfoCache={userInfoCache}
+                            />
+                          )}
                         />
                       </td>
 
