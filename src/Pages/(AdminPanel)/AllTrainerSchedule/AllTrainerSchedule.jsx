@@ -1,13 +1,26 @@
-import { useState, useMemo } from "react";
-import { FaSearch } from "react-icons/fa";
+import { useMemo, useRef, useState } from "react";
+
+// Import Icons
+import { FaInfo, FaSearch } from "react-icons/fa";
+import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
+
+// Import Packages
+import PropTypes from "prop-types";
+import { Tooltip } from "react-tooltip";
+
+// import Shared
 import BookedTrainerBasicInfo from "../../../Shared/Component/BookedTrainerBasicInfo";
 
-// Utility to convert "HH:MM" → total minutes
+// import Modals & Components
+import AllTrainerScheduleModal from "./AllTrainerScheduleModal/AllTrainerScheduleModal";
+
+// Converts "HH:MM" time string into total minutes since midnight
 const timeStringToMinutes = (timeStr) => {
   const [h, m] = timeStr.split(":").map(Number);
   return h * 60 + m;
 };
 
+// Converts 24-hour time (e.g. "13:45") into 12-hour format with AM/PM (e.g. "1:45 PM")
 const convertTo12HourFormat = (time24) => {
   const [hourStr, minuteStr] = time24.split(":");
   let hour = parseInt(hourStr, 10);
@@ -16,6 +29,7 @@ const convertTo12HourFormat = (time24) => {
   return `${hour}:${minuteStr} ${amps}`;
 };
 
+// Checks if a selected time (in "HH:MM") falls within a given start and end time range
 const timeInRange = (selected, start, end) => {
   if (!start || !end || start === "N/A" || end === "N/A") return false;
   const selectedMins = timeStringToMinutes(selected);
@@ -25,11 +39,23 @@ const timeInRange = (selected, start, end) => {
 };
 
 const AllTrainerSchedule = ({ TrainersScheduleData }) => {
-  const [trainerSearchTerm, setTrainerSearchTerm] = useState("");
-  const [selectedDay, setSelectedDay] = useState("");
-  const [selectedClassType, setSelectedClassType] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
+  // Reference to the trainer schedule modal
+  const modalTrainerScheduleRef = useRef(null);
 
+  // Store the currently selected schedule for modal view
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
+
+  // Filter states
+  const [selectedDay, setSelectedDay] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
+  const [selectedClassType, setSelectedClassType] = useState("");
+  const [trainerSearchTerm, setTrainerSearchTerm] = useState("");
+
+  // Pagination setup
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Summarize a trainer's schedule details for easy filtering/display
   const summarizeTrainer = (trainer) => {
     const schedule = trainer.trainerSchedule;
 
@@ -40,35 +66,37 @@ const AllTrainerSchedule = ({ TrainersScheduleData }) => {
     const daysActive = [];
     const classTypeCount = {};
 
-    // Time‐range tracking
+    // Track start and end times across all sessions
     let earliestStart = null;
     let latestEnd = null;
 
     for (const [day, times] of Object.entries(schedule)) {
       let dayHasSession = false;
 
+      // eslint-disable-next-line no-unused-vars
       for (const [timeKey, session] of Object.entries(times)) {
         if (session.classType && session.classType.trim() !== "") {
           dayHasSession = true;
           totalSessions++;
 
-          // Track participants
+          // Count actual participants
           const participantsCount = Array.isArray(session.participant)
             ? session.participant.length
             : 0;
           totalParticipants += participantsCount;
 
+          // Track participant limits
           if (session.participantLimit && session.participantLimit > 0) {
             totalParticipantLimit += session.participantLimit;
           } else {
             unlimitedParticipants += participantsCount;
           }
 
-          // Count class types
+          // Count how often each class type appears
           classTypeCount[session.classType] =
             (classTypeCount[session.classType] || 0) + 1;
 
-          // Update earliestStart / latestEnd
+          // Compare start and end times
           const startMinutes = timeStringToMinutes(session.start);
           const endMinutes = timeStringToMinutes(session.end);
           if (
@@ -91,18 +119,17 @@ const AllTrainerSchedule = ({ TrainersScheduleData }) => {
       }
     }
 
-    // Determine most common class type
+    // Determine most frequently occurring class type
     const mostCommonClassType = Object.entries(classTypeCount).reduce(
       (maxPair, currPair) => (currPair[1] > maxPair[1] ? currPair : maxPair),
       ["N/A", 0]
     )[0];
 
-    // Calculate active hours difference (in hours)
+    // Calculate total active hours between earliest start and latest end
     let activeHours = 0;
     if (earliestStart && latestEnd) {
       const diffMinutes =
         timeStringToMinutes(latestEnd) - timeStringToMinutes(earliestStart);
-      // Round to one decimal place if needed
       activeHours = Math.round((diffMinutes / 60) * 10) / 10;
     }
 
@@ -119,7 +146,7 @@ const AllTrainerSchedule = ({ TrainersScheduleData }) => {
     };
   };
 
-  // Pre‐calculate summaries for each trainer
+  // Memoized summary list of all trainers for performance
   const trainersWithSummary = useMemo(() => {
     return TrainersScheduleData.map((trainer) => ({
       ...trainer,
@@ -127,6 +154,7 @@ const AllTrainerSchedule = ({ TrainersScheduleData }) => {
     }));
   }, [TrainersScheduleData]);
 
+  // Extract all unique class types from trainer summaries
   const classTypeOptions = useMemo(() => {
     const set = new Set();
     trainersWithSummary.forEach((t) => {
@@ -137,6 +165,7 @@ const AllTrainerSchedule = ({ TrainersScheduleData }) => {
     return Array.from(set).sort();
   }, [trainersWithSummary]);
 
+  // Extract all active days across trainers
   const dayOptions = useMemo(() => {
     const days = new Set();
     trainersWithSummary.forEach((t) => {
@@ -144,9 +173,10 @@ const AllTrainerSchedule = ({ TrainersScheduleData }) => {
         if (day) days.add(day);
       });
     });
-    return Array.from(days).sort(); // e.g., ["Friday", "Monday", ...]
+    return Array.from(days).sort();
   }, [trainersWithSummary]);
 
+  // Get all unique session start and end times
   const uniqueTimes = useMemo(() => {
     const timeSet = new Set();
 
@@ -160,13 +190,12 @@ const AllTrainerSchedule = ({ TrainersScheduleData }) => {
       });
     });
 
-    // Return sorted list in "HH:MM" format
     return Array.from(timeSet).sort(
       (a, b) => timeStringToMinutes(a) - timeStringToMinutes(b)
     );
   }, [TrainersScheduleData]);
 
-  // Final filtered trainers
+  // Filtered trainers based on search, day, class type, and time range
   const filteredTrainers = trainersWithSummary.filter((trainer) => {
     const { trainerName } = trainer;
     const { daysActive, mostCommonClassType, earliestStart, latestEnd } =
@@ -191,8 +220,24 @@ const AllTrainerSchedule = ({ TrainersScheduleData }) => {
     return nameMatch && dayMatch && classMatch && timeMatch;
   });
 
+  // Total pages for paginated table
+  const totalPages = Math.ceil(filteredTrainers.length / itemsPerPage);
+
+  // Current page's trainers for display
+  const currentData = filteredTrainers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Close the trainer schedule modal and clear selected state
+  const closeTrainerScheduleModal = () => {
+    modalTrainerScheduleRef.current?.close();
+    setSelectedSchedule(null);
+  };
+
   return (
-    <div className="text-black">
+    <div className="text-black pb-5">
+      {/* Page Header */}
       <div className="bg-gray-400 py-2">
         <h3 className="font-semibold text-white text-center text-lg">
           All Trainer Schedule
@@ -276,79 +321,186 @@ const AllTrainerSchedule = ({ TrainersScheduleData }) => {
       </div>
 
       {/* Table */}
-      <table className="min-w-full table-auto text-sm">
-        <thead>
-          <tr className="bg-gray-100 border-b">
-            <th className="px-4 py-2">#</th>
-            <th className="px-4 py-2">Trainer Name</th>
-            <th className="px-4 py-2">Total Sessions</th>
-            <th className="px-4 py-2">Booked Sessions</th>
-            <th className="px-4 py-2">Days Active</th>
-            <th className="px-4 py-2">Main Class Type</th>
-            <th className="px-4 py-2">No Limit Sessions</th>
-            <th className="px-4 py-2">Time Range</th>
-            <th className="px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredTrainers.map((trainer, idx) => {
-            const { summary } = trainer;
-            return (
-              <tr key={trainer._id} className="hover:bg-gray-100">
-                <td className="px-4 py-2">{idx + 1}</td>
-                <td className="border px-4 py-2">
-                  <BookedTrainerBasicInfo
-                    trainerID={trainer?.trainerId}
-                    py={1}
-                  />
-                </td>
-                <td className="border text-center px-4 py-2">
-                  {summary?.totalSessions}
-                </td>
-                <td className="border text-center px-4 py-2">
-                  {summary?.totalParticipants} /{" "}
-                  {summary?.totalParticipantLimit}
-                </td>
-                <td className="border text-center px-4 py-2">
-                  {summary?.daysActive}
-                </td>
-                <td className="border text-center px-4 py-2">
-                  {summary?.mostCommonClassType}
-                </td>
-                <td className="border text-center px-4 py-2">
-                  {summary?.unlimitedParticipants}
-                </td>
-                <td className="border text-center px-4 py-2 w-[170px] ">
-                  {summary?.earliestStart === "N/A" &&
-                  summary?.latestEnd === "N/A" ? (
-                    "N/A"
-                  ) : (
-                    <div className="text-sm block">
-                      <p>
-                        {convertTo12HourFormat(summary?.earliestStart)} -
-                        {convertTo12HourFormat(summary?.latestEnd)}
-                      </p>
-                      <p>( {summary?.activeHours} hrs )</p>
-                    </div>
-                  )}
-                </td>
-                <td className="border px-4 py-2">
-                  <button
-                    onClick={() =>
-                      alert(`Show details for ${trainer.trainerName}`)
-                    }
-                    className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-                  >
-                    Details
-                  </button>
-                </td>
+      {currentData.length > 0 ? (
+        <div className="overflow-x-auto">
+          {/* Data Table */}
+          <table className="min-w-full table-auto border border-gray-300 text-sm">
+            {/* Table Header */}
+            <thead>
+              <tr className="bg-gray-100 border-b">
+                <th className="px-4 py-2">#</th>
+                <th className="px-4 py-2">Trainer Name</th>
+                <th className="px-4 py-2">Total Sessions</th>
+                <th className="px-4 py-2">Booked Sessions</th>
+                <th className="px-4 py-2">Days Active</th>
+                <th className="px-4 py-2">Main Class Type</th>
+                <th className="px-4 py-2">No Limit Sessions</th>
+                <th className="px-4 py-2">Time Range</th>
+                <th className="px-4 py-2">Actions</th>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+
+            {/* Table Body */}
+            <tbody>
+              {currentData.map((trainer, index) => {
+                const { summary } = trainer;
+                return (
+                  <tr key={trainer._id} className="hover:bg-gray-100">
+                    {/* Serial Number */}
+                    <td className="border px-4 py-2">
+                      {(currentPage - 1) * itemsPerPage + index + 1}
+                    </td>
+
+                    {/* Trainer Information */}
+                    <td className="border px-4 py-2">
+                      <BookedTrainerBasicInfo
+                        trainerID={trainer?.trainerId}
+                        py={1}
+                      />
+                    </td>
+
+                    {/* TotAL Sessions */}
+                    <td className="border text-center px-4 py-2">
+                      {summary?.totalSessions}
+                    </td>
+
+                    {/* Participants / Limit */}
+                    <td className="border text-center px-4 py-2">
+                      {summary?.totalParticipants} /{" "}
+                      {summary?.totalParticipantLimit}
+                    </td>
+
+                    {/* Active Days */}
+                    <td className="border text-center px-4 py-2">
+                      {summary?.daysActive}
+                    </td>
+
+                    {/* Common Class Types */}
+                    <td className="border text-center px-4 py-2">
+                      {summary?.mostCommonClassType}
+                    </td>
+
+                    {/* Unlimited class Participants */}
+                    <td className="border text-center px-4 py-2">
+                      {summary?.unlimitedParticipants}
+                    </td>
+
+                    {/* Class Start, End & Duration Time */}
+                    <td className="border text-center px-4 py-2 w-[170px] ">
+                      {summary?.earliestStart === "N/A" &&
+                      summary?.latestEnd === "N/A" ? (
+                        "N/A"
+                      ) : (
+                        <div className="text-sm block">
+                          <p>
+                            {convertTo12HourFormat(summary?.earliestStart)} -
+                            {convertTo12HourFormat(summary?.latestEnd)}
+                          </p>
+                          <p>( {summary?.activeHours} hrs )</p>
+                        </div>
+                      )}
+                    </td>
+
+                    {/* Action */}
+                    <td className="border px-4 py-2">
+                      <button
+                        id={`view-details-btn-${summary._id}`}
+                        className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
+                        onClick={() => {
+                          setSelectedSchedule(summary);
+                          modalTrainerScheduleRef.current?.showModal();
+                        }}
+                      >
+                        <FaInfo className="text-yellow-500" />
+                      </button>
+                      <Tooltip
+                        anchorSelect={`#view-details-btn-${summary._id}`}
+                        content="View Detailed Schedule Info"
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+
+          {/* Pagination Controls */}
+          <div className="mt-6 flex justify-center items-center gap-4">
+            <div className="join">
+              {/* Previous Page Button */}
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className={`join-item bg-white btn btn-sm h-10 px-5 text-sm transition-all duration-200 ${
+                  currentPage === 1
+                    ? "cursor-not-allowed opacity-50"
+                    : "hover:bg-blue-100 text-blue-600"
+                }`}
+              >
+                <FaAnglesLeft />
+              </button>
+
+              {/* Page Info */}
+              <span className="join-item h-10 px-5 text-sm flex items-center justify-center border border-gray-300 bg-white text-gray-800 font-semibold">
+                Page {currentPage} / {totalPages}
+              </span>
+
+              {/* Next Page Button */}
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+                className={`join-item bg-white btn btn-sm h-10 px-5 text-sm transition-all duration-200 ${
+                  currentPage === totalPages
+                    ? "cursor-not-allowed opacity-50"
+                    : "hover:bg-blue-100 text-blue-600"
+                }`}
+              >
+                <FaAnglesRight />
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-gray-200 p-4">
+          <p className="text-center font-semibold text-black">
+            No Booking History Available.
+          </p>
+        </div>
+      )}
+
+      {/* Trainer Schedule Modal */}
+      <dialog ref={modalTrainerScheduleRef} className="modal">
+        <AllTrainerScheduleModal
+          closeModal={closeTrainerScheduleModal}
+          selectedSchedule={selectedSchedule}
+        />
+      </dialog>
     </div>
   );
+};
+
+// Prop Validation
+AllTrainerSchedule.propTypes = {
+  TrainersScheduleData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      trainerId: PropTypes.string.isRequired,
+      trainerName: PropTypes.string.isRequired,
+      trainerSchedule: PropTypes.objectOf(
+        PropTypes.objectOf(
+          PropTypes.shape({
+            classType: PropTypes.string,
+            start: PropTypes.string,
+            end: PropTypes.string,
+            participantLimit: PropTypes.number,
+            participant: PropTypes.arrayOf(PropTypes.object), // Adjust if you have a specific structure for participant objects
+          })
+        )
+      ).isRequired,
+    })
+  ).isRequired,
 };
 
 export default AllTrainerSchedule;

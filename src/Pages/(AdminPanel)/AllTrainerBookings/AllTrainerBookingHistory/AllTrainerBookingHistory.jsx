@@ -280,10 +280,12 @@ const AllTrainerBookingHistory = ({ AllTrainerBookingHistoryData }) => {
 
             {/* Table Body */}
             <tbody>
-              {currentData?.map((booking, idx) => (
+              {currentData?.map((booking, index) => (
                 <tr key={booking._id} className="border-b hover:bg-gray-50">
                   {/* Serial Number */}
-                  <td className="px-4 py-2">{idx + 1}</td>
+                  <td className="px-4 py-2">
+                    {(currentPage - 1) * itemsPerPage + index + 1}
+                  </td>
 
                   {/* Booker User Information */}
                   <td className="border px-4 py-2">
