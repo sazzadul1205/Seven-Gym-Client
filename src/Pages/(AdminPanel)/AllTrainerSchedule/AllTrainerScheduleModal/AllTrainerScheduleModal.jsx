@@ -4,7 +4,6 @@ import { ImCross } from "react-icons/im";
 const AllTrainerScheduleModal = ({ closeModal, selectedSchedule }) => {
   console.log("selected Schedule :", selectedSchedule);
 
-
   return (
     <div className="modal-box max-w-5xl w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black pb-5">
       {/* Header */}

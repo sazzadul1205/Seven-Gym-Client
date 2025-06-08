@@ -77,6 +77,8 @@ const AllCompleatInvoices = ({ CompletedTierPaymentData }) => {
     setSelectedPaymentInvoice(null);
   };
 
+  
+
   return (
     <div>
       {/* Page Header */}

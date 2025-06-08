@@ -12,9 +12,8 @@ import {
   FaUserSlash,
   FaExclamationTriangle,
   FaUnlock,
+  FaInfo,
 } from "react-icons/fa";
-
-import { HiDotsVertical } from "react-icons/hi";
 
 // import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
@@ -184,9 +183,9 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
         onClick={() =>
           setOpenDropdownId(openDropdownId === trainer._id ? null : trainer._id)
         }
-        className="p-1 border border-gray-300 rounded-full hover:bg-gray-200 focus:outline-none cursor-pointer"
+        className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
       >
-        <HiDotsVertical size={20} />
+        <FaInfo className="text-yellow-500" />
       </button>
 
       {/* Dropdown menu */}

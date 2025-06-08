@@ -12,20 +12,7 @@ import { getGenderIcon } from "../../../Utility/getGenderIcon";
 
 // Import Modal
 import AllTrainerManagementDropdown from "./AllTrainerManagementDropdown/AllTrainerManagementDropdown";
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const formatPhone = (phone) => {
-  // Ensure phone starts with '+'
-  const normalized = phone.startsWith("+") ? phone : `+${phone}`;
-
-  // Format: +880 19 1733 5945
-  const country = normalized.slice(0, 4); // +880
-  const operator = normalized.slice(4, 6); // 19
-  const part1 = normalized.slice(6, 10); // 1733
-  const part2 = normalized.slice(10); // 5945
-
-  return `${country} ${operator} ${part1} ${part2}`;
-};
+import { formatPhone } from "../../../Utility/formatPhone";
 
 const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
   // React state for filters
@@ -119,133 +106,137 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
 
   return (
     <div className="text-black">
-      {/* ========== FILTER SECTION ========== */}
-      <div className="bg-gray-200 px-4 py-6 flex flex-col items-center space-y-1">
-        <label className="text-gray-700 font-medium text-lg">
+      {/* Header */}
+      <div className="bg-gray-400 py-2">
+        <h3 className="font-semibold text-white text-center text-lg">
           All Trainers
-        </label>
+        </h3>
+      </div>
 
-        {/* Filter Controls (Gender, Specialization, Tier, Search) */}
-        <div className="flex flex-wrap justify-center gap-4 w-full max-w-6xl">
-          {/* Gender Filter Dropdown */}
-          <div className="flex flex-col">
-            <label className="text-sm text-gray-600 mb-1">Gender</label>
-            <select
-              value={selectedGender}
-              onChange={(e) => setSelectedGender(e.target.value)}
-              className="min-w-[180px] bg-white border border-gray-300 rounded-md px-4 py-2 text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-500"
-            >
-              {genderOptions.map((gender) => (
-                <option key={gender} value={gender}>
-                  {gender}
-                </option>
-              ))}
-            </select>
+      {/* Filters */}
+      <div className="flex flex-wrap justify-center gap-4 w-full p-4 bg-gray-400 border border-t-white">
+        {/* Search by Trainer Name */}
+        <div className="flex flex-col flex-1 max-w-[400px]">
+          <label className="text-sm font-semibold text-white mb-1">
+            Search By Trainer Name
+          </label>
+          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+            <FaSearch className="text-gray-500" />
+            <input
+              type="text"
+              placeholder="Search users..."
+              className="w-full outline-none text-gray-700 placeholder-gray-400 bg-transparent"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
+        </div>
 
-          {/* Specialization Filter Dropdown */}
-          <div className="flex flex-col">
-            <label className="text-sm text-gray-600 mb-1">Specialization</label>
-            <select
-              value={selectedSpecialization}
-              onChange={(e) => setSelectedSpecialization(e.target.value)}
-              className="min-w-[180px] bg-white border border-gray-300 rounded-md px-4 py-2 text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-500"
-            >
-              {uniqueSpecializations.map((spec) => (
-                <option key={spec} value={spec}>
-                  {spec}
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* Gender Dropdown */}
+        <div className="flex flex-col flex-1 max-w-[200px]">
+          <label className="text-sm font-semibold text-white mb-1">
+            Gender Dropdown
+          </label>
+          <select
+            value={selectedGender}
+            onChange={(e) => setSelectedGender(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-full bg-white text-gray-700 outline-none shadow-sm"
+          >
+            {genderOptions.map((gender) => (
+              <option key={gender} value={gender}>
+                {gender}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          {/* Tier Filter Dropdown */}
-          <div className="flex flex-col">
-            <label className="text-sm text-gray-600 mb-1">Tier</label>
-            <select
-              value={selectedTier}
-              onChange={(e) => setSelectedTier(e.target.value)}
-              className="min-w-[180px] bg-white border border-gray-300 rounded-md px-4 py-2 text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-500"
-            >
-              {uniqueTiers.map((tier) => (
-                <option key={tier} value={tier}>
-                  {tier}
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* Specialization Dropdown */}
+        <div className="flex flex-col flex-1 max-w-[200px]">
+          <label className="text-sm font-semibold text-white mb-1">
+            Specialization Dropdown
+          </label>
+          <select
+            value={selectedSpecialization}
+            onChange={(e) => setSelectedSpecialization(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-full bg-white text-gray-700 outline-none shadow-sm"
+          >
+            {uniqueSpecializations.map((spec) => (
+              <option key={spec} value={spec}>
+                {spec}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          {/* Search Input for Trainer Name */}
-          <div className="flex flex-col flex-1 min-w-[250px]">
-            <label className="text-sm text-gray-600 mb-1">Search By Name</label>
-            <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
-              <FaSearch className="text-gray-500" />
-              <input
-                type="text"
-                placeholder="Search users..."
-                className="w-full outline-none text-gray-700 placeholder-gray-400 bg-transparent"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </div>
+        {/* Tier Dropdown */}
+        <div className="flex flex-col flex-1 max-w-[200px]">
+          <label className="text-sm font-semibold text-white mb-1">
+            Tier Dropdown
+          </label>
+          <select
+            value={selectedTier}
+            onChange={(e) => setSelectedTier(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-full bg-white text-gray-700 outline-none shadow-sm"
+          >
+            {uniqueTiers.map((tier) => (
+              <option key={tier} value={tier}>
+                {tier}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
-      {/* ========== TRAINERS TABLE ========== */}
-      <div className="text-black">
-        <table className="table w-full border border-gray-300">
+      {/* Tables */}
+      <div className="overflow-x-auto">
+        {/* Data Table */}
+        <table className="min-w-full table-auto border border-gray-300 text-sm">
           {/* Table Header */}
-          <thead className="bg-gray-100 text-gray-700">
-            <tr>
-              <th>#</th>
-              <th>Profile</th>
-              <th>Full Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Specialization</th>
-              <th>Gender</th>
-              <th>Tier</th>
-              <th>Action</th>
+          <thead>
+            <tr className="bg-gray-100 border-b">
+              <th className="px-4 py-2">#</th>
+              <th className="px-4 py-2">Profile</th>
+              <th className="px-4 py-2">Full Name</th>
+              <th className="px-4 py-2">Email</th>
+              <th className="px-4 py-2">Phone</th>
+              <th className="px-4 py-2">Specialization</th>
+              <th className="px-4 py-2">Gender</th>
+              <th className="px-4 py-2">Tier</th>
+              <th className="px-4 py-2">Action</th>
             </tr>
           </thead>
 
-          {/* Table Body with Trainer Data */}
+          {/* Table Body */}
           <tbody>
-            {currentTrainers.length === 0 ? (
-              // Fallback Row when no trainers match filters
-              <tr>
-                <td colSpan="9" className="text-center text-gray-500 py-4">
-                  No trainers found.
-                </td>
-              </tr>
-            ) : (
+            {
               // Map through trainers and render table rows
               currentTrainers.map((trainer, index) => (
                 <tr
                   key={trainer._id}
                   className={`hover:bg-gray-100 items-center ${
                     trainer.ban
-                      ? "bg-red-100 hover:bg-red-200"
+                      ? "bg-red-200 hover:bg-red-200/90"
                       : !trainer.tier
-                      ? "bg-red-100 hover:bg-red-200"
+                      ? "bg-red-200 hover:bg-red-200/90"
                       : ""
                   }`}
                 >
                   {/* Serial Number */}
-                  <td>{indexOfFirstTrainer + index + 1}</td>
+                  <td className="border px-4 py-2">
+                    {(currentPage - 1) * trainersPerPage + index + 1}
+                  </td>
 
                   {/* Trainer Profile Picture */}
-                  <td>
+                  <td className="border px-4 py-2">
                     <img
                       src={trainer.imageUrl}
                       alt={trainer.name}
-                      className="w-10 h-10 rounded-full object-cover"
+                      className="w-16 h-16 rounded-full object-cover"
                     />
                   </td>
 
                   {/* Full Name with Search Highlight */}
-                  <td>
+                  <td className="border px-4 py-2">
                     {searchTerm
                       ? (() => {
                           const regex = new RegExp(`(${searchTerm})`, "i");
@@ -264,7 +255,7 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
                   </td>
 
                   {/* Email (clickable mail link) */}
-                  <td>
+                  <td className="border px-4 py-2">
                     <a
                       href={`mailto:${trainer.email}`}
                       className="text-blue-600 hover:underline"
@@ -276,10 +267,12 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
                   </td>
 
                   {/* Phone Number (formatted) */}
-                  <td>{formatPhone(trainer.contact.phone)}</td>
+                  <td className="border px-4 py-2">
+                    {formatPhone(trainer.contact.phone)}
+                  </td>
 
                   {/* Specialization or Ban Time Left */}
-                  <td>
+                  <td className="border px-4 py-2">
                     {trainer.ban
                       ? (() => {
                           const now = new Date();
@@ -328,7 +321,8 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
 
                           return (
                             <span className="text-red-600 font-semibold">
-                              Un Ban in {timeLeftStr.trim() || "less than a day"}
+                              Un Ban in{" "}
+                              {timeLeftStr.trim() || "less than a day"}
                             </span>
                           );
                         })()
@@ -336,11 +330,11 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
                   </td>
 
                   {/* Gender with Icon and Label */}
-                  <td className="flex items-center justify-center gap-1 py-2">
+                  <td className="border px-4 py-2">
                     {(() => {
                       const { icon, label } = getGenderIcon(trainer.gender);
                       return (
-                        <div className="flex flex-col items-center justify-center text-center">
+                        <div className="flex flex-col items-center text-center">
                           <span className="w-6 h-6 flex items-center justify-center">
                             {icon}
                           </span>
@@ -351,7 +345,7 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
                   </td>
 
                   {/* Tier Badge */}
-                  <td>
+                  <td className="border px-4 py-2">
                     {trainer.ban ? (
                       <span className="text-red-600 font-bold">Banned</span>
                     ) : trainer.tier ? (
@@ -362,7 +356,7 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
                   </td>
 
                   {/* Action Dropdown */}
-                  <td>
+                  <td className="border px-4 py-2">
                     <AllTrainerManagementDropdown
                       trainer={trainer}
                       Refetch={Refetch}
@@ -370,7 +364,7 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
                   </td>
                 </tr>
               ))
-            )}
+            }
           </tbody>
         </table>
       </div>

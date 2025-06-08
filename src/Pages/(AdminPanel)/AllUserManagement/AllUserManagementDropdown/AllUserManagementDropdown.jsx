@@ -9,10 +9,10 @@ import {
   FaBan,
   FaClipboardList,
   FaExclamationTriangle,
+  FaInfo,
   FaUnlock,
   FaUserSlash,
 } from "react-icons/fa";
-import { HiDotsVertical } from "react-icons/hi";
 
 // Import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
@@ -164,12 +164,12 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
     <div ref={dropdownRef} className="relative inline-block text-left">
       {/* Dropdown toggle button */}
       <button
-        className="border-2 border-black  rounded-full p-2 hover:bg-gray-200 transition cursor-pointer"
+        className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200"
         onClick={() =>
           setOpenDropdownId(openDropdownId === user._id ? null : user._id)
         }
       >
-        <HiDotsVertical className="text-gray-700" />
+        <FaInfo className="text-yellow-500" />
       </button>
 
       {/* Dropdown menu */}

@@ -494,13 +494,20 @@ AllTrainerSchedule.propTypes = {
             classType: PropTypes.string,
             start: PropTypes.string,
             end: PropTypes.string,
-            participantLimit: PropTypes.number,
-            participant: PropTypes.arrayOf(PropTypes.object), // Adjust if you have a specific structure for participant objects
+            participantLimit: PropTypes.oneOfType([
+              PropTypes.number,
+              PropTypes.string,
+            ]),
+            participant: PropTypes.oneOfType([
+              PropTypes.arrayOf(PropTypes.object),
+              PropTypes.object,
+            ]),
           })
         )
       ).isRequired,
     })
-  ).isRequired,
+  ),
 };
 
 export default AllTrainerSchedule;
+
