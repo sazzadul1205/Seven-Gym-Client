@@ -32,7 +32,6 @@ const AllTrainerScheduleModal = ({ closeModal, selectedSchedule }) => {
   // // Error handling
   if (TrainerBasicError) return <FetchingError />;
 
-  console.log(TrainerBasicData);
   // Assuming you receive a `summary` prop object from the parent that looks like your JSON
   const {
     totalSessions,
@@ -48,6 +47,8 @@ const AllTrainerScheduleModal = ({ closeModal, selectedSchedule }) => {
 
   const { icon: trainerIcon } = getGenderIcon(TrainerBasicData?.gender);
 
+
+
   return (
     <div className="modal-box max-w-5xl w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black pb-5">
       {/* Header */}
@@ -61,7 +62,9 @@ const AllTrainerScheduleModal = ({ closeModal, selectedSchedule }) => {
         />
       </div>
 
-      <div className="overflow-auto">
+      {/* Body */}
+      <div className="overflow-auto space-y-3">
+        {/* Primary Information */}
         <div className="flex justify-between bg-gray-200 py-2 px-5 gap-2">
           {/* Trainer information */}
           <div className="min-w-1/2 border-r border-black">
@@ -106,56 +109,149 @@ const AllTrainerScheduleModal = ({ closeModal, selectedSchedule }) => {
             </div>
           </div>
 
+          {/* Summary */}
           <div className="min-w-1/2">
+            {/* Title */}
             <h4 className="font-semibold mb-2 border-b border-gray-300">
               Schedule Summary
             </h4>
-            <div className="flex justify-between items-center">
-              <p className="font-semibold">Total Sessions :</p>
-              <p>{totalSessions ?? "-"}</p>
-            </div>
+            {/* Summary Details */}
+            <div className="space-y-2">
+              {/* Total Sessions */}
+              <div className="flex justify-between items-center">
+                <p className="font-semibold">Total Sessions :</p>
+                <p>{totalSessions ?? "-"}</p>
+              </div>
 
-            <div className="flex justify-between items-center">
-              <p className="font-semibold">Total Participants : </p>
-              <p>
-                {totalParticipants ?? "-"} / {totalParticipantLimit ?? "-"}
-              </p>
-              {unlimitedParticipants ? (
-                <p className="text-sm text-green-600 font-medium">
-                  Unlimited Participants
-                </p>
-              ) : null}
-            </div>
-
-            <div className="flex justify-between items-center">
-              <p className="font-semibold">Most Common Class Type</p>
-              <p>{mostCommonClassType || "-"}</p>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <p className="font-semibold">Class Time : </p>
-              <div className="flex items-center gap-2">
+              {/* Total Participants */}
+              <div className="flex justify-between items-center">
+                <p className="font-semibold">Total Participants : </p>
                 <p>
-                  {formatTimeTo12Hour(earliestStart)} -
-                  {formatTimeTo12Hour(latestEnd)}
+                  {totalParticipants ?? "-"} / {totalParticipantLimit ?? "-"}
                 </p>
-                <p>( {activeHours} hrs )</p>
+                {unlimitedParticipants ? (
+                  <p className="text-sm text-green-600 font-medium">
+                    Unlimited Participants
+                  </p>
+                ) : null}
+              </div>
+
+              {/* Common Class Type */}
+              <div className="flex justify-between items-center">
+                <p className="font-semibold">Most Common Class Type</p>
+                <p>{mostCommonClassType || "-"}</p>
+              </div>
+
+              {/* Class Type */}
+              <div className="flex justify-between items-center">
+                <p className="font-semibold">Class Time : </p>
+                <div className="flex items-center gap-2">
+                  <p>
+                    {formatTimeTo12Hour(earliestStart)} -
+                    {formatTimeTo12Hour(latestEnd)}
+                  </p>
+                  <p>( {activeHours} hrs )</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Summary Section */}
-
-        <div className="inline-block bg-white rounded-md shadow-md p-4  w-full">
-          <p className="text-sm text-gray-500 uppercase tracking-wide font-semibold mb-1">
+        {/* Active Date */}
+        <div className="w-full bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          {/* Title */}
+          <p className="text-xs font-semibold text-gray-500 tracking-wider uppercase mb-3">
             Active Days
           </p>
-          <p className="text-base text-gray-900 leading-snug">
-            {daysActive || (
-              <span className="text-gray-400">No data available</span>
-            )}
+
+          {/* Active day */}
+          {daysActive ? (
+            <div className="flex flex-wrap gap-2">
+              {daysActive.split(",").map((day) => (
+                <span
+                  key={day.trim()}
+                  className="px-3 py-1 text-sm rounded-full bg-blue-100 text-blue-700 font-medium"
+                >
+                  {day.trim()}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400 italic text-sm">No data available</p>
+          )}
+        </div>
+
+        {/* Schedules */}
+        <div className="w-full bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          {/* Title */}
+          <p className="text-xs font-semibold text-gray-500 tracking-wider uppercase mb-3">
+            Schedule
           </p>
+
+          {/* Class Schedule */}
+          {selectedSchedule?.trainerSchedule &&
+            Object.entries(selectedSchedule?.trainerSchedule).map(
+              ([day, sessions]) => (
+                <div key={day} className="mb-6">
+                  {/* Day Header */}
+                  <h3 className="text-lg font-semibold text-black mb-2">
+                    {day}
+                  </h3>
+
+                  {/* Table */}
+                  <div className="overflow-x-auto">
+                    {/* Data Table */}
+                    <table className="min-w-full table-auto border border-gray-300 text-sm">
+                      {/* Table Header */}
+                      <thead>
+                        <tr className="bg-gray-100 border-b">
+                          <th className="px-4 py-2">Start - End</th>
+                          <th className="px-4 py-2">Class Type</th>
+                          <th className="px-4 py-2">Participants</th>
+                          <th className="px-4 py-2">Limit</th>
+                          <th className="px-4 py-2">Price ($)</th>
+                        </tr>
+                      </thead>
+
+                      {/* Table Body */}
+                      <tbody>
+                        {Object.entries(sessions).map(([time, session]) => (
+                          <tr key={time} className="border-b">
+                            {/* Time */}
+                            <td className="border px-4 py-2">
+                              {formatTimeTo12Hour(session.start)} -{" "}
+                              {formatTimeTo12Hour(session.end)}
+                            </td>
+
+                            {/* Class Type */}
+                            <td className="border px-4 py-2">
+                              {session.classType}
+                            </td>
+
+                            {/* Participant Count  */}
+                            <td className="border px-4 py-2">
+                              {Object.keys(session.participant || {}).length}
+                            </td>
+
+                            {/* Participant Length */}
+                            <td className="border px-4 py-2">
+                              {session.participantLimit}
+                            </td>
+
+                            {/* Price */}
+                            <td className="border px-4 py-2">
+                              {session.classPrice > 0
+                                ? `$ ${session.classPrice}`
+                                : "Free"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )
+            )}
         </div>
       </div>
     </div>

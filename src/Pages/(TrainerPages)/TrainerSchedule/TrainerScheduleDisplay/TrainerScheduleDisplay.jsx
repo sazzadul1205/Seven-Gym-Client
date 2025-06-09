@@ -21,9 +21,8 @@ const TrainerScheduleDisplay = ({
   handleClear,
   tempSchedule,
   handleUpdate,
-  TrainersClassType,
-  // isValidClassType,
   ClassTypesData,
+  TrainersClassType,
 }) => {
   const [selectedClass, setSelectedClass] = useState(null);
 
