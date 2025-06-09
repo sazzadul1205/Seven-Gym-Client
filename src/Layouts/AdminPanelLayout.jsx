@@ -14,6 +14,7 @@ import coach from "../assets/AdminPanel/coach.png";
 import weekly from "../assets/AdminPanel/weekly.png";
 import invoice from "../assets/AdminPanel/invoice.png";
 import booking from "../assets/AdminPanel/booking.png";
+import homepage from "../assets/AdminPanel/homepage.png";
 import ProfileDefault from "../assets/ProfileDefault.jpg";
 import trainerInvoice from "../assets/AdminPanel/trainerInvoice.png";
 
@@ -33,6 +34,7 @@ import TierUpgradeInvoices from "../Pages/(AdminPanel)/TierUpgradeInvoices/TierU
 import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
 import AllTrainerSchedule from "../Pages/(AdminPanel)/AllTrainerSchedule/AllTrainerSchedule";
+import HomePageAdminControl from "../Pages/(AdminPanel)/HomePageAdminControl/HomePageAdminControl";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -68,61 +70,24 @@ const AdminPanelLayout = () => {
 
   const {
     // Is Loading States
-    AllUsersIsLoading,
-    AllTrainersIsLoading,
-    TierUpgradeRefundIsLoading,
-    TierUpgradePaymentIsLoading,
-    TrainerSessionRefundIsLoading,
-    TrainerSessionActiveIsLoading,
-    TrainerSessionPaymentIsLoading,
-    DailyTierUpgradeRefundIsLoading,
-    TrainerSessionCompletedIsLoading,
-    DailyTierUpgradePaymentIsLoading,
-    AllTrainerBookingRequestIsLoading,
-    AllTrainerBookingHistoryIsLoading,
-    AllTrainerBookingAcceptedIsLoading,
-    TrainerSessionRefundStatusIsLoading,
-    TrainerSessionActiveStatusIsLoading,
-    AllTrainerBookingCompletedIsLoading,
-    AllTrainerBookingCancelledIsLoading,
-    TrainerSessionPaymentStatusIsLoading,
-    TrainerBookingRequestStatusIsLoading,
-    TrainerBookingAcceptedStatusIsLoading,
-    TrainerBookingCompletedStatusIsLoading,
-    TrainerBookingCancelledStatusIsLoading,
-    TrainerSessionCompletedStatusIsLoading,
+    isLoading,
 
     // Error States
-    AllUsersError,
-    AllTrainersError,
-    TierUpgradeRefundError,
-    TierUpgradePaymentError,
-    TrainerSessionRefundError,
-    TrainerSessionActiveError,
-    TrainerSessionPaymentError,
-    DailyTierUpgradeRefundError,
-    TrainerSessionCompletedError,
-    DailyTierUpgradePaymentError,
-    AllTrainerBookingRequestError,
-    AllTrainerBookingHistoryError,
-    AllTrainerBookingAcceptedError,
-    TrainerSessionRefundStatusError,
-    TrainerSessionActiveStatusError,
-    AllTrainerBookingCompletedError,
-    AllTrainerBookingCancelledError,
-    TrainerSessionPaymentStatusError,
-    TrainerBookingRequestStatusError,
-    TrainerBookingAcceptedStatusError,
-    TrainerBookingCompletedStatusError,
-    TrainerBookingCancelledStatusError,
-    TrainerSessionCompletedStatusError,
+    error,
 
     // Data States
+    GalleryData,
     AllUsersData,
+    PromotionsData,
+    GymFeaturesData,
     AllTrainersData,
+    TestimonialsData,
     TrainersScheduleData,
+    HomeBannerSectionData,
     TierUpgradeRefundData,
+    HomeWelcomeSectionData,
     TierUpgradePaymentData,
+    HomeServicesSectionData,
     TrainerSessionRefundData,
     TrainerSessionActiveData,
     TrainerSessionPaymentData,
@@ -139,9 +104,9 @@ const AdminPanelLayout = () => {
     TrainerSessionPaymentStatusData,
     TrainerBookingRequestStatusData,
     TrainerBookingAcceptedStatusData,
+    TrainerSessionCompletedStatusData,
     TrainerBookingCompletedStatusData,
     TrainerBookingCancelledStatusData,
-    TrainerSessionCompletedStatusData,
 
     // Refetch Function
     refetchAll,
@@ -236,63 +201,29 @@ const AdminPanelLayout = () => {
         <AllTrainerSchedule TrainersScheduleData={TrainersScheduleData} />
       ),
     },
+    {
+      id: "Home_Page_View",
+      Icon: homepage,
+      title: "Home Page View",
+      content: (
+        <HomePageAdminControl
+          GalleryData={GalleryData}
+          PromotionsData={PromotionsData}
+          GymFeaturesData={GymFeaturesData}
+          TestimonialsData={TestimonialsData}
+          HomeBannerSectionData={HomeBannerSectionData}
+          HomeWelcomeSectionData={HomeWelcomeSectionData}
+          HomeServicesSectionData={HomeServicesSectionData}
+        />
+      ),
+    },
   ];
 
   // Loading state
-  if (
-    AllUsersIsLoading ||
-    AllTrainersIsLoading ||
-    TierUpgradeRefundIsLoading ||
-    TierUpgradePaymentIsLoading ||
-    TrainerSessionRefundIsLoading ||
-    TrainerSessionActiveIsLoading ||
-    TrainerSessionPaymentIsLoading ||
-    DailyTierUpgradeRefundIsLoading ||
-    TrainerSessionCompletedIsLoading ||
-    DailyTierUpgradePaymentIsLoading ||
-    AllTrainerBookingHistoryIsLoading ||
-    AllTrainerBookingRequestIsLoading ||
-    AllTrainerBookingAcceptedIsLoading ||
-    TrainerSessionRefundStatusIsLoading ||
-    TrainerSessionActiveStatusIsLoading ||
-    AllTrainerBookingCompletedIsLoading ||
-    AllTrainerBookingCancelledIsLoading ||
-    TrainerSessionPaymentStatusIsLoading ||
-    TrainerBookingRequestStatusIsLoading ||
-    TrainerBookingAcceptedStatusIsLoading ||
-    TrainerBookingCompletedStatusIsLoading ||
-    TrainerSessionCompletedStatusIsLoading ||
-    TrainerBookingCancelledStatusIsLoading
-  )
-    return <Loading />;
+  if (isLoading) return <Loading />;
 
   // Error state
-  if (
-    AllUsersError ||
-    AllTrainersError ||
-    TierUpgradeRefundError ||
-    TierUpgradePaymentError ||
-    TrainerSessionRefundError ||
-    TrainerSessionActiveError ||
-    TrainerSessionPaymentError ||
-    DailyTierUpgradeRefundError ||
-    TrainerSessionCompletedError ||
-    DailyTierUpgradePaymentError ||
-    AllTrainerBookingRequestError ||
-    AllTrainerBookingHistoryError ||
-    AllTrainerBookingAcceptedError ||
-    TrainerSessionRefundStatusError ||
-    TrainerSessionActiveStatusError ||
-    AllTrainerBookingCompletedError ||
-    AllTrainerBookingCancelledError ||
-    TrainerBookingRequestStatusError ||
-    TrainerSessionPaymentStatusError ||
-    TrainerBookingAcceptedStatusError ||
-    TrainerBookingCompletedStatusError ||
-    TrainerBookingCancelledStatusError ||
-    TrainerSessionCompletedStatusError
-  )
-    return <FetchingError />;
+  if (error) return <FetchingError />;
 
   const handleSignOut = async () => {
     const result = await Swal.fire({

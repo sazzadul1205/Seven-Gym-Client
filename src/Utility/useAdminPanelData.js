@@ -1,495 +1,313 @@
-// import Packages
-import { useQuery } from "@tanstack/react-query";
-
-// Import Hooks
-// import useAuth from "../Hooks/useAuth";
-import useAxiosPublic from "../Hooks/useAxiosPublic";
+import useFetchData from "./useFetchData";
 
 const useAdminPanelData = () => {
-  //   const { user } = useAuth();
-  const axiosPublic = useAxiosPublic();
-
-  // 1. Fetch All Users
+  // 1. All Users
   const {
     data: AllUsersData,
     isLoading: AllUsersIsLoading,
     error: AllUsersError,
     refetch: AllUsersRefetch,
-  } = useQuery({
-    queryKey: ["AllUsersData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Users`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData("AllUsersData", "/Users");
 
-  // 2. Fetch All Trainers
+  // 2. All Trainers
   const {
     data: AllTrainersData,
     isLoading: AllTrainersIsLoading,
     error: AllTrainersError,
     refetch: AllTrainersRefetch,
-  } = useQuery({
-    queryKey: ["AllTrainersData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Trainers`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData("AllTrainersData", "/Trainers");
 
-  // 3. Fetch All Tier Upgrade Payments
+  // 3. Tier Upgrade Payment
   const {
     data: TierUpgradePaymentData,
     isLoading: TierUpgradePaymentIsLoading,
     error: TierUpgradePaymentError,
     refetch: TierUpgradePaymentRefetch,
-  } = useQuery({
-    queryKey: ["TierUpgradePaymentData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Tier_Upgrade_Payment`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData("TierUpgradePaymentData", "/Tier_Upgrade_Payment");
 
-  // 4. Fetch All Tier Upgrade Refund
+  // 4. Tier Upgrade Refund
   const {
     data: TierUpgradeRefundData,
     isLoading: TierUpgradeRefundIsLoading,
     error: TierUpgradeRefundError,
     refetch: TierUpgradeRefundRefetch,
-  } = useQuery({
-    queryKey: ["TierUpgradeRefundData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Tier_Upgrade_Refund`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData("TierUpgradeRefundData", "/Tier_Upgrade_Refund");
 
-  // 5. Fetch Daily Tier Upgrade Payment
+  // 5. Daily Tier Upgrade Payment
   const {
     data: DailyTierUpgradePaymentData,
     isLoading: DailyTierUpgradePaymentIsLoading,
     error: DailyTierUpgradePaymentError,
     refetch: DailyTierUpgradePaymentRefetch,
-  } = useQuery({
-    queryKey: ["DailyTierUpgradePaymentData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Tier_Upgrade_Payment/DailyStatus`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "DailyTierUpgradePaymentData",
+    "/Tier_Upgrade_Payment/DailyStatus"
+  );
 
-  // 6. Fetch Daily Tier Upgrade Refund
+  // 6. Daily Tier Upgrade Refund
   const {
     data: DailyTierUpgradeRefundData,
     isLoading: DailyTierUpgradeRefundIsLoading,
     error: DailyTierUpgradeRefundError,
     refetch: DailyTierUpgradeRefundRefetch,
-  } = useQuery({
-    queryKey: ["DailyTierUpgradeRefundData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Tier_Upgrade_Refund/DailyStatus`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "DailyTierUpgradeRefundData",
+    "/Tier_Upgrade_Refund/DailyStatus"
+  );
 
-  // 7. Fetch Trainer Session Payment
+  // 7. Trainer Session Payment
   const {
     data: TrainerSessionPaymentData,
     isLoading: TrainerSessionPaymentIsLoading,
     error: TrainerSessionPaymentError,
     refetch: TrainerSessionPaymentRefetch,
-  } = useQuery({
-    queryKey: ["TrainerSessionPaymentData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Trainer_Session_Payment`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData("TrainerSessionPaymentData", "/Trainer_Session_Payment");
 
-  // 8. Fetch Trainer Session Refund
+  // 8. Trainer Session Refund
   const {
     data: TrainerSessionRefundData,
     isLoading: TrainerSessionRefundIsLoading,
     error: TrainerSessionRefundError,
     refetch: TrainerSessionRefundRefetch,
-  } = useQuery({
-    queryKey: ["TrainerSessionRefundData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Trainer_Session_Refund`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData("TrainerSessionRefundData", "/Trainer_Session_Refund");
 
-  // 9. Fetch Trainer Session Active
+  // 9. Trainer Session Active
   const {
     data: TrainerSessionActiveData,
     isLoading: TrainerSessionActiveIsLoading,
     error: TrainerSessionActiveError,
     refetch: TrainerSessionActiveRefetch,
-  } = useQuery({
-    queryKey: ["TrainerSessionActiveData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Session_Completed_&_Active/ActiveSessions`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "TrainerSessionActiveData",
+    "/Trainer_Session_Completed_&_Active/ActiveSessions"
+  );
 
-  // 10. Fetch Trainer Session Completed
+  // 10. Trainer Session Completed
   const {
     data: TrainerSessionCompletedData,
     isLoading: TrainerSessionCompletedIsLoading,
     error: TrainerSessionCompletedError,
     refetch: TrainerSessionCompletedRefetch,
-  } = useQuery({
-    queryKey: ["TrainerSessionCompletedData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Session_Completed_&_Active/CompletedSessions`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "TrainerSessionCompletedData",
+    "/Trainer_Session_Completed_&_Active/CompletedSessions"
+  );
 
-  // 11. Fetch Trainer Session Payed Status
+  // 11. Trainer Session Payment Status
   const {
     data: TrainerSessionPaymentStatusData,
     isLoading: TrainerSessionPaymentStatusIsLoading,
     error: TrainerSessionPaymentStatusError,
     refetch: TrainerSessionPaymentStatusRefetch,
-  } = useQuery({
-    queryKey: ["TrainerSessionPaymentStatusData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Session_Payment/DailyStats`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "TrainerSessionPaymentStatusData",
+    "/Trainer_Session_Payment/DailyStats"
+  );
 
-  // 12. Fetch Trainer Session Refund Status
+  // 12. Trainer Session Refund Status
   const {
     data: TrainerSessionRefundStatusData,
     isLoading: TrainerSessionRefundStatusIsLoading,
     error: TrainerSessionRefundStatusError,
     refetch: TrainerSessionRefundStatusRefetch,
-  } = useQuery({
-    queryKey: ["TrainerSessionRefundStatusData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Trainer_Session_Refund/DailyStats`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "TrainerSessionRefundStatusData",
+    "/Trainer_Session_Refund/DailyStats"
+  );
 
-  // 13. Fetch Trainer Session Active Status
+  // 13. Trainer Session Active Status
   const {
     data: TrainerSessionActiveStatusData,
     isLoading: TrainerSessionActiveStatusIsLoading,
     error: TrainerSessionActiveStatusError,
     refetch: TrainerSessionActiveStatusRefetch,
-  } = useQuery({
-    queryKey: ["TrainerSessionActiveStatusData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Session_Completed_&_Active/ActiveSessions/DailyStatus`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "TrainerSessionActiveStatusData",
+    "/Trainer_Session_Completed_&_Active/ActiveSessions/DailyStatus"
+  );
 
-  // 13. Fetch Trainer Session Completed Status
+  // 14. Trainer Session Completed Status
   const {
     data: TrainerSessionCompletedStatusData,
     isLoading: TrainerSessionCompletedStatusIsLoading,
     error: TrainerSessionCompletedStatusError,
     refetch: TrainerSessionCompletedStatusRefetch,
-  } = useQuery({
-    queryKey: ["TrainerSessionCompletedStatusData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Session_Completed_&_Active/CompletedSessions/DailyStatus`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "TrainerSessionCompletedStatusData",
+    "/Trainer_Session_Completed_&_Active/CompletedSessions/DailyStatus"
+  );
 
-  // 14. Fetch All Trainer Booking Accepted
+  // 15. All Trainer Booking Accepted
   const {
     data: AllTrainerBookingAcceptedData,
     isLoading: AllTrainerBookingAcceptedIsLoading,
     error: AllTrainerBookingAcceptedError,
     refetch: AllTrainerBookingAcceptedRefetch,
-  } = useQuery({
-    queryKey: ["AllTrainerBookingAcceptedData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Trainer_Booking_Accepted`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "AllTrainerBookingAcceptedData",
+    "/Trainer_Booking_Accepted"
+  );
 
-  // 15. Fetch All Trainer Booking History
+  // 16. All Trainer Booking History
   const {
     data: AllTrainerBookingHistoryData,
     isLoading: AllTrainerBookingHistoryIsLoading,
     error: AllTrainerBookingHistoryError,
     refetch: AllTrainerBookingHistoryRefetch,
-  } = useQuery({
-    queryKey: ["AllTrainerBookingHistoryData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Trainer_Booking_History`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData("AllTrainerBookingHistoryData", "/Trainer_Booking_History");
 
-  // 16. Fetch All Trainer Booking Request
+  // 17. All Trainer Booking Request
   const {
     data: AllTrainerBookingRequestData,
     isLoading: AllTrainerBookingRequestIsLoading,
     error: AllTrainerBookingRequestError,
     refetch: AllTrainerBookingRequestRefetch,
-  } = useQuery({
-    queryKey: ["AllTrainerBookingRequestData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Trainer_Booking_Request`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData("AllTrainerBookingRequestData", "/Trainer_Booking_Request");
 
-  // 17. Fetch All Trainer Booking Completed
+  // 18. All Trainer Booking Completed
   const {
     data: AllTrainerBookingCompletedData,
     isLoading: AllTrainerBookingCompletedIsLoading,
     error: AllTrainerBookingCompletedError,
     refetch: AllTrainerBookingCompletedRefetch,
-  } = useQuery({
-    queryKey: ["AllTrainerBookingCompletedData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Trainer_Booking_History/Completed`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "AllTrainerBookingCompletedData",
+    "/Trainer_Booking_History/Completed"
+  );
 
-  // 18. Fetch All Trainer Booking Cancelled
+  // 19. All Trainer Booking Cancelled
   const {
     data: AllTrainerBookingCancelledData,
     isLoading: AllTrainerBookingCancelledIsLoading,
     error: AllTrainerBookingCancelledError,
     refetch: AllTrainerBookingCancelledRefetch,
-  } = useQuery({
-    queryKey: ["AllTrainerBookingCancelledData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Trainer_Booking_History/Cancelled`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "AllTrainerBookingCancelledData",
+    "/Trainer_Booking_History/Cancelled"
+  );
 
-  // 19. Fetch Trainer Booking Accepted Stratus Data
+  // 20. Trainer Booking Accepted Status
   const {
     data: TrainerBookingAcceptedStatusData,
     isLoading: TrainerBookingAcceptedStatusIsLoading,
     error: TrainerBookingAcceptedStatusError,
     refetch: TrainerBookingAcceptedStatusRefetch,
-  } = useQuery({
-    queryKey: ["TrainerBookingAcceptedStatusData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Booking_Accepted/DailyStatus`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "TrainerBookingAcceptedStatusData",
+    "/Trainer_Booking_Accepted/DailyStatus"
+  );
 
-  // 20. Fetch Trainer Booking Request Status Data
+  // 21. Trainer Booking Request Status
   const {
     data: TrainerBookingRequestStatusData,
     isLoading: TrainerBookingRequestStatusIsLoading,
     error: TrainerBookingRequestStatusError,
     refetch: TrainerBookingRequestStatusRefetch,
-  } = useQuery({
-    queryKey: ["TrainerBookingRequestStatusData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Booking_Request/DailyStatus`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "TrainerBookingRequestStatusData",
+    "/Trainer_Booking_Request/DailyStatus"
+  );
 
-  // 21. Fetch Trainer Booking Completed Status Data
+  // 22. Fetch Trainer Booking Completed Status Data
   const {
     data: TrainerBookingCompletedStatusData,
     isLoading: TrainerBookingCompletedStatusIsLoading,
     error: TrainerBookingCompletedStatusError,
     refetch: TrainerBookingCompletedStatusRefetch,
-  } = useQuery({
-    queryKey: ["TrainerBookingCompletedStatusData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Booking_History/Completed/DailyStatus`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "TrainerBookingCompletedStatusData",
+    "/Trainer_Booking_History/Completed/DailyStatus"
+  );
 
-  // 21. Fetch Trainer Booking Cancelled Status Data
+  // 23. Fetch Trainer Booking Cancelled Status Data
   const {
     data: TrainerBookingCancelledStatusData,
     isLoading: TrainerBookingCancelledStatusIsLoading,
     error: TrainerBookingCancelledStatusError,
     refetch: TrainerBookingCancelledStatusRefetch,
-  } = useQuery({
-    queryKey: ["TrainerBookingCancelledStatusData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(
-          `/Trainer_Booking_History/Cancelled/DailyStatus`
-        );
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData(
+    "TrainerBookingCancelledStatusData",
+    "/Trainer_Booking_History/Cancelled/DailyStatus"
+  );
 
-  // 22. Fetch Trainers Schedule Data
+  // 24. Fetch Trainers Schedule Data
   const {
     data: TrainersScheduleData,
     isLoading: TrainersScheduleIsLoading,
     error: TrainersScheduleError,
     refetch: TrainersScheduleRefetch,
-  } = useQuery({
-    queryKey: ["TrainersScheduleData"],
-    queryFn: async () => {
-      try {
-        const res = await axiosPublic.get(`/Trainers_Schedule`);
-        return res.data;
-      } catch (err) {
-        if (err.response?.status === 404) return [];
-        throw err;
-      }
-    },
-  });
+  } = useFetchData("TrainersScheduleData", "/Trainers_Schedule");
+
+  // 25. Fetch Home Banner Section
+  const {
+    data: HomeBannerSectionData,
+    isLoading: HomeBannerSectionIsLoading,
+    error: HomeBannerSectionError,
+    refetch: HomeBannerSectionRefetch,
+  } = useFetchData("HomeBannerSection", "/Home_Banner_Section");
+
+  // 26. Fetch Home Welcome Section
+  const {
+    data: HomeWelcomeSectionData,
+    isLoading: HomeWelcomeSectionIsLoading,
+    error: HomeWelcomeSectionError,
+    refetch: HomeWelcomeSectionRefetch,
+  } = useFetchData("HomeWelcomeSection", "/Home_Welcome_Section");
+
+  // 27. Fetch Home Services Section
+  const {
+    data: HomeServicesSectionData,
+    isLoading: HomeServicesSectionIsLoading,
+    error: HomeServicesSectionError,
+    refetch: HomeServicesSectionRefetch,
+  } = useFetchData("HomeServicesSection", "/Home_Services_Section");
+
+  // 28. Fetch Gallery
+  const {
+    data: GalleryData,
+    isLoading: GalleryIsLoading,
+    error: GalleryError,
+    refetch: GalleryRefetch,
+  } = useFetchData("Gallery", "/Gallery");
+
+  // 29. Fetch Promotions
+  const {
+    data: PromotionsData,
+    isLoading: PromotionsIsLoading,
+    error: PromotionsError,
+    refetch: PromotionsRefetch,
+  } = useFetchData("Promotions", "/Promotions");
+
+  // 30. Fetch Gym Features
+  const {
+    data: GymFeaturesData,
+    isLoading: GymFeaturesIsLoading,
+    error: GymFeaturesError,
+    refetch: GymFeaturesRefetch,
+  } = useFetchData("GymFeatures", "/Gym_Features");
+
+  // 31. Fetch Testimonials
+  const {
+    data: TestimonialsData,
+    isLoading: TestimonialsIsLoading,
+    error: TestimonialsError,
+    refetch: TestimonialsRefetch,
+  } = useFetchData("Testimonials", "/Testimonials");
 
   // Unified refetch function
   const refetchAll = async () => {
+    await GalleryRefetch();
     await AllUsersRefetch();
+    await PromotionsRefetch();
     await AllTrainersRefetch();
+    await GymFeaturesRefetch();
+    await TestimonialsRefetch();
     await TrainersScheduleRefetch();
+    await HomeBannerSectionRefetch();
     await TierUpgradeRefundRefetch();
     await TierUpgradePaymentRefetch();
+    await HomeWelcomeSectionRefetch();
+    await HomeServicesSectionRefetch();
     await TrainerSessionRefundRefetch();
     await TrainerSessionActiveRefetch();
     await TrainerSessionPaymentRefetch();
@@ -511,133 +329,112 @@ const useAdminPanelData = () => {
     await TrainerBookingCancelledStatusRefetch();
   };
 
+  const isLoading =
+    GalleryIsLoading ||
+    AllUsersIsLoading ||
+    PromotionsIsLoading ||
+    AllTrainersIsLoading ||
+    GymFeaturesIsLoading ||
+    TestimonialsIsLoading ||
+    TrainersScheduleIsLoading ||
+    TierUpgradeRefundIsLoading ||
+    HomeBannerSectionIsLoading ||
+    TierUpgradePaymentIsLoading ||
+    HomeWelcomeSectionIsLoading ||
+    HomeServicesSectionIsLoading ||
+    TrainerSessionRefundIsLoading ||
+    TrainerSessionActiveIsLoading ||
+    TrainerSessionPaymentIsLoading ||
+    DailyTierUpgradeRefundIsLoading ||
+    TrainerSessionCompletedIsLoading ||
+    DailyTierUpgradePaymentIsLoading ||
+    AllTrainerBookingHistoryIsLoading ||
+    AllTrainerBookingRequestIsLoading ||
+    AllTrainerBookingAcceptedIsLoading ||
+    TrainerSessionRefundStatusIsLoading ||
+    TrainerSessionActiveStatusIsLoading ||
+    AllTrainerBookingCompletedIsLoading ||
+    AllTrainerBookingCancelledIsLoading ||
+    TrainerSessionPaymentStatusIsLoading ||
+    TrainerBookingRequestStatusIsLoading ||
+    TrainerBookingAcceptedStatusIsLoading ||
+    TrainerSessionCompletedStatusIsLoading ||
+    TrainerBookingCompletedStatusIsLoading ||
+    TrainerBookingCancelledStatusIsLoading;
+
+  const error =
+    GalleryError ||
+    AllUsersError ||
+    PromotionsError ||
+    AllTrainersError ||
+    GymFeaturesError ||
+    TestimonialsError ||
+    TrainersScheduleError ||
+    HomeBannerSectionError ||
+    TierUpgradeRefundError ||
+    TierUpgradePaymentError ||
+    HomeWelcomeSectionError ||
+    HomeServicesSectionError ||
+    TrainerSessionRefundError ||
+    TrainerSessionActiveError ||
+    TrainerSessionPaymentError ||
+    DailyTierUpgradeRefundError ||
+    TrainerSessionCompletedError ||
+    DailyTierUpgradePaymentError ||
+    AllTrainerBookingHistoryError ||
+    AllTrainerBookingRequestError ||
+    AllTrainerBookingAcceptedError ||
+    TrainerSessionRefundStatusError ||
+    TrainerSessionActiveStatusError ||
+    AllTrainerBookingCompletedError ||
+    AllTrainerBookingCancelledError ||
+    TrainerSessionPaymentStatusError ||
+    TrainerBookingRequestStatusError ||
+    TrainerBookingAcceptedStatusError ||
+    TrainerSessionCompletedStatusError ||
+    TrainerBookingCompletedStatusError ||
+    TrainerBookingCancelledStatusError;
+
   return {
     // Is Loading States
-    AllUsersIsLoading,
-    AllTrainersIsLoading,
-    TrainersScheduleIsLoading,
-    TierUpgradeRefundIsLoading,
-    TierUpgradePaymentIsLoading,
-    TrainerSessionRefundIsLoading,
-    TrainerSessionActiveIsLoading,
-    TrainerSessionPaymentIsLoading,
-    DailyTierUpgradeRefundIsLoading,
-    TrainerSessionCompletedIsLoading,
-    DailyTierUpgradePaymentIsLoading,
-    AllTrainerBookingHistoryIsLoading,
-    AllTrainerBookingRequestIsLoading,
-    AllTrainerBookingAcceptedIsLoading,
-    TrainerSessionRefundStatusIsLoading,
-    TrainerSessionActiveStatusIsLoading,
-    AllTrainerBookingCompletedIsLoading,
-    AllTrainerBookingCancelledIsLoading,
-    TrainerSessionPaymentStatusIsLoading,
-    TrainerSessionCompletedStatusIsLoading,
-    TrainerBookingAcceptedStatusIsLoading,
-    TrainerBookingRequestStatusIsLoading,
-    TrainerBookingCompletedStatusIsLoading,
-    TrainerBookingCancelledStatusIsLoading,
+    isLoading,
 
     // Error States
-    AllUsersError,
-    AllTrainersError,
-    TrainersScheduleError,
-    TierUpgradeRefundError,
-    TierUpgradePaymentError,
-    TrainerSessionRefundError,
-    TrainerSessionActiveError,
-    TrainerSessionPaymentError,
-    DailyTierUpgradeRefundError,
-    TrainerSessionCompletedError,
-    DailyTierUpgradePaymentError,
-    AllTrainerBookingHistoryError,
-    AllTrainerBookingRequestError,
-    AllTrainerBookingAcceptedError,
-    TrainerSessionRefundStatusError,
-    TrainerSessionActiveStatusError,
-    AllTrainerBookingCompletedError,
-    AllTrainerBookingCancelledError,
-    TrainerSessionPaymentStatusError,
-    TrainerBookingRequestStatusError,
-    TrainerBookingAcceptedStatusError,
-    TrainerSessionCompletedStatusError,
-    TrainerBookingCompletedStatusError,
-    TrainerBookingCancelledStatusError,
+    error,
 
     // Data State
-    // Send All Users Data
+    GalleryData,
     AllUsersData,
-
-    // Send All Trainers Data
+    PromotionsData,
+    GymFeaturesData,
     AllTrainersData,
-
-    // Send All Schedule Data
+    TestimonialsData,
     TrainersScheduleData,
-
-    // Send All Tier Upgrade Refund Data
+    HomeBannerSectionData,
     TierUpgradeRefundData,
-
-    // Send All Tier Upgrade Payment Data
+    HomeWelcomeSectionData,
     TierUpgradePaymentData,
-
-    // Send Daily Tier Upgrade Refund Data
+    HomeServicesSectionData,
     TrainerSessionRefundData,
-
-    // Send Daily Tier Upgrade Payment Data
     TrainerSessionActiveData,
-
-    // Send Trainer Session Payment Data
     TrainerSessionPaymentData,
-
-    // Send Trainer Session Refund Data
     DailyTierUpgradeRefundData,
-
-    // Send Trainer Session Active Data
     DailyTierUpgradePaymentData,
-
-    // Send Trainer Session Completed Data
     TrainerSessionCompletedData,
-
-    // Send Trainer Session Payment Status Data
     AllTrainerBookingRequestData,
-
-    // Send Trainer Session Refund Status Data
     AllTrainerBookingHistoryData,
-
-    // Send Trainer Session Active Status Data
     AllTrainerBookingAcceptedData,
-
-    // Send Trainer Session Completed Status Data
     TrainerSessionRefundStatusData,
-
-    // Send All Trainer Booking Accepted Data
     TrainerSessionActiveStatusData,
-
-    // Send All Trainer Booking History Data
     AllTrainerBookingCompletedData,
-
-    // Send All Trainer Booking Request Data
     AllTrainerBookingCancelledData,
-
-    // Send All Trainer Booking Completed Data
     TrainerSessionPaymentStatusData,
-
-    // Send Booking Request Status Data
     TrainerBookingRequestStatusData,
-
-    // Send Booking Accepted Status Data
     TrainerBookingAcceptedStatusData,
-
-    // Send All Trainer Booking Cancelled Data
     TrainerSessionCompletedStatusData,
-
-    // Send Booking Completed Status Data
     TrainerBookingCompletedStatusData,
-
-    // Send Booking Cancelled Status Data
     TrainerBookingCancelledStatusData,
 
-    // Refetch Function
     refetchAll,
   };
 };

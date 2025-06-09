@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
+// Import Components
 import GymFeatures from "./GymFeatures/GymFeatures";
 import OurServices from "./OurServices/OurServices";
 import Testimonials from "./Testimonials/Testimonials";
@@ -14,6 +15,7 @@ import PromotionsSection from "./PromotionsSection/PromotionsSection";
 // Background Asset
 import HomeBackground from "../../../assets/Home-Background/Home-Background.jpeg";
 
+// Import Hooks
 import Loading from "../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../Shared/Component/FetchingError";
@@ -21,125 +23,138 @@ import FetchingError from "../../../Shared/Component/FetchingError";
 const Home = () => {
   const axiosPublic = useAxiosPublic();
 
-  // Fetching data for all the sections
+  // Fetch Home Banner Section Data
   const {
-    data: Home_Banner_SectionData,
-    isLoading: Home_Banner_SectionDataIsLoading,
-    error: Home_Banner_SectionDataError,
+    data: HomeBannerSectionData,
+    isLoading: HomeBannerSectionIsLoading,
+    error: HomeBannerSectionError,
   } = useQuery({
-    queryKey: ["Home_Banner_Section"],
+    queryKey: ["HomeBannerSection"],
     queryFn: () =>
       axiosPublic.get("/Home_Banner_Section").then((res) => res.data),
   });
+
+  // Fetch Home Welcome Section Data
   const {
-    data: Home_Welcome_SectionData,
-    isLoading: Home_Welcome_SectionDataIsLoading,
-    error: Home_Welcome_SectionDataError,
+    data: HomeWelcomeSectionData,
+    isLoading: HomeWelcomeSectionIsLoading,
+    error: HomeWelcomeSectionError,
   } = useQuery({
-    queryKey: ["Home_Welcome_Section"],
+    queryKey: ["HomeWelcomeSection"],
     queryFn: () =>
       axiosPublic.get("/Home_Welcome_Section").then((res) => res.data),
   });
+
+  // Fetch Home Services Section Data
   const {
-    data: Home_Services_SectionData,
-    isLoading: Home_Services_SectionDataIsLoading,
-    error: Home_Services_SectionDataError,
+    data: HomeServicesSectionData,
+    isLoading: HomeServicesSectionIsLoading,
+    error: HomeServicesSectionError,
   } = useQuery({
-    queryKey: ["Home_Services_Section"],
+    queryKey: ["HomeServicesSection"],
     queryFn: () =>
       axiosPublic.get("/Home_Services_Section").then((res) => res.data),
   });
+
+  // Fetch Our Classes Data
   const {
-    data: Our_ClassesData,
-    isLoading: Our_ClassesDataIsLoading,
-    error: Our_ClassesDataError,
+    data: OurClassesData,
+    isLoading: OurClassesIsLoading,
+    error: OurClassesError,
   } = useQuery({
-    queryKey: ["Our_Classes"],
+    queryKey: ["OurClasses"],
     queryFn: () => axiosPublic.get("/Our_Classes").then((res) => res.data),
   });
+
+  // Fetch Class Details Data
   const {
-    data: Class_DetailsData,
-    isLoading: Class_DetailsDataIsLoading,
-    error: Class_DetailsDataError,
+    data: ClassDetailsData,
+    isLoading: ClassDetailsIsLoading,
+    error: ClassDetailsError,
   } = useQuery({
-    queryKey: ["Class_Details"],
+    queryKey: ["ClassDetails"],
     queryFn: () => axiosPublic.get("/Class_Details").then((res) => res.data),
   });
+
+  // Fetch Trainers Data
   const {
     data: TrainersData,
-    isLoading: TrainersDataIsLoading,
-    error: TrainersDataError,
+    isLoading: TrainersIsLoading,
+    error: TrainersError,
   } = useQuery({
     queryKey: ["Trainers"],
     queryFn: () => axiosPublic.get("/Trainers").then((res) => res.data),
   });
+
+  // Fetch Testimonials Data
   const {
     data: TestimonialsData,
-    isLoading: TestimonialsDataIsLoading,
-    error: TestimonialsDataError,
+    isLoading: TestimonialsIsLoading,
+    error: TestimonialsError,
   } = useQuery({
     queryKey: ["Testimonials"],
     queryFn: () => axiosPublic.get("/Testimonials").then((res) => res.data),
   });
+
+  // Fetch Gallery Data
   const {
     data: GalleryData,
-    isLoading: GalleryDataIsLoading,
-    error: GalleryDataError,
+    isLoading: GalleryIsLoading,
+    error: GalleryError,
   } = useQuery({
     queryKey: ["Gallery"],
     queryFn: () => axiosPublic.get("/Gallery").then((res) => res.data),
   });
+
+  // Fetch Promotions Data
   const {
     data: PromotionsData,
-    isLoading: PromotionsDataIsLoading,
-    error: PromotionsDataError,
+    isLoading: PromotionsIsLoading,
+    error: PromotionsError,
   } = useQuery({
     queryKey: ["Promotions"],
     queryFn: () => axiosPublic.get("/Promotions").then((res) => res.data),
   });
+
+  // Fetch GymFeatures Data
   const {
-    data: Gym_FeaturesData,
-    isLoading: Gym_FeaturesDataIsLoading,
-    error: Gym_FeaturesDataError,
+    data: GymFeaturesData,
+    isLoading: GymFeaturesIsLoading,
+    error: GymFeaturesError,
   } = useQuery({
-    queryKey: ["Gym_Features"],
+    queryKey: ["GymFeatures"],
     queryFn: () => axiosPublic.get("/Gym_Features").then((res) => res.data),
   });
 
-  // Check if any data is loading
-  const isLoading = [
-    Home_Banner_SectionDataIsLoading,
-    Home_Welcome_SectionDataIsLoading,
-    Home_Services_SectionDataIsLoading,
-    Our_ClassesDataIsLoading,
-    Class_DetailsDataIsLoading,
-    TrainersDataIsLoading,
-    TestimonialsDataIsLoading,
-    GalleryDataIsLoading,
-    PromotionsDataIsLoading,
-    Gym_FeaturesDataIsLoading,
-  ].some(Boolean); // Use Array.some to check if any value is true
-
-  // Check if any error occurred
-  const hasError = [
-    Home_Banner_SectionDataError,
-    Home_Welcome_SectionDataError,
-    Home_Services_SectionDataError,
-    Our_ClassesDataError,
-    Class_DetailsDataError,
-    TrainersDataError,
-    TestimonialsDataError,
-    GalleryDataError,
-    PromotionsDataError,
-    Gym_FeaturesDataError,
-  ].some(Boolean); // Use Array.some to check if any value is true
-
-  // Loading and error states
-  if (isLoading) {
+  // Is Loading States
+  if (
+    GalleryIsLoading ||
+    TrainersIsLoading ||
+    PromotionsIsLoading ||
+    OurClassesIsLoading ||
+    GymFeaturesIsLoading ||
+    TestimonialsIsLoading ||
+    ClassDetailsIsLoading ||
+    HomeBannerSectionIsLoading ||
+    HomeWelcomeSectionIsLoading ||
+    HomeServicesSectionIsLoading
+  ) {
     return <Loading />;
   }
 
-  if (hasError) {
+  // Error States
+  if (
+    GalleryError ||
+    TrainersError ||
+    PromotionsError ||
+    OurClassesError ||
+    GymFeaturesError ||
+    TestimonialsError ||
+    ClassDetailsError ||
+    HomeBannerSectionError ||
+    HomeWelcomeSectionError ||
+    HomeServicesSectionError
+  ) {
     return <FetchingError />;
   }
 
@@ -152,18 +167,17 @@ const Home = () => {
         backgroundPosition: "center",
       }}
     >
-      {/* Render components with their respective data */}
-      <BannerSection homeBannerData={Home_Banner_SectionData} />
-      <WelcomeSection homeWelcomeData={Home_Welcome_SectionData} />
-      <OurServices homeServicesData={Home_Services_SectionData} />
+      <BannerSection homeBannerData={HomeBannerSectionData} />
+      <WelcomeSection homeWelcomeData={HomeWelcomeSectionData} />
+      <OurServices homeServicesData={HomeServicesSectionData} />
       <ClassSchedule
-        ourClasses={Our_ClassesData}
-        classDetails={Class_DetailsData}
+        ourClasses={OurClassesData}
+        classDetails={ClassDetailsData}
       />
       <FeaturedTrainers trainersData={TrainersData} />
       <GalleryPreview galleryData={GalleryData} />
       <PromotionsSection promotionsData={PromotionsData} />
-      <GymFeatures gymFeaturesData={Gym_FeaturesData} />
+      <GymFeatures gymFeaturesData={GymFeaturesData} />
       <Testimonials testimonialsData={TestimonialsData} />
       <CallToAction />
     </div>
