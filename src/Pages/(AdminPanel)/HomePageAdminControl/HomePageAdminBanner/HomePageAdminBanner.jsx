@@ -24,6 +24,44 @@ const HomePageAdminBanner = ({ Refetch, HomeBannerSectionData }) => {
   // Selected Banner
   const [selectedBanner, setSelectedBanner] = useState(null);
 
+  // Handle Delete
+  const handleDeleteBanner = async (bannerId) => {
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: "This banner will be permanently deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#F72C5B",
+      cancelButtonColor: "#d1d5db",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    try {
+      await axiosPublic.delete(`/Home_Banner_Section/${bannerId}`);
+      await Refetch();
+
+      Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "Banner has been removed.",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+    } catch (error) {
+      console.error(error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Failed!",
+        text: "Banner could not be deleted.",
+        confirmButtonColor: "#F72C5B",
+      });
+    }
+  };
+
   return (
     <section>
       {/* Title */}
@@ -56,7 +94,7 @@ const HomePageAdminBanner = ({ Refetch, HomeBannerSectionData }) => {
         {HomeBannerSectionData?.map((banner) => (
           <div
             key={banner._id}
-            className="relative w-full h-64 rounded-2xl overflow-hidden shadow-md border border-gray-200"
+            className="relative w-full h-64 rounded-2xl overflow-hidden shadow-md border border-gray-200 transform transition duration-300 hover:scale-105"
           >
             {/* Background Image */}
             <img
@@ -71,47 +109,7 @@ const HomePageAdminBanner = ({ Refetch, HomeBannerSectionData }) => {
               <button
                 id={`delete-banner-btn-${banner._id}`}
                 className="absolute top-3 left-3 border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200 z-10"
-                onClick={async () => {
-                  const confirm = await Swal.fire({
-                    title: "Are you sure?",
-                    text: "This banner will be permanently deleted.",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#F72C5B",
-                    cancelButtonColor: "#d1d5db",
-                    confirmButtonText: "Yes, delete it!",
-                    cancelButtonText: "Cancel",
-                  });
-
-                  if (confirm.isConfirmed) {
-                    // If Success
-                    try {
-                      await axiosPublic.delete(
-                        `/Home_Banner_Section/${banner._id}`
-                      );
-                      await Refetch();
-
-                      Swal.fire({
-                        icon: "success",
-                        title: "Deleted!",
-                        text: "Banner has been removed.",
-                        showConfirmButton: false,
-                        timer: 1000,
-                      });
-
-                      // If Unrestful
-                    } catch (error) {
-                      console.log(error);
-
-                      Swal.fire({
-                        icon: "error",
-                        title: "Failed!",
-                        text: "Banner could not be deleted.",
-                        confirmButtonColor: "#F72C5B",
-                      });
-                    }
-                  }
-                }}
+                onClick={() => handleDeleteBanner(banner._id)}
               >
                 <FaRegTrashAlt className="text-red-500" />
               </button>
@@ -120,7 +118,7 @@ const HomePageAdminBanner = ({ Refetch, HomeBannerSectionData }) => {
                 content="Delete Banner"
               />
             </>
-            
+
             {/* Edit button top-right */}
             <>
               <button

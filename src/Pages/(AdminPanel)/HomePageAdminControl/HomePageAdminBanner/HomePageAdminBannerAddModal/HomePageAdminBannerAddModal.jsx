@@ -25,34 +25,16 @@ const TOLERANCE = 0.05;
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Key}`;
 
-// Function to upload image to imgbb
-const uploadImage = async (file) => {
-  if (!file) return null;
-
-  const formData = new FormData();
-  formData.append("image", file);
-
-  try {
-    const res = await axios.post(Image_Hosting_API, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-
-    return res?.data?.data?.display_url || null;
-  } catch (error) {
-    console.error("Upload failed:", error);
-    return null;
-  }
-};
-
 const HomePageAdminBannerAddModal = ({ Refetch }) => {
   const axiosPublic = useAxiosPublic();
   const fileInputRef = useRef(null);
 
   // Local state variables
   const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [modalError, setModalError] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   // Form handling using react-hook-form
   const {
@@ -67,6 +49,25 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
       link: "/",
     },
   });
+
+  // Function to upload image to imgbb
+  const uploadImage = async (file) => {
+    if (!file) return null;
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await axios.post(Image_Hosting_API, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      return res?.data?.data?.display_url || null;
+    } catch (error) {
+      setModalError("Upload failed:", error);
+      return null;
+    }
+  };
 
   // Ensures the link input always starts with "/"
   const handleLinkChange = (e) => {
@@ -123,16 +124,7 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
           setPreview(reader.result);
           setImageFile(file);
         } else {
-          Swal.fire({
-            icon: "warning",
-            title: "Invalid Banner Dimensions",
-            html: `
-              <div style="text-align:left;">
-                <p><strong>Required:</strong> 1920x500 px</p>
-                <p><strong>Your Image:</strong> ${width}x${height} px</p>
-              </div>`,
-            confirmButtonColor: "#F72C5B",
-          });
+          setModalError(`Invalid Banner Dimensions:  ${width}x${height}`);
         }
       };
       img.src = reader.result;
@@ -144,12 +136,7 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
   // Handle form submission
   const onSubmit = async (data) => {
     if (!imageFile) {
-      Swal.fire({
-        icon: "error",
-        title: "Image Required",
-        text: "Please upload a valid banner image.",
-        confirmButtonColor: "#F72C5B",
-      });
+      setModalError("Please upload a valid banner image.");
       return;
     }
 
@@ -160,12 +147,7 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
 
     if (!uploadedImageUrl) {
       setLoading(false);
-      Swal.fire({
-        icon: "error",
-        title: "Upload Failed",
-        text: "Could not upload the image. Try again.",
-        confirmButtonColor: "#F72C5B",
-      });
+      setModalError("Could not upload the image. Try again.");
       return;
     }
 
@@ -182,28 +164,25 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
       reset();
       Refetch();
       setPreview(null);
-      setImageFile(null);
+      setModalError("");
       setLoading(false);
+      setImageFile(null);
 
       // Close modal
       document.getElementById("Add_Banner_Modal").close();
 
       Swal.fire({
         icon: "success",
-        title: "Banner Added",
-        text: "Your new banner has been successfully saved.",
+        title: "Banner Added Successfully",
+        text: "Your new Banner has been successfully Saved.",
         showConfirmButton: false,
         timer: 1000,
       });
     } catch (error) {
-      console.log(error);
+      console.error("Submission failed:", error);
+      setModalError("Something went wrong while saving the data. Try again.");
+    } finally {
       setLoading(false);
-      Swal.fire({
-        icon: "error",
-        title: "Submission Failed",
-        text: "Something went wrong while saving the banner.",
-        confirmButtonColor: "#F72C5B",
-      });
     }
   };
 
@@ -217,6 +196,16 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
           onClick={() => document.getElementById("Add_Banner_Modal").close()}
         />
       </div>
+
+      {/* Error messages */}
+      {(Object.keys(errors).length > 0 || modalError) && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md space-y-1 text-sm m-5">
+          {errors.title && <div>Title is required.</div>}
+          {errors.description && <div>Description is required.</div>}
+          {errors.videoUrl && <div>Video URL is required.</div>}
+          {modalError && <div>{modalError}</div>}
+        </div>
+      )}
 
       {/* Modal Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="p-5 space-y-5">

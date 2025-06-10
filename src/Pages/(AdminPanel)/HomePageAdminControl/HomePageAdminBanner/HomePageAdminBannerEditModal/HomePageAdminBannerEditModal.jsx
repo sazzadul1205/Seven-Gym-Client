@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from "react";
+
+// Import Packages
 import axios from "axios";
 import PropTypes from "prop-types";
 import { useForm } from "react-hook-form";
 
+// Import Icons
 import { ImCross } from "react-icons/im";
 import { RiImageAddFill } from "react-icons/ri";
 
+// import Button
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+
+// Import Hooks
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
 // Image requirements
@@ -17,24 +23,6 @@ const TOLERANCE = 0.05;
 // Image hosting API
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Key}`;
-
-// Upload image to hosting service
-const uploadImage = async (file) => {
-  if (!file) return null;
-
-  const formData = new FormData();
-  formData.append("image", file);
-
-  try {
-    const res = await axios.post(Image_Hosting_API, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    return res?.data?.data?.display_url || null;
-  } catch (error) {
-    console.error("Upload failed:", error);
-    return null;
-  }
-};
 
 const HomePageAdminBannerEditModal = ({
   setSelectedBanner,
@@ -61,6 +49,24 @@ const HomePageAdminBannerEditModal = ({
     formState: { errors },
   } = useForm();
 
+  // Upload image to hosting service
+  const uploadImage = async (file) => {
+    if (!file) return null;
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await axios.post(Image_Hosting_API, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return res?.data?.data?.display_url || null;
+    } catch (error) {
+      setModalError("Upload failed:", error);
+      return null;
+    }
+  };
+
   // Populate form when selectedBanner changes
   useEffect(() => {
     if (selectedBanner) {
@@ -83,28 +89,6 @@ const HomePageAdminBannerEditModal = ({
     }
   }, [selectedBanner, setValue]);
 
-  // Validate image size
-  const validateImageDimensions = (file) => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-      img.onload = () => {
-        const validWidth =
-          Math.abs(img.width - REQUIRED_WIDTH) <= REQUIRED_WIDTH * TOLERANCE;
-        const validHeight =
-          Math.abs(img.height - REQUIRED_HEIGHT) <= REQUIRED_HEIGHT * TOLERANCE;
-        validWidth && validHeight
-          ? resolve(true)
-          : reject(
-              new Error(
-                `Image must be approx ${REQUIRED_WIDTH}x${REQUIRED_HEIGHT}px.`
-              )
-            );
-      };
-      img.onerror = () => reject(new Error("Failed to load image"));
-    });
-  };
-
   // Open file selector
   const handleImageClick = () => fileInputRef.current?.click();
 
@@ -113,7 +97,7 @@ const HomePageAdminBannerEditModal = ({
     if (!file) return;
     setModalError(""); // Clear previous error
     try {
-      await validateImageDimensions(file);
+      validateAndPreviewImage(file);
       setImageFile(file);
 
       // Preview image
@@ -169,6 +153,34 @@ const HomePageAdminBannerEditModal = ({
     return false;
   };
 
+  // Validate image dimensions and preview
+  const validateAndPreviewImage = (file) => {
+    if (!file?.type?.startsWith("image/")) return;
+
+    const reader = new FileReader();
+    const img = new Image();
+
+    reader.onloadend = () => {
+      img.onload = () => {
+        const { width, height } = img;
+        const widthValid =
+          Math.abs(width - REQUIRED_WIDTH) <= REQUIRED_WIDTH * TOLERANCE;
+        const heightValid =
+          Math.abs(height - REQUIRED_HEIGHT) <= REQUIRED_HEIGHT * TOLERANCE;
+
+        if (widthValid && heightValid) {
+          setPreview(reader.result);
+          setImageFile(file);
+        } else {
+          setModalError(`Invalid Banner Dimensions:  ${width}x${height}`);
+        }
+      };
+      img.src = reader.result;
+    };
+
+    reader.readAsDataURL(file);
+  };
+
   // Submit handler
   const onSubmit = async (data) => {
     setModalError(""); // Reset error
@@ -180,6 +192,7 @@ const HomePageAdminBannerEditModal = ({
       if (imageFile) {
         imageUrl = await uploadImage(imageFile);
         if (!imageUrl) throw new Error("Image upload failed");
+        setModalError("Image upload failed");
       }
 
       const payload = {

@@ -1,9 +1,16 @@
-import Slider from "react-slick";
+import { Link } from "react-router";
+
+// Import Packages
+import { Tooltip } from "react-tooltip";
 import PropTypes from "prop-types";
-import Title from "../../../../Shared/Component/Title";
+
+// Import Slider
+import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { Link } from "react-router";
+
+// import Title
+import Title from "../../../../Shared/Component/Title";
 
 const OurServices = ({ homeServicesData }) => {
   // Slider settings
@@ -46,7 +53,8 @@ const OurServices = ({ homeServicesData }) => {
               <div key={service.id || service.title} className="px-3 py-4">
                 <Link
                   to={service.link}
-                  className="block transform transition duration-300 hover:scale-105"
+                  id={`service-link-${service._id}`}
+                  className="block transform transition duration-300 hover:scale-105 cursor-default"
                   aria-label={`Learn more about ${service.title}`}
                 >
                   {/* Service Card */}
@@ -66,9 +74,14 @@ const OurServices = ({ homeServicesData }) => {
                     </h3>
 
                     {/* Service Description */}
-                    <p className="text-gray-700">{service.description}</p>
+                    <p className="text-black" >{service.description}</p>
                   </div>
                 </Link>
+                <Tooltip
+                  anchorSelect={`#service-link-${service._id}`}
+                  place="top"
+                  content={`Go To ${service.link}`}
+                />
               </div>
             ))}
           </Slider>

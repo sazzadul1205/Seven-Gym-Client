@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 // Import Sections
 import HomePageAdminBanner from "./HomePageAdminBanner/HomePageAdminBanner";
 import HomePageAdminWelcome from "./HomePageAdminWelcome/HomePageAdminWelcome";
@@ -35,7 +37,7 @@ const HomePageAdminControl = ({
 
       <HomePageAdminServices
         Refetch={Refetch}
-        HomeWelcomeSectionData={HomeServicesSectionData}
+        HomeServicesSectionData={HomeServicesSectionData}
       />
     </div>
   );
