@@ -207,6 +207,7 @@ const AdminPanelLayout = () => {
       title: "Home Page View",
       content: (
         <HomePageAdminControl
+          Refetch={refetchAll}
           GalleryData={GalleryData}
           PromotionsData={PromotionsData}
           GymFeaturesData={GymFeaturesData}

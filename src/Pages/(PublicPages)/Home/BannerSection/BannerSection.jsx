@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
+import { Link } from "react-router";
 
 const BannerSection = ({ homeBannerData }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -50,18 +52,28 @@ const BannerSection = ({ homeBannerData }) => {
         <p className="text-base lg:text-lg mb-6">
           {homeBannerData[currentIndex].description}
         </p>
-        <a
-          href={homeBannerData[currentIndex].link}
-          className="bg-linear-to-br hover:bg-linear-to-tl from-red-400 to-red-600 text-white py-2 px-16 rounded-sm text-lg"
+
+        <Link
+          to={homeBannerData[currentIndex].link}
+          className="flex justify-center"
         >
-          {homeBannerData[currentIndex].buttonName}
-        </a>
+          <CommonButton
+            text={homeBannerData[currentIndex].buttonName}
+            type="button"
+            bgColor="OriginalRed"
+            px="px-16"
+            py="py-3"
+            borderRadius="rounded-sm"
+            textColor="text-white"
+            className="text-base"
+          />
+        </Link>``
       </div>
 
       {/* Left Navigation Button */}
       <button
         onClick={handleLeftClick}
-        className="absolute top-0 left-0 h-full w-[10%] sm:w-[5%] bg-black hover:bg-[#f35f81] bg-opacity-50 hover:bg-opacity-20 flex items-center justify-center"
+        className="absolute top-0 left-0 h-full w-[10%] sm:w-[5%] bg-black hover:bg-[#f35f81]/20 bg-opacity-50 hover:bg-opacity-20 flex items-center justify-center"
       >
         <FaArrowLeftLong className="text-3xl" />
       </button>
@@ -69,7 +81,7 @@ const BannerSection = ({ homeBannerData }) => {
       {/* Right Navigation Button */}
       <button
         onClick={handleRightClick}
-        className="absolute top-0 right-0 h-full w-[10%] sm:w-[5%] bg-black hover:bg-[#f35f81] bg-opacity-50 hover:bg-opacity-20 flex items-center justify-center"
+        className="absolute top-0 right-0 h-full w-[10%] sm:w-[5%] bg-black hover:bg-[#f35f81]/20 bg-opacity-50 hover:bg-opacity-20 flex items-center justify-center"
       >
         <FaArrowRightLong className="text-3xl" />
       </button>
