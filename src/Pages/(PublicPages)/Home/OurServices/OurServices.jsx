@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import Title from "../../../../Shared/Component/Title";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Link } from "react-router";
 
 const OurServices = ({ homeServicesData }) => {
   // Slider settings
@@ -32,7 +33,7 @@ const OurServices = ({ homeServicesData }) => {
 
   return (
     <div className="py-10 bg-gradient-to-t from-black/40 to-black/70">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto ">
         <div className="container mx-auto text-center">
           {/* Section Title */}
           <div className="px-6">
@@ -40,11 +41,11 @@ const OurServices = ({ homeServicesData }) => {
           </div>
 
           {/* Services Slider */}
-          <Slider {...settings} className="mt-5 md:mt-11 px-2">
+          <Slider {...settings} className="mt-2s md:mt-2 px-2">
             {homeServicesData.map((service) => (
               <div key={service.id || service.title} className="px-3 py-4">
-                <a
-                  href={service.link}
+                <Link
+                  to={service.link}
                   className="block transform transition duration-300 hover:scale-105"
                   aria-label={`Learn more about ${service.title}`}
                 >
@@ -67,7 +68,7 @@ const OurServices = ({ homeServicesData }) => {
                     {/* Service Description */}
                     <p className="text-gray-700">{service.description}</p>
                   </div>
-                </a>
+                </Link>
               </div>
             ))}
           </Slider>

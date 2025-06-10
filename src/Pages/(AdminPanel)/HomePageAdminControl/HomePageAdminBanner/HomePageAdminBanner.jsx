@@ -120,6 +120,7 @@ const HomePageAdminBanner = ({ Refetch, HomeBannerSectionData }) => {
                 content="Delete Banner"
               />
             </>
+            
             {/* Edit button top-right */}
             <>
               <button

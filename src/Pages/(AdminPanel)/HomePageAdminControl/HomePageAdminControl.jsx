@@ -1,7 +1,7 @@
-import { Tooltip } from "react-tooltip";
-import CommonButton from "../../../Shared/Buttons/CommonButton";
-import { FaEdit, FaRegTrashAlt } from "react-icons/fa";
+// Import Sections
 import HomePageAdminBanner from "./HomePageAdminBanner/HomePageAdminBanner";
+import HomePageAdminWelcome from "./HomePageAdminWelcome/HomePageAdminWelcome";
+import HomePageAdminServices from "./HomePageAdminServices/HomePageAdminServices";
 
 const HomePageAdminControl = ({
   Refetch,
@@ -26,6 +26,16 @@ const HomePageAdminControl = ({
       <HomePageAdminBanner
         Refetch={Refetch}
         HomeBannerSectionData={HomeBannerSectionData}
+      />
+
+      <HomePageAdminWelcome
+        Refetch={Refetch}
+        HomeWelcomeSectionData={HomeWelcomeSectionData}
+      />
+
+      <HomePageAdminServices
+        Refetch={Refetch}
+        HomeWelcomeSectionData={HomeServicesSectionData}
       />
     </div>
   );

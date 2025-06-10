@@ -343,7 +343,7 @@ const HomePageAdminBannerEditModal = ({
             bgColor="green"
             isLoading={loading}
             loadingText="Saving..."
-            disabled={!hasChanges()}
+            disabled={!hasChanges() || loading}
           />
         </div>
       </form>
