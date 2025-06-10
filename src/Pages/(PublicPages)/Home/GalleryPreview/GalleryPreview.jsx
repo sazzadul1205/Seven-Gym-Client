@@ -1,11 +1,14 @@
 import { Link } from "react-router";
 
+// Import Packages
 import PropTypes from "prop-types";
 
+// Import Slider
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
+// import Title
 import Title from "../../../../Shared/Component/Title";
 
 const GalleryPreview = ({ galleryData }) => {
@@ -43,59 +46,61 @@ const GalleryPreview = ({ galleryData }) => {
 
   return (
     <div className="py-10 bg-gradient-to-b from-black/40 to-black/70">
-      <div className="max-w-7xl mx-auto text-center">
-        {/* Section Title */}
-        <div className="px-6">
-          <Title titleContent="Our Gallery Preview" />
-        </div>
-
-        <div className="mt-11">
-          {/* Top Slider - Moves in Reverse Direction */}
-          <div className="overflow-hidden">
-            <Slider
-              {...sliderSettings}
-              className="slider-left"
-              style={{ transform: "scaleX(-1)" }} // Reverse direction
-            >
-              {galleryData.map((image) => (
-                <div key={image._id}>
-                  <div className="rounded-lg overflow-hidden shadow-lg">
-                    <img
-                      src={image.url}
-                      alt={image.alt || "Gallery image"}
-                      className="w-full h-56 object-cover"
-                    />
-                  </div>
-                </div>
-              ))}
-            </Slider>
+      <div className="mx-auto text-center">
+        <div className="container mx-auto text-center">
+          {/* Section Title */}
+          <div className="px-6">
+            <Title titleContent="Our Gallery Preview" />
           </div>
 
-          {/* Bottom Slider - Normal Direction */}
-          <div className="overflow-hidden">
-            <Slider {...sliderSettings} className="slider-right">
-              {galleryData.map((image) => (
-                <div key={image._id}>
-                  <div className="rounded-lg overflow-hidden shadow-lg">
-                    <img
-                      src={image.url}
-                      alt={image.alt || "Gallery image"}
-                      className="w-full h-56 object-cover"
-                    />
+          <div className="mt-11">
+            {/* Top Slider - Moves in Reverse Direction */}
+            <div className="overflow-hidden">
+              <Slider
+                {...sliderSettings}
+                className="slider-left"
+                style={{ transform: "scaleX(-1)" }} // Reverse direction
+              >
+                {galleryData.map((image) => (
+                  <div key={image._id}>
+                    <div className="rounded-lg overflow-hidden shadow-lg">
+                      <img
+                        src={image.url}
+                        alt={image.alt || "Gallery image"}
+                        className="w-full h-56 object-cover"
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </Slider>
-          </div>
-        </div>
+                ))}
+              </Slider>
+            </div>
 
-        {/* Button: View Full Gallery */}
-        <div className="text-center mt-8">
-          <Link to="/Gallery">
-            <button className="bg-linear-to-bl hover:bg-linear-to-tr from-[#d1234f] to-[#fc003f] px-14 py-3 text-xl font-semibold text-white rounded-xl shadow-lg hover:shadow-2xl">
-              View Full Gallery
-            </button>
-          </Link>
+            {/* Bottom Slider - Normal Direction */}
+            <div className="overflow-hidden">
+              <Slider {...sliderSettings} className="slider-right">
+                {galleryData.map((image) => (
+                  <div key={image._id}>
+                    <div className="rounded-lg overflow-hidden shadow-lg">
+                      <img
+                        src={image.url}
+                        alt={image.alt || "Gallery image"}
+                        className="w-full h-56 object-cover"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </Slider>
+            </div>
+          </div>
+
+          {/* Button: View Full Gallery */}
+          <div className="text-center mt-8">
+            <Link to="/Gallery">
+              <button className="bg-linear-to-bl hover:bg-linear-to-tr from-[#d1234f] to-[#fc003f] px-14 py-3 text-xl font-semibold text-white rounded-xl shadow-lg hover:shadow-2xl">
+                View Full Gallery
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

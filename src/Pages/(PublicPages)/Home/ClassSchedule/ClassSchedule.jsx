@@ -1,8 +1,13 @@
-import { Link } from "react-router";
 import { useState, useEffect, useMemo } from "react";
+import { Link } from "react-router";
 
+// Import Packages
 import PropTypes from "prop-types";
+
+// Import Icons
 import { FaUserPlus } from "react-icons/fa";
+
+// Import Date Controle 
 import {
   format,
   isAfter,
@@ -12,7 +17,9 @@ import {
   differenceInSeconds,
 } from "date-fns";
 
+// Import Shared
 import Title from "../../../../Shared/Component/Title";
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 const ClassSchedule = ({ ourClasses, classDetails }) => {
   // State to track the current time
@@ -130,9 +137,15 @@ const ClassSchedule = ({ ourClasses, classDetails }) => {
         {/* Hover Overlay for Join Button */}
         <div className="hidden lg:flex absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition duration-300 items-center justify-center rounded-lg">
           <Link to={`/Classes/${classItem.module}`}>
-            <button className="absolute top-4 right-4 bg-white bg-linear-to-tr hover:bg-linear-to-bl from-[#F72C5B] to-[#ce294f] text-white font-bold px-10 py-3 rounded-lg shadow-lg">
-              <FaUserPlus />
-            </button>
+            <CommonButton
+              text=""
+              icon={<FaUserPlus />}
+              bgColor="OriginalRed"
+              px="px-10"
+              py="py-3"
+              borderRadius="rounded-lg"
+              className="absolute top-4 right-4 shadow-lg"
+            />
           </Link>
           <p className="text-white text-xl font-semibold">
             Join {classItem.module} Class
@@ -164,16 +177,16 @@ const ClassSchedule = ({ ourClasses, classDetails }) => {
   );
 };
 
-// ✅ **Prop Validation for ClassSchedule Component**
+// Prop Validation for ClassSchedule Component
 ClassSchedule.propTypes = {
   ourClasses: PropTypes.arrayOf(
     PropTypes.shape({
-      day: PropTypes.string.isRequired, // Example: "Monday"
+      day: PropTypes.string.isRequired,
       classes: PropTypes.arrayOf(
         PropTypes.shape({
-          module: PropTypes.string.isRequired, // Example: "Yoga"
-          startTime: PropTypes.string.isRequired, // Example: "08:00:00"
-          endTime: PropTypes.string.isRequired, // Example: "09:00:00"
+          module: PropTypes.string.isRequired,
+          startTime: PropTypes.string.isRequired,
+          endTime: PropTypes.string.isRequired,
         })
       ).isRequired,
     })
@@ -181,7 +194,7 @@ ClassSchedule.propTypes = {
   classDetails: PropTypes.arrayOf(
     PropTypes.shape({
       module: PropTypes.string.isRequired,
-      icon: PropTypes.string, // URL to the class icon (optional)
+      icon: PropTypes.string,
     })
   ).isRequired,
 };

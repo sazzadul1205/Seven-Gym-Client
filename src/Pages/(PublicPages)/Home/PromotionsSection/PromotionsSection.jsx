@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 import Title from "../../../../Shared/Component/Title";
 import PromotionContentModal from "./PromotionContentModal/PromotionContentModal";
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 const PromotionsSection = ({ promotionsData }) => {
   // State to track the selected promotion for the modal
@@ -24,37 +25,47 @@ const PromotionsSection = ({ promotionsData }) => {
 
         {/* Promotions Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mt-6 md:mt-11 px-3">
-          {promotionsData.map((promo) => (
-            <div
-              key={promo._id}
-              className="bg-linear-to-br from-gray-50 to-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col"
-            >
-              {/* Promotion Image */}
-              <img
-                src={promo.imageUrl}
-                alt={promo.title || "Promotion Image"}
-                className="w-full h-56 object-cover"
-              />
+          {promotionsData
+            .filter((promo) => promo.show)
+            .map((promo) => (
+              <div
+                key={promo._id}
+                className="bg-linear-to-br hover:bg-linear-to-tr from-gray-100 to-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col"
+              >
+                {/* Promotion Image */}
+                <img
+                  src={promo.imageUrl}
+                  alt={promo.title || "Promotion Image"}
+                  className="w-full h-56 object-cover"
+                />
 
-              {/* Promotion Details */}
-              <div className="flex-1 p-4 border-t-2 border-black">
-                <h3 className="text-xl font-semibold mb-2 text-black">
-                  {promo.title}
-                </h3>
-                <p className="text-gray-700">{promo.description}</p>
-              </div>
+                {/* Promotion Details */}
+                <div className="flex-1 p-4 border-t-2 border-black">
+                  {/* Title */}
+                  <h3 className="text-xl font-semibold mb-2 text-black">
+                    {promo.title}
+                  </h3>
 
-              {/* "Learn More" Button */}
-              <div className="p-4">
-                <button
-                  className="w-full border-2 bg-linear-to-tl hover:bg-linear-to-br from-[#d1234f]/70 to-[#eb0b43] font-semibold rounded-xl hover:text-white transition duration-300 py-3"
-                  onClick={() => handleOpenModal(promo)}
-                >
-                  Learn More
-                </button>
+                  {/* Description */}
+                  <p className="text-black">{promo.description}</p>
+                </div>
+
+                {/* "Learn More" Button */}
+                <div className="p-4">
+                  <CommonButton
+                    clickEvent={() => handleOpenModal(promo)}
+                    text="Learn More"
+                    bgColor="OriginalRed"
+                    textColor="text-white"
+                    borderRadius="rounded-xl"
+                    py="py-3"
+                    className="border-2 transition duration-300 w-full"
+                    defaultDirection="bg-gradient-to-tl"
+                    hoverDirection="hover:bg-gradient-to-br"
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
 

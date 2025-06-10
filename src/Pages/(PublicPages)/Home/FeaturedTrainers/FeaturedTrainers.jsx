@@ -1,9 +1,15 @@
 import { Link } from "react-router";
 
+// Import Packages
 import PropTypes from "prop-types";
 
+// Import title
 import Title from "../../../../Shared/Component/Title";
+
+// Import Trainer Card
 import TrainerPublicIdCard from "../../../../Shared/Component/TrainerPublicIdCard";
+
+// Import button
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 // Main Featured Trainers Component
@@ -28,7 +34,7 @@ const FeaturedTrainers = ({ trainersData }) => {
           <Link to="/Trainers">
             <CommonButton
               text="Find More Teachers"
-              bgColor="OriginalRed" // Uses your custom red gradient
+              bgColor="OriginalRed" 
               px="px-14"
               py="py-3"
               textColor="text-white"

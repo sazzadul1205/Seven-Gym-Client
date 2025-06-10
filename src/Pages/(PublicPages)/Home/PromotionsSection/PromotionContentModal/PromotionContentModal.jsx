@@ -5,11 +5,11 @@ const PromotionContentModal = ({ promo }) => {
   if (!promo) return null; // Ensure promo data exists before rendering
 
   return (
-    <div className="modal-box p-0 rounded-md relative bg-white">
+    <div className="modal-box p-0 rounded-md relative bg-white text-black">
       {/* Close Button (Top-Left Over Image) */}
       <form method="dialog">
         <button
-          className="absolute top-2 right-2 bg-black/60 text-white p-3 rounded-full hover:bg-red-500 transition duration-300"
+          className="absolute top-2 right-2 bg-black/60 text-white p-3 rounded-full hover:bg-red-500 transition duration-300 cursor-pointer"
           onClick={() =>
             document.getElementById("Promotion_Content_Modal").close()
           }
@@ -29,7 +29,7 @@ const PromotionContentModal = ({ promo }) => {
       </div>
 
       {/* Promotion Content */}
-      <div className="p-6">
+      <div className="px-6 py-2">
         {/* Promotion Title */}
         <h3 className="text-2xl font-bold py-2">{promo.title}</h3>
 

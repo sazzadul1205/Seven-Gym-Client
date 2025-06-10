@@ -5,11 +5,11 @@ import CommonButton from "../Buttons/CommonButton";
 
 const TrainerPublicIdCard = ({ trainer }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden relative flex flex-col border border-gray-300">
+    <div className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden relative flex flex-col border border-gray-900">
       {/* Tier Badge */}
       {trainer?.tier && (
         <span
-          className={`absolute top-3 left-3 z-10 ${fetchTierBadge(
+          className={`absolute top-3 left-3 z-10 cursor-default ${fetchTierBadge(
             trainer.tier
           )} px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide shadow-md`}
         >
@@ -27,7 +27,7 @@ const TrainerPublicIdCard = ({ trainer }) => {
       </div>
 
       {/* Card Content */}
-      <div className="flex flex-col flex-1 justify-between bg-gradient-to-b from-gray-100 to-gray-200 p-4 space-y-4">
+      <div className="flex flex-col flex-1 justify-between bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-100 to-gray-300 p-4 space-y-4">
         {/* Trainer Info */}
         <div>
           <h4 className="text-2xl font-bold text-gray-800">{trainer?.name}</h4>

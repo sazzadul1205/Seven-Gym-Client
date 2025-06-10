@@ -69,7 +69,6 @@ const HomePageAdminServices = ({ Refetch, HomeServicesSectionData }) => {
             id={`add-services-btn`}
             className="border-2 border-green-500 bg-green-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200 z-10"
             onClick={() => {
-              setSelectedServices(HomeServicesSectionData);
               document.getElementById("Add_Service_Modal").showModal();
             }}
           >

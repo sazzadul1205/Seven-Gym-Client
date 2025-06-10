@@ -49,7 +49,7 @@ const HomePageAdminWelcome = ({ Refetch, HomeWelcomeSectionData }) => {
       </div>
 
       {/* Welcome Section */}
-      <div className="hidden md:flex relative h-[800px] w-full text-white m-2">
+      <div className="hidden md:flex relative h-[800px] w-full text-white">
         {/* Background Video */}
         <div className="absolute inset-0 overflow-hidden">
           <iframe

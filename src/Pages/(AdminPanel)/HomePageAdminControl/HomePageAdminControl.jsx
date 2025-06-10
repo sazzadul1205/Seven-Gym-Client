@@ -4,6 +4,7 @@
 import HomePageAdminBanner from "./HomePageAdminBanner/HomePageAdminBanner";
 import HomePageAdminWelcome from "./HomePageAdminWelcome/HomePageAdminWelcome";
 import HomePageAdminServices from "./HomePageAdminServices/HomePageAdminServices";
+import HomePageAdminPromotion from "./HomePageAdminPromotion/HomePageAdminPromotion";
 
 const HomePageAdminControl = ({
   Refetch,
@@ -38,6 +39,11 @@ const HomePageAdminControl = ({
       <HomePageAdminServices
         Refetch={Refetch}
         HomeServicesSectionData={HomeServicesSectionData}
+      />
+
+      <HomePageAdminPromotion
+        Refetch={Refetch}
+        PromotionsData={PromotionsData}
       />
     </div>
   );

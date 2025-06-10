@@ -17,15 +17,15 @@ import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
 // Image upload requirements
-const REQUIRED_WIDTH = 1920;
-const REQUIRED_HEIGHT = 500;
+const REQUIRED_WIDTH = 500;
+const REQUIRED_HEIGHT = 300;
 const TOLERANCE = 0.05;
 
 // Environment variables for image hosting API
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Key}`;
 
-const HomePageAdminBannerAddModal = ({ Refetch }) => {
+const HomePageAdminPromotionAddModal = ({ Refetch }) => {
   const axiosPublic = useAxiosPublic();
   const fileInputRef = useRef(null);
 
@@ -39,16 +39,10 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
   // Form handling using react-hook-form
   const {
     register,
-    setValue,
-    watch,
     reset,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      link: "/",
-    },
-  });
+  } = useForm();
 
   // Function to upload image to imgbb
   const uploadImage = async (file) => {
@@ -67,14 +61,6 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
       setModalError("Upload failed:", error);
       return null;
     }
-  };
-
-  // Ensures the link input always starts with "/"
-  const handleLinkChange = (e) => {
-    let value = e.target.value;
-    if (!value.startsWith("/")) value = "/" + value;
-    if (value === "") value = "/";
-    setValue("link", value);
   };
 
   // Trigger file input click on image area click
@@ -136,7 +122,6 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
   // Handle form submission
   const onSubmit = async (data) => {
     setModalError("");
-
     if (!imageFile) {
       setModalError("Please upload a valid banner image.");
       return;
@@ -152,15 +137,16 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
       setModalError("Could not upload the image. Try again.");
       return;
     }
-
     // Construct payload with form data and image URL
     const payload = {
       ...data,
-      image: uploadedImageUrl,
+      show: false,
+      imageUrl: uploadedImageUrl,
     };
 
     try {
-      await axiosPublic.post(`/Home_Banner_Section`, payload);
+      await axiosPublic.post(`/Promotions`, payload);
+      //   console.log(payload);
 
       // Reset form and state
       reset();
@@ -171,12 +157,12 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
       setImageFile(null);
 
       // Close modal
-      document.getElementById("Add_Banner_Modal").close();
+      document.getElementById("Add_Promotion_Modal").close();
 
       Swal.fire({
         icon: "success",
-        title: "Banner Added Successfully",
-        text: "Your new Banner has been successfully Saved.",
+        title: "Promotion Added Successfully",
+        text: "Your new Promotion has been successfully Saved.",
         showConfirmButton: false,
         timer: 1000,
       });
@@ -189,13 +175,13 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
   };
 
   return (
-    <div className="modal-box max-w-5xl w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black">
+    <div className="modal-box max-w-3xl w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black">
       {/* Modal Header */}
       <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
-        <h3 className="font-bold text-lg">Add New Banner</h3>
+        <h3 className="font-bold text-lg">Add New Promotion</h3>
         <ImCross
           className="text-xl hover:text-[#F72C5B] cursor-pointer"
-          onClick={() => document.getElementById("Add_Banner_Modal").close()}
+          onClick={() => document.getElementById("Add_Promotion_Modal").close()}
         />
       </div>
 
@@ -235,7 +221,7 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
                     <RiImageAddFill />
                   </div>
                   <p className="text-sm font-semibold">
-                    Recommended: 1920x500 px
+                    Recommended: 500x300 px
                   </p>
                 </div>
               </div>
@@ -245,7 +231,7 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
               <div className="text-5xl transition-transform group-hover:scale-110 border-2 border-gray-700 rounded-full p-5 mb-2">
                 <RiImageAddFill />
               </div>
-              <p className="text-sm font-semibold">Recommended: 1920x500 px</p>
+              <p className="text-sm font-semibold">Recommended: 500x300 px</p>
             </div>
           )}
           <input
@@ -257,64 +243,105 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
           />
         </div>
 
-        {/* Title Input */}
+        {/* Title */}
         <div>
-          <label className="block text-sm font-medium mb-1">Title</label>
+          <label className="font-semibold mb-1 block" htmlFor="title">
+            Title <span className="text-red-600">*</span>
+          </label>
           <input
+            id="title"
             type="text"
             {...register("title", { required: true })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            placeholder="Banner Title"
+            placeholder="Enter promotion title"
           />
-          {errors.title && (
-            <p className="text-red-500 text-xs mt-1">Title is required.</p>
-          )}
         </div>
 
-        {/* Description Input */}
+        {/* Description */}
         <div>
-          <label className="block text-sm font-medium mb-1">Description</label>
+          <label className="font-semibold mb-1 block" htmlFor="description">
+            Description <span className="text-red-600">*</span>
+          </label>
           <textarea
+            id="description"
             {...register("description", { required: true })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            placeholder="Banner Description"
+            placeholder="Enter detailed description"
+            rows={4}
           />
-          {errors.description && (
-            <p className="text-red-500 text-xs mt-1">
-              Description is required.
-            </p>
-          )}
         </div>
 
-        {/* Button Name Input */}
+        {/* Link */}
         <div>
-          <label className="block text-sm font-medium mb-1">Button Name</label>
+          <label className="font-semibold mb-1 block" htmlFor="link">
+            Link (URL)
+          </label>
           <input
+            id="link"
             type="text"
-            {...register("buttonName", { required: true })}
+            {...register("link")}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            placeholder="Button Text (e.g., View Gallery)"
+            placeholder="/Promotion/Membership-Discount"
           />
-          {errors.buttonName && (
-            <p className="text-red-500 text-xs mt-1">
-              Button name is required.
-            </p>
-          )}
         </div>
 
-        {/* Link Input */}
+        {/* Promo Duration */}
         <div>
-          <label className="block text-sm font-medium mb-1">Button Link</label>
+          <label className="font-semibold mb-1 block" htmlFor="promoDuration">
+            Promotion Duration
+          </label>
           <input
-            type="text"
-            value={watch("link")}
-            onChange={handleLinkChange}
+            id="promoDuration"
+            type="date"
+            {...register("promoDuration")}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            placeholder="Target Link (e.g., /Gallery)"
+            placeholder="Offer valid till December 31st, 2024"
           />
-          {errors.link && (
-            <p className="text-red-500 text-xs mt-1">Link is required.</p>
-          )}
+        </div>
+
+        {/* Offer Details */}
+        <div>
+          <label className="font-semibold mb-1 block" htmlFor="offerDetails">
+            Offer Details
+          </label>
+          <textarea
+            id="offerDetails"
+            {...register("offerDetails")}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            placeholder="Details about the offer"
+            rows={3}
+          />
+        </div>
+
+        {/* Discount Percentage */}
+        <div>
+          <label
+            className="font-semibold mb-1 block"
+            htmlFor="discountPercentage"
+          >
+            Discount Percentage (%)
+          </label>
+          <input
+            id="discountPercentage"
+            type="number"
+            {...register("discountPercentage", { min: 0, max: 100 })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            placeholder="25"
+          />
+        </div>
+
+        {/* Promo Code */}
+        <div>
+          <label className="font-semibold mb-1 block" htmlFor="promoCode">
+            Promo Code
+          </label>
+          <input
+            id="promoCode"
+            type="text"
+            {...register("promoCode")}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            placeholder="PROMO-6759D6EB"
+          />
         </div>
 
         {/* Submit Button */}
@@ -333,8 +360,8 @@ const HomePageAdminBannerAddModal = ({ Refetch }) => {
 };
 
 // Prop Validation
-HomePageAdminBannerAddModal.propTypes = {
+HomePageAdminPromotionAddModal.propTypes = {
   Refetch: PropTypes.func.isRequired,
 };
 
-export default HomePageAdminBannerAddModal;
+export default HomePageAdminPromotionAddModal;
