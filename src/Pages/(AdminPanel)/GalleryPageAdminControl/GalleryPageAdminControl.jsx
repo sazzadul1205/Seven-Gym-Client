@@ -1,9 +1,57 @@
-import React from "react";
-import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
+// Import Packages
+import Swal from "sweetalert2";
+import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
+
+// import Icons
+import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
+
+// Import Hooks
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
+
+// Import Shared
 import GalleryPageAdminAddModal from "./GalleryPageAdminAddModal/GalleryPageAdminAddModal";
 
 const GalleryPageAdminControl = ({ Refetch, GalleryData }) => {
+  const axiosPublic = useAxiosPublic();
+
+  // Delete Gallery Image
+  const handleDeleteGalleryImage = async (promoId) => {
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: "This Gallery Image will be permanently deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#F72C5B",
+      cancelButtonColor: "#d1d5db",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    try {
+      await axiosPublic.delete(`/Gallery/${promoId}`);
+      await Refetch();
+
+      Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "Gallery Image has been removed.",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        icon: "error",
+        title: "Failed!",
+        text: "Gallery Image could not be deleted.",
+        confirmButtonColor: "#F72C5B",
+      });
+    }
+  };
+
   return (
     <div className="text-black pb-5">
       {/* Header */}
@@ -14,7 +62,7 @@ const GalleryPageAdminControl = ({ Refetch, GalleryData }) => {
             id="add-image-btn"
             className="border-2 border-green-500 bg-green-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200 z-10"
             onClick={() =>
-              document.getElementById("Add_Image_Modal")?.showModal()
+              document.getElementById("Add_Gallery_Image_Modal")?.showModal()
             }
           >
             <FaPlus className="text-green-500" />
@@ -51,7 +99,7 @@ const GalleryPageAdminControl = ({ Refetch, GalleryData }) => {
                 <button
                   id={`delete-item-btn-${item._id}`}
                   className="absolute top-3 left-3 border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200 z-10"
-                  // onClick={() => handleDeletePromotion(item._id)}
+                  onClick={() => handleDeleteGalleryImage(item._id)}
                 >
                   <FaRegTrashAlt className="text-red-500" />
                 </button>
@@ -70,11 +118,23 @@ const GalleryPageAdminControl = ({ Refetch, GalleryData }) => {
       </div>
 
       {/* Add New Gallery Modal */}
-      <dialog id="Add_Gallery_Modal" className="modal">
+      <dialog id="Add_Gallery_Image_Modal" className="modal">
         <GalleryPageAdminAddModal Refetch={Refetch} />
       </dialog>
     </div>
   );
+};
+
+// Prop Validation
+GalleryPageAdminControl.propTypes = {
+  Refetch: PropTypes.func.isRequired,
+  GalleryData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      url: PropTypes.string.isRequired,
+      alt: PropTypes.string,
+    })
+  ).isRequired,
 };
 
 export default GalleryPageAdminControl;

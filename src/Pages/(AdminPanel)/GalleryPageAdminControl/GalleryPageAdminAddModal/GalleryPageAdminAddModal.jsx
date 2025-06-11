@@ -11,14 +11,14 @@ import { ImCross } from "react-icons/im";
 import { RiImageAddFill } from "react-icons/ri";
 
 // Import Common Button
-import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 // Import Hooks
-import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
 // Image upload requirements
-const REQUIRED_WIDTH = 500;
-const REQUIRED_HEIGHT = 300;
+const REQUIRED_WIDTH = 300;
+const REQUIRED_HEIGHT = 200;
 const TOLERANCE = 0.05;
 
 // Environment variables for image hosting API
@@ -140,13 +140,11 @@ const GalleryPageAdminAddModal = ({ Refetch }) => {
     // Construct payload with form data and image URL
     const payload = {
       ...data,
-      show: false,
-      imageUrl: uploadedImageUrl,
+      url: uploadedImageUrl,
     };
 
     try {
-      await axiosPublic.post(`/Promotions`, payload);
-      //   console.log(payload);
+      await axiosPublic.post(`/Gallery`, payload);
 
       // Reset form and state
       reset();
@@ -157,12 +155,12 @@ const GalleryPageAdminAddModal = ({ Refetch }) => {
       setImageFile(null);
 
       // Close modal
-      document.getElementById("Add_Promotion_Modal").close();
+      document.getElementById("Add_Gallery_Image_Modal").close();
 
       Swal.fire({
         icon: "success",
-        title: "Promotion Added Successfully",
-        text: "Your new Promotion has been successfully Saved.",
+        title: "Gallery Image Added Successfully",
+        text: "Your new Gallery Image has been successfully Saved.",
         showConfirmButton: false,
         timer: 1000,
       });
@@ -181,7 +179,9 @@ const GalleryPageAdminAddModal = ({ Refetch }) => {
         <h3 className="font-bold text-lg">Add New Gallery Image</h3>
         <ImCross
           className="text-xl hover:text-[#F72C5B] cursor-pointer"
-          onClick={() => document.getElementById("Add_Gallery_Modal").close()}
+          onClick={() =>
+            document.getElementById("Add_Gallery_Image_Modal").close()
+          }
         />
       </div>
 
@@ -221,7 +221,7 @@ const GalleryPageAdminAddModal = ({ Refetch }) => {
                     <RiImageAddFill />
                   </div>
                   <p className="text-sm font-semibold">
-                    Recommended: 500x300 px
+                    Recommended: 300x200 px
                   </p>
                 </div>
               </div>
@@ -231,7 +231,7 @@ const GalleryPageAdminAddModal = ({ Refetch }) => {
               <div className="text-5xl transition-transform group-hover:scale-110 border-2 border-gray-700 rounded-full p-5 mb-2">
                 <RiImageAddFill />
               </div>
-              <p className="text-sm font-semibold">Recommended: 500x300 px</p>
+              <p className="text-sm font-semibold">Recommended: 300x200 px</p>
             </div>
           )}
           <input
@@ -243,17 +243,17 @@ const GalleryPageAdminAddModal = ({ Refetch }) => {
           />
         </div>
 
-        {/* Title */}
+        {/* Alt */}
         <div>
-          <label className="font-semibold mb-1 block" htmlFor="title">
-            Title <span className="text-red-600">*</span>
+          <label className="font-semibold mb-1 block" htmlFor="alt">
+            Alt <span className="text-red-600">*</span>
           </label>
           <input
-            id="title"
+            id="alt"
             type="text"
-            {...register("title", { required: true })}
+            {...register("alt", { required: true })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            placeholder="Enter promotion title"
+            placeholder="Enter Gallery Image alt"
           />
         </div>
 
@@ -270,6 +270,11 @@ const GalleryPageAdminAddModal = ({ Refetch }) => {
       </form>
     </div>
   );
+};
+
+// Prop Validation
+GalleryPageAdminAddModal.propTypes = {
+  Refetch: PropTypes.func.isRequired,
 };
 
 export default GalleryPageAdminAddModal;

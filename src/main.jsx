@@ -25,6 +25,7 @@ import SignUpDetails from "./Pages/(Auth)/SignUpDetails/SignUpDetails.jsx";
 // Public Pages Import
 import Home from "./Pages/(PublicPages)/Home/Home.jsx";
 import Forums from "./Pages/(PublicPages)/Forums/Forums.jsx";
+import Community from "./Pages/(PublicPages)/Community/Community.jsx";
 import Gallery from "./Pages/(PublicPages)/Gallery/Gallery.jsx";
 import AboutUs from "./Pages/(PublicPages)/(About)/AboutUs/AboutUs.jsx";
 import Classes from "./Pages/(PublicPages)/(Classes)/Classes/Classes.jsx";
@@ -104,7 +105,7 @@ createRoot(document.getElementById("root")).render(
               />
               <Route path="/Classes" element={<Classes />} />
               <Route path="/Classes/:module" element={<ClassesDetails />} />
-              <Route path="/Forums" element={<Forums />} />
+              <Route path="/Forums" element={<Community />} />
               <Route path="/About/OurMission" element={<OurMission />} />
               <Route
                 path="/About/Testimonials"
