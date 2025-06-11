@@ -1,0 +1,35 @@
+@keyframes slide-fade-down {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px) scaleY(0.95);
+        max-height: 0;
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+        max-height: 500px;
+    }
+}
+
+@keyframes slide-fade-up {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+        max-height: 500px;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-10px) scaleY(0.95);
+        max-height: 0;
+    }
+}
+
+.animate-slide-fade-down {
+    animation: slide-fade-down 0.5s ease-out forwards;
+}
+
+.animate-slide-fade-up {
+    animation: slide-fade-up 0.5s ease-out forwards;
+}

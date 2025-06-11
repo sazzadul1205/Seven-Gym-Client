@@ -1,147 +1,199 @@
 import { useState } from "react";
-import {
-  FaPlus,
-  FaCommentAlt,
-  FaThumbsUp,
-  FaThumbsDown,
-  FaTimes,
-} from "react-icons/fa";
+import { FaPlus, FaCommentAlt, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import Forums_Background from "../../../assets/Forums-Background/Forums-Background.jfif";
+import PostDetails from "./PostDetails/PostDetails";
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
+import { useQuery, useQueries } from "@tanstack/react-query";
+import Loading from "../../../Shared/Loading/Loading";
+import FetchingError from "../../../Shared/Component/FetchingError";
+import CommonButton from "../../../Shared/Buttons/CommonButton";
+import useAuth from "../../../Hooks/useAuth";
 
-const mockPosts = Array.from({ length: 12 }).map((_, i) => ({
-  id: `p${i + 1}`,
-  author: ["JohnDoe", "FitnessQueen", "MuscleMax", "HealthGuru"][i % 4],
-  authorImg: `https://i.pravatar.cc/150?img=${i + 1}`,
-  role: ["Member", "Trainer", "Coach", "Enthusiast"][i % 4],
-  title: [
-    "How do you stay consistent with your workout routine?",
-    "Quick high-protein meal prep ideas?",
-    "Best stretches post workout?",
-    "Tips for running your first 5K?",
-  ][i % 4],
-  content:
-    "Let’s share tips, experiences and encouragement! Feel free to post questions or your own strategies here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
-  likes: Math.floor(Math.random() * 50),
-  dislikes: Math.floor(Math.random() * 10),
-  comments: Math.floor(Math.random() * 20),
-  date: `2025-06-${(i % 30) + 1}`,
-  allComments: Array.from({ length: (i % 5) + 1 }).map((_, j) => {
-    const commenters = [
-      {
-        user: "Alice",
-        userImg: "https://i.pravatar.cc/150?img=11",
-        role: "Member",
-        comments: [
-          "Loved this insight!",
-          "Thanks for sharing!",
-          "This really helped me!",
-          "I’ve been struggling with this too.",
-          "What a helpful thread.",
-        ],
-      },
-      {
-        user: "Bob",
-        userImg: "https://i.pravatar.cc/150?img=12",
-        role: "Trainer",
-        comments: [
-          "Good tips, I’ll try them.",
-          "Form matters more than speed.",
-          "Recovery is crucial.",
-          "Start light, stay consistent.",
-          "This advice tracks well.",
-        ],
-      },
-      {
-        user: "Charlie",
-        userImg: "https://i.pravatar.cc/150?img=13",
-        role: "Coach",
-        comments: [
-          "Nutrition matters too.",
-          "Mindset is everything.",
-          "Warm-ups are underrated.",
-          "Don't skip cooldowns!",
-          "Consistency over perfection.",
-        ],
-      },
-    ];
-
-    const commenter = commenters[j % commenters.length];
-
-    return {
-      user: commenter.user,
-      userImg: commenter.userImg,
-      role: commenter.role,
-      time: `2025-06-${(j % 30) + 1} 12:${10 + j} PM`,
-      text: commenter.comments[j % commenter.comments.length],
-    };
-  }),
-}));
+// Helper function to format a date string into a readable format with month, day, year, and time in 12-hour format
+const formatDate = (dateStr) => {
+  const d = new Date(dateStr);
+  const options = {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  };
+  return d.toLocaleString("en-US", options);
+};
 
 const Community = () => {
+  const axiosPublic = useAxiosPublic();
+  const { user } = useAuth();
+
+  console.log(user);
+
+  // State to track currently selected post for detailed view
   const [selectedPost, setSelectedPost] = useState(null);
 
-  console.log(selectedPost);
+  // Fetch all by Tanstack Query
+  const {
+    data: CommunityPostsData,
+    isLoading: CommunityPostsIsLoading,
+    error: CommunityPostsError,
+  } = useQuery({
+    queryKey: ["CommunityPostsData"],
+    queryFn: () => axiosPublic.get("/CommunityPosts").then((res) => res.data),
+  });
+
+  // Once posts are fetched, fetch profile info for each post’s author, depending on their role (Trainer or Member)
+  const profileQueries = useQueries({
+    queries:
+      CommunityPostsData?.map((post) => {
+        // If author is a Trainer, fetch trainer basic info by authorId
+        if (post.authorRole === "Trainer") {
+          return {
+            queryKey: ["TrainerBasicInfo", post.authorId],
+            queryFn: () =>
+              axiosPublic
+                .get(`/Trainers/BasicInfo?id=${post.authorId}`)
+                .then((res) => res.data),
+            enabled: !!post.authorId,
+          };
+        } else if (post.authorRole === "Member") {
+          // If author is a Member, fetch user basic profile by email
+          return {
+            queryKey: ["UserBasicProfile", post.authorEmail],
+            queryFn: () =>
+              axiosPublic
+                .get(`/Users/BasicProfile?email=${post.authorEmail}`)
+                .then((res) => res.data),
+            enabled: !!post.authorEmail,
+          };
+        } else {
+          // If role is unknown or invalid, skip fetching profile
+          return {
+            queryKey: ["InvalidAuthor", post._id],
+            queryFn: async () => null,
+            enabled: false,
+          };
+        }
+      }) || [],
+  });
+
+  // Check if any profile query is still loading
+  const isAnyProfileLoading = profileQueries.some((q) => q.isLoading);
+
+  // Check if any profile query has errored
+  const isAnyProfileError = profileQueries.some((q) => q.error);
+
+  // Show loading spinner if posts or profiles are loading
+  if (CommunityPostsIsLoading || isAnyProfileLoading) {
+    return <Loading />;
+  }
+
+  // Show error component if posts or profile fetches errored
+  if (CommunityPostsError || isAnyProfileError) {
+    return <FetchingError />;
+  }
+
+  console.log(CommunityPostsData[0]);
 
   return (
     <div
       className="bg-fixed bg-cover bg-center min-h-screen"
       style={{ backgroundImage: `url(${Forums_Background})` }}
     >
-      {/* Header */}
-      <h3 className="bg-gradient-to-bl from-[#F72C5B] to-[#c199a2] text-white text-center text-4xl font-extrabold py-8 shadow-lg">
+      {/* Page header */}
+      <h3 className="bg-gradient-to-b from-[#F72C5B] to-[#c199a2] text-white text-center text-4xl font-extrabold py-8 shadow-lg">
         Community Corner
       </h3>
 
-      {/* Content */}
-      <div className="bg-gradient-to-b from-gray-100/50 to-gray-300/50 py-8 px-6 lg:px-16">
-        {/* Add Post CTA */}
-        <div className="flex justify-end mb-6">
-          <button className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-full shadow hover:bg-green-700 transition">
-            <FaPlus /> Add New Post
-          </button>
+      {/* Main content area with gradient background */}
+      <div className="bg-gradient-to-b from-gray-100/50 to-gray-300/50 min-h-screen pb-5">
+        {/* Button to add a new post, positioned top-right */}
+        <div className="flex justify-start py-5 px-10">
+          <CommonButton
+            clickEvent={() => {
+              // Add your click handler here
+            }}
+            text="Add New Post"
+            icon={<FaPlus />}
+            iconPosition="before"
+            textColor="text-white"
+            bgColor="green"
+            px="px-10"
+            py="py-3"
+            borderRadius="rounded-xl"
+            className="shadow hover:bg-green-700 transition"
+            cursorStyle="cursor-pointer"
+          />
         </div>
-
-        {/* Posts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {mockPosts.map((post) => {
-            const isLong = post.content.length > 100;
+        {/* Posts grid container */}
+        <div className="px-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Loop through community posts */}
+          {CommunityPostsData.map((post, index) => {
+            // Check if post content is longer than 300 characters for preview truncation
+            const isLong = post.postContent.length > 300;
+            // Create preview text - truncated or full content accordingly
             const preview = isLong
-              ? post.content.slice(0, 300) + "..."
-              : post.content;
+              ? post.postContent.slice(0, 300) + "..."
+              : post.postContent;
+
+            // Count likes, dislikes, and comments safely (handle undefined)
+            const likeCount = post.liked?.length ?? 0;
+            const dislikeCount = post.disliked?.length ?? 0;
+            const commentCount = post.comments?.length ?? 0;
+
+            // Get profile data from the corresponding profile query result
+            const profileData = profileQueries[index]?.data;
+
+            // Determine author image URL from profile data or fallback to generated avatar with initials
+            const authorImg =
+              profileData?.imageUrl || // For Trainer profile image
+              profileData?.profileImage || // For Member profile image
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                post.authorName
+              )}&background=random&size=64`; // Fallback avatar
 
             return (
+              // Individual post card container with rounded corners and shadow
               <div
-                key={post.id}
+                key={post._id}
                 className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col"
               >
-                {/* Header */}
+                {/* Post header with author info and timestamp */}
                 <div className="flex items-center justify-between p-6 border-b">
                   <div className="flex items-center gap-4">
+                    {/* Author avatar */}
                     <img
-                      src={post.authorImg}
-                      alt={post.author}
+                      src={authorImg}
+                      alt={post.authorName}
                       className="w-12 h-12 rounded-full"
                     />
+                    {/* Author name and role */}
                     <div>
                       <h4 className="text-lg font-semibold text-gray-800">
-                        {post.author}
+                        {post.authorName}
                       </h4>
-                      <p className="text-sm text-gray-500">{post.role}</p>
+                      <p className="text-sm text-gray-500">{post.authorRole}</p>
                     </div>
                   </div>
-                  <span className="text-sm text-gray-400">{post.date}</span>
+                  {/* Post creation date formatted */}
+                  <span className="text-sm text-gray-400">
+                    {formatDate(post.createdAt)}
+                  </span>
                 </div>
 
-                {/* Title & Content */}
+                {/* Post title and content preview */}
                 <div className="p-6 flex-1">
+                  {/* Post title */}
                   <h5 className="text-2xl font-bold text-gray-900 mb-3">
-                    {post.title}
+                    {post.postTitle}
                   </h5>
+                  {/* Post content preview */}
                   <p className="text-gray-700 leading-relaxed mb-4">
                     {preview}{" "}
+                    {/* Show 'Show more' button if content is truncated */}
                     {isLong && (
                       <button
-                        onClick={() => setSelectedPost(post)}
+                        onClick={() => setSelectedPost(post)} // Select post for detailed view on click
                         className="text-blue-600 hover:underline text-sm"
                       >
                         Show more
@@ -149,27 +201,58 @@ const Community = () => {
                     )}
                   </p>
 
-                  {/* Interaction */}
-                  <div className="flex items-center justify-between text-gray-600">
-                    <div className="flex items-center gap-6">
-                      <button className="flex items-center gap-2 hover:text-green-600 transition">
-                        <FaThumbsUp /> {post.likes}
-                      </button>
-                      <button className="flex items-center gap-2 hover:text-red-600 transition">
-                        <FaThumbsDown /> {post.dislikes}
-                      </button>
-                      <button
-                        className="flex items-center gap-2 hover:text-blue-600 transition"
-                        onClick={() => {
-                          setSelectedPost(post);
-                          document
-                            .getElementById("Post_Details_Modal")
-                            .showModal();
-                        }}
-                      >
-                        <FaCommentAlt /> {post.comments}
-                      </button>
-                    </div>
+                  {/* Post action buttons (Like, Dislike, Comment) */}
+                  <div className="flex items-center justify-end gap-6">
+                    {/* Like Button */}
+                    <button
+                      className="flex items-center gap-2 group transition cursor-pointer"
+                      aria-label="Like"
+                      onClick={() => {
+                        // Placeholder: implement like functionality here
+                      }}
+                    >
+                      <div className="border border-gray-400 p-2 rounded-full group-hover:border-green-600 transition-colors">
+                        <FaThumbsUp className="text-lg text-gray-600 group-hover:text-green-600" />
+                      </div>
+                      <span className="text-gray-700 group-hover:text-green-600 font-medium">
+                        {likeCount}
+                      </span>
+                    </button>
+
+                    {/* Dislike Button */}
+                    <button
+                      className="flex items-center gap-2 group transition cursor-pointer"
+                      aria-label="Dislike"
+                      onClick={() => {
+                        // Placeholder: implement dislike functionality here
+                      }}
+                    >
+                      <div className="border border-gray-400 p-2 rounded-full group-hover:border-red-500 transition-colors">
+                        <FaThumbsDown className="text-lg text-gray-600 group-hover:text-red-600" />
+                      </div>
+                      <span className="text-gray-700 group-hover:text-red-600 font-medium">
+                        {dislikeCount}
+                      </span>
+                    </button>
+
+                    {/* Comment Button */}
+                    <button
+                      className="flex items-center gap-2 group transition cursor-pointer"
+                      aria-label="Comment"
+                      onClick={() => {
+                        setSelectedPost(post); // Set selected post for modal
+                        document
+                          .getElementById("Post_Details_Modal")
+                          .showModal(); // Show the comments/details modal
+                      }}
+                    >
+                      <div className="border border-gray-400 p-2 rounded-full group-hover:border-yellow-500 transition-colors">
+                        <FaCommentAlt className="text-lg text-gray-600 group-hover:text-yellow-600" />
+                      </div>
+                      <span className="text-gray-700 group-hover:text-yellow-600 font-medium">
+                        {commentCount}
+                      </span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -178,102 +261,12 @@ const Community = () => {
         </div>
       </div>
 
-      {/* Comments Modal */}
-
+      {/* Modal dialog for post details and comments */}
       <dialog id="Post_Details_Modal" className="modal">
-        <div className="modal-box min-w-3xl p-0 bg-linear-to-b from-white to-gray-300 text-black">
-          {/* Close Button */}
-          <button
-            onClick={() =>
-              document.getElementById("Post_Details_Modal").close()
-            }
-            className="absolute top-2 right-2 text-white bg-red-400 hover:bg-red-600 rounded-full w-8 h-8 flex items-center justify-center shadow-lg z-50 cursor-pointer "
-          >
-            <FaTimes className="text-sm" />
-          </button>
-          {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b">
-            <div className="flex items-center gap-4">
-              <img
-                src={selectedPost?.authorImg}
-                alt={selectedPost?.author}
-                className="w-16 h-16 rounded-full"
-              />
-              <div>
-                <h4 className="text-lg font-semibold text-gray-800">
-                  {selectedPost?.author}
-                </h4>
-                <p className="text-sm text-gray-500">{selectedPost?.role}</p>
-              </div>
-            </div>
-            <span className="text-sm text-gray-400">{selectedPost?.date}</span>
-          </div>
-
-          {/* Title & Content */}
-          <div className="p-6 flex-1">
-            <h5 className="text-2xl font-bold text-gray-900 mb-3">
-              {selectedPost?.title}
-            </h5>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              {selectedPost?.content}
-            </p>
-
-            {/* Interaction */}
-            <div className="flex items-center justify-between text-gray-600">
-              <div className="flex items-center gap-6">
-                <button className="flex items-center gap-2 hover:text-green-600 transition">
-                  <FaThumbsUp /> {selectedPost?.likes}
-                </button>
-                <button className="flex items-center gap-2 hover:text-red-600 transition">
-                  <FaThumbsDown /> {selectedPost?.dislikes}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* All Comments */}
-          <div className="bg-white pb-5">
-            {/* Header */}
-            <h3 className="text-lg font-bold p-2">
-              Comments : <span className="font-thin">( 5 )</span>
-            </h3>
-
-            {/* Comments */}
-            <div className="pl-12 pr-5 hover:bg-gray-100 cursor-default">
-              {/* Header */}
-              <div className="flex justify-between border-b py-2">
-                <div className="flex items-center gap-4">
-                  {/* Commenter Avatar */}
-                  <img
-                    src={selectedPost?.authorImg}
-                    alt={selectedPost?.author}
-                    className="w-12 h-12 rounded-full"
-                  />
-                  {/* Commenter Name & role */}
-                  <div>
-                    {/* Name */}
-                    <h4 className="text-lg font-semibold text-gray-800">
-                      {selectedPost?.author}
-                    </h4>
-
-                    {/* Role */}
-                    <p className="text-sm text-gray-500">
-                      {selectedPost?.role}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Comment Date */}
-                <span className="text-sm text-gray-400">
-                  {selectedPost?.date}
-                </span>
-              </div>
-
-              {/* Comment */}
-              <p className="px-14 py-2">{selectedPost?.content}</p>
-            </div>
-          </div>
-        </div>
+        <PostDetails
+          selectedPost={selectedPost}
+          setSelectedPost={setSelectedPost}
+        />
       </dialog>
     </div>
   );
