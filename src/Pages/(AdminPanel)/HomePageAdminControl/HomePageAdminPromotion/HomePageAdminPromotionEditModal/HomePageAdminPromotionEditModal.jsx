@@ -32,6 +32,7 @@ const HomePageAdminPromotionEditModal = ({
   const fileInputRef = useRef();
   const axiosPublic = useAxiosPublic();
 
+  // State Management
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
@@ -73,7 +74,7 @@ const HomePageAdminPromotionEditModal = ({
         title: selectedPromo.title || "",
         description: selectedPromo.description || "",
         link: selectedPromo.link || "",
-        image: selectedPromo.image || "",
+        imageUrl: selectedPromo.imageUrl || "",
         promoDuration: selectedPromo.promoDuration || "",
         offerDetails: selectedPromo.offerDetails || "",
         discountPercentage: selectedPromo.discountPercentage || "",
@@ -90,7 +91,7 @@ const HomePageAdminPromotionEditModal = ({
 
       setModalError("");
       setImageFile(null);
-      setPreview(values.image);
+      setPreview(values.imageUrl);
       setInitialValues(values);
     }
   }, [selectedPromo, setValue]);
@@ -152,7 +153,7 @@ const HomePageAdminPromotionEditModal = ({
     } catch (err) {
       setModalError(err.message);
       setImageFile(null);
-      setPreview(selectedPromo?.image || "");
+      setPreview(selectedPromo?.imageUrl || "");
     }
   };
 
@@ -430,6 +431,27 @@ const HomePageAdminPromotionEditModal = ({
       </form>
     </div>
   );
+};
+
+// Prop
+HomePageAdminPromotionEditModal.propTypes = {
+  setSelectedPromo: PropTypes.func.isRequired,
+  selectedPromo: PropTypes.shape({
+    _id: PropTypes.string,
+    title: PropTypes.string,
+    description: PropTypes.string,
+    link: PropTypes.string,
+    imageUrl: PropTypes.string,
+    promoDuration: PropTypes.string,
+    offerDetails: PropTypes.string,
+    discountPercentage: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    promoCode: PropTypes.string,
+    image: PropTypes.string,
+  }),
+  Refetch: PropTypes.func.isRequired,
 };
 
 export default HomePageAdminPromotionEditModal;

@@ -16,7 +16,7 @@ import CommonButton from "../../../../Shared/Buttons/CommonButton";
 const FeaturedTrainers = ({ trainersData }) => {
   return (
     <div className="py-10 bg-gradient-to-t from-black/40 to-black/70">
-      <div className="mx-auto max-w-7xl">
+      <div className="container mx-auto text-center">
         {/* Section Title */}
         <div className="text-center px-6">
           <Title titleContent="Our Trainer's" />
@@ -34,7 +34,7 @@ const FeaturedTrainers = ({ trainersData }) => {
           <Link to="/Trainers">
             <CommonButton
               text="Find More Teachers"
-              bgColor="OriginalRed" 
+              bgColor="OriginalRed"
               px="px-14"
               py="py-3"
               textColor="text-white"

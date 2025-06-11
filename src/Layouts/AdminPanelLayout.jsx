@@ -14,6 +14,7 @@ import coach from "../assets/AdminPanel/coach.png";
 import weekly from "../assets/AdminPanel/weekly.png";
 import invoice from "../assets/AdminPanel/invoice.png";
 import booking from "../assets/AdminPanel/booking.png";
+import gallery from "../assets/AdminPanel/gallery.png";
 import homepage from "../assets/AdminPanel/homepage.png";
 import ProfileDefault from "../assets/ProfileDefault.jpg";
 import trainerInvoice from "../assets/AdminPanel/trainerInvoice.png";
@@ -30,11 +31,12 @@ import FetchingError from "../Shared/Component/FetchingError";
 // Import Tabs Components
 import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserManagement";
 import AllTrainerBookings from "../Pages/(AdminPanel)/AllTrainerBookings/AllTrainerBookings";
+import AllTrainerSchedule from "../Pages/(AdminPanel)/AllTrainerSchedule/AllTrainerSchedule";
 import TierUpgradeInvoices from "../Pages/(AdminPanel)/TierUpgradeInvoices/TierUpgradeInvoices";
+import HomePageAdminControl from "../Pages/(AdminPanel)/HomePageAdminControl/HomePageAdminControl";
 import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
-import AllTrainerSchedule from "../Pages/(AdminPanel)/AllTrainerSchedule/AllTrainerSchedule";
-import HomePageAdminControl from "../Pages/(AdminPanel)/HomePageAdminControl/HomePageAdminControl";
+import GalleryPageAdminControl from "../Pages/(AdminPanel)/GalleryPageAdminControl/GalleryPageAdminControl";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -208,14 +210,20 @@ const AdminPanelLayout = () => {
       content: (
         <HomePageAdminControl
           Refetch={refetchAll}
-          GalleryData={GalleryData}
           PromotionsData={PromotionsData}
           GymFeaturesData={GymFeaturesData}
-          TestimonialsData={TestimonialsData}
           HomeBannerSectionData={HomeBannerSectionData}
           HomeWelcomeSectionData={HomeWelcomeSectionData}
           HomeServicesSectionData={HomeServicesSectionData}
         />
+      ),
+    },
+    {
+      id: "Gallery_Page_View",
+      Icon: gallery,
+      title: "Gallery Page View",
+      content: (
+        <GalleryPageAdminControl Refetch={refetchAll} GalleryData={GalleryData} />
       ),
     },
   ];

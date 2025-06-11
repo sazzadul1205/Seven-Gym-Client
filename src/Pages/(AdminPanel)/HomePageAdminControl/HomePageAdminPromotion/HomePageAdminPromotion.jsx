@@ -1,31 +1,41 @@
+import { useEffect, useState } from "react";
+
+// Import Packages
+import Swal from "sweetalert2";
+import PropTypes from "prop-types";
+import { Tooltip } from "react-tooltip";
+
+// import Icons
 import {
-  FaPlus,
-  FaRegTrashAlt,
   FaEdit,
+  FaPlus,
   FaRegStar,
+  FaRegTrashAlt,
   FaStar,
 } from "react-icons/fa";
-import { Tooltip } from "react-tooltip";
-import CommonButton from "../../../../Shared/Buttons/CommonButton";
-import PromotionContentModal from "../../../(PublicPages)/Home/PromotionsSection/PromotionContentModal/PromotionContentModal";
-import { useState, useEffect } from "react";
+
+// Import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-import Swal from "sweetalert2";
+
+// Import Shared
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
+
+// Import Modals
 import HomePageAdminPromotionAddModal from "./HomePageAdminPromotionAddModal/HomePageAdminPromotionAddModal";
 import HomePageAdminPromotionEditModal from "./HomePageAdminPromotionEditModal/HomePageAdminPromotionEditModal";
+import PromotionContentModal from "../../../(PublicPages)/Home/PromotionsSection/PromotionContentModal/PromotionContentModal";
 
 const HomePageAdminPromotion = ({ Refetch, PromotionsData }) => {
   const axiosPublic = useAxiosPublic();
 
   // Local promotions state for instant UI updates
   const [promotions, setPromotions] = useState(PromotionsData || []);
+  const [selectedPromo, setSelectedPromo] = useState(null);
 
   // Sync local state if PromotionsData changes from parent
   useEffect(() => {
     setPromotions(PromotionsData || []);
   }, [PromotionsData]);
-
-  const [selectedPromo, setSelectedPromo] = useState(null);
 
   // Open detail modal
   const handleOpenModal = (promo) => {
@@ -136,12 +146,11 @@ const HomePageAdminPromotion = ({ Refetch, PromotionsData }) => {
     }
   };
 
-//   console.log(PromotionsData);
-
   return (
     <section>
       {/* Header */}
       <div className="bg-gray-400 py-2 border-t-2 flex items-center">
+        {/* Left: Add Button */}
         <div className="flex-shrink-0 pl-3">
           <button
             id="add-promotion-btn"
@@ -158,19 +167,21 @@ const HomePageAdminPromotion = ({ Refetch, PromotionsData }) => {
           />
         </div>
 
+        {/* Center: Title */}
         <h3 className="flex-grow text-white font-semibold text-lg text-center">
           Promotions Section (Promotions: {promotions.length})
         </h3>
 
+        {/* Right: Empty div to balance flex */}
         <div className="flex-shrink-0 w-10" />
       </div>
 
       {/* Promotion Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-2">
         {promotions.map((promo) => (
           <div
             key={promo._id}
-            className="relative bg-gradient-to-br from-gray-100 to-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col"
+            className="relative bg-gradient-to-br from-gray-100 to-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col "
           >
             {/* Image */}
             <img
@@ -198,20 +209,22 @@ const HomePageAdminPromotion = ({ Refetch, PromotionsData }) => {
             <>
               <button
                 id={`show-status-btn-${promo._id}`}
-                className="absolute top-3 left-1/2 border-2 border-gray-500 bg-gray-100 rounded-full p-1 cursor-pointer hover:scale-105 transition-transform duration-200 z-10"
+                className="absolute top-3 left-1/2 transform -translate-x-1/2 border-2 border-gray-500/50 bg-gray-100/50 hover:bg-gray-100 rounded-full p-1 cursor-pointer hover:scale-105 transition-transform duration-200 z-10"
                 onClick={() => toggleShowStatus(promo._id)}
               >
-                {promo.show ? (
-                  <FaStar className="text-yellow-500 text-3xl" />
+                {promo?.show === true ? (
+                  <FaStar className="text-yellow-500/50 hover:text-yellow-500 text-3xl" />
                 ) : (
-                  <FaRegStar className="text-yellow-500 text-3xl" />
+                  <FaRegStar className="text-yellow-500/50 hover:text-yellow-500 text-3xl" />
                 )}
               </button>
+              <Tooltip
+                anchorSelect={`#show-status-btn-${promo._id}`}
+                content={
+                  promo?.show === true ? "Featured promotion" : "Click to promo"
+                }
+              />
             </>
-            <Tooltip
-              anchorSelect={`#show-status-btn-${promo._id}`}
-              content={promo.show ? "Featured promotion" : "Click to feature"}
-            />
 
             {/* Edit Button */}
             <>
@@ -279,6 +292,20 @@ const HomePageAdminPromotion = ({ Refetch, PromotionsData }) => {
       </dialog>
     </section>
   );
+};
+
+// Prop
+HomePageAdminPromotion.propTypes = {
+  Refetch: PropTypes.func.isRequired,
+  PromotionsData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      title: PropTypes.string,
+      description: PropTypes.string,
+      imageUrl: PropTypes.string,
+      show: PropTypes.bool,
+    })
+  ).isRequired,
 };
 
 export default HomePageAdminPromotion;

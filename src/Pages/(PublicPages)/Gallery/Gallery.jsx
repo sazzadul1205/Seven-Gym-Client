@@ -95,7 +95,7 @@ const Gallery = () => {
                 <img
                   src={item?.url}
                   alt={item?.alt || "Gallery Image"}
-                  className="w-full h-full object-cover rounded-lg shadow-lg "
+                  className="w-full h-full object-cover rounded-lg shadow-lg  hover:scale-105 transition-transform duration-300 "
                   loading="lazy"
                 />
               </div>

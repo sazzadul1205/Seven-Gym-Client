@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 // Import Icons
 import { FaUserPlus } from "react-icons/fa";
 
-// Import Date Controle 
+// Import Date Controle
 import {
   format,
   isAfter,
@@ -157,7 +157,7 @@ const ClassSchedule = ({ ourClasses, classDetails }) => {
 
   return (
     <div className="py-10 bg-gradient-to-b from-black/40 to-black/70">
-      <div className="mx-auto max-w-7xl">
+      <div className="container mx-auto text-center">
         <div className="container mx-auto text-center">
           {/* Section Title */}
           <div className="mb-6 px-6">

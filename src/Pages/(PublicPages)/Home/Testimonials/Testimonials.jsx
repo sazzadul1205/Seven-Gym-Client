@@ -11,12 +11,10 @@ import "slick-carousel/slick/slick-theme.css";
 
 // Component Import
 import Title from "../../../../Shared/Component/Title";
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
+import { FaArrowRight } from "react-icons/fa";
 
 const Testimonials = ({ testimonialsData = [] }) => {
-
-
-
-  
   const sliderRef = useRef(null);
 
   // Slider settings for responsiveness and autoplay
@@ -30,8 +28,8 @@ const Testimonials = ({ testimonialsData = [] }) => {
     autoplaySpeed: 1500,
     arrows: false,
     responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 2 } }, // Tablet view
-      { breakpoint: 768, settings: { slidesToShow: 1 } }, // Mobile view
+      { breakpoint: 1024, settings: { slidesToShow: 2 } },
+      { breakpoint: 768, settings: { slidesToShow: 1 } },
     ],
   };
 
@@ -41,13 +39,13 @@ const Testimonials = ({ testimonialsData = [] }) => {
 
   return (
     <div className="py-10 bg-gradient-to-t from-black/40 to-black/70">
-      <div className="max-w-7xl mx-auto text-center">
+      <div className="container mx-auto text-center">
         {/* Section Title */}
         <Title titleContent="What Our Clients Say About Us" />
 
         {/* Testimonials Carousel */}
         {testimonialsData?.length > 0 ? (
-          <Slider ref={sliderRef} {...settings} className="mt-8">
+          <Slider ref={sliderRef} {...settings} className="mt-2">
             {testimonialsData.map(({ _id, imageUrl, name, role, quote }) => (
               <div
                 key={_id}
@@ -86,11 +84,20 @@ const Testimonials = ({ testimonialsData = [] }) => {
         )}
 
         {/* Read More Stories Button */}
-        <div className="mt-8">
+        <div className="flex justify-center mt-2">
           <Link to="/About/Testimonials">
-            <button className="bg-linear-to-bl hover:bg-linear-to-tr from-[#d1234f] to-[#fc003f] px-14 py-3 text-xl font-semibold text-white rounded-xl shadow-lg hover:shadow-2xl transition duration-300">
-              Read More Stories
-            </button>
+            <CommonButton
+              type="button"
+              text="Read More Stories"
+              bgColor="OriginalRed"
+              px="px-14"
+              py="py-3"
+              textColor="text-white"
+              borderRadius="rounded-xl"
+              className=" shadow-lg hover:shadow-2xl"
+              icon={<FaArrowRight />}
+              iconPosition="after"
+            />
           </Link>
         </div>
       </div>

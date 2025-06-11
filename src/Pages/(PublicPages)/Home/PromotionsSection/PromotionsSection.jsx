@@ -17,7 +17,7 @@ const PromotionsSection = ({ promotionsData }) => {
 
   return (
     <div className="py-10 bg-gradient-to-t from-black/40 to-black/70">
-      <div className="max-w-7xl mx-auto text-center">
+      <div className="container mx-auto text-center">
         {/* Section Title */}
         <div className="px-6">
           <Title titleContent="Promotions & Offers" />

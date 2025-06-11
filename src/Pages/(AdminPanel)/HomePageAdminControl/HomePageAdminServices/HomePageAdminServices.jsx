@@ -89,9 +89,10 @@ const HomePageAdminServices = ({ Refetch, HomeServicesSectionData }) => {
         <div className="flex-shrink-0 w-10" />
       </div>
 
+      {/* Content */}
       <div className="grid grid-cols-4">
         {HomeServicesSectionData.map((service) => (
-          <div key={service.id || service.title} className="px-3 py-4">
+          <div key={service.id || service.title} className="p-2">
             <div
               className="block transform transition duration-300 hover:scale-105 cursor-default"
               aria-label={`Learn more about ${service.title}`}
