@@ -7,7 +7,7 @@ import { FaRegStar, FaStar, FaStarHalfAlt } from "react-icons/fa";
 // TrainerTestimonials component receives TrainerData prop (array of trainers with testimonials)
 const TrainerTestimonials = ({ TrainerData = [] }) => {
   // Extract testimonials or default to empty array
-  const TrainerTestimonialsData = TrainerData?.[0]?.testimonials || [];
+  const TrainerTestimonialsData = TrainerData?.testimonials || [];
 
   // Boolean check to show fallback if no testimonials
   const hasTestimonials = TrainerTestimonialsData.length > 0;
@@ -110,17 +110,15 @@ const renderStars = (rating = 0) => {
 
 // PropTypes ensure valid prop structure is passed to component
 TrainerTestimonials.propTypes = {
-  TrainerData: PropTypes.arrayOf(
-    PropTypes.shape({
-      testimonials: PropTypes.arrayOf(
-        PropTypes.shape({
-          clientName: PropTypes.string.isRequired,
-          email: PropTypes.string.isRequired,
-          testimonial: PropTypes.string.isRequired,
-          rating: PropTypes.number.isRequired,
-          clientAvatar: PropTypes.string,
-        })
-      ),
-    })
-  ),
+  TrainerData: PropTypes.shape({
+    testimonials: PropTypes.arrayOf(
+      PropTypes.shape({
+        clientName: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
+        testimonial: PropTypes.string.isRequired,
+        rating: PropTypes.number.isRequired,
+        clientAvatar: PropTypes.string,
+      })
+    ),
+  }),
 };

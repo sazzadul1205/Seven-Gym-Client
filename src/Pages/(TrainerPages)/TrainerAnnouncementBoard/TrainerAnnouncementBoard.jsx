@@ -7,7 +7,7 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 
 // ---------------- Announcement Form Component ----------------
 const AnnouncementForm = ({
-  TrainerProfileData,
+  TrainerData,
   initialData = {},
   refetchAll,
   onCancel,
@@ -38,9 +38,9 @@ const AnnouncementForm = ({
       content,
       date: now.toLocaleDateString(),
       time: now.toLocaleTimeString(),
-      trainerName: TrainerProfileData?.name,
-      trainerEmail: TrainerProfileData?.email,
-      trainerID: TrainerProfileData?._id,
+      trainerName: TrainerData?.name,
+      trainerEmail: TrainerData?.email,
+      trainerID: TrainerData?._id,
     };
 
     try {
@@ -207,7 +207,7 @@ const AnnouncementCard = ({ announcement, onEdit, onDelete }) => (
 // ---------------- Main Trainer Announcement Board ----------------
 const TrainerAnnouncementBoard = ({
   refetchAll,
-  TrainerProfileData,
+  TrainerData,
   TrainerAnnouncement,
 }) => {
   const axiosPublic = useAxiosPublic();
@@ -316,7 +316,7 @@ const TrainerAnnouncementBoard = ({
         {(showForm || editing) && (
           <AnnouncementForm
             key={editing?._id || "new"}
-            TrainerProfileData={TrainerProfileData}
+            TrainerData={TrainerData}
             onCancel={handleCancel}
             refetchAll={refetchAll}
             initialData={editing || {}}
@@ -365,7 +365,7 @@ const TrainerAnnouncementBoard = ({
 // ---------------- PropTypes Definitions ----------------
 // PropTypes for AnnouncementForm
 AnnouncementForm.propTypes = {
-  TrainerProfileData: PropTypes.shape({
+  TrainerData: PropTypes.shape({
     _id: PropTypes.string,
     name: PropTypes.string,
     email: PropTypes.string,
@@ -398,7 +398,7 @@ AnnouncementCard.propTypes = {
 // PropTypes for TrainerAnnouncementBoard
 TrainerAnnouncementBoard.propTypes = {
   refetchAll: PropTypes.func.isRequired,
-  TrainerProfileData: PropTypes.shape({
+  TrainerData: PropTypes.shape({
     _id: PropTypes.string,
     name: PropTypes.string,
     email: PropTypes.string,

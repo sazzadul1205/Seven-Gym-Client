@@ -17,7 +17,7 @@ import { getGenderIcon } from "../../../Utility/getGenderIcon";
 // Import Hooks
 import useAuth from "../../../Hooks/useAuth";
 
-const TrainerSettingsLayoutHeader = ({ refetchAll, TrainerProfileData }) => {
+const TrainerSettingsLayoutHeader = ({ refetchAll, TrainerData }) => {
   const { logOut } = useAuth();
   const navigate = useNavigate();
 
@@ -28,7 +28,7 @@ const TrainerSettingsLayoutHeader = ({ refetchAll, TrainerProfileData }) => {
   const [spinning, setSpinning] = useState(false);
 
   // Get gender details (icon + label)
-  const { icon } = getGenderIcon(TrainerProfileData?.gender);
+  const { icon } = getGenderIcon(TrainerData?.gender);
 
   // Logout function with confirmation
   const handleSignOut = async () => {
@@ -78,7 +78,7 @@ const TrainerSettingsLayoutHeader = ({ refetchAll, TrainerProfileData }) => {
       <div className="flex items-center space-x-4 w-3/4 md:w-auto">
         {/* Trainer Profile Picture */}
         <img
-          src={TrainerProfileData?.imageUrl}
+          src={TrainerData?.imageUrl}
           alt="Trainer Profile"
           className="w-12 h-12 rounded-full border border-gray-300"
         />
@@ -89,7 +89,7 @@ const TrainerSettingsLayoutHeader = ({ refetchAll, TrainerProfileData }) => {
           <div className="flex justify-start items-center gap-3">
             {/* Trainer Name */}
             <h3 className="text-lg font-bold text-gray-700">
-              {TrainerProfileData?.name}
+              {TrainerData?.name}
             </h3>
 
             {/* Trainer Icons */}
@@ -97,17 +97,15 @@ const TrainerSettingsLayoutHeader = ({ refetchAll, TrainerProfileData }) => {
           </div>
 
           {/* Trainer Specialization */}
-          <p className="text-sm text-gray-600">
-            {TrainerProfileData?.specialization}
-          </p>
+          <p className="text-sm text-gray-600">{TrainerData?.specialization}</p>
         </div>
       </div>
 
       {/* Badge Display */}
       <div className="hidden md:flex items-center">
-        {TrainerProfileData?.tier && (
-          <span className={fetchTierBadge(TrainerProfileData.tier)}>
-            {TrainerProfileData.tier} Tier
+        {TrainerData?.tier && (
+          <span className={fetchTierBadge(TrainerData.tier)}>
+            {TrainerData.tier} Tier
           </span>
         )}
       </div>
@@ -156,7 +154,7 @@ const TrainerSettingsLayoutHeader = ({ refetchAll, TrainerProfileData }) => {
 // Prop Validation
 TrainerSettingsLayoutHeader.propTypes = {
   refetchAll: PropTypes.func.isRequired,
-  TrainerProfileData: PropTypes.shape({
+  TrainerData: PropTypes.shape({
     name: PropTypes.string,
     imageUrl: PropTypes.string,
     gender: PropTypes.string,

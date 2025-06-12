@@ -16,17 +16,11 @@ const TrainerDashboard = ({
   TrainerScheduleData,
   TrainerData,
 }) => {
-  // Trainer name
-  const trainerName = TrainerBookingAccepted[0]?.trainer || "N/A";
-
-  // Extract trainer details
-  const TrainerProfileData = TrainerData?.[0] || null;
-
   return (
     <div className="bg-gradient-to-t from-gray-100 to-gray-300 min-h-screen p-1 md:p-4">
       {/* Title */}
       <h3 className="text-2xl text-center font-bold text-black mb-2">
-        {trainerName}&apos;s Dashboard
+        {TrainerData.name}&apos;s Dashboard
       </h3>
 
       {/* Divider */}
@@ -66,7 +60,7 @@ const TrainerDashboard = ({
       {/* Divider */}
       <div className="bg-gray-400 p-[1px] my-5" />
 
-      <TrainerDashboardTestimonials TrainerDetails={TrainerProfileData || {}} />
+      <TrainerDashboardTestimonials TrainerDetails={TrainerData || {}} />
     </div>
   );
 };

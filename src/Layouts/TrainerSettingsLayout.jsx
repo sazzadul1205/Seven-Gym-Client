@@ -74,7 +74,6 @@ const TrainerSettingsLayout = () => {
     // Data
     TrainerData,
     ClassTypesData,
-    TrainerProfileData,
     TrainerScheduleData,
     TrainerAnnouncementData,
     TrainerStudentHistoryData,
@@ -156,9 +155,8 @@ const TrainerSettingsLayout = () => {
       content: (
         <TrainerSchedule
           refetch={refetchAll}
+          TrainerData={TrainerData}
           ClassTypesData={ClassTypesData}
-          TrainerProfileData={TrainerProfileData}
-          AvailableClassTypesData={ClassTypesData}
           TrainerProfileScheduleData={TrainerProfileScheduleData}
         />
       ),
@@ -183,7 +181,6 @@ const TrainerSettingsLayout = () => {
       content: (
         <TrainerScheduleParticipant
           refetch={refetchAll}
-          TrainerProfileData={TrainerProfileData}
           TrainerBookingRequestData={TrainerBookingRequestData}
           TrainerProfileScheduleData={TrainerProfileScheduleData}
           TrainerBookingAcceptedData={TrainerBookingAcceptedData}
@@ -241,7 +238,7 @@ const TrainerSettingsLayout = () => {
       content: (
         <TrainerAnnouncementBoard
           refetchAll={refetchAll}
-          TrainerProfileData={TrainerProfileData}
+          TrainerData={TrainerData}
           TrainerAnnouncement={TrainerAnnouncementData}
         />
       ),
@@ -279,14 +276,12 @@ const TrainerSettingsLayout = () => {
   )
     return <FetchingError />;
 
-  console.log(TrainerData._id);
-
   return (
     <div className="min-h-screen bg-white ">
       {/* Trainer Settings Header */}
       <TrainerSettingsLayoutHeader
         refetchAll={refetchAll}
-        TrainerProfileData={TrainerProfileData}
+        TrainerData={TrainerData}
       />
 
       {/* Floating Drawer Button for Mobile */}
@@ -432,7 +427,7 @@ const TrainerSettingsLayout = () => {
 
       {/* Add Trainer Data Modal */}
       <dialog id="Add_Trainer_Data" className="modal">
-        <TrainerAddModal refetch={refetchAll} TrainerData={TrainerData} />
+        <TrainerAddModal refetch={refetchAll} />
       </dialog>
     </div>
   );

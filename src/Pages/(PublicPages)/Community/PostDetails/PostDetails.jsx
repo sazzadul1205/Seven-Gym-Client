@@ -1,14 +1,20 @@
 /* eslint-disable react/prop-types */
-import { FaThumbsDown, FaThumbsUp, FaTimes } from "react-icons/fa";
+import {
+  FaRegTrashAlt,
+  FaThumbsDown,
+  FaThumbsUp,
+  FaTimes,
+} from "react-icons/fa";
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
 import { useState } from "react";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../../Hooks/useAuth";
 import "./PostDetails.css";
 import Loading from "../../../../Shared/Loading/Loading";
 import FetchingError from "../../../../Shared/Component/FetchingError";
 import { useUserOrTrainerData } from "./useUserOrTrainerData";
+import PostDetailsComment from "./PostDetailsComment/PostDetailsComment";
+import usePostAuthorImage from "../fetchPostAuthorImage";
 
 const formatDate = (dateStr) => {
   const d = new Date(dateStr);
@@ -30,198 +36,247 @@ const PostDetails = ({
   const axiosPublic = useAxiosPublic();
   const { user } = useAuth();
 
+  // Local component state
+  const [deleting, setDeleting] = useState(false);
   const [localError, setLocalError] = useState("");
   const [newComment, setNewComment] = useState("");
-  const [showCommentBox, setShowCommentBox] = useState(false);
   const [animateClass, setAnimateClass] = useState("");
+  const [showCommentBox, setShowCommentBox] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const { data: profileData } = useQuery({
-    queryKey: [
-      "PostAuthor",
-      selectedPost?.authorId || selectedPost?.authorEmail,
-    ],
-    queryFn: async () => {
-      if (selectedPost?.authorRole === "Trainer") {
-        const res = await axiosPublic.get(
-          `/Trainers/BasicInfo?id=${selectedPost.authorId}`
-        );
-        return res.data;
-      } else if (selectedPost?.authorRole === "Member") {
-        const res = await axiosPublic.get(
-          `/Users/BasicProfile?email=${selectedPost.authorEmail}`
-        );
-        return res.data;
-      }
-      return null;
-    },
-    enabled: !!selectedPost,
-  });
+  // Get author image for post
+  const authorImage = usePostAuthorImage(selectedPost);
 
-  const authorImage =
-    profileData?.profileImage ||
-    profileData?.imageUrl ||
-    "https://via.placeholder.com/64";
-
+  // Fetch logged-in user's full data and role (trainer/member)
   const { data, isLoading, error, role } = useUserOrTrainerData(user?.email);
 
+  // Update selected post state with new values (likes/comments)
   const updatePostLikes = (updatedPost) => {
     setSelectedPost({ ...selectedPost, ...updatedPost });
   };
 
+  // Function to handle toggling 'like' on a post
   const toggleLike = async () => {
+    // If user not logged in, show warning and exit
     if (!user?.email) {
       setLocalError("Login Required", "Please log in to like.", "warning");
+      return;
     }
 
+    // Get current liked and disliked arrays from the post
     const liked = selectedPost.liked || [];
     const disliked = selectedPost.disliked || [];
 
+    // Check if the user already liked or disliked this post
     const alreadyLiked = liked.includes(user.email);
     const alreadyDisliked = disliked.includes(user.email);
 
+    // Update liked list: remove if already liked, add otherwise
     const newLiked = alreadyLiked
       ? liked.filter((e) => e !== user.email)
       : [...liked, user.email];
 
+    // Update disliked list: remove if user had disliked before
     const newDisliked = alreadyDisliked
       ? disliked.filter((e) => e !== user.email)
       : disliked;
 
+    // Optimistically update the post state in UI
     updatePostLikes({ liked: newLiked, disliked: newDisliked });
 
     try {
       if (alreadyLiked) {
+        // If user already liked, send request to remove like
         await axiosPublic.patch(
           `/CommunityPosts/Post/Like/${selectedPost._id}`,
-          {
-            email: user.email,
-          }
+          { email: user.email }
         );
       } else {
         if (alreadyDisliked) {
+          // If user had previously disliked, remove dislike first
           await axiosPublic.patch(
             `/CommunityPosts/Post/Dislike/${selectedPost._id}`,
-            {
-              email: user.email,
-            }
+            { email: user.email }
           );
         }
+
+        // Then add the like
         await axiosPublic.patch(
           `/CommunityPosts/Post/Like/${selectedPost._id}`,
-          {
-            email: user.email,
-          }
+          { email: user.email }
         );
       }
+
+      // Refetch all posts to ensure fresh server data
       CommunityPostsRefetch();
     } catch (err) {
+      // If error occurs, show appropriate error message
       setLocalError("Error", "Failed to update like.", "error", err);
     }
   };
 
+  // Function to handle toggling 'dislike' on a post
   const toggleDislike = async () => {
+    // If user not logged in, show warning and exit
     if (!user?.email) {
       setLocalError("Login Required", "Please log in to like.", "warning");
+      return;
     }
 
+    // Get current liked and disliked arrays from the post
     const liked = selectedPost.liked || [];
     const disliked = selectedPost.disliked || [];
 
+    // Check if the user already liked or disliked this post
     const alreadyLiked = liked.includes(user.email);
     const alreadyDisliked = disliked.includes(user.email);
 
+    // Update disliked list: remove if already disliked, add otherwise
     const newDisliked = alreadyDisliked
       ? disliked.filter((e) => e !== user.email)
       : [...disliked, user.email];
 
+    // Update liked list: remove like if it exists
     const newLiked = alreadyLiked
       ? liked.filter((e) => e !== user.email)
       : liked;
 
+    // Optimistically update the post state in UI
     updatePostLikes({ liked: newLiked, disliked: newDisliked });
 
     try {
       if (alreadyDisliked) {
+        // If user already disliked, send request to remove dislike
         await axiosPublic.patch(
           `/CommunityPosts/Post/Dislike/${selectedPost._id}`,
-          {
-            email: user.email,
-          }
+          { email: user.email }
         );
       } else {
         if (alreadyLiked) {
+          // If user had liked before, remove like first
           await axiosPublic.patch(
             `/CommunityPosts/Post/Like/${selectedPost._id}`,
-            {
-              email: user.email,
-            }
+            { email: user.email }
           );
         }
+
+        // Then add the dislike
         await axiosPublic.patch(
           `/CommunityPosts/Post/Dislike/${selectedPost._id}`,
-          {
-            email: user.email,
-          }
+          { email: user.email }
         );
       }
+
+      // Refetch all posts to sync UI with latest server data
       CommunityPostsRefetch();
     } catch (err) {
+      // If error occurs, show appropriate error message
       setLocalError("Error", "Failed to update like.", "error", err);
     }
   };
 
+  // Function to add a new comment to the selected post
   const handleAddComment = async () => {
+    // Prevent adding empty or whitespace-only comments
     if (!newComment.trim()) return;
 
+    // Prepare the payload
     const commentPayload = {
       user: data?.fullName || data?.name || "Anonymous",
-      email: data?.email || " ",
-      userImg: data?.profileImage || "https://via.placeholder.com/48",
+      email: data?.email,
+      userImg:
+        data?.profileImage ||
+        data?.imageUrl ||
+        "https://via.placeholder.com/48",
       role: role || "Member",
       content: newComment,
       time: new Date().toISOString(),
     };
 
+    // Create an updated comments array by appending the new comment
     const updatedComments = [...(selectedPost.comments || []), commentPayload];
+
+    // Optimistically update comments in the UI immediately
     updatePostLikes({ comments: updatedComments });
 
     try {
+      // Send POST request to backend API to save the new comment
       await axiosPublic.post(
         `/CommunityPosts/Post/Comment/${selectedPost._id}`,
         commentPayload
       );
+
       setNewComment("");
-      CommunityPostsRefetch(); // optional but recommended
+      CommunityPostsRefetch();
+      setShowCommentBox(false);
     } catch (err) {
-      setLocalError("Error", "Failed to add comment.", "error", err);
+      console.log(err);
+      setLocalError(`Failed to add comment.: err`);
     }
   };
 
+  // Function to toggle the visibility of the comment input box
   const toggleCommentBox = () => {
+    // Check if the current user has already commented on the selected post
+    const alreadyCommented = (selectedPost?.comments || []).some(
+      (comment) => comment.email === user?.email
+    );
+
+    // If user has already commented, prevent showing the comment box and show an error
+    if (alreadyCommented) {
+      setLocalError("You've already commented on this post.");
+      return;
+    }
+
+    // If the comment box is currently shown, initiate exit animation before hiding
     if (showCommentBox) {
       setAnimateClass("comment-box-exit");
       setTimeout(() => {
         setShowCommentBox(false);
-      }, 400); // match the animation duration
+      }, 400);
     } else {
+      // If comment box is hidden, show it with an enter animation
       setShowCommentBox(true);
       setAnimateClass("comment-box-enter");
     }
   };
 
-  const likeCount = selectedPost?.liked?.length || 0;
-  const dislikeCount = selectedPost?.disliked?.length || 0;
-  const userLiked = selectedPost?.liked?.includes(user?.email);
-  const userDisliked = selectedPost?.disliked?.includes(user?.email);
+  // Function to delete the selected post from the community
+  const handleDeletePost = async () => {
+    try {
+      setDeleting(true);
+      setLocalError(null);
+
+      // Send DELETE request to backend API to delete the post by ID
+      const res = await axiosPublic.delete(
+        `/CommunityPosts/${selectedPost._id}`
+      );
+
+      // Check response message for success confirmation
+      if (res.data?.message === "Comment deleted successfully") {
+        setLocalError("Comment deleted successfully.");
+
+        document.getElementById("Post_Details_Modal").close();
+        setDeleting(true);
+      } else {
+        // Show error message if deletion was unsuccessful or message missing
+        setLocalError(res.data?.message || "Could not delete comment.");
+      }
+    } catch (error) {
+      console.error(error);
+      setLocalError("Failed to delete comment.");
+    } finally {
+      setDeleting(false);
+      CommunityPostsRefetch();
+    }
+  };
 
   if (isLoading) return <Loading />;
   if (error) return <FetchingError />;
 
-  console.log("Users Data :", data);
-  console.log("Users Role :", role);
-
   return (
     <div className="modal-box min-w-3xl p-0 bg-gradient-to-b from-white to-gray-200 text-black">
+      {/* Close Modal Button */}
       <button
         onClick={() => {
           setLocalError("");
@@ -233,6 +288,18 @@ const PostDetails = ({
         <FaTimes className="text-sm" />
       </button>
 
+      {/* Delete Button - Only visible to post author */}
+      {user?.email === selectedPost?.authorEmail && (
+        <button
+          onClick={() => setShowDeleteConfirm(true)}
+          className="text-red-500 bg-red-200 hover:bg-red-300 p-2 rounded-full border border-red-500 mt-1 cursor-pointer absolute top-1 right-14"
+          title="Delete Post"
+        >
+          <FaRegTrashAlt />
+        </button>
+      )}
+
+      {/* Display Local Error */}
       {localError && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative m-4">
           <strong className="font-bold">Error:</strong>{" "}
@@ -240,28 +307,108 @@ const PostDetails = ({
         </div>
       )}
 
-      {/* Header */}
-      {/* [. . . . header Content] */}
+      {/* Post Header: Author Info and Post Date */}
+      <div className="flex items-center justify-between p-6 border-b">
+        {/* Post information */}
+        <div className="flex items-center gap-4">
+          {/* Author Avatar */}
+          <img
+            src={authorImage}
+            alt={selectedPost?.authorName}
+            className="w-16 h-16 rounded-full"
+          />
 
-      {/* Post Content */}
+          {/* Author Info */}
+          <div>
+            {/* Author Name */}
+            <h4 className="text-lg font-semibold text-gray-800">
+              {selectedPost?.authorName}
+            </h4>
+
+            {/* Author Role */}
+            <p className="text-sm text-gray-500">{selectedPost?.authorRole}</p>
+          </div>
+        </div>
+
+        {/* Posting Time */}
+        <span className="text-sm text-gray-400">
+          {formatDate(selectedPost?.createdAt)}
+        </span>
+      </div>
+
+      {/* Delete Confirmation Prompt */}
+      {showDeleteConfirm && (
+        <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative m-4 flex items-center justify-between">
+          {/* Message */}
+          <div>
+            <strong className="font-bold">Are you sure?</strong>{" "}
+            <span>This action will permanently delete the post.</span>
+          </div>
+
+          {/* Confirm/Cancel Buttons */}
+          <div className="flex gap-2">
+            {/* Confirm Button */}
+            <CommonButton
+              clickEvent={handleDeletePost}
+              text={deleting ? "Deleting..." : "Yes"}
+              isLoading={deleting}
+              bgColor="DarkRed"
+              width="[100px]"
+              py="py-1"
+              textColor="text-white"
+              borderRadius="rounded"
+              cursorStyle="cursor-pointer"
+            />
+
+            {/* Cancel Button */}
+            <CommonButton
+              clickEvent={() => setShowDeleteConfirm(false)}
+              text="Cancel"
+              bgColor="gray"
+              width="[100px]"
+              py="py-1"
+              textColor="text-white"
+              borderRadius="rounded"
+              cursorStyle="cursor-pointer"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Main Post Content */}
       <div className="p-6 flex-1">
+        {/* Post Title */}
         <h5 className="text-2xl font-bold text-gray-900 mb-3">
           {selectedPost?.postTitle}
         </h5>
+
+        {/* Post Content */}
         <p className="text-gray-700 leading-relaxed mb-4">
           {selectedPost?.postContent}
         </p>
 
+        {/* Display Post Tags */}
+        {selectedPost?.tags?.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {selectedPost?.tags.map((tag, i) => (
+              <span
+                key={i}
+                className="text-xs bg-pink-100 text-pink-700 px-2 py-1 rounded-full"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Action Buttons: Add Comment, Like, Dislike */}
         <div className="flex items-center justify-between">
+          {/* Comment Button */}
           <CommonButton
             text={showCommentBox ? "Hide Comment Box" : "Add Comment"}
             clickEvent={() => {
               if (!user?.email) {
-                setLocalError(
-                  "Login Required",
-                  "Please log in to Comment.",
-                  "warning"
-                );
+                setLocalError("Please log in to Comment.");
               }
               toggleCommentBox();
             }}
@@ -272,37 +419,48 @@ const PostDetails = ({
             iconPosition="before"
           />
 
-          {/* Like / Dislike */}
+          {/* Like/Dislike Buttons */}
           <div className="flex items-center justify-end gap-6">
+            {/* Like Button */}
             <button
               onClick={toggleLike}
               className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
-                userLiked
+                selectedPost?.liked?.includes(user?.email)
                   ? "text-green-600 border-green-600"
                   : "text-gray-600 border-gray-400 hover:text-green-600 hover:border-green-600"
               }`}
             >
               <FaThumbsUp className="text-lg" />
             </button>
-            <span className="font-medium text-black">{likeCount}</span>
 
+            {/* Like Count */}
+            <span className="font-medium text-black">
+              {selectedPost?.liked?.length || 0}
+            </span>
+
+            {/* Dislike Button */}
             <button
               onClick={toggleDislike}
               className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
-                userDisliked
+                selectedPost?.disliked?.includes(user?.email)
                   ? "text-red-600 border-red-500"
                   : "text-gray-600 border-gray-400 hover:text-red-600 hover:border-red-500"
               }`}
             >
               <FaThumbsDown className="text-lg" />
             </button>
-            <span className="font-medium text-black">{dislikeCount}</span>
+
+            {/* Dislike Count */}
+            <span className="font-medium text-black">
+              {selectedPost?.disliked?.length || 0}
+            </span>
           </div>
         </div>
 
-        {/* Comment Input */}
+        {/* Comment Input Box */}
         {showCommentBox && (
           <div className={`pt-4 ${animateClass}`}>
+            {/* Text input */}
             <textarea
               rows="3"
               placeholder="Write your comment..."
@@ -311,6 +469,7 @@ const PostDetails = ({
               onChange={(e) => setNewComment(e.target.value)}
             ></textarea>
 
+            {/* Input Button */}
             <div className="flex justify-end">
               <CommonButton
                 clickEvent={handleAddComment}
@@ -324,8 +483,29 @@ const PostDetails = ({
         )}
       </div>
 
-      {/* Comments */}
-      {/* [. . . . Comment Content] */}
+      {/* Comments Section */}
+      <div className="bg-white pb-5">
+        {/* Cement Header */}
+        <h3 className="text-lg font-bold p-2">
+          Comments:
+          {/* Cement Count  */}
+          <span className="font-bold ml-3">
+            ( {selectedPost?.comments?.length || 0} )
+          </span>
+        </h3>
+
+        {/* Render Each Comment */}
+        <div className="pl-12 pr-5 space-y-3 cursor-default">
+          {selectedPost?.comments?.map((comment, index) => (
+            <PostDetailsComment
+              key={index}
+              comment={comment}
+              id={selectedPost._id}
+              CommunityPostsRefetch={CommunityPostsRefetch}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

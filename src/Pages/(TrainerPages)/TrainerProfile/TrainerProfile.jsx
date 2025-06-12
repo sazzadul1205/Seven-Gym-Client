@@ -11,7 +11,7 @@ import TrainerDetailsTestimonials from "../../(PublicPages)/(Trainers)/TrainersD
 
 const TrainerProfile = ({ TrainerScheduleData, TrainerData, refetch }) => {
   // Extract trainer details
-  const TrainerProfileData = TrainerData?.[0] || null;
+  // const TrainerProfileData = TrainerData?.[0] || null;
 
   // Extract schedule details
   const TrainerProfileScheduleData = TrainerScheduleData?.[0] || null;
@@ -21,7 +21,7 @@ const TrainerProfile = ({ TrainerScheduleData, TrainerData, refetch }) => {
       {/* Header Section */}
       <div className="bg-linear-to-b from-gray-200 to-gray-400">
         <TrainerProfileHeader
-          TrainerDetails={TrainerProfileData || {}}
+          TrainerDetails={TrainerData || {}}
           refetch={refetch}
         />
       </div>
@@ -31,31 +31,31 @@ const TrainerProfile = ({ TrainerScheduleData, TrainerData, refetch }) => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Trainer Bio and Experience */}
           <TrainerProfileAbout
-            TrainerDetails={TrainerProfileData || {}}
+            TrainerDetails={TrainerData || {}}
             refetch={refetch}
           />
 
           {/* Trainer Contact Information */}
           <TrainerProfileContact
-            TrainerDetails={TrainerProfileData || {}}
+            TrainerDetails={TrainerData || {}}
             refetch={refetch}
           />
         </div>
 
         {/* Trainer Pricing and Availability */}
         <TrainerProfileSchedule
-          TrainerDetails={TrainerProfileData || {}}
+          TrainerDetails={TrainerData || {}}
           TrainerSchedule={TrainerProfileScheduleData || {}}
         />
 
         {/* Trainer Certifications & Details */}
         <TrainerProfileDetails
-          TrainerDetails={TrainerProfileData || {}}
+          TrainerDetails={TrainerData || {}}
           refetch={refetch}
         />
 
         {/* Trainer Testimonials */}
-        <TrainerDetailsTestimonials TrainerDetails={TrainerProfileData || {}} />
+        <TrainerDetailsTestimonials TrainerDetails={TrainerData || {}} />
       </div>
     </div>
   );
@@ -65,7 +65,6 @@ const TrainerProfile = ({ TrainerScheduleData, TrainerData, refetch }) => {
 TrainerProfile.propTypes = {
   TrainerScheduleData: PropTypes.arrayOf(
     PropTypes.shape({
-      // Define properties based on the structure of each schedule item
       day: PropTypes.string,
       time: PropTypes.string,
       sessionType: PropTypes.string,
@@ -73,16 +72,14 @@ TrainerProfile.propTypes = {
       // Add more properties if needed
     })
   ),
-  TrainerData: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      gender: PropTypes.string,
-      specialization: PropTypes.string,
-      tier: PropTypes.string,
-      imageUrl: PropTypes.string,
-      // Add other relevant fields for TrainerData
-    })
-  ),
+  TrainerData: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    gender: PropTypes.string,
+    specialization: PropTypes.string,
+    tier: PropTypes.string,
+    imageUrl: PropTypes.string,
+    // Add other relevant fields
+  }),
   refetch: PropTypes.func.isRequired,
 };
 

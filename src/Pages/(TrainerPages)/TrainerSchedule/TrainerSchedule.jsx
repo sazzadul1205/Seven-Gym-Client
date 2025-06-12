@@ -38,8 +38,8 @@ const MAX_DAYS = 5;
 
 const TrainerSchedule = ({
   refetch,
+  TrainerData,
   ClassTypesData,
-  TrainerProfileData,
   TrainerProfileScheduleData,
 }) => {
   const axiosPublic = useAxiosPublic();
@@ -52,7 +52,7 @@ const TrainerSchedule = ({
   const [defaultTimeSlots, setDefaultTimeSlots] = useState([]);
 
   // Extract trainer's preferred class types
-  const TrainersClassType = TrainerProfileData?.preferences?.classTypes || [];
+  const TrainersClassType = TrainerData?.preferences?.classTypes || [];
 
   // Memoize schedule from props to prevent re-computation
   const initialSchedule = useMemo(
@@ -174,7 +174,7 @@ const TrainerSchedule = ({
     if (result.isConfirmed) {
       try {
         await axiosPublic.put("/Trainers_Schedule/Update", {
-          trainerName: TrainerProfileData?.name,
+          trainerName: TrainerData?.name,
           trainerSchedule: tempSchedule,
         });
 
@@ -212,7 +212,7 @@ const TrainerSchedule = ({
             time: range.start,
             start: range.start,
             end: range.end,
-            id: `${TrainerProfileData.name.replace(/\s+/g, "_")}-${day}-${
+            id: `${TrainerData.name.replace(/\s+/g, "_")}-${day}-${
               range.start
             }`,
           };
@@ -297,7 +297,7 @@ const TrainerSchedule = ({
           setChangesMade={setChangesMade}
           setTempSchedule={setTempSchedule}
           defaultTimeSlots={defaultTimeSlots}
-          TrainerProfileData={TrainerProfileData}
+          TrainerData={TrainerData}
         />
 
         {/* Time Range Customize */}
@@ -333,7 +333,7 @@ TrainerSchedule.propTypes = {
       description: PropTypes.string,
     })
   ).isRequired,
-  TrainerProfileData: PropTypes.shape({
+  TrainerData: PropTypes.shape({
     name: PropTypes.string.isRequired,
     preferences: PropTypes.shape({
       classTypes: PropTypes.arrayOf(PropTypes.string),

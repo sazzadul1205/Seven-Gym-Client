@@ -29,8 +29,7 @@ const useTrainerDashboardData = () => {
     enabled: !!user?.email,
   });
 
-  // 2. Extract Trainer Profile
-  const TrainerProfileData = TrainerData?.[0] || null;
+  console.log(TrainerData);
 
   // 3. Fetch Trainer Schedule
   const {
@@ -39,12 +38,12 @@ const useTrainerDashboardData = () => {
     error: TrainerScheduleError,
     refetch: TrainerScheduleRefetch,
   } = useQuery({
-    queryKey: ["TrainerScheduleData", TrainerProfileData?.name],
+    queryKey: ["TrainerScheduleData", TrainerData?.name],
     queryFn: async () => {
       try {
         const res = await axiosPublic.get(
           `/Trainers_Schedule/ByTrainerName?trainerName=${encodeURIComponent(
-            TrainerProfileData?.name
+            TrainerData?.name
           )}`
         );
         return res.data;
@@ -53,7 +52,7 @@ const useTrainerDashboardData = () => {
         throw err;
       }
     },
-    enabled: !!TrainerProfileData?.name,
+    enabled: !!TrainerData?.name,
   });
 
   // 4. Extract Schedule Profile
@@ -84,11 +83,11 @@ const useTrainerDashboardData = () => {
     error: TrainerBookingRequestError,
     refetch: TrainerBookingRequestRefetch,
   } = useQuery({
-    queryKey: ["TrainerBookingRequestData", TrainerProfileData?.name],
+    queryKey: ["TrainerBookingRequestData", TrainerData?.name],
     queryFn: async () => {
       try {
         const res = await axiosPublic.get(
-          `/Trainer_Booking_Request/Trainer/${TrainerProfileData?.name}`
+          `/Trainer_Booking_Request/Trainer/${TrainerData?.name}`
         );
         return res.data;
       } catch (err) {
@@ -96,7 +95,7 @@ const useTrainerDashboardData = () => {
         throw err;
       }
     },
-    enabled: !!TrainerProfileData?.name,
+    enabled: !!TrainerData?.name,
   });
 
   // 7. Fetch Accepted Bookings
@@ -106,11 +105,11 @@ const useTrainerDashboardData = () => {
     error: TrainerBookingAcceptedError,
     refetch: TrainerBookingAcceptedRefetch,
   } = useQuery({
-    queryKey: ["TrainerBookingAcceptedData", TrainerProfileData?.name],
+    queryKey: ["TrainerBookingAcceptedData", TrainerData?.name],
     queryFn: async () => {
       try {
         const res = await axiosPublic.get(
-          `/Trainer_Booking_Accepted/Trainer/${TrainerProfileData?.name}`
+          `/Trainer_Booking_Accepted/Trainer/${TrainerData?.name}`
         );
         return res.data;
       } catch (err) {
@@ -118,7 +117,7 @@ const useTrainerDashboardData = () => {
         throw err;
       }
     },
-    enabled: !!TrainerProfileData?.name,
+    enabled: !!TrainerData?.name,
   });
 
   // 8. Fetch Booking History
@@ -128,11 +127,11 @@ const useTrainerDashboardData = () => {
     error: TrainerBookingHistoryError,
     refetch: TrainerBookingHistoryRefetch,
   } = useQuery({
-    queryKey: ["TrainerBookingHistoryData", TrainerProfileData?._id],
+    queryKey: ["TrainerBookingHistoryData", TrainerData?._id],
     queryFn: async () => {
       try {
         const res = await axiosPublic.get(
-          `/Trainer_Booking_History/Trainer/${TrainerProfileData?._id}`
+          `/Trainer_Booking_History/Trainer/${TrainerData?._id}`
         );
         return res.data;
       } catch (err) {
@@ -140,7 +139,7 @@ const useTrainerDashboardData = () => {
         throw err;
       }
     },
-    enabled: !!TrainerProfileData?._id,
+    enabled: !!TrainerData?._id,
   });
 
   // 9. Fetch Trainer-Student History
@@ -150,11 +149,11 @@ const useTrainerDashboardData = () => {
     error: TrainerStudentHistoryError,
     refetch: TrainerStudentHistoryRefetch,
   } = useQuery({
-    queryKey: ["TrainerStudentHistory", TrainerProfileData?._id],
+    queryKey: ["TrainerStudentHistory", TrainerData?._id],
     queryFn: async () => {
       try {
         const res = await axiosPublic.get(
-          `/Trainer_Student_History?trainerId=${TrainerProfileData?._id}`
+          `/Trainer_Student_History?trainerId=${TrainerData?._id}`
         );
         return res.data;
       } catch (err) {
@@ -162,7 +161,7 @@ const useTrainerDashboardData = () => {
         throw err;
       }
     },
-    enabled: !!TrainerProfileData?._id,
+    enabled: !!TrainerData?._id,
   });
 
   // 10. Fetch Daily Booking History Stats
@@ -172,11 +171,11 @@ const useTrainerDashboardData = () => {
     error: TrainerBookingHistoryDailyStatsError,
     refetch: TrainerStudentHistoryDailyStatsRefetch,
   } = useQuery({
-    queryKey: ["TrainerBookingHistoryDailyStats", TrainerProfileData?._id],
+    queryKey: ["TrainerBookingHistoryDailyStats", TrainerData?._id],
     queryFn: async () => {
       try {
         const res = await axiosPublic.get(
-          `/Trainer_Booking_History/DailyStats?trainerId=${TrainerProfileData?._id}`
+          `/Trainer_Booking_History/DailyStats?trainerId=${TrainerData?._id}`
         );
         return res.data;
       } catch (err) {
@@ -184,7 +183,7 @@ const useTrainerDashboardData = () => {
         throw err;
       }
     },
-    enabled: !!TrainerProfileData?._id,
+    enabled: !!TrainerData?._id,
   });
 
   // 11. Fetch Daily Accepted Stats
@@ -194,11 +193,11 @@ const useTrainerDashboardData = () => {
     error: TrainerBookingAcceptedDailyStatsError,
     refetch: TrainerStudentAcceptedDailyStatsRefetch,
   } = useQuery({
-    queryKey: ["TrainerBookingAcceptedDailyStats", TrainerProfileData?._id],
+    queryKey: ["TrainerBookingAcceptedDailyStats", TrainerData?._id],
     queryFn: async () => {
       try {
         const res = await axiosPublic.get(
-          `/Trainer_Booking_Accepted/DailyStats?trainerId=${TrainerProfileData?._id}`
+          `/Trainer_Booking_Accepted/DailyStats?trainerId=${TrainerData?._id}`
         );
         return res.data;
       } catch (err) {
@@ -206,7 +205,7 @@ const useTrainerDashboardData = () => {
         throw err;
       }
     },
-    enabled: !!TrainerProfileData?._id,
+    enabled: !!TrainerData?._id,
   });
 
   // 11. Fetch Daily Accepted Stats
@@ -216,11 +215,11 @@ const useTrainerDashboardData = () => {
     error: TrainerAnnouncementError,
     refetch: TrainerAnnouncementRefetch,
   } = useQuery({
-    queryKey: ["TrainerAnnouncement", TrainerProfileData?._id],
+    queryKey: ["TrainerAnnouncement", TrainerData?._id],
     queryFn: async () => {
       try {
         const res = await axiosPublic.get(
-          `/Trainer_Announcement?trainerID=${TrainerProfileData?._id}`
+          `/Trainer_Announcement?trainerID=${TrainerData?._id}`
         );
         return res.data;
       } catch (err) {
@@ -228,7 +227,7 @@ const useTrainerDashboardData = () => {
         throw err;
       }
     },
-    enabled: !!TrainerProfileData?._id,
+    enabled: !!TrainerData?._id,
   });
 
   // Unified refetch function
@@ -272,7 +271,7 @@ const useTrainerDashboardData = () => {
     // Fetched Data
     TrainerData,
     ClassTypesData,
-    TrainerProfileData,
+    // TrainerProfileData,
     TrainerScheduleData,
     TrainerAnnouncementData,
     TrainerStudentHistoryData,
