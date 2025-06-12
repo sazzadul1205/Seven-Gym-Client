@@ -3,6 +3,7 @@ import CommonButton from "../../../../Shared/Buttons/CommonButton";
 import { useState } from "react";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
+import CommunityAuthorAvatar from "../CommunityAuthorAvatar/CommunityAuthorAvatar";
 
 const formatDate = (dateStr) => {
   const d = new Date(dateStr);
@@ -55,13 +56,14 @@ const PostDetails = ({ setSelectedPost, selectedPost }) => {
     enabled: !!selectedPost,
   });
 
-  
-
   const authorImage =
     profileData?.profileImage ||
     profileData?.imageUrl ||
     "https://via.placeholder.com/64";
 
+  // Count likes, dislikes, and comments safely (handle undefined)
+  const likeCount = selectedPost?.liked?.length ?? 0;
+  const dislikeCount = selectedPost?.disliked?.length ?? 0;
 
   return (
     <div className="modal-box min-w-3xl p-0 bg-gradient-to-b from-white to-gray-200 text-black">
@@ -104,37 +106,29 @@ const PostDetails = ({ setSelectedPost, selectedPost }) => {
           {selectedPost?.postContent}
         </p>
 
-        {/* Like / Dislike */}
-        <div className="flex items-center justify-between py-2">
-          <div className="flex items-center gap-6">
-            <button className="flex items-center gap-2 group transition cursor-pointer">
-              <div className="border border-gray-400 p-2 rounded-full group-hover:border-green-600 transition-colors">
-                <FaThumbsUp className="text-lg text-gray-600 group-hover:text-green-600" />
-              </div>
-              <span className="text-gray-700 group-hover:text-green-600 font-medium">
-                {selectedPost?.liked?.length ?? 0}
-              </span>
-            </button>
-            <button className="flex items-center gap-2 group transition cursor-pointer">
-              <div className="border border-gray-400 p-2 rounded-full group-hover:border-red-500 transition-colors">
-                <FaThumbsDown className="text-lg text-gray-600 group-hover:text-red-600" />
-              </div>
-              <span className="text-gray-700 group-hover:text-red-600 font-medium">
-                {selectedPost?.disliked?.length ?? 0}
-              </span>
-            </button>
-          </div>
+        {/* Post action buttons (Like, Dislike, Comment) */}
+        <div className="flex items-center justify-end gap-6">
+          {/* Like Button + Count */}
+          <button
+            className="flex items-center gap-2 border border-gray-400 p-3 rounded-full text-gray-600 hover:text-green-600 hover:border-green-600 transition-colors cursor-pointer"
+            title="Like"
+            aria-label="Like"
+            // onClick={handleLike}
+          >
+            <FaThumbsUp className="text-lg" />
+          </button>
+          <span className="font-medium text-black">{likeCount}</span>
 
-          <CommonButton
-            clickEvent={toggleCommentBox}
-            text={showCommentBox ? "Cancel" : "Add Comment"}
-            bgColor="blue"
-            textColor="text-white"
-            width="[200px]"
-            py="py-2"
-            borderRadius="rounded"
-            className="font-semibold shadow"
-          />
+          {/* Dislike Button + Count */}
+          <button
+            className="flex items-center gap-2 border border-gray-400 p-3 rounded-full text-gray-600 hover:text-red-600 hover:border-red-500 transition-colors cursor-pointer"
+            title="Dislike"
+            aria-label="Dislike"
+            // onClick={handleDislike}
+          >
+            <FaThumbsDown className="text-lg" />
+          </button>
+          <span className="font-medium text-black">{dislikeCount}</span>
         </div>
 
         {/* Comment Input */}
