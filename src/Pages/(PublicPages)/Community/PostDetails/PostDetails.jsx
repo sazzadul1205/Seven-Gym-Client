@@ -8,6 +8,7 @@ import useAuth from "../../../../Hooks/useAuth";
 import "./PostDetails.css";
 import Loading from "../../../../Shared/Loading/Loading";
 import FetchingError from "../../../../Shared/Component/FetchingError";
+import { useUserOrTrainerData } from "./useUserOrTrainerData";
 
 const formatDate = (dateStr) => {
   const d = new Date(dateStr);
@@ -61,15 +62,7 @@ const PostDetails = ({
     profileData?.imageUrl ||
     "https://via.placeholder.com/64";
 
-  const {
-    data: UsersData,
-    isLoading: UsersIsLoading,
-    error: UsersError,
-    // refetch: UsersRefetch,
-  } = useQuery({
-    queryKey: ["CommunityPostsData"],
-    queryFn: () => axiosPublic.get("/Users").then((res) => res.data),
-  });
+  const { data, isLoading, error, role } = useUserOrTrainerData(user?.email);
 
   const updatePostLikes = (updatedPost) => {
     setSelectedPost({ ...selectedPost, ...updatedPost });
@@ -181,10 +174,10 @@ const PostDetails = ({
     if (!newComment.trim()) return;
 
     const commentPayload = {
-      user: profileData?.fullName || "Anonymous",
-      email: profileData?.email || " ",
-      userImg: profileData?.profileImage || "https://via.placeholder.com/48",
-      role: profileData?.role || "Member",
+      user: data?.fullName || data?.name || "Anonymous",
+      email: data?.email || " ",
+      userImg: data?.profileImage || "https://via.placeholder.com/48",
+      role: role || "Member",
       content: newComment,
       time: new Date().toISOString(),
     };
@@ -221,10 +214,11 @@ const PostDetails = ({
   const userLiked = selectedPost?.liked?.includes(user?.email);
   const userDisliked = selectedPost?.disliked?.includes(user?.email);
 
-  if (UsersIsLoading) return <Loading />;
-  if (UsersError) return <FetchingError />;
+  if (isLoading) return <Loading />;
+  if (error) return <FetchingError />;
 
-  console.log(UsersData);
+  console.log("Users Data :", data);
+  console.log("Users Role :", role);
 
   return (
     <div className="modal-box min-w-3xl p-0 bg-gradient-to-b from-white to-gray-200 text-black">
