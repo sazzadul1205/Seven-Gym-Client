@@ -3,12 +3,13 @@ import { FaPlus, FaCommentAlt, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import Forums_Background from "../../../assets/Forums-Background/Forums-Background.jfif";
 import PostDetails from "./PostDetails/PostDetails";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../Shared/Loading/Loading";
 import FetchingError from "../../../Shared/Component/FetchingError";
 import CommonButton from "../../../Shared/Buttons/CommonButton";
 import useAuth from "../../../Hooks/useAuth";
 import CommunityAuthorAvatar from "./CommunityAuthorAvatar/CommunityAuthorAvatar";
+import Swal from "sweetalert2";
 
 const formatDate = (dateStr) => {
   const d = new Date(dateStr);
@@ -30,12 +31,6 @@ const Community = () => {
   const [localPosts, setLocalPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
 
-  useEffect(() => {
-    if (CommunityPostsData) {
-      setLocalPosts(CommunityPostsData);
-    }
-  }, [CommunityPostsData]);
-
   const {
     data: CommunityPostsData,
     isLoading: CommunityPostsIsLoading,
@@ -46,69 +41,141 @@ const Community = () => {
     queryFn: () => axiosPublic.get("/CommunityPosts").then((res) => res.data),
   });
 
+  // Toggle Like
   const toggleLike = async (post) => {
+    if (!user || !user.email) {
+      Swal.fire({
+        icon: "warning",
+        title: "Login Required",
+        text: "Please log in to like this post.",
+        confirmButtonText: "Login",
+      });
+      return;
+    }
+
     const userEmail = user.email;
     const userLiked = post.liked?.includes(userEmail);
     const userDisliked = post.disliked?.includes(userEmail);
 
+    // 1. Optimistically update local state
+    const updatedPosts = localPosts.map((p) => {
+      if (p._id === post._id) {
+        const newLiked = userLiked
+          ? p.liked.filter((email) => email !== userEmail)
+          : [...(p.liked || []), userEmail];
+
+        const newDisliked = userDisliked
+          ? p.disliked.filter((email) => email !== userEmail)
+          : p.disliked;
+
+        return { ...p, liked: newLiked, disliked: newDisliked };
+      }
+      return p;
+    });
+
+    setLocalPosts(updatedPosts);
+
+    // 2. Perform the actual API call
     try {
       if (userLiked) {
-        // Remove like
-        await axiosPublic.patch(`/CommunityPosts/Post/Like/${post._id}`, {
-          email: userEmail,
-        });
-      } else if (userDisliked) {
-        // Remove dislike, then add like
-        await axiosPublic.patch(`/CommunityPosts/Post/Dislike/${post._id}`, {
-          email: userEmail,
-        });
         await axiosPublic.patch(`/CommunityPosts/Post/Like/${post._id}`, {
           email: userEmail,
         });
       } else {
-        // Add like
+        if (userDisliked) {
+          await axiosPublic.patch(`/CommunityPosts/Post/Dislike/${post._id}`, {
+            email: userEmail,
+          });
+        }
         await axiosPublic.patch(`/CommunityPosts/Post/Like/${post._id}`, {
           email: userEmail,
         });
       }
-      QueryClient.invalidateQueries(["CommunityPostsData"]);
-      CommunityPostsRefetch();
     } catch (error) {
-      console.error("Failed to toggle like:", error);
+      console.log(error);
+
+      // 3. Revert on failure
+      Swal.fire({
+        icon: "error",
+        title: "Failed to Like",
+        text: "An error occurred while liking the post. Please try again.",
+      });
+
+      // 4. Revert to server state
+      setLocalPosts(CommunityPostsData);
     }
   };
 
+  // Toggle Dislike
   const toggleDislike = async (post) => {
+    if (!user || !user.email) {
+      Swal.fire({
+        icon: "warning",
+        title: "Login Required",
+        text: "Please log in to dislike this post.",
+        confirmButtonText: "Login",
+      });
+      return;
+    }
+
     const userEmail = user.email;
     const userLiked = post.liked?.includes(userEmail);
     const userDisliked = post.disliked?.includes(userEmail);
 
+    // 1. Optimistically update local state
+    const updatedPosts = localPosts.map((p) => {
+      if (p._id === post._id) {
+        const newDisliked = userDisliked
+          ? p.disliked.filter((email) => email !== userEmail)
+          : [...(p.disliked || []), userEmail];
+
+        const newLiked = userLiked
+          ? p.liked.filter((email) => email !== userEmail)
+          : p.liked;
+
+        return { ...p, disliked: newDisliked, liked: newLiked };
+      }
+      return p;
+    });
+
+    setLocalPosts(updatedPosts);
+
+    // 2. Perform the actual API call
     try {
       if (userDisliked) {
-        // Remove dislike
-        await axiosPublic.patch(`/CommunityPosts/Post/Dislike/${post._id}`, {
-          email: userEmail,
-        });
-      } else if (userLiked) {
-        // Remove like, then add dislike
-        await axiosPublic.patch(`/CommunityPosts/Post/Like/${post._id}`, {
-          email: userEmail,
-        });
         await axiosPublic.patch(`/CommunityPosts/Post/Dislike/${post._id}`, {
           email: userEmail,
         });
       } else {
-        // Add dislike
+        if (userLiked) {
+          await axiosPublic.patch(`/CommunityPosts/Post/Like/${post._id}`, {
+            email: userEmail,
+          });
+        }
         await axiosPublic.patch(`/CommunityPosts/Post/Dislike/${post._id}`, {
           email: userEmail,
         });
       }
-      QueryClient.invalidateQueries(["CommunityPostsData"]);
-      CommunityPostsRefetch();
     } catch (error) {
-      console.error("Failed to toggle dislike:", error);
+      console.log(error);
+
+      // 3. Revert on failure
+      Swal.fire({
+        icon: "error",
+        title: "Failed to Dislike",
+        text: "An error occurred while disliking the post. Please try again.",
+      });
+
+      // 4. Revert to server state
+      setLocalPosts(CommunityPostsData);
     }
   };
+
+  useEffect(() => {
+    if (CommunityPostsData) {
+      setLocalPosts(CommunityPostsData);
+    }
+  }, [CommunityPostsData]);
 
   if (CommunityPostsIsLoading) return <Loading />;
   if (CommunityPostsError) return <FetchingError />;
@@ -142,7 +209,7 @@ const Community = () => {
         </div>
 
         <div className="px-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {CommunityPostsData.map((post) => {
+          {localPosts.map((post) => {
             const isLong = post.postContent.length > 300;
             const preview = isLong
               ? post.postContent.slice(0, 300) + "..."
@@ -267,6 +334,7 @@ const Community = () => {
         <PostDetails
           selectedPost={selectedPost}
           setSelectedPost={setSelectedPost}
+          CommunityPostsRefetch={CommunityPostsRefetch}
         />
       </dialog>
     </div>

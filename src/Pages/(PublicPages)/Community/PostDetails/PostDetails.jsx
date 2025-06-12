@@ -1,39 +1,38 @@
+/* eslint-disable react/prop-types */
 import { FaThumbsDown, FaThumbsUp, FaTimes } from "react-icons/fa";
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
 import { useState } from "react";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
-import CommunityAuthorAvatar from "../CommunityAuthorAvatar/CommunityAuthorAvatar";
+import useAuth from "../../../../Hooks/useAuth";
+import "./PostDetails.css";
+import Loading from "../../../../Shared/Loading/Loading";
+import FetchingError from "../../../../Shared/Component/FetchingError";
 
 const formatDate = (dateStr) => {
   const d = new Date(dateStr);
-  const options = {
+  return d.toLocaleString("en-US", {
     month: "short",
     day: "2-digit",
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
-  };
-  return d.toLocaleString("en-US", options);
+  });
 };
 
-const PostDetails = ({ setSelectedPost, selectedPost }) => {
+const PostDetails = ({
+  selectedPost,
+  setSelectedPost,
+  CommunityPostsRefetch,
+}) => {
   const axiosPublic = useAxiosPublic();
+  const { user } = useAuth();
 
+  const [localError, setLocalError] = useState("");
   const [newComment, setNewComment] = useState("");
   const [showCommentBox, setShowCommentBox] = useState(false);
-  const [shouldRender, setShouldRender] = useState(false);
-
-  const toggleCommentBox = () => {
-    if (showCommentBox) {
-      setShowCommentBox(false);
-      setTimeout(() => setShouldRender(false), 500);
-    } else {
-      setShouldRender(true);
-      setTimeout(() => setShowCommentBox(true), 10);
-    }
-  };
+  const [animateClass, setAnimateClass] = useState("");
 
   const { data: profileData } = useQuery({
     queryKey: [
@@ -51,7 +50,8 @@ const PostDetails = ({ setSelectedPost, selectedPost }) => {
           `/Users/BasicProfile?email=${selectedPost.authorEmail}`
         );
         return res.data;
-      } else return null;
+      }
+      return null;
     },
     enabled: !!selectedPost,
   });
@@ -61,41 +61,193 @@ const PostDetails = ({ setSelectedPost, selectedPost }) => {
     profileData?.imageUrl ||
     "https://via.placeholder.com/64";
 
-  // Count likes, dislikes, and comments safely (handle undefined)
-  const likeCount = selectedPost?.liked?.length ?? 0;
-  const dislikeCount = selectedPost?.disliked?.length ?? 0;
+  const {
+    data: UsersData,
+    isLoading: UsersIsLoading,
+    error: UsersError,
+    // refetch: UsersRefetch,
+  } = useQuery({
+    queryKey: ["CommunityPostsData"],
+    queryFn: () => axiosPublic.get("/Users").then((res) => res.data),
+  });
+
+  const updatePostLikes = (updatedPost) => {
+    setSelectedPost({ ...selectedPost, ...updatedPost });
+  };
+
+  const toggleLike = async () => {
+    if (!user?.email) {
+      setLocalError("Login Required", "Please log in to like.", "warning");
+    }
+
+    const liked = selectedPost.liked || [];
+    const disliked = selectedPost.disliked || [];
+
+    const alreadyLiked = liked.includes(user.email);
+    const alreadyDisliked = disliked.includes(user.email);
+
+    const newLiked = alreadyLiked
+      ? liked.filter((e) => e !== user.email)
+      : [...liked, user.email];
+
+    const newDisliked = alreadyDisliked
+      ? disliked.filter((e) => e !== user.email)
+      : disliked;
+
+    updatePostLikes({ liked: newLiked, disliked: newDisliked });
+
+    try {
+      if (alreadyLiked) {
+        await axiosPublic.patch(
+          `/CommunityPosts/Post/Like/${selectedPost._id}`,
+          {
+            email: user.email,
+          }
+        );
+      } else {
+        if (alreadyDisliked) {
+          await axiosPublic.patch(
+            `/CommunityPosts/Post/Dislike/${selectedPost._id}`,
+            {
+              email: user.email,
+            }
+          );
+        }
+        await axiosPublic.patch(
+          `/CommunityPosts/Post/Like/${selectedPost._id}`,
+          {
+            email: user.email,
+          }
+        );
+      }
+      CommunityPostsRefetch();
+    } catch (err) {
+      setLocalError("Error", "Failed to update like.", "error", err);
+    }
+  };
+
+  const toggleDislike = async () => {
+    if (!user?.email) {
+      setLocalError("Login Required", "Please log in to like.", "warning");
+    }
+
+    const liked = selectedPost.liked || [];
+    const disliked = selectedPost.disliked || [];
+
+    const alreadyLiked = liked.includes(user.email);
+    const alreadyDisliked = disliked.includes(user.email);
+
+    const newDisliked = alreadyDisliked
+      ? disliked.filter((e) => e !== user.email)
+      : [...disliked, user.email];
+
+    const newLiked = alreadyLiked
+      ? liked.filter((e) => e !== user.email)
+      : liked;
+
+    updatePostLikes({ liked: newLiked, disliked: newDisliked });
+
+    try {
+      if (alreadyDisliked) {
+        await axiosPublic.patch(
+          `/CommunityPosts/Post/Dislike/${selectedPost._id}`,
+          {
+            email: user.email,
+          }
+        );
+      } else {
+        if (alreadyLiked) {
+          await axiosPublic.patch(
+            `/CommunityPosts/Post/Like/${selectedPost._id}`,
+            {
+              email: user.email,
+            }
+          );
+        }
+        await axiosPublic.patch(
+          `/CommunityPosts/Post/Dislike/${selectedPost._id}`,
+          {
+            email: user.email,
+          }
+        );
+      }
+      CommunityPostsRefetch();
+    } catch (err) {
+      setLocalError("Error", "Failed to update like.", "error", err);
+    }
+  };
+
+  const handleAddComment = async () => {
+    if (!newComment.trim()) return;
+
+    const commentPayload = {
+      user: profileData?.fullName || "Anonymous",
+      email: profileData?.email || " ",
+      userImg: profileData?.profileImage || "https://via.placeholder.com/48",
+      role: profileData?.role || "Member",
+      content: newComment,
+      time: new Date().toISOString(),
+    };
+
+    const updatedComments = [...(selectedPost.comments || []), commentPayload];
+    updatePostLikes({ comments: updatedComments });
+
+    try {
+      await axiosPublic.post(
+        `/CommunityPosts/Post/Comment/${selectedPost._id}`,
+        commentPayload
+      );
+      setNewComment("");
+      CommunityPostsRefetch(); // optional but recommended
+    } catch (err) {
+      setLocalError("Error", "Failed to add comment.", "error", err);
+    }
+  };
+
+  const toggleCommentBox = () => {
+    if (showCommentBox) {
+      setAnimateClass("comment-box-exit");
+      setTimeout(() => {
+        setShowCommentBox(false);
+      }, 400); // match the animation duration
+    } else {
+      setShowCommentBox(true);
+      setAnimateClass("comment-box-enter");
+    }
+  };
+
+  const likeCount = selectedPost?.liked?.length || 0;
+  const dislikeCount = selectedPost?.disliked?.length || 0;
+  const userLiked = selectedPost?.liked?.includes(user?.email);
+  const userDisliked = selectedPost?.disliked?.includes(user?.email);
+
+  if (UsersIsLoading) return <Loading />;
+  if (UsersError) return <FetchingError />;
+
+  console.log(UsersData);
 
   return (
     <div className="modal-box min-w-3xl p-0 bg-gradient-to-b from-white to-gray-200 text-black">
       <button
         onClick={() => {
+          setLocalError("");
           setSelectedPost("");
-          document.getElementById("Post_Details_Modal").close();
+          document.getElementById("Post_Details_Modal")?.close();
         }}
         className="absolute top-2 right-2 text-white bg-red-400 hover:bg-red-600 rounded-full w-8 h-8 flex items-center justify-center shadow-lg z-50 cursor-pointer"
       >
         <FaTimes className="text-sm" />
       </button>
 
-      {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b">
-        <div className="flex items-center gap-4">
-          <img
-            src={authorImage}
-            alt={selectedPost?.authorName}
-            className="w-16 h-16 rounded-full"
-          />
-          <div>
-            <h4 className="text-lg font-semibold text-gray-800">
-              {selectedPost?.authorName}
-            </h4>
-            <p className="text-sm text-gray-500">{selectedPost?.authorRole}</p>
-          </div>
+      {localError && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative m-4">
+          <strong className="font-bold">Error:</strong>{" "}
+          <span>{localError}</span>
         </div>
-        <span className="text-sm text-gray-400">
-          {formatDate(selectedPost?.createdAt)}
-        </span>
-      </div>
+      )}
+
+      {/* Header */}
+      {/* [. . . . header Content] */}
 
       {/* Post Content */}
       <div className="p-6 flex-1">
@@ -106,93 +258,80 @@ const PostDetails = ({ setSelectedPost, selectedPost }) => {
           {selectedPost?.postContent}
         </p>
 
-        {/* Post action buttons (Like, Dislike, Comment) */}
-        <div className="flex items-center justify-end gap-6">
-          {/* Like Button + Count */}
-          <button
-            className="flex items-center gap-2 border border-gray-400 p-3 rounded-full text-gray-600 hover:text-green-600 hover:border-green-600 transition-colors cursor-pointer"
-            title="Like"
-            aria-label="Like"
-            // onClick={handleLike}
-          >
-            <FaThumbsUp className="text-lg" />
-          </button>
-          <span className="font-medium text-black">{likeCount}</span>
+        <div className="flex items-center justify-between">
+          <CommonButton
+            text={showCommentBox ? "Hide Comment Box" : "Add Comment"}
+            clickEvent={() => {
+              if (!user?.email) {
+                setLocalError(
+                  "Login Required",
+                  "Please log in to Comment.",
+                  "warning"
+                );
+              }
+              toggleCommentBox();
+            }}
+            bgColor="blue"
+            textColor="text-white"
+            py="py-2"
+            width="[200px]"
+            iconPosition="before"
+          />
 
-          {/* Dislike Button + Count */}
-          <button
-            className="flex items-center gap-2 border border-gray-400 p-3 rounded-full text-gray-600 hover:text-red-600 hover:border-red-500 transition-colors cursor-pointer"
-            title="Dislike"
-            aria-label="Dislike"
-            // onClick={handleDislike}
-          >
-            <FaThumbsDown className="text-lg" />
-          </button>
-          <span className="font-medium text-black">{dislikeCount}</span>
+          {/* Like / Dislike */}
+          <div className="flex items-center justify-end gap-6">
+            <button
+              onClick={toggleLike}
+              className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
+                userLiked
+                  ? "text-green-600 border-green-600"
+                  : "text-gray-600 border-gray-400 hover:text-green-600 hover:border-green-600"
+              }`}
+            >
+              <FaThumbsUp className="text-lg" />
+            </button>
+            <span className="font-medium text-black">{likeCount}</span>
+
+            <button
+              onClick={toggleDislike}
+              className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
+                userDisliked
+                  ? "text-red-600 border-red-500"
+                  : "text-gray-600 border-gray-400 hover:text-red-600 hover:border-red-500"
+              }`}
+            >
+              <FaThumbsDown className="text-lg" />
+            </button>
+            <span className="font-medium text-black">{dislikeCount}</span>
+          </div>
         </div>
 
         {/* Comment Input */}
-        <div
-          className={`transition-all duration-500 ease-in-out overflow-hidden ${
-            showCommentBox ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-          }`}
-        >
-          {shouldRender && (
-            <div className="pt-4">
-              <textarea
-                rows="3"
-                placeholder="Write your comment..."
-                className="w-full p-3 bg-white border border-gray-300 rounded shadow-sm resize-none focus:outline-none focus:ring focus:ring-blue-200"
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-              ></textarea>
+        {showCommentBox && (
+          <div className={`pt-4 ${animateClass}`}>
+            <textarea
+              rows="3"
+              placeholder="Write your comment..."
+              className="w-full p-3 bg-white border border-gray-300 rounded shadow-sm resize-none focus:outline-none focus:ring focus:ring-blue-200"
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            ></textarea>
 
+            <div className="flex justify-end">
               <CommonButton
-                // clickEvent={handleAddComment}
+                clickEvent={handleAddComment}
                 text="Submit"
                 bgColor="green"
-                className="mt-2"
+                px="px-16"
+                py="py-2"
               />
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Comments */}
-      <div className="bg-white pb-5">
-        <h3 className="text-lg font-bold p-2">
-          Comments :{" "}
-          <span className="font-thin">
-            ( {selectedPost?.comments?.length ?? 0} )
-          </span>
-        </h3>
-
-        <div className="pl-12 pr-5 space-y-3 cursor-default">
-          {selectedPost?.comments?.map((comment, index) => (
-            <div key={index}>
-              <div className="flex justify-between border-b py-2">
-                <div className="flex items-center gap-4">
-                  <img
-                    src={comment?.userImg || "https://via.placeholder.com/48"}
-                    alt={comment?.user}
-                    className="w-12 h-12 rounded-full"
-                  />
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-800">
-                      {comment?.user}
-                    </h4>
-                    <p className="text-sm text-gray-500">{comment?.role}</p>
-                  </div>
-                </div>
-                <span className="text-sm text-gray-400">
-                  {formatDate(comment?.time)}
-                </span>
-              </div>
-              <p className="px-14 py-2">{comment?.content}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* [. . . . Comment Content] */}
     </div>
   );
 };

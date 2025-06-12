@@ -26,10 +26,12 @@
     }
 }
 
-.animate-slide-fade-down {
-    animation: slide-fade-down 0.5s ease-out forwards;
+.comment-box-enter {
+    animation: slide-fade-down 0.4s ease forwards;
+    overflow: hidden;
 }
 
-.animate-slide-fade-up {
-    animation: slide-fade-up 0.5s ease-out forwards;
+.comment-box-exit {
+    animation: slide-fade-up 0.4s ease forwards;
+    overflow: hidden;
 }
