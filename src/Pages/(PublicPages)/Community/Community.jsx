@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { FaPlus, FaCommentAlt, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import {
+  FaPlus,
+  FaCommentAlt,
+  FaThumbsUp,
+  FaThumbsDown,
+  FaRegTrashAlt,
+} from "react-icons/fa";
+import { MdEdit } from "react-icons/md";
 import Forums_Background from "../../../assets/Forums-Background/Forums-Background.jfif";
 import PostDetails from "./PostDetails/PostDetails";
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
@@ -11,6 +18,7 @@ import useAuth from "../../../Hooks/useAuth";
 import CommunityAuthorAvatar from "./CommunityAuthorAvatar/CommunityAuthorAvatar";
 import Swal from "sweetalert2";
 
+// Utility function to format date to a human-readable string
 const formatDate = (dateStr) => {
   const d = new Date(dateStr);
   const options = {
@@ -28,9 +36,11 @@ const Community = () => {
   const axiosPublic = useAxiosPublic();
   const { user } = useAuth();
 
+  // Local state for storing posts and selected post for modal/view
   const [localPosts, setLocalPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
 
+  // Fetch community posts using React Query
   const {
     data: CommunityPostsData,
     isLoading: CommunityPostsIsLoading,
@@ -41,9 +51,10 @@ const Community = () => {
     queryFn: () => axiosPublic.get("/CommunityPosts").then((res) => res.data),
   });
 
-  // Toggle Like
+  // Like toggle handler
   const toggleLike = async (post) => {
     if (!user || !user.email) {
+      // Ask user to log in if not authenticated
       Swal.fire({
         icon: "warning",
         title: "Login Required",
@@ -57,7 +68,7 @@ const Community = () => {
     const userLiked = post.liked?.includes(userEmail);
     const userDisliked = post.disliked?.includes(userEmail);
 
-    // 1. Optimistically update local state
+    // Optimistically update UI
     const updatedPosts = localPosts.map((p) => {
       if (p._id === post._id) {
         const newLiked = userLiked
@@ -75,7 +86,7 @@ const Community = () => {
 
     setLocalPosts(updatedPosts);
 
-    // 2. Perform the actual API call
+    // Sync with server
     try {
       if (userLiked) {
         await axiosPublic.patch(`/CommunityPosts/Post/Like/${post._id}`, {
@@ -94,19 +105,17 @@ const Community = () => {
     } catch (error) {
       console.log(error);
 
-      // 3. Revert on failure
+      // Revert UI and alert user on error
       Swal.fire({
         icon: "error",
         title: "Failed to Like",
         text: "An error occurred while liking the post. Please try again.",
       });
-
-      // 4. Revert to server state
       setLocalPosts(CommunityPostsData);
     }
   };
 
-  // Toggle Dislike
+  // Dislike toggle handler (same logic as like, but for dislikes)
   const toggleDislike = async (post) => {
     if (!user || !user.email) {
       Swal.fire({
@@ -122,7 +131,6 @@ const Community = () => {
     const userLiked = post.liked?.includes(userEmail);
     const userDisliked = post.disliked?.includes(userEmail);
 
-    // 1. Optimistically update local state
     const updatedPosts = localPosts.map((p) => {
       if (p._id === post._id) {
         const newDisliked = userDisliked
@@ -140,7 +148,6 @@ const Community = () => {
 
     setLocalPosts(updatedPosts);
 
-    // 2. Perform the actual API call
     try {
       if (userDisliked) {
         await axiosPublic.patch(`/CommunityPosts/Post/Dislike/${post._id}`, {
@@ -159,18 +166,16 @@ const Community = () => {
     } catch (error) {
       console.log(error);
 
-      // 3. Revert on failure
       Swal.fire({
         icon: "error",
         title: "Failed to Dislike",
         text: "An error occurred while disliking the post. Please try again.",
       });
-
-      // 4. Revert to server state
       setLocalPosts(CommunityPostsData);
     }
   };
 
+  // Update local state when data is fetched or refetch'ed
   useEffect(() => {
     if (CommunityPostsData) {
       setLocalPosts(CommunityPostsData);
@@ -185,10 +190,12 @@ const Community = () => {
       className="bg-fixed bg-cover bg-center min-h-screen"
       style={{ backgroundImage: `url(${Forums_Background})` }}
     >
+      {/* Header */}
       <h3 className="bg-gradient-to-b from-[#F72C5B] to-[#c199a2] text-white text-center text-4xl font-extrabold py-8 shadow-lg">
         Community Corner
       </h3>
 
+      {/* Add, Search, Dropdowns & toggle  */}
       <div className="bg-gradient-to-b from-gray-100/50 to-gray-300/50 min-h-screen pb-5">
         <div className="flex justify-start py-5 px-10">
           <CommonButton
@@ -208,8 +215,10 @@ const Community = () => {
           />
         </div>
 
+        {/* Community Grid Layout */}
         <div className="px-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
           {localPosts.map((post) => {
+            // Prepare preview and interaction state
             const isLong = post.postContent.length > 300;
             const preview = isLong
               ? post.postContent.slice(0, 300) + "..."
@@ -223,30 +232,43 @@ const Community = () => {
             const userDisliked = post.disliked?.includes(user?.email);
 
             return (
+              // Post Card
               <div
                 key={post._id}
                 className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col"
               >
+                {/* Post Header with Author Info */}
                 <div className="flex items-center justify-between p-6 border-b">
+                  {/* Post Author Avatar, Name & Role */}
                   <div className="flex items-center gap-4">
+                    {/* Avatar */}
                     <CommunityAuthorAvatar post={post} />
+
+                    {/* Name & Role  */}
                     <div>
+                      {/* Name */}
                       <h4 className="text-lg font-semibold text-gray-800">
                         {post.authorName}
                       </h4>
+                      {/* Role */}
                       <p className="text-sm text-gray-500">{post.authorRole}</p>
                     </div>
                   </div>
+
+                  {/* Post Created At */}
                   <span className="text-sm text-gray-400">
                     {formatDate(post.createdAt)}
                   </span>
                 </div>
 
+                {/* Post Content */}
                 <div className="p-6 flex-1">
+                  {/* Post Title */}
                   <h5 className="text-2xl font-bold text-gray-900 mb-3">
                     {post.postTitle}
                   </h5>
 
+                  {/* Post Preview Content with 'Show more' if long */}
                   <p className="text-gray-700 leading-relaxed mb-4">
                     {preview}
                     {isLong && (
@@ -264,63 +286,98 @@ const Community = () => {
                     )}
                   </p>
 
+                  {/* Tags */}
                   {post.tags?.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-4">
                       {post.tags.map((tag, i) => (
                         <span
                           key={i}
-                          className="text-xs bg-pink-100 text-pink-700 px-2 py-1 rounded-full"
+                          className="text-sm bg-pink-100 text-pink-500 px-5 py-1 rounded-full"
                         >
-                          #{tag}
+                          # {tag}
                         </span>
                       ))}
                     </div>
                   )}
 
-                  <div className="flex items-center justify-end gap-6">
-                    {/* Like Button */}
-                    <button
-                      onClick={() => toggleLike(post)}
-                      className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
-                        userLiked
-                          ? "text-green-600 border-green-600"
-                          : "text-gray-600 border-gray-400 hover:text-green-600 hover:border-green-600"
-                      }`}
-                    >
-                      <FaThumbsUp className="text-lg" />
-                    </button>
-                    <span className="font-medium text-black">{likeCount}</span>
+                  {/* Actions Row */}
+                  <div className="flex justify-between items-center">
+                    {/* Trash & Edit Buttons */}
+                    <div className="flex items-center gap-6">
+                      {/* Edit/Delete only for post author */}
+                      {user?.email === post.authorEmail && (
+                        <>
+                          {/* Delete Button */}
+                          <button
+                            onClick={() => {
+                              // handle delete here
+                            }}
+                            className="flex items-center text-red-700 bg-red-100 hover:bg-red-200 border border-red-500 p-3 rounded-full transition cursor-pointer"
+                          >
+                            <FaRegTrashAlt className="text-lg" />
+                          </button>
 
-                    {/* Dislike Button */}
-                    <button
-                      onClick={() => toggleDislike(post)}
-                      className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
-                        userDisliked
-                          ? "text-red-600 border-red-500"
-                          : "text-gray-600 border-gray-400 hover:text-red-600 hover:border-red-500"
-                      }`}
-                    >
-                      <FaThumbsDown className="text-lg" />
-                    </button>
-                    <span className="font-medium text-black">
-                      {dislikeCount}
-                    </span>
+                          {/* Edit Button */}
+                          <button
+                            onClick={() => {
+                              // handle edit here
+                            }}
+                            className="flex items-center text-yellow-700 bg-yellow-100 hover:bg-yellow-200 border border-yellow-500 p-3 rounded-full transition cursor-pointer"
+                          >
+                            <MdEdit className="text-lg" />
+                          </button>
+                        </>
+                      )}
+                    </div>
 
-                    {/* Comment Button */}
-                    <button
-                      className="flex items-center gap-2 border border-gray-400 p-3 rounded-full text-gray-600 hover:text-yellow-600 hover:border-yellow-500 transition cursor-pointer"
-                      onClick={() => {
-                        setSelectedPost(post);
-                        document
-                          .getElementById("Post_Details_Modal")
-                          .showModal();
-                      }}
-                    >
-                      <FaCommentAlt className="text-lg" />
-                    </button>
-                    <span className="font-medium text-black">
-                      {commentCount}
-                    </span>
+                    {/* Like, Dislike & Comment Comments */}
+                    <div className="flex items-center gap-6">
+                      {/* Like */}
+                      <button
+                        onClick={() => toggleLike(post)}
+                        className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
+                          userLiked
+                            ? "text-green-600 border-green-600"
+                            : "text-gray-600 border-gray-400 hover:text-green-600 hover:border-green-600"
+                        }`}
+                      >
+                        <FaThumbsUp className="text-lg" />
+                      </button>
+                      <span className="font-medium text-black">
+                        {likeCount}
+                      </span>
+
+                      {/* Dislike */}
+                      <button
+                        onClick={() => toggleDislike(post)}
+                        className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
+                          userDisliked
+                            ? "text-red-600 border-red-500"
+                            : "text-gray-600 border-gray-400 hover:text-red-600 hover:border-red-500"
+                        }`}
+                      >
+                        <FaThumbsDown className="text-lg" />
+                      </button>
+                      <span className="font-medium text-black">
+                        {dislikeCount}
+                      </span>
+
+                      {/* Comment */}
+                      <button
+                        className="flex items-center gap-2 border border-gray-400 p-3 rounded-full text-gray-600 hover:text-yellow-600 hover:border-yellow-500 transition cursor-pointer"
+                        onClick={() => {
+                          setSelectedPost(post);
+                          document
+                            .getElementById("Post_Details_Modal")
+                            .showModal();
+                        }}
+                      >
+                        <FaCommentAlt className="text-lg" />
+                      </button>
+                      <span className="font-medium text-black">
+                        {commentCount}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>

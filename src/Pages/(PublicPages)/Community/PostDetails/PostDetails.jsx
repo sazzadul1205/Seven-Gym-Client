@@ -1,21 +1,38 @@
-/* eslint-disable react/prop-types */
+import { useState } from "react";
+
+// Import Packages
+import PropTypes from "prop-types";
+
+// Import Icons
 import {
   FaRegTrashAlt,
   FaThumbsDown,
   FaThumbsUp,
   FaTimes,
 } from "react-icons/fa";
+
+// Import Shared
+import FetchingError from "../../../../Shared/Component/FetchingError";
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
-import { useState } from "react";
+import Loading from "../../../../Shared/Loading/Loading";
+
+// Import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import useAuth from "../../../../Hooks/useAuth";
-import "./PostDetails.css";
-import Loading from "../../../../Shared/Loading/Loading";
-import FetchingError from "../../../../Shared/Component/FetchingError";
-import { useUserOrTrainerData } from "./useUserOrTrainerData";
+
+// Import Detailed Comment Component
 import PostDetailsComment from "./PostDetailsComment/PostDetailsComment";
+
+// Import User/Trainer Data
+import { useUserOrTrainerData } from "./useUserOrTrainerData";
+
+// import Fetch Author Image
 import usePostAuthorImage from "../fetchPostAuthorImage";
 
+// Import Css
+import "./PostDetails.css";
+
+// Utility function to format date to a human-readable string
 const formatDate = (dateStr) => {
   const d = new Date(dateStr);
   return d.toLocaleString("en-US", {
@@ -508,6 +525,36 @@ const PostDetails = ({
       </div>
     </div>
   );
+};
+
+// Prop Validation
+PostDetails.propTypes = {
+  selectedPost: PropTypes.shape({
+    _id: PropTypes.string,
+    authorName: PropTypes.string,
+    authorEmail: PropTypes.string,
+    authorRole: PropTypes.string,
+    authorId: PropTypes.string,
+    postTitle: PropTypes.string,
+    postContent: PropTypes.string,
+    tags: PropTypes.arrayOf(PropTypes.string),
+    createdAt: PropTypes.string,
+    liked: PropTypes.arrayOf(PropTypes.string),
+    disliked: PropTypes.arrayOf(PropTypes.string),
+    comments: PropTypes.arrayOf(
+      PropTypes.shape({
+        user: PropTypes.string,
+        role: PropTypes.string,
+        userImg: PropTypes.string,
+        time: PropTypes.string,
+        content: PropTypes.string,
+        liked: PropTypes.arrayOf(PropTypes.string),
+        disliked: PropTypes.arrayOf(PropTypes.string),
+      })
+    ),
+  }),
+  setSelectedPost: PropTypes.func,
+  CommunityPostsRefetch: PropTypes.func.isRequired,
 };
 
 export default PostDetails;
