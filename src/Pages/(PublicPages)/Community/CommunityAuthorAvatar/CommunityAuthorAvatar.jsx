@@ -1,4 +1,3 @@
-
 import PropTypes from "prop-types";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
@@ -12,20 +11,20 @@ const CommunityAuthorAvatar = ({ post }) => {
     isError,
   } = useQuery({
     queryKey:
-      post.authorRole === "Trainer"
-        ? ["TrainerBasicInfo", post.authorId]
-        : post.authorRole === "Member"
-        ? ["UserBasicProfile", post.authorEmail]
-        : ["InvalidAuthor", post._id],
+      post?.authorRole === "Trainer"
+        ? ["TrainerBasicInfo", post?.authorId]
+        : post?.authorRole === "Member"
+        ? ["UserBasicProfile", post?.authorEmail]
+        : ["InvalidAuthor", post?._id],
     queryFn: async () => {
-      if (post.authorRole === "Trainer" && post.authorId) {
+      if (post?.authorRole === "Trainer" && post?.authorId) {
         const res = await axiosPublic.get(
-          `/Trainers/BasicInfo?id=${post.authorId}`
+          `/Trainers/BasicInfo?id=${post?.authorId}`
         );
         return res.data;
-      } else if (post.authorRole === "Member" && post.authorEmail) {
+      } else if (post?.authorRole === "Member" && post?.authorEmail) {
         const res = await axiosPublic.get(
-          `/Users/BasicProfile?email=${post.authorEmail}`
+          `/Users/BasicProfile?email=${post?.authorEmail}`
         );
         return res.data;
       } else {
@@ -33,15 +32,15 @@ const CommunityAuthorAvatar = ({ post }) => {
       }
     },
     enabled:
-      (post.authorRole === "Trainer" && !!post.authorId) ||
-      (post.authorRole === "Member" && !!post.authorEmail),
+      (post?.authorRole === "Trainer" && !!post?.authorId) ||
+      (post?.authorRole === "Member" && !!post?.authorEmail),
   });
 
   const authorImg =
     profileData?.imageUrl ||
     profileData?.profileImage ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      post.authorName
+      post?.authorName
     )}&background=random&size=64`;
 
   if (isLoading) {
@@ -49,14 +48,14 @@ const CommunityAuthorAvatar = ({ post }) => {
   }
 
   if (isError) {
-    return <p>{post.authorName}</p>;
+    return <p>{post?.authorName}</p>;
   }
 
   return (
     <div>
       <img
         src={authorImg}
-        alt={post.authorName}
+        alt={post?.authorName}
         className="w-12 h-12 rounded-full"
       />
     </div>

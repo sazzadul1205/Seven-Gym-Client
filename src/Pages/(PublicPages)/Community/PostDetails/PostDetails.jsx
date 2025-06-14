@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 
 // Import Icons
 import {
+  FaCommentAlt,
   FaRegTrashAlt,
   FaThumbsDown,
   FaThumbsUp,
@@ -31,6 +32,8 @@ import usePostAuthorImage from "../fetchPostAuthorImage";
 
 // Import Css
 import "./PostDetails.css";
+import CommunityAuthorAvatar from "../CommunityAuthorAvatar/CommunityAuthorAvatar";
+import { MdEdit } from "react-icons/md";
 
 // Utility function to format date to a human-readable string
 const formatDate = (dateStr) => {
@@ -299,8 +302,15 @@ const PostDetails = ({
   if (isLoading) return <Loading />;
   if (error) return <FetchingError />;
 
+  const likeCount = selectedPost?.liked?.length ?? 0;
+  const dislikeCount = selectedPost?.disliked?.length ?? 0;
+  const commentCount = selectedPost?.comments?.length ?? 0;
+
+  const userLiked = selectedPost?.liked?.includes(user?.email);
+  const userDisliked = selectedPost?.disliked?.includes(user?.email);
+
   return (
-    <div className="modal-box min-w-3xl p-0 bg-gradient-to-b from-white to-gray-200 text-black">
+    <div className="modal-box md:min-w-3xl p-0 bg-gradient-to-b from-white to-gray-200 text-black">
       {/* Close Modal Button */}
       <button
         onClick={() => {
@@ -313,17 +323,6 @@ const PostDetails = ({
         <FaTimes className="text-sm" />
       </button>
 
-      {/* Delete Button - Only visible to post author */}
-      {user?.email === selectedPost?.authorEmail && (
-        <button
-          onClick={() => setShowDeleteConfirm(true)}
-          className="text-red-500 bg-red-200 hover:bg-red-300 p-2 rounded-full border border-red-500 mt-1 cursor-pointer absolute top-1 right-14"
-          title="Delete Post"
-        >
-          <FaRegTrashAlt />
-        </button>
-      )}
-
       {/* Display Local Error */}
       {localError && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative m-4">
@@ -333,53 +332,49 @@ const PostDetails = ({
       )}
 
       {/* Post Header: Author Info and Post Date */}
-      <div className="flex items-center justify-between p-6 border-b">
-        {/* Post information */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between p-2 md:p-6 border-b pt-10">
         <div className="flex items-center gap-4">
-          {/* Author Avatar */}
-          <img
-            src={authorImage}
-            alt={selectedPost?.authorName}
-            className="w-16 h-16 rounded-full"
-          />
+          {/* Poster Avatar */}
+          <CommunityAuthorAvatar post={selectedPost} />
 
-          {/* Author Info */}
+          {/* Poster Name & Role */}
           <div>
-            {/* Author Name */}
+            {/* Name */}
             <h4 className="text-lg font-semibold text-gray-800">
               {selectedPost?.authorName}
             </h4>
-
-            {/* Author Role */}
+            {/* Role */}
             <p className="text-sm text-gray-500">{selectedPost?.authorRole}</p>
           </div>
         </div>
 
-        {/* Posting Time */}
-        <span className="text-sm text-gray-400">
+        {/* Posted Date */}
+        <span className="flex text-sm text-gray-400 justify-end">
           {formatDate(selectedPost?.createdAt)}
         </span>
       </div>
 
       {/* Delete Confirmation Prompt */}
       {showDeleteConfirm && (
-        <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative m-4 flex items-center justify-between">
+        <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative m-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           {/* Message */}
-          <div>
-            <strong className="font-bold">Are you sure?</strong>{" "}
+          <div className="flex-1">
+            <strong className="font-bold block mb-1 sm:mb-0">
+              Are you sure?
+            </strong>
             <span>This action will permanently delete the post.</span>
           </div>
 
           {/* Confirm/Cancel Buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full sm:w-auto justify-end">
             {/* Confirm Button */}
             <CommonButton
               clickEvent={handleDeletePost}
               text={deleting ? "Deleting..." : "Yes"}
               isLoading={deleting}
               bgColor="DarkRed"
-              width="[100px]"
-              py="py-1"
+              width="full sm:[100px]"
+              py="py-2"
               textColor="text-white"
               borderRadius="rounded"
               cursorStyle="cursor-pointer"
@@ -390,8 +385,8 @@ const PostDetails = ({
               clickEvent={() => setShowDeleteConfirm(false)}
               text="Cancel"
               bgColor="gray"
-              width="[100px]"
-              py="py-1"
+              width="full sm:[100px]"
+              py="py-2"
               textColor="text-white"
               borderRadius="rounded"
               cursorStyle="cursor-pointer"
@@ -401,9 +396,9 @@ const PostDetails = ({
       )}
 
       {/* Main Post Content */}
-      <div className="p-6 flex-1">
+      <div className="p-2 md:p-6 flex flex-col flex-1">
         {/* Post Title */}
-        <h5 className="text-2xl font-bold text-gray-900 mb-3">
+        <h5 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">
           {selectedPost?.postTitle}
         </h5>
 
@@ -412,23 +407,120 @@ const PostDetails = ({
           {selectedPost?.postContent}
         </p>
 
-        {/* Display Post Tags */}
+        {/* Posts Tags */}
         {selectedPost?.tags?.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
-            {selectedPost?.tags.map((tag, i) => (
+          <div
+            className={`mb-4 gap-2 flex sm:flex-wrap flex-nowrap overflow-x-auto sm:overflow-visible scrollbar-hide snap-x snap-mandatory`}
+          >
+            {selectedPost.tags.map((tag, i) => (
               <span
                 key={i}
-                className="text-xs bg-pink-100 text-pink-700 px-2 py-1 rounded-full"
+                className="text-sm bg-pink-100 text-pink-500 px-5 py-1 rounded-full shrink-0 snap-start"
               >
-                #{tag}
+                # {tag}
               </span>
             ))}
           </div>
         )}
 
-        {/* Action Buttons: Add Comment, Like, Dislike */}
-        <div className="flex items-center justify-between">
-          {/* Comment Button */}
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row sm:justify-between gap-4 items-stretch sm:items-center mt-auto pt-4 border-t">
+          {/* Left: Edit/Delete for Author */}
+          <div className="flex gap-4 justify-start items-center">
+            {/* Comment Button */}
+            <div className="w-full hidden md:flex">
+              <CommonButton
+                text={showCommentBox ? "Hide Comment Box" : "Add Comment"}
+                clickEvent={() => {
+                  if (!user?.email) {
+                    setLocalError("Please log in to Comment.");
+                  }
+                  toggleCommentBox();
+                }}
+                bgColor="blue"
+                textColor="text-white"
+                py="py-2"
+                width="full sm:[200px]"
+                iconPosition="before"
+              />
+            </div>
+
+            {user?.email === selectedPost?.authorEmail && (
+              <>
+                {/* Delete Button */}
+                <button
+                  onClick={() => handleDeletePost(selectedPost?._id)}
+                  className="flex items-center text-red-700 bg-red-100 hover:bg-red-200 border border-red-500 p-3 rounded-full transition cursor-pointer"
+                >
+                  <FaRegTrashAlt className="text-lg" />
+                </button>
+
+                {/* Edit Button */}
+                <button
+                  onClick={() => {
+                    setSelectedPost(selectedPost);
+                    document
+                      .getElementById("Edit_Community_Post_Modal")
+                      .showModal();
+                  }}
+                  className="flex items-center text-yellow-700 bg-yellow-100 hover:bg-yellow-200 border border-yellow-500 p-3 rounded-full transition cursor-pointer"
+                >
+                  <MdEdit className="text-lg" />
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Right: Like/Dislike/Comment */}
+          <div className="flex flex-wrap justify-start sm:justify-end gap-4 items-center">
+            {/* Like */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => toggleLike(selectedPost)}
+                className={`flex items-center justify-center border p-3 rounded-full transition cursor-pointer ${
+                  userLiked
+                    ? "text-green-600 border-green-600"
+                    : "text-gray-600 border-gray-400 hover:text-green-600 hover:border-green-600"
+                }`}
+              >
+                <FaThumbsUp className="text-lg" />
+              </button>
+              <span className="font-medium text-black">{likeCount}</span>
+            </div>
+
+            {/* Dislike */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => toggleDislike(selectedPost)}
+                className={`flex items-center justify-center border p-3 rounded-full transition cursor-pointer ${
+                  userDisliked
+                    ? "text-red-600 border-red-500"
+                    : "text-gray-600 border-gray-400 hover:text-red-600 hover:border-red-500"
+                }`}
+              >
+                <FaThumbsDown className="text-lg" />
+              </button>
+              <span className="font-medium text-black">{dislikeCount}</span>
+            </div>
+
+            {/* Comment */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  setSelectedPost(selectedPost);
+                  document.getElementById("Post_Details_Modal").showModal();
+                }}
+                className="flex items-center justify-center border border-gray-400 p-3 rounded-full text-gray-600 hover:text-yellow-600 hover:border-yellow-500 transition cursor-pointer"
+              >
+                <FaCommentAlt className="text-lg" />
+              </button>
+              <span className="font-medium text-black">{commentCount}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Comment Button */}
+        <div className="w-full sm:w-[200px] pt-5 flex md:hidden">
           <CommonButton
             text={showCommentBox ? "Hide Comment Box" : "Add Comment"}
             clickEvent={() => {
@@ -440,46 +532,9 @@ const PostDetails = ({
             bgColor="blue"
             textColor="text-white"
             py="py-2"
-            width="[200px]"
+            width="full sm:[200px]"
             iconPosition="before"
           />
-
-          {/* Like/Dislike Buttons */}
-          <div className="flex items-center justify-end gap-6">
-            {/* Like Button */}
-            <button
-              onClick={toggleLike}
-              className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
-                selectedPost?.liked?.includes(user?.email)
-                  ? "text-green-600 border-green-600"
-                  : "text-gray-600 border-gray-400 hover:text-green-600 hover:border-green-600"
-              }`}
-            >
-              <FaThumbsUp className="text-lg" />
-            </button>
-
-            {/* Like Count */}
-            <span className="font-medium text-black">
-              {selectedPost?.liked?.length || 0}
-            </span>
-
-            {/* Dislike Button */}
-            <button
-              onClick={toggleDislike}
-              className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
-                selectedPost?.disliked?.includes(user?.email)
-                  ? "text-red-600 border-red-500"
-                  : "text-gray-600 border-gray-400 hover:text-red-600 hover:border-red-500"
-              }`}
-            >
-              <FaThumbsDown className="text-lg" />
-            </button>
-
-            {/* Dislike Count */}
-            <span className="font-medium text-black">
-              {selectedPost?.disliked?.length || 0}
-            </span>
-          </div>
         </div>
 
         {/* Comment Input Box */}

@@ -20,6 +20,8 @@ import CommunityAuthorAvatar from "./CommunityAuthorAvatar/CommunityAuthorAvatar
 import Swal from "sweetalert2";
 import AddCommunityPostModal from "./PostDetails/AddCommunityPostModal/AddCommunityPostModal";
 import EditCommunityPostModal from "./PostDetails/EditCommunityPostModal/EditCommunityPostModal";
+import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
+import { HiOutlineFilter } from "react-icons/hi";
 
 // Utility function to format date to a human-readable string
 const formatDate = (dateStr) => {
@@ -42,6 +44,7 @@ const Community = () => {
   // Local State
   const [localPosts, setLocalPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [showFiltersMobile, setShowFiltersMobile] = useState(false);
 
   // Filter States
   const [searchTitle, setSearchTitle] = useState("");
@@ -49,6 +52,12 @@ const Community = () => {
   const [searchAuthor, setSearchAuthor] = useState("");
   const [showMyPostsOnly, setShowMyPostsOnly] = useState(false);
   const [sortPriority, setSortPriority] = useState("mostRecent");
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // How many Posts to show per page
+  const postsPerPage = 10;
 
   // Fetch community posts using React Query
   const {
@@ -218,6 +227,7 @@ const Community = () => {
     }
   };
 
+  // Handle Delete Sate
   const handleDeletePost = async (postId) => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -266,6 +276,19 @@ const Community = () => {
     }
   }, [CommunityPostsData]);
 
+  // Pagination calculations
+  const indexOfLastTrainer = currentPage * postsPerPage;
+  const indexOfFirstTrainer = indexOfLastTrainer - postsPerPage;
+
+  // Current posts to display on the current page
+  const currentPosts = filteredPosts.slice(
+    indexOfFirstTrainer,
+    indexOfLastTrainer
+  );
+
+  // Total number of pages
+  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+
   if (CommunityPostsIsLoading) return <Loading />;
   if (CommunityPostsError) return <FetchingError />;
 
@@ -275,14 +298,14 @@ const Community = () => {
       style={{ backgroundImage: `url(${Forums_Background})` }}
     >
       {/* Header */}
-      <h3 className="bg-gradient-to-b from-[#F72C5B] to-[#c199a2] text-white text-center text-4xl font-extrabold py-4 shadow-lg">
+      <h3 className="bg-gradient-to-b from-[#F72C5B] to-[#c199a2] text-white text-center text-3xl sm:text-4xl font-extrabold py-4 shadow-lg">
         Community Corner
       </h3>
 
       {/* Filter and Add Section */}
-      <div className="bg-gradient-to-t from-gray-100/70 to-gray-300/70 flex flex-col gap-6 lg:flex-row items-end justify-between px-10 py-5">
+      <div className="bg-gradient-to-t from-gray-100/70 to-gray-300/70 flex flex-col md:flex-row gap-2 md:gap-6 items-end justify-between px-4 sm:px-6 md:px-10 py-5">
         {/* Add New Post */}
-        <div className="w-[300px]">
+        <div className="w-full sm:w-[300px]">
           {user?.email && (
             <CommonButton
               clickEvent={() => {
@@ -296,17 +319,37 @@ const Community = () => {
               px="px-10"
               py="py-3"
               borderRadius="rounded-xl"
-              className="shadow hover:bg-green-700 transition"
+              className="shadow hover:bg-green-700 transition w-full sm:w-auto"
               cursorStyle="cursor-pointer"
             />
           )}
         </div>
 
+        {/* Filter Toggle Button - Mobile Only */}
+        <CommonButton
+          clickEvent={() => setShowFiltersMobile(!showFiltersMobile)}
+          text={showFiltersMobile ? "Hide Filters" : "Show Filters"}
+          icon={<HiOutlineFilter />}
+          iconPosition="before"
+          textColor="text-white"
+          bgColor="blue"
+          px="px-6"
+          py="py-3"
+          borderRadius="rounded-xl"
+          width="full"
+          className="sm:hidden"
+          cursorStyle="cursor-pointer"
+        />
+
         {/* Filter & Sort Controls */}
-        <div className="flex flex-wrap gap-4 w-full lg:justify-end">
+        <div
+          className={`flex flex-wrap gap-4 flex-grow justify-end w-full ${
+            showFiltersMobile ? "block" : "hidden"
+          } sm:flex sm:visible sm:static`}
+        >
           {/* Author Name Filter */}
           <div className="flex flex-col w-full sm:w-[240px]">
-            <label className="text-sm font-semibold text-white mb-1">
+            <label className="text-xs sm:text-sm font-semibold text-white mb-1">
               Search by Author
             </label>
             <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm">
@@ -323,7 +366,7 @@ const Community = () => {
 
           {/* Post Title Filter */}
           <div className="flex flex-col w-full sm:w-[240px]">
-            <label className="text-sm font-semibold text-white mb-1">
+            <label className="text-xs sm:text-sm font-semibold text-white mb-1">
               Search by Title
             </label>
             <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm">
@@ -340,7 +383,7 @@ const Community = () => {
 
           {/* Tag Dropdown */}
           <div className="flex flex-col w-full sm:w-[180px]">
-            <label className="text-sm font-semibold text-white mb-1">
+            <label className="text-xs sm:text-sm font-semibold text-white mb-1">
               Filter by Tag
             </label>
             <select
@@ -359,7 +402,7 @@ const Community = () => {
 
           {/* Sort Dropdown */}
           <div className="flex flex-col w-full sm:w-[180px]">
-            <label className="text-sm font-semibold text-white mb-1">
+            <label className="text-xs sm:text-sm font-semibold text-white mb-1">
               Sort By
             </label>
             <select
@@ -376,8 +419,8 @@ const Community = () => {
 
           {/* Show My Posts Toggle */}
           {user?.email && (
-            <div className="flex flex-col w-[100px]">
-              <label className="text-sm font-semibold text-white mb-1">
+            <div className="flex flex-col w-full sm:w-[100px]">
+              <label className="text-xs sm:text-sm font-semibold text-white mb-1">
                 My Posts
               </label>
               <input
@@ -394,9 +437,8 @@ const Community = () => {
       {/* Main Body */}
       <div className="bg-gradient-to-b from-gray-100/50 to-gray-300/50 min-h-screen pb-5">
         {/* Community Grid Layout */}
-        <div className="px-10 grid grid-cols-1 lg:grid-cols-2 gap-8 pt-5">
-          {filteredPosts.map((post) => {
-            // Prepare preview and interaction state
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-8 pt-5 px-1 md:px-10">
+          {currentPosts.map((post) => {
             const isLong = post.postContent.length > 300;
             const preview = isLong
               ? post.postContent.slice(0, 300) + "..."
@@ -409,20 +451,18 @@ const Community = () => {
             const userLiked = post.liked?.includes(user?.email);
             const userDisliked = post.disliked?.includes(user?.email);
 
-            // Post Card
             return (
               <div
                 key={post._id}
                 className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col"
               >
-                {/* Post Header with Author Info */}
-                <div className="flex items-center justify-between p-6 border-b">
-                  {/* Post Author Avatar, Name & Role */}
+                {/* Post Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between p-6 border-b">
                   <div className="flex items-center gap-4">
-                    {/* Avatar */}
+                    {/* Poster Avatar */}
                     <CommunityAuthorAvatar post={post} />
 
-                    {/* Name & Role  */}
+                    {/* Poster Name & Role */}
                     <div>
                       {/* Name */}
                       <h4 className="text-lg font-semibold text-gray-800">
@@ -433,20 +473,20 @@ const Community = () => {
                     </div>
                   </div>
 
-                  {/* Post Created At */}
-                  <span className="text-sm text-gray-400">
+                  {/* Posted Date */}
+                  <span className="flex text-sm text-gray-400 justify-end">
                     {formatDate(post.createdAt)}
                   </span>
                 </div>
 
                 {/* Post Content */}
                 <div className="p-6 flex flex-col flex-1">
-                  {/* Title */}
-                  <h5 className="text-2xl font-bold text-gray-900 mb-3">
+                  {/* Posts Title */}
+                  <h5 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">
                     {post.postTitle}
                   </h5>
 
-                  {/* Preview */}
+                  {/* Posts Content */}
                   <p className="text-gray-700 leading-relaxed mb-4">
                     {preview}
                     {isLong && (
@@ -464,13 +504,15 @@ const Community = () => {
                     )}
                   </p>
 
-                  {/* Tags */}
+                  {/* Posts Tags */}
                   {post.tags?.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-4">
+                    <div
+                      className={`mb-4 gap-2 flex sm:flex-wrap flex-nowrap overflow-x-auto sm:overflow-visible scrollbar-hide snap-x snap-mandatory`}
+                    >
                       {post.tags.map((tag, i) => (
                         <span
                           key={i}
-                          className="text-sm bg-pink-100 text-pink-500 px-5 py-1 rounded-full"
+                          className="text-sm bg-pink-100 text-pink-500 px-5 py-1 rounded-full shrink-0 snap-start"
                         >
                           # {tag}
                         </span>
@@ -478,41 +520,41 @@ const Community = () => {
                     </div>
                   )}
 
-                  {/* Action Buttons - Always at Bottom */}
-                  <div className="flex justify-between items-center mt-auto pt-4 border-t">
-                    {/* Edit/Delete */}
-                    <div className="flex items-center gap-6">
-                      {user?.email === post.authorEmail && (
-                        <>
-                          <button
-                            onClick={() => handleDeletePost(post._id)}
-                            className="flex items-center text-red-700 bg-red-100 hover:bg-red-200 border border-red-500 p-3 rounded-full transition cursor-pointer"
-                          >
-                            <FaRegTrashAlt className="text-lg" />
-                          </button>
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-4 items-stretch sm:items-center mt-auto pt-4 border-t">
+                    {/* Left: Edit/Delete for Author */}
+                    {user?.email === post.authorEmail && (
+                      <div className="flex gap-4 justify-start">
+                        {/* Delete Button */}
+                        <button
+                          onClick={() => handleDeletePost(post._id)}
+                          className="flex items-center text-red-700 bg-red-100 hover:bg-red-200 border border-red-500 p-3 rounded-full transition cursor-pointer"
+                        >
+                          <FaRegTrashAlt className="text-lg" />
+                        </button>
 
-                          <button
-                            onClick={() => {
-                              setSelectedPost(post);
-                              document
-                                .getElementById("Edit_Community_Post_Modal")
-                                .showModal();
-                            }}
-                            className="flex items-center text-yellow-700 bg-yellow-100 hover:bg-yellow-200 border border-yellow-500 p-3 rounded-full transition cursor-pointer"
-                          >
-                            <MdEdit className="text-lg" />
-                          </button>
-                        </>
-                      )}
-                    </div>
+                        {/* Edit Button */}
+                        <button
+                          onClick={() => {
+                            setSelectedPost(post);
+                            document
+                              .getElementById("Edit_Community_Post_Modal")
+                              .showModal();
+                          }}
+                          className="flex items-center text-yellow-700 bg-yellow-100 hover:bg-yellow-200 border border-yellow-500 p-3 rounded-full transition cursor-pointer"
+                        >
+                          <MdEdit className="text-lg" />
+                        </button>
+                      </div>
+                    )}
 
-                    {/* Like/Dislike/Comment */}
-                    <div className="flex items-center gap-6">
+                    {/* Right: Like/Dislike/Comment */}
+                    <div className="flex flex-wrap justify-start sm:justify-end gap-4 items-center">
                       {/* Like */}
-                      <>
+                      <div className="flex items-center gap-2">
                         <button
                           onClick={() => toggleLike(post)}
-                          className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
+                          className={`flex items-center justify-center border p-3 rounded-full transition cursor-pointer ${
                             userLiked
                               ? "text-green-600 border-green-600"
                               : "text-gray-600 border-gray-400 hover:text-green-600 hover:border-green-600"
@@ -523,13 +565,13 @@ const Community = () => {
                         <span className="font-medium text-black">
                           {likeCount}
                         </span>
-                      </>
+                      </div>
 
                       {/* Dislike */}
-                      <>
+                      <div className="flex items-center gap-2">
                         <button
                           onClick={() => toggleDislike(post)}
-                          className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
+                          className={`flex items-center justify-center border p-3 rounded-full transition cursor-pointer ${
                             userDisliked
                               ? "text-red-600 border-red-500"
                               : "text-gray-600 border-gray-400 hover:text-red-600 hover:border-red-500"
@@ -540,31 +582,66 @@ const Community = () => {
                         <span className="font-medium text-black">
                           {dislikeCount}
                         </span>
-                      </>
+                      </div>
 
                       {/* Comment */}
-                      <>
+                      <div className="flex items-center gap-2">
                         <button
-                          className="flex items-center gap-2 border border-gray-400 p-3 rounded-full text-gray-600 hover:text-yellow-600 hover:border-yellow-500 transition cursor-pointer"
                           onClick={() => {
                             setSelectedPost(post);
                             document
                               .getElementById("Post_Details_Modal")
                               .showModal();
                           }}
+                          className="flex items-center justify-center border border-gray-400 p-3 rounded-full text-gray-600 hover:text-yellow-600 hover:border-yellow-500 transition cursor-pointer"
                         >
                           <FaCommentAlt className="text-lg" />
                         </button>
                         <span className="font-medium text-black">
                           {commentCount}
                         </span>
-                      </>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             );
           })}
+        </div>
+
+        {/* Pagination Control */}
+        <div className="mt-6 flex justify-center items-center gap-4 px-4 sm:px-6 md:px-10">
+          <div className="join">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={`join-item bg-white btn btn-sm h-10 px-5 text-sm transition-all duration-200 ${
+                currentPage === 1
+                  ? "cursor-not-allowed opacity-50"
+                  : "hover:bg-blue-100 text-blue-600"
+              }`}
+            >
+              <FaAnglesLeft />
+            </button>
+
+            <span className="join-item h-10 px-5 text-sm flex items-center justify-center border border-gray-300 bg-white text-gray-800 font-semibold">
+              Page {currentPage} / {totalPages}
+            </span>
+
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className={`join-item bg-white btn btn-sm h-10 px-5 text-sm transition-all duration-200 ${
+                currentPage === totalPages
+                  ? "cursor-not-allowed opacity-50"
+                  : "hover:bg-blue-100 text-blue-600"
+              }`}
+            >
+              <FaAnglesRight />
+            </button>
+          </div>
         </div>
       </div>
 

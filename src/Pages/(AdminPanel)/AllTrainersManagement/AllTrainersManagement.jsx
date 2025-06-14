@@ -15,18 +15,10 @@ import AllTrainerManagementDropdown from "./AllTrainerManagementDropdown/AllTrai
 import { formatPhone } from "../../../Utility/formatPhone";
 
 const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
-  // React state for filters
-
-  // Search text
+  // Filter state
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Tier filter
   const [selectedTier, setSelectedTier] = useState("All");
-
-  // Gender filter
   const [selectedGender, setSelectedGender] = useState("All");
-
-  // Specialization filter
   const [selectedSpecialization, setSelectedSpecialization] = useState("All");
 
   // Pagination state

@@ -58,3 +58,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .select__menu {
   z-index: 9999 !important;
 }
+
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
