@@ -5,6 +5,7 @@ import {
   FaThumbsUp,
   FaThumbsDown,
   FaRegTrashAlt,
+  FaSearch,
 } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import Forums_Background from "../../../assets/Forums-Background/Forums-Background.jfif";
@@ -40,6 +41,13 @@ const Community = () => {
   const [localPosts, setLocalPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
 
+  // Filter states
+  const [searchTitle, setSearchTitle] = useState("");
+  const [selectedTag, setSelectedTag] = useState("");
+  const [searchAuthor, setSearchAuthor] = useState("");
+  const [showMyPostsOnly, setShowMyPostsOnly] = useState(false);
+  const [sortPriority, setSortPriority] = useState("mostRecent");
+
   // Fetch community posts using React Query
   const {
     data: CommunityPostsData,
@@ -50,6 +58,39 @@ const Community = () => {
     queryKey: ["CommunityPostsData"],
     queryFn: () => axiosPublic.get("/CommunityPosts").then((res) => res.data),
   });
+
+  // Unique tags for dropdown
+  const allTags = [...new Set(localPosts.flatMap((post) => post.tags || []))];
+
+  // Filtered + sorted posts
+  const filteredPosts = [...localPosts]
+    .filter((post) => {
+      const authorMatch = post.authorName
+        ?.toLowerCase()
+        .includes(searchAuthor.toLowerCase());
+      const titleMatch = post.postTitle
+        ?.toLowerCase()
+        .includes(searchTitle.toLowerCase());
+      const tagMatch = selectedTag ? post.tags?.includes(selectedTag) : true;
+      const myPostMatch = showMyPostsOnly
+        ? post.authorEmail === user?.email
+        : true;
+
+      return authorMatch && titleMatch && tagMatch && myPostMatch;
+    })
+    .sort((a, b) => {
+      switch (sortPriority) {
+        case "mostLiked":
+          return (b.liked?.length || 0) - (a.liked?.length || 0);
+        case "mostDisliked":
+          return (b.disliked?.length || 0) - (a.disliked?.length || 0);
+        case "mostCommented":
+          return (b.comments?.length || 0) - (a.comments?.length || 0);
+        case "mostRecent":
+        default:
+          return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+    });
 
   // Like toggle handler
   const toggleLike = async (post) => {
@@ -174,7 +215,6 @@ const Community = () => {
       setLocalPosts(CommunityPostsData);
     }
   };
-
   // Update local state when data is fetched or refetch'ed
   useEffect(() => {
     if (CommunityPostsData) {
@@ -195,29 +235,121 @@ const Community = () => {
         Community Corner
       </h3>
 
-      {/* Add, Search, Dropdowns & toggle  */}
-      <div className="bg-gradient-to-b from-gray-100/50 to-gray-300/50 min-h-screen pb-5">
-        <div className="flex justify-start py-5 px-10">
-          <CommonButton
-            clickEvent={() => {
-              // Add post logic
-            }}
-            text="Add New Post"
-            icon={<FaPlus />}
-            iconPosition="before"
-            textColor="text-white"
-            bgColor="green"
-            px="px-10"
-            py="py-3"
-            borderRadius="rounded-xl"
-            className="shadow hover:bg-green-700 transition"
-            cursorStyle="cursor-pointer"
-          />
+      {/* Main Body */}
+      <div className="bg-gradient-to-b from-gray-100/50 to-gray-300/50 min-h-screen py-5">
+        {/* Filter and Add Section */}
+        <div className="flex flex-col gap-6 lg:flex-row items-end justify-between px-10">
+          {/* Add New Post */}
+          <div className="w-[300px]">
+            <CommonButton
+              clickEvent={() => {
+                // Add post logic
+              }}
+              text="Add New Post"
+              icon={<FaPlus />}
+              iconPosition="before"
+              textColor="text-white"
+              bgColor="green"
+              px="px-10"
+              py="py-3"
+              borderRadius="rounded-xl"
+              className="shadow hover:bg-green-700 transition"
+              cursorStyle="cursor-pointer"
+            />
+          </div>
+
+          {/* Filter & Sort Controls */}
+          <div className="flex flex-wrap gap-4 w-full lg:justify-end">
+            {/* Author Name Filter */}
+            <div className="flex flex-col w-full sm:w-[240px]">
+              <label className="text-sm font-semibold text-white mb-1">
+                Search by Author
+              </label>
+              <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm">
+                <FaSearch className="h-4 w-4 text-gray-500" />
+                <input
+                  type="text"
+                  placeholder="Author name..."
+                  value={searchAuthor}
+                  onChange={(e) => setSearchAuthor(e.target.value)}
+                  className="w-full outline-none text-gray-700 bg-transparent placeholder-gray-400"
+                />
+              </div>
+            </div>
+
+            {/* Post Title Filter */}
+            <div className="flex flex-col w-full sm:w-[240px]">
+              <label className="text-sm font-semibold text-white mb-1">
+                Search by Title
+              </label>
+              <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm">
+                <FaSearch className="h-4 w-4 text-gray-500" />
+                <input
+                  type="text"
+                  placeholder="Post title..."
+                  value={searchTitle}
+                  onChange={(e) => setSearchTitle(e.target.value)}
+                  className="w-full outline-none text-gray-700 bg-transparent placeholder-gray-400"
+                />
+              </div>
+            </div>
+
+            {/* Tag Dropdown */}
+            <div className="flex flex-col w-full sm:w-[180px]">
+              <label className="text-sm font-semibold text-white mb-1">
+                Filter by Tag
+              </label>
+              <select
+                value={selectedTag}
+                onChange={(e) => setSelectedTag(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-full bg-white text-gray-700 outline-none shadow-sm"
+              >
+                <option value="">All Tags</option>
+                {allTags.map((tag, i) => (
+                  <option key={i} value={tag}>
+                    {tag}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="flex flex-col w-full sm:w-[180px]">
+              <label className="text-sm font-semibold text-white mb-1">
+                Sort By
+              </label>
+              <select
+                value={sortPriority}
+                onChange={(e) => setSortPriority(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-full bg-white text-gray-700 outline-none shadow-sm"
+              >
+                <option value="mostRecent">Most Recent</option>
+                <option value="mostLiked">Most Liked</option>
+                <option value="mostDisliked">Most Disliked</option>
+                <option value="mostCommented">Most Commented</option>
+              </select>
+            </div>
+
+            {/* Show My Posts Toggle */}
+            {user?.email && (
+              <div className="flex flex-col w-[100px]">
+                <label className="text-sm font-semibold text-white mb-1">
+                  My Posts
+                </label>
+                <input
+                  type="checkbox"
+                  checked={showMyPostsOnly}
+                  onChange={() => setShowMyPostsOnly(!showMyPostsOnly)}
+                  className="toggle toggle-success toggle-lg"
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Community Grid Layout */}
-        <div className="px-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {localPosts.map((post) => {
+        <div className="px-10 grid grid-cols-1 lg:grid-cols-2 gap-8 pt-5">
+          {filteredPosts.map((post) => {
             // Prepare preview and interaction state
             const isLong = post.postContent.length > 300;
             const preview = isLong

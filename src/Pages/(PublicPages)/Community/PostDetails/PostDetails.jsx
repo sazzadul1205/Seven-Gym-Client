@@ -194,6 +194,11 @@ const PostDetails = ({
 
   // Function to add a new comment to the selected post
   const handleAddComment = async () => {
+    // If user is not logged in, show alert and exit
+    if (!user) {
+      setLocalError(`Please log In to Comment`);
+    }
+
     // Prevent adding empty or whitespace-only comments
     if (!newComment.trim()) return;
 
@@ -210,14 +215,12 @@ const PostDetails = ({
       time: new Date().toISOString(),
     };
 
-    // Create an updated comments array by appending the new comment
+    // Optimistically update UI
     const updatedComments = [...(selectedPost.comments || []), commentPayload];
-
-    // Optimistically update comments in the UI immediately
     updatePostLikes({ comments: updatedComments });
 
     try {
-      // Send POST request to backend API to save the new comment
+      // Send to backend
       await axiosPublic.post(
         `/CommunityPosts/Post/Comment/${selectedPost._id}`,
         commentPayload
@@ -228,31 +231,36 @@ const PostDetails = ({
       setShowCommentBox(false);
     } catch (err) {
       console.log(err);
-      setLocalError(`Failed to add comment.: err`);
+      setLocalError(`Failed to add comment.: ${err}`);
     }
   };
 
   // Function to toggle the visibility of the comment input box
   const toggleCommentBox = () => {
-    // Check if the current user has already commented on the selected post
+    // If user is not logged in, show an error and exit
+    if (!user) {
+      setLocalError("You must be logged in to comment.");
+      return;
+    }
+
+    // Check if the current user has already commented
     const alreadyCommented = (selectedPost?.comments || []).some(
       (comment) => comment.email === user?.email
     );
 
-    // If user has already commented, prevent showing the comment box and show an error
+    // If user already commented, show an error and exit
     if (alreadyCommented) {
       setLocalError("You've already commented on this post.");
       return;
     }
 
-    // If the comment box is currently shown, initiate exit animation before hiding
+    // Toggle comment box visibility with animation
     if (showCommentBox) {
       setAnimateClass("comment-box-exit");
       setTimeout(() => {
         setShowCommentBox(false);
       }, 400);
     } else {
-      // If comment box is hidden, show it with an enter animation
       setShowCommentBox(true);
       setAnimateClass("comment-box-enter");
     }

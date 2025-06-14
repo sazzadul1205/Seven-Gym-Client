@@ -24,7 +24,7 @@ import SignUpDetails from "./Pages/(Auth)/SignUpDetails/SignUpDetails.jsx";
 
 // Public Pages Import
 import Home from "./Pages/(PublicPages)/Home/Home.jsx";
-import Forums from "./Pages/(PublicPages)/Forums/Forums.jsx";
+// import Forums from "./Pages/(PublicPages)/Forums/Forums.jsx";
 import Community from "./Pages/(PublicPages)/Community/Community.jsx";
 import Gallery from "./Pages/(PublicPages)/Gallery/Gallery.jsx";
 import AboutUs from "./Pages/(PublicPages)/(About)/AboutUs/AboutUs.jsx";

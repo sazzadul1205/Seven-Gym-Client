@@ -167,7 +167,7 @@ const PostDetailsComment = ({
           </span>
 
           {/* Only show delete icon if user is the commenter and not confirming yet */}
-          {user?.email === comment?.email && !confirming && (
+          {user && user.email === comment?.email && !confirming && (
             <button
               onClick={() => setConfirming(true)}
               className="text-red-500 bg-red-200 hover:bg-red-300 p-2 rounded-full border border-red-500 mt-1 cursor-pointer"
