@@ -218,6 +218,47 @@ const Community = () => {
     }
   };
 
+  const handleDeletePost = async (postId) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This will permanently delete the post.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axiosPublic.delete(`/CommunityPosts/${postId}`);
+        await CommunityPostsRefetch();
+
+        // Temporary success alert
+        Swal.fire({
+          icon: "success",
+          title: "Deleted!",
+          text: "The post has been deleted.",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        CommunityPostsRefetch();
+      } catch (error) {
+        console.error("Delete error:", error);
+
+        // Temporary error alert
+        Swal.fire({
+          icon: "error",
+          title: "Delete Failed",
+          text: "Something went wrong. Try again later.",
+          timer: 2500,
+          showConfirmButton: false,
+        });
+      }
+    }
+  };
+
   // Update local state when data is fetched or refetch'ed
   useEffect(() => {
     if (CommunityPostsData) {
@@ -234,126 +275,124 @@ const Community = () => {
       style={{ backgroundImage: `url(${Forums_Background})` }}
     >
       {/* Header */}
-      <h3 className="bg-gradient-to-b from-[#F72C5B] to-[#c199a2] text-white text-center text-4xl font-extrabold py-8 shadow-lg">
+      <h3 className="bg-gradient-to-b from-[#F72C5B] to-[#c199a2] text-white text-center text-4xl font-extrabold py-4 shadow-lg">
         Community Corner
       </h3>
 
-      {/* Main Body */}
-      <div className="bg-gradient-to-b from-gray-100/50 to-gray-300/50 min-h-screen py-5">
-        {/* Filter and Add Section */}
-        <div className="flex flex-col gap-6 lg:flex-row items-end justify-between px-10">
-          {/* Add New Post */}
-          <div className="w-[300px]">
-            {user?.email && (
-              <CommonButton
-                clickEvent={() => {
-                  document
-                    .getElementById("Add_Community_Post_Modal")
-                    .showModal();
-                }}
-                text="Add New Post"
-                icon={<FaPlus />}
-                iconPosition="before"
-                textColor="text-white"
-                bgColor="green"
-                px="px-10"
-                py="py-3"
-                borderRadius="rounded-xl"
-                className="shadow hover:bg-green-700 transition"
-                cursorStyle="cursor-pointer"
-              />
-            )}
-          </div>
-
-          {/* Filter & Sort Controls */}
-          <div className="flex flex-wrap gap-4 w-full lg:justify-end">
-            {/* Author Name Filter */}
-            <div className="flex flex-col w-full sm:w-[240px]">
-              <label className="text-sm font-semibold text-white mb-1">
-                Search by Author
-              </label>
-              <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm">
-                <FaSearch className="h-4 w-4 text-gray-500" />
-                <input
-                  type="text"
-                  placeholder="Author name..."
-                  value={searchAuthor}
-                  onChange={(e) => setSearchAuthor(e.target.value)}
-                  className="w-full outline-none text-gray-700 bg-transparent placeholder-gray-400"
-                />
-              </div>
-            </div>
-
-            {/* Post Title Filter */}
-            <div className="flex flex-col w-full sm:w-[240px]">
-              <label className="text-sm font-semibold text-white mb-1">
-                Search by Title
-              </label>
-              <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm">
-                <FaSearch className="h-4 w-4 text-gray-500" />
-                <input
-                  type="text"
-                  placeholder="Post title..."
-                  value={searchTitle}
-                  onChange={(e) => setSearchTitle(e.target.value)}
-                  className="w-full outline-none text-gray-700 bg-transparent placeholder-gray-400"
-                />
-              </div>
-            </div>
-
-            {/* Tag Dropdown */}
-            <div className="flex flex-col w-full sm:w-[180px]">
-              <label className="text-sm font-semibold text-white mb-1">
-                Filter by Tag
-              </label>
-              <select
-                value={selectedTag}
-                onChange={(e) => setSelectedTag(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-full bg-white text-gray-700 outline-none shadow-sm"
-              >
-                <option value="">All Tags</option>
-                {allTags.map((tag, i) => (
-                  <option key={i} value={tag}>
-                    {tag}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Sort Dropdown */}
-            <div className="flex flex-col w-full sm:w-[180px]">
-              <label className="text-sm font-semibold text-white mb-1">
-                Sort By
-              </label>
-              <select
-                value={sortPriority}
-                onChange={(e) => setSortPriority(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-full bg-white text-gray-700 outline-none shadow-sm"
-              >
-                <option value="mostRecent">Most Recent</option>
-                <option value="mostLiked">Most Liked</option>
-                <option value="mostDisliked">Most Disliked</option>
-                <option value="mostCommented">Most Commented</option>
-              </select>
-            </div>
-
-            {/* Show My Posts Toggle */}
-            {user?.email && (
-              <div className="flex flex-col w-[100px]">
-                <label className="text-sm font-semibold text-white mb-1">
-                  My Posts
-                </label>
-                <input
-                  type="checkbox"
-                  checked={showMyPostsOnly}
-                  onChange={() => setShowMyPostsOnly(!showMyPostsOnly)}
-                  className="toggle toggle-success toggle-lg"
-                />
-              </div>
-            )}
-          </div>
+      {/* Filter and Add Section */}
+      <div className="bg-gradient-to-t from-gray-100/70 to-gray-300/70 flex flex-col gap-6 lg:flex-row items-end justify-between px-10 py-5">
+        {/* Add New Post */}
+        <div className="w-[300px]">
+          {user?.email && (
+            <CommonButton
+              clickEvent={() => {
+                document.getElementById("Add_Community_Post_Modal").showModal();
+              }}
+              text="Add New Post"
+              icon={<FaPlus />}
+              iconPosition="before"
+              textColor="text-white"
+              bgColor="green"
+              px="px-10"
+              py="py-3"
+              borderRadius="rounded-xl"
+              className="shadow hover:bg-green-700 transition"
+              cursorStyle="cursor-pointer"
+            />
+          )}
         </div>
 
+        {/* Filter & Sort Controls */}
+        <div className="flex flex-wrap gap-4 w-full lg:justify-end">
+          {/* Author Name Filter */}
+          <div className="flex flex-col w-full sm:w-[240px]">
+            <label className="text-sm font-semibold text-white mb-1">
+              Search by Author
+            </label>
+            <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm">
+              <FaSearch className="h-4 w-4 text-gray-500" />
+              <input
+                type="text"
+                placeholder="Author name..."
+                value={searchAuthor}
+                onChange={(e) => setSearchAuthor(e.target.value)}
+                className="w-full outline-none text-gray-700 bg-transparent placeholder-gray-400"
+              />
+            </div>
+          </div>
+
+          {/* Post Title Filter */}
+          <div className="flex flex-col w-full sm:w-[240px]">
+            <label className="text-sm font-semibold text-white mb-1">
+              Search by Title
+            </label>
+            <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm">
+              <FaSearch className="h-4 w-4 text-gray-500" />
+              <input
+                type="text"
+                placeholder="Post title..."
+                value={searchTitle}
+                onChange={(e) => setSearchTitle(e.target.value)}
+                className="w-full outline-none text-gray-700 bg-transparent placeholder-gray-400"
+              />
+            </div>
+          </div>
+
+          {/* Tag Dropdown */}
+          <div className="flex flex-col w-full sm:w-[180px]">
+            <label className="text-sm font-semibold text-white mb-1">
+              Filter by Tag
+            </label>
+            <select
+              value={selectedTag}
+              onChange={(e) => setSelectedTag(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-full bg-white text-gray-700 outline-none shadow-sm"
+            >
+              <option value="">All Tags</option>
+              {allTags.map((tag, i) => (
+                <option key={i} value={tag}>
+                  {tag}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Sort Dropdown */}
+          <div className="flex flex-col w-full sm:w-[180px]">
+            <label className="text-sm font-semibold text-white mb-1">
+              Sort By
+            </label>
+            <select
+              value={sortPriority}
+              onChange={(e) => setSortPriority(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-full bg-white text-gray-700 outline-none shadow-sm"
+            >
+              <option value="mostRecent">Most Recent</option>
+              <option value="mostLiked">Most Liked</option>
+              <option value="mostDisliked">Most Disliked</option>
+              <option value="mostCommented">Most Commented</option>
+            </select>
+          </div>
+
+          {/* Show My Posts Toggle */}
+          {user?.email && (
+            <div className="flex flex-col w-[100px]">
+              <label className="text-sm font-semibold text-white mb-1">
+                My Posts
+              </label>
+              <input
+                type="checkbox"
+                checked={showMyPostsOnly}
+                onChange={() => setShowMyPostsOnly(!showMyPostsOnly)}
+                className="toggle toggle-success toggle-lg"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Main Body */}
+      <div className="bg-gradient-to-b from-gray-100/50 to-gray-300/50 min-h-screen pb-5">
         {/* Community Grid Layout */}
         <div className="px-10 grid grid-cols-1 lg:grid-cols-2 gap-8 pt-5">
           {filteredPosts.map((post) => {
@@ -370,8 +409,8 @@ const Community = () => {
             const userLiked = post.liked?.includes(user?.email);
             const userDisliked = post.disliked?.includes(user?.email);
 
+            // Post Card
             return (
-              // Post Card
               <div
                 key={post._id}
                 className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col"
@@ -401,13 +440,13 @@ const Community = () => {
                 </div>
 
                 {/* Post Content */}
-                <div className="p-6 flex-1">
-                  {/* Post Title */}
+                <div className="p-6 flex flex-col flex-1">
+                  {/* Title */}
                   <h5 className="text-2xl font-bold text-gray-900 mb-3">
                     {post.postTitle}
                   </h5>
 
-                  {/* Post Preview Content with 'Show more' if long */}
+                  {/* Preview */}
                   <p className="text-gray-700 leading-relaxed mb-4">
                     {preview}
                     {isLong && (
@@ -439,24 +478,19 @@ const Community = () => {
                     </div>
                   )}
 
-                  {/* Actions Row */}
-                  <div className="flex justify-between items-center">
-                    {/* Trash & Edit Buttons */}
+                  {/* Action Buttons - Always at Bottom */}
+                  <div className="flex justify-between items-center mt-auto pt-4 border-t">
+                    {/* Edit/Delete */}
                     <div className="flex items-center gap-6">
-                      {/* Edit/Delete only for post author */}
                       {user?.email === post.authorEmail && (
                         <>
-                          {/* Delete Button */}
                           <button
-                            onClick={() => {
-                              // handle delete here
-                            }}
+                            onClick={() => handleDeletePost(post._id)}
                             className="flex items-center text-red-700 bg-red-100 hover:bg-red-200 border border-red-500 p-3 rounded-full transition cursor-pointer"
                           >
                             <FaRegTrashAlt className="text-lg" />
                           </button>
 
-                          {/* Edit Button */}
                           <button
                             onClick={() => {
                               setSelectedPost(post);
@@ -472,7 +506,7 @@ const Community = () => {
                       )}
                     </div>
 
-                    {/* Like, Dislike & Comment Comments */}
+                    {/* Like/Dislike/Comment */}
                     <div className="flex items-center gap-6">
                       {/* Like */}
                       <>

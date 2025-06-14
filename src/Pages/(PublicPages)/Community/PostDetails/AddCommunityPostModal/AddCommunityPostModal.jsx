@@ -245,7 +245,7 @@ const AddCommunityPostModal = ({ CommunityPostsRefetch }) => {
                 key={idx}
                 className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center gap-2"
               >
-                #{tag}
+                # {tag}
                 <ImCross
                   className="cursor-pointer text-xs"
                   onClick={() => removeTag(tag)}
