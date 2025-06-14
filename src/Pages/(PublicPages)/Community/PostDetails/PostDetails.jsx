@@ -27,9 +27,6 @@ import PostDetailsComment from "./PostDetailsComment/PostDetailsComment";
 // Import User/Trainer Data
 import { useUserOrTrainerData } from "./useUserOrTrainerData";
 
-// import Fetch Author Image
-import usePostAuthorImage from "../fetchPostAuthorImage";
-
 // Import Css
 import "./PostDetails.css";
 import CommunityAuthorAvatar from "../CommunityAuthorAvatar/CommunityAuthorAvatar";
@@ -63,9 +60,6 @@ const PostDetails = ({
   const [animateClass, setAnimateClass] = useState("");
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-  // Get author image for post
-  const authorImage = usePostAuthorImage(selectedPost);
 
   // Fetch logged-in user's full data and role (trainer/member)
   const { data, isLoading, error, role } = useUserOrTrainerData(user?.email);
@@ -356,18 +350,17 @@ const PostDetails = ({
 
       {/* Delete Confirmation Prompt */}
       {showDeleteConfirm && (
-        <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative m-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          {/* Message */}
-          <div className="flex-1">
+        <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative m-4 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+          {/* Message Section */}
+          <div className="flex-1 text-sm sm:text-base">
             <strong className="font-bold block mb-1 sm:mb-0">
               Are you sure?
             </strong>
             <span>This action will permanently delete the post.</span>
           </div>
 
-          {/* Confirm/Cancel Buttons */}
-          <div className="flex gap-2 w-full sm:w-auto justify-end">
-            {/* Confirm Button */}
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <CommonButton
               clickEvent={handleDeletePost}
               text={deleting ? "Deleting..." : "Yes"}
@@ -380,7 +373,6 @@ const PostDetails = ({
               cursorStyle="cursor-pointer"
             />
 
-            {/* Cancel Button */}
             <CommonButton
               clickEvent={() => setShowDeleteConfirm(false)}
               text="Cancel"
@@ -575,7 +567,7 @@ const PostDetails = ({
         </h3>
 
         {/* Render Each Comment */}
-        <div className="pl-12 pr-5 space-y-3 cursor-default">
+        <div className="md:pl-12 pr-5 space-y-3 cursor-default">
           {selectedPost?.comments?.map((comment, index) => (
             <PostDetailsComment
               key={index}

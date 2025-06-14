@@ -101,32 +101,31 @@ const PostDetailsComment = ({
 
       {/* Inline confirmation UI before deleting a comment */}
       {confirming && (
-        <div className="mb-2 px-4 py-2 bg-yellow-100 text-yellow-800 rounded text-sm flex items-center justify-between">
-          {/* Conformation message */}
-          <span>Are you sure you want to delete this comment?</span>
+        <div className="mb-2 px-4 py-3 bg-yellow-100 text-yellow-800 rounded text-sm flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+          {/* Message */}
+          <span className="flex-1">
+            Are you sure you want to delete this comment?
+          </span>
 
-          {/* Buttons */}
-          <div className="flex gap-2 ml-4">
-            {/* Confirm Button */}
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <CommonButton
               clickEvent={handleDelete}
               text={deleting ? "Deleting..." : "Yes"}
               isLoading={deleting}
               bgColor="DarkRed"
-              width="[100px]"
+              width="full sm:[100px]"
               py="py-1"
               textColor="text-white"
               borderRadius="rounded"
               cursorStyle="cursor-pointer"
-              className=""
             />
 
-            {/* Delete Button */}
             <CommonButton
               clickEvent={() => setConfirming(false)}
               text="Cancel"
               bgColor="gray"
-              width="[100px]"
+              width="full sm:[100px]"
               py="py-1"
               textColor="text-white"
               borderRadius="rounded"
@@ -137,7 +136,7 @@ const PostDetailsComment = ({
       )}
 
       {/* Main comment block */}
-      <div className="flex justify-between border-b py-2">
+      <div className="flex flex-col md:flex-row md:items-center justify-between p-6 border-b">
         {/* Commenter profile section */}
         <div className="flex items-center gap-4">
           {/* Commenter Image */}
