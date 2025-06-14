@@ -16,6 +16,7 @@ import invoice from "../assets/AdminPanel/invoice.png";
 import booking from "../assets/AdminPanel/booking.png";
 import gallery from "../assets/AdminPanel/gallery.png";
 import homepage from "../assets/AdminPanel/homepage.png";
+import costumer from "../assets/AdminPanel/costumer.png";
 import ProfileDefault from "../assets/ProfileDefault.jpg";
 import trainerInvoice from "../assets/AdminPanel/trainerInvoice.png";
 
@@ -35,8 +36,10 @@ import AllTrainerSchedule from "../Pages/(AdminPanel)/AllTrainerSchedule/AllTrai
 import TierUpgradeInvoices from "../Pages/(AdminPanel)/TierUpgradeInvoices/TierUpgradeInvoices";
 import HomePageAdminControl from "../Pages/(AdminPanel)/HomePageAdminControl/HomePageAdminControl";
 import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
-import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
+import TestimonialsManagement from "../Pages/(AdminPanel)/TestimonialsManagement/TestimonialsManagement";
 import GalleryPageAdminControl from "../Pages/(AdminPanel)/GalleryPageAdminControl/GalleryPageAdminControl";
+import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
+import CommunityPostsManagement from "../Pages/(AdminPanel)/CommunityPostsManagement/CommunityPostsManagement";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -223,8 +226,28 @@ const AdminPanelLayout = () => {
       Icon: gallery,
       title: "Gallery Page View",
       content: (
-        <GalleryPageAdminControl Refetch={refetchAll} GalleryData={GalleryData} />
+        <GalleryPageAdminControl
+          Refetch={refetchAll}
+          GalleryData={GalleryData}
+        />
       ),
+    },
+    {
+      id: "Testimonials",
+      Icon: costumer,
+      title: "Testimonials",
+      content: (
+        <TestimonialsManagement
+          Refetch={refetchAll}
+          TestimonialsData={TestimonialsData}
+        />
+      ),
+    },
+    {
+      id: "Community_Posts",
+      Icon: gallery,
+      title: "Community Posts",
+      content: <CommunityPostsManagement />,
     },
   ];
 

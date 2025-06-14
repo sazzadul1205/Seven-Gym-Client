@@ -1,6 +1,9 @@
-/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 
+// Import Packages
+import PropTypes from "prop-types";
+
+// Import Tabs
 import AllTrainerBookingHistory from "./AllTrainerBookingHistory/AllTrainerBookingHistory";
 import AllTrainerBookingRequest from "./AllTrainerBookingRequest/AllTrainerBookingRequest";
 import AllTrainerBookingCanceled from "./AllTrainerBookingCanceled/AllTrainerBookingCanceled";
@@ -117,6 +120,20 @@ const AllTrainerBookings = ({
       </div>
     </div>
   );
+};
+
+//  Prop Validation
+AllTrainerBookings.propTypes = {
+  AllTrainerBookingRequestData: PropTypes.array,
+  AllTrainerBookingHistoryData: PropTypes.array,
+  AllTrainerBookingAcceptedData: PropTypes.array,
+  AllTrainerBookingCompletedData: PropTypes.array,
+  AllTrainerBookingCancelledData: PropTypes.array,
+
+  TrainerBookingRequestStatusData: PropTypes.array,
+  TrainerBookingAcceptedStatusData: PropTypes.array,
+  TrainerBookingCompletedStatusData: PropTypes.array,
+  TrainerBookingCancelledStatusData: PropTypes.array,
 };
 
 export default AllTrainerBookings;

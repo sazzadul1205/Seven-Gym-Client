@@ -252,11 +252,11 @@ const TrainerSessionRefundInvoices = ({ TrainerSessionRefundData }) => {
                       {/* Booker Info */}
                       <td className="border px-4 py-2">
                         <TrainerBookingRequestUserBasicInfo
-                          email={item?.BookingInfo?.bookerEmail}
+                          email={item?.bookingDataForHistory?.bookerEmail}
                           renderUserInfo={(user) => (
                             <CachedUserInfo
                               user={user}
-                              email={item?.BookingInfo?.bookerEmail}
+                              email={item?.bookingDataForHistory?.bookerEmail}
                               setUserInfoCache={setUserInfoCache}
                               userInfoCache={userInfoCache}
                             />

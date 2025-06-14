@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useMemo, useRef, useState } from "react";
 
 // Import Icons
@@ -14,7 +13,7 @@ import Loading from "../../../Shared/Loading/Loading";
 import BookedTrainerBasicInfo from "../../../Shared/Component/BookedTrainerBasicInfo";
 
 // import Modals & Components
-import AllTrainerScheduleModal from "./AllTrainerScheduleModal/AllTrainerScheduleModal";
+import TrainerScheduleDetailsModal from "./TrainerScheduleDetailsModal/TrainerScheduleDetailsModal";
 
 // Import Utility
 import { formatTimeTo12Hour } from "../../../Utility/formatTimeTo12Hour";
@@ -26,18 +25,9 @@ const timeStringToMinutes = (timeStr) => {
 };
 
 const AllTrainerSchedule = ({ TrainersScheduleData }) => {
-  if (!TrainersScheduleData || TrainersScheduleData.length === 0) {
-    // Show loading component if no trainer data available yet
-    return <Loading />;
-  }
-
-  // Reference to the modal for trainer schedule details
   const modalTrainerScheduleRef = useRef(null);
 
-  // State to hold the currently selected trainer schedule for modal display
-  const [selectedSchedule, setSelectedSchedule] = useState(null);
-
-  // State for filters: day, time, trainer name, and class type
+  // Local State Management
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [trainerSearchTerm, setTrainerSearchTerm] = useState("");
@@ -83,6 +73,13 @@ const AllTrainerSchedule = ({ TrainersScheduleData }) => {
       (a, b) => timeStringToMinutes(a) - timeStringToMinutes(b)
     );
   }, [TrainersScheduleData]);
+
+  // Selected State
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
+  // Show loading component if no trainer data available yet
+  if (!TrainersScheduleData || TrainersScheduleData.length === 0) {
+    return <Loading />;
+  }
 
   // Filter and summarize trainers based on search and filter criteria
   const summarizeData = TrainersScheduleData.filter((trainer) => {
@@ -378,7 +375,7 @@ const AllTrainerSchedule = ({ TrainersScheduleData }) => {
 
       {/* Trainer Schedule Modal */}
       <dialog ref={modalTrainerScheduleRef} className="modal">
-        <AllTrainerScheduleModal
+        <TrainerScheduleDetailsModal
           closeModal={closeTrainerScheduleModal}
           selectedSchedule={selectedSchedule}
         />

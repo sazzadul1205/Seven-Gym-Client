@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
-/* eslint-disable react/prop-types */
 
-import TrainerSessionActiveInvoices from "./TrainerSessionActiveInvoices/TrainerSessionActiveInvoices";
-import TrainerSessionCompletedInvoices from "./TrainerSessionCompletedInvoices/TrainerSessionCompletedInvoices";
-import TrainerSessionPaymentInvoices from "./TrainerSessionPaymentInvoices/TrainerSessionPaymentInvoices";
+// Import Packages
+import PropTypes from "prop-types";
+
+// Import Tabs
 import TrainerSessionRefundInvoices from "./TrainerSessionRefundInvoices/TrainerSessionRefundInvoices";
+import TrainerSessionActiveInvoices from "./TrainerSessionActiveInvoices/TrainerSessionActiveInvoices";
+import TrainerSessionPaymentInvoices from "./TrainerSessionPaymentInvoices/TrainerSessionPaymentInvoices";
+import TrainerSessionCompletedInvoices from "./TrainerSessionCompletedInvoices/TrainerSessionCompletedInvoices";
+
+// Import Charts
 import TrainerSessionChart from "./TrainerSessionChart/TrainerSessionChart";
 
+// import TABS Key & Label
 const TABS = [
   { key: "active", label: "Active Invoices" },
   { key: "completed", label: "Completed Invoices" },
@@ -15,23 +21,25 @@ const TABS = [
 ];
 
 const TrainerSessionsInvoices = ({
-  TrainerSessionRefundData = [],
-  TrainerSessionActiveData = [],
-  TrainerSessionPaymentData = [],
-  TrainerSessionCompletedData = [],
+  TrainerSessionRefundData,
+  TrainerSessionActiveData,
+  TrainerSessionPaymentData,
+  TrainerSessionCompletedData,
 
   // Status Data
-  TrainerSessionActiveStatusData = [],
-  TrainerSessionRefundStatusData = [],
-  TrainerSessionPaymentStatusData = [],
-  TrainerSessionCompletedStatusData = [],
+  TrainerSessionActiveStatusData,
+  TrainerSessionRefundStatusData,
+  TrainerSessionPaymentStatusData,
+  TrainerSessionCompletedStatusData,
 }) => {
+  // Local State Management
   const [activeTab, setActiveTab] = useState("active");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Load State Effect
   useEffect(() => {
     setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 300); // Adjust delay if needed
+    const timer = setTimeout(() => setIsLoading(false), 300);
     return () => clearTimeout(timer);
   }, [activeTab]);
 
@@ -105,6 +113,18 @@ const TrainerSessionsInvoices = ({
       </div>
     </div>
   );
+};
+
+// Prop Validation
+TrainerSessionsInvoices.propTypes = {
+  TrainerSessionRefundData: PropTypes.array,
+  TrainerSessionActiveData: PropTypes.array,
+  TrainerSessionPaymentData: PropTypes.array,
+  TrainerSessionCompletedData: PropTypes.array,
+  TrainerSessionActiveStatusData: PropTypes.array,
+  TrainerSessionRefundStatusData: PropTypes.array,
+  TrainerSessionPaymentStatusData: PropTypes.array,
+  TrainerSessionCompletedStatusData: PropTypes.array,
 };
 
 export default TrainerSessionsInvoices;

@@ -1,12 +1,15 @@
-/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 
+// Import Packages
+import PropTypes from "prop-types";
+
+// Import Tabs
+import Home from "../../(PublicPages)/Home/Home";
 import HomePageAdminBanner from "./HomePageAdminBanner/HomePageAdminBanner";
 import HomePageAdminWelcome from "./HomePageAdminWelcome/HomePageAdminWelcome";
 import HomePageAdminServices from "./HomePageAdminServices/HomePageAdminServices";
 import HomePageAdminPromotion from "./HomePageAdminPromotion/HomePageAdminPromotion";
 import HomePageAdminFeatures from "./HomePageAdminFeatures/HomePageAdminFeatures";
-import Home from "../../(PublicPages)/Home/Home";
 
 // Define Tabs
 const TABS = [
@@ -26,9 +29,11 @@ const HomePageAdminControl = ({
   HomeWelcomeSectionData,
   HomeServicesSectionData,
 }) => {
+  // Local State Management
   const [activeTab, setActiveTab] = useState("view");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Tab Loading State
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => setIsLoading(false), 200);
@@ -118,6 +123,16 @@ const HomePageAdminControl = ({
       </div>
     </div>
   );
+};
+
+// Prop Validation
+HomePageAdminControl.propTypes = {
+  Refetch: PropTypes.func,
+  PromotionsData: PropTypes.array,
+  GymFeaturesData: PropTypes.array,
+  HomeBannerSectionData: PropTypes.array,
+  HomeWelcomeSectionData: PropTypes.object,
+  HomeServicesSectionData: PropTypes.array,
 };
 
 export default HomePageAdminControl;

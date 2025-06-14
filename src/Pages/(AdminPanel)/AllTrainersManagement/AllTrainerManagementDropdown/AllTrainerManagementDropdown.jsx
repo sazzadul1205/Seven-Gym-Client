@@ -70,8 +70,8 @@ const AllTrainerManagementDropdown = ({ trainer, Refetch }) => {
 
               // 2. Update User role to "Member"
               // Assuming you update by email, adjust if you want to update by id
-              await axiosPublic.patch("/Users/UpdateRole", {
-                email: trainer?._id,
+              await axiosPublic.put("/Users/UpdateRole", {
+                id: trainer?._id,
                 role: "Member",
               });
 

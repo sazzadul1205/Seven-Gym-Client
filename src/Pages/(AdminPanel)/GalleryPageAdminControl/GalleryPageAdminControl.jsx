@@ -134,7 +134,7 @@ GalleryPageAdminControl.propTypes = {
       url: PropTypes.string.isRequired,
       alt: PropTypes.string,
     })
-  ).isRequired,
+  ),
 };
 
 export default GalleryPageAdminControl;

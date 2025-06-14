@@ -49,7 +49,7 @@ const FeaturedTrainers = ({ trainersData }) => {
   );
 };
 
-// PropTypes validation for FeaturedTrainers component
+// Prop Type Validation
 FeaturedTrainers.propTypes = {
   trainersData: PropTypes.arrayOf(
     PropTypes.shape({

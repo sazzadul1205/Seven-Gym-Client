@@ -1,16 +1,26 @@
-/* eslint-disable react/prop-types */
+// Import Packages
+import PropTypes from "prop-types";
 import { useQuery } from "@tanstack/react-query";
+
+// Import Icons
 import { ImCross } from "react-icons/im";
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+
+// Import Shared
 import Loading from "../../../../Shared/Loading/Loading";
 import FetchingError from "../../../../Shared/Component/FetchingError";
+
+// Import Hooks
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+
+// Import Utility
 import { getGenderIcon } from "../../../../Utility/getGenderIcon";
-import { getTierBadge } from "../../../(TrainerPages)/TrainerProfile/TrainerProfileHeader/TrainerProfileHeader";
 import { formatTimeTo12Hour } from "../../../../Utility/formatTimeTo12Hour";
 
-const AllTrainerScheduleModal = ({ closeModal, selectedSchedule }) => {
+// import Tier Badge
+import { getTierBadge } from "../../../(TrainerPages)/TrainerProfile/TrainerProfileHeader/TrainerProfileHeader";
+
+const TrainerScheduleDetailsModal = ({ closeModal, selectedSchedule }) => {
   const axiosPublic = useAxiosPublic();
-  console.log("selected Schedule :", selectedSchedule);
 
   // Fetch Booker Data
   const {
@@ -26,28 +36,14 @@ const AllTrainerScheduleModal = ({ closeModal, selectedSchedule }) => {
     enabled: !!selectedSchedule?.trainerId,
   });
 
-  // // Loading state
-  if (TrainerBasicIsLoading) return <Loading />;
-
-  // // Error handling
-  if (TrainerBasicError) return <FetchingError />;
-
-  // Assuming you receive a `summary` prop object from the parent that looks like your JSON
-  const {
-    totalSessions,
-    totalParticipants,
-    totalParticipantLimit,
-    unlimitedParticipants,
-    daysActive,
-    mostCommonClassType,
-    earliestStart,
-    latestEnd,
-    activeHours,
-  } = selectedSchedule?.summary || {};
-
+  // Get Gender Icons
   const { icon: trainerIcon } = getGenderIcon(TrainerBasicData?.gender);
 
+  // Loading state
+  if (TrainerBasicIsLoading) return <Loading />;
 
+  // Error handling
+  if (TrainerBasicError) return <FetchingError />;
 
   return (
     <div className="modal-box max-w-5xl w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black pb-5">
@@ -120,16 +116,17 @@ const AllTrainerScheduleModal = ({ closeModal, selectedSchedule }) => {
               {/* Total Sessions */}
               <div className="flex justify-between items-center">
                 <p className="font-semibold">Total Sessions :</p>
-                <p>{totalSessions ?? "-"}</p>
+                <p>{selectedSchedule?.summary?.totalSessions ?? "-"}</p>
               </div>
 
               {/* Total Participants */}
               <div className="flex justify-between items-center">
                 <p className="font-semibold">Total Participants : </p>
                 <p>
-                  {totalParticipants ?? "-"} / {totalParticipantLimit ?? "-"}
+                  {selectedSchedule?.summary?.totalParticipants ?? "-"} /{" "}
+                  {selectedSchedule?.summary?.totalParticipantLimit ?? "-"}
                 </p>
-                {unlimitedParticipants ? (
+                {selectedSchedule?.summary?.unlimitedParticipants ? (
                   <p className="text-sm text-green-600 font-medium">
                     Unlimited Participants
                   </p>
@@ -139,7 +136,7 @@ const AllTrainerScheduleModal = ({ closeModal, selectedSchedule }) => {
               {/* Common Class Type */}
               <div className="flex justify-between items-center">
                 <p className="font-semibold">Most Common Class Type</p>
-                <p>{mostCommonClassType || "-"}</p>
+                <p>{selectedSchedule?.summary?.mostCommonClassType || "-"}</p>
               </div>
 
               {/* Class Type */}
@@ -147,10 +144,12 @@ const AllTrainerScheduleModal = ({ closeModal, selectedSchedule }) => {
                 <p className="font-semibold">Class Time : </p>
                 <div className="flex items-center gap-2">
                   <p>
-                    {formatTimeTo12Hour(earliestStart)} -
-                    {formatTimeTo12Hour(latestEnd)}
+                    {formatTimeTo12Hour(
+                      selectedSchedule?.summary?.earliestStart
+                    )}{" "}
+                    -{formatTimeTo12Hour(selectedSchedule?.summary?.latestEnd)}
                   </p>
-                  <p>( {activeHours} hrs )</p>
+                  <p>( {selectedSchedule?.summary?.activeHours} hrs )</p>
                 </div>
               </div>
             </div>
@@ -165,9 +164,9 @@ const AllTrainerScheduleModal = ({ closeModal, selectedSchedule }) => {
           </p>
 
           {/* Active day */}
-          {daysActive ? (
+          {selectedSchedule?.summary?.daysActive ? (
             <div className="flex flex-wrap gap-2">
-              {daysActive.split(",").map((day) => (
+              {selectedSchedule?.summary?.daysActive.split(",").map((day) => (
                 <span
                   key={day.trim()}
                   className="px-3 py-1 text-sm rounded-full bg-blue-100 text-blue-700 font-medium"
@@ -219,29 +218,29 @@ const AllTrainerScheduleModal = ({ closeModal, selectedSchedule }) => {
                           <tr key={time} className="border-b">
                             {/* Time */}
                             <td className="border px-4 py-2">
-                              {formatTimeTo12Hour(session.start)} -{" "}
-                              {formatTimeTo12Hour(session.end)}
+                              {formatTimeTo12Hour(session?.start)} -{" "}
+                              {formatTimeTo12Hour(session?.end)}
                             </td>
 
                             {/* Class Type */}
                             <td className="border px-4 py-2">
-                              {session.classType}
+                              {session?.classType}
                             </td>
 
                             {/* Participant Count  */}
                             <td className="border px-4 py-2">
-                              {Object.keys(session.participant || {}).length}
+                              {Object.keys(session?.participant || {})?.length}
                             </td>
 
                             {/* Participant Length */}
                             <td className="border px-4 py-2">
-                              {session.participantLimit}
+                              {session?.participantLimit}
                             </td>
 
                             {/* Price */}
                             <td className="border px-4 py-2">
-                              {session.classPrice > 0
-                                ? `$ ${session.classPrice}`
+                              {session?.classPrice > 0
+                                ? `$ ${session?.classPrice}`
                                 : "Free"}
                             </td>
                           </tr>
@@ -258,4 +257,43 @@ const AllTrainerScheduleModal = ({ closeModal, selectedSchedule }) => {
   );
 };
 
-export default AllTrainerScheduleModal;
+// Prop Validation
+TrainerScheduleDetailsModal.propTypes = {
+  closeModal: PropTypes.func.isRequired,
+  selectedSchedule: PropTypes.shape({
+    trainerId: PropTypes.string,
+    trainerName: PropTypes.string,
+    summary: PropTypes.shape({
+      totalSessions: PropTypes.number,
+      totalParticipants: PropTypes.number,
+      totalParticipantLimit: PropTypes.number,
+      unlimitedParticipants: PropTypes.oneOfType([
+        PropTypes.bool,
+        PropTypes.number,
+      ]),
+
+      daysActive: PropTypes.string,
+      mostCommonClassType: PropTypes.string,
+      earliestStart: PropTypes.string,
+      latestEnd: PropTypes.string,
+      activeHours: PropTypes.number,
+    }),
+    trainerSchedule: PropTypes.objectOf(
+      PropTypes.objectOf(
+        PropTypes.shape({
+          start: PropTypes.string.isRequired,
+          end: PropTypes.string.isRequired,
+          classType: PropTypes.string.isRequired,
+          participantLimit: PropTypes.number,
+          classPrice: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+          participant: PropTypes.oneOfType([
+            PropTypes.objectOf(PropTypes.any),
+            PropTypes.arrayOf(PropTypes.any),
+          ]),
+        })
+      )
+    ),
+  }),
+};
+
+export default TrainerScheduleDetailsModal;
