@@ -54,3 +54,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
   /* Inverts white to black */
 }
+
+.select__menu {
+  z-index: 9999 !important;
+}

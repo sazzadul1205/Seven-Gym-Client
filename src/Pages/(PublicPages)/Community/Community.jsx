@@ -18,6 +18,8 @@ import CommonButton from "../../../Shared/Buttons/CommonButton";
 import useAuth from "../../../Hooks/useAuth";
 import CommunityAuthorAvatar from "./CommunityAuthorAvatar/CommunityAuthorAvatar";
 import Swal from "sweetalert2";
+import AddCommunityPostModal from "./PostDetails/AddCommunityPostModal/AddCommunityPostModal";
+import EditCommunityPostModal from "./PostDetails/EditCommunityPostModal/EditCommunityPostModal";
 
 // Utility function to format date to a human-readable string
 const formatDate = (dateStr) => {
@@ -37,11 +39,11 @@ const Community = () => {
   const axiosPublic = useAxiosPublic();
   const { user } = useAuth();
 
-  // Local state for storing posts and selected post for modal/view
+  // Local State
   const [localPosts, setLocalPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
 
-  // Filter states
+  // Filter States
   const [searchTitle, setSearchTitle] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
   const [searchAuthor, setSearchAuthor] = useState("");
@@ -215,6 +217,7 @@ const Community = () => {
       setLocalPosts(CommunityPostsData);
     }
   };
+
   // Update local state when data is fetched or refetch'ed
   useEffect(() => {
     if (CommunityPostsData) {
@@ -241,21 +244,25 @@ const Community = () => {
         <div className="flex flex-col gap-6 lg:flex-row items-end justify-between px-10">
           {/* Add New Post */}
           <div className="w-[300px]">
-            <CommonButton
-              clickEvent={() => {
-                // Add post logic
-              }}
-              text="Add New Post"
-              icon={<FaPlus />}
-              iconPosition="before"
-              textColor="text-white"
-              bgColor="green"
-              px="px-10"
-              py="py-3"
-              borderRadius="rounded-xl"
-              className="shadow hover:bg-green-700 transition"
-              cursorStyle="cursor-pointer"
-            />
+            {user?.email && (
+              <CommonButton
+                clickEvent={() => {
+                  document
+                    .getElementById("Add_Community_Post_Modal")
+                    .showModal();
+                }}
+                text="Add New Post"
+                icon={<FaPlus />}
+                iconPosition="before"
+                textColor="text-white"
+                bgColor="green"
+                px="px-10"
+                py="py-3"
+                borderRadius="rounded-xl"
+                className="shadow hover:bg-green-700 transition"
+                cursorStyle="cursor-pointer"
+              />
+            )}
           </div>
 
           {/* Filter & Sort Controls */}
@@ -452,7 +459,10 @@ const Community = () => {
                           {/* Edit Button */}
                           <button
                             onClick={() => {
-                              // handle edit here
+                              setSelectedPost(post);
+                              document
+                                .getElementById("Edit_Community_Post_Modal")
+                                .showModal();
                             }}
                             className="flex items-center text-yellow-700 bg-yellow-100 hover:bg-yellow-200 border border-yellow-500 p-3 rounded-full transition cursor-pointer"
                           >
@@ -465,50 +475,56 @@ const Community = () => {
                     {/* Like, Dislike & Comment Comments */}
                     <div className="flex items-center gap-6">
                       {/* Like */}
-                      <button
-                        onClick={() => toggleLike(post)}
-                        className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
-                          userLiked
-                            ? "text-green-600 border-green-600"
-                            : "text-gray-600 border-gray-400 hover:text-green-600 hover:border-green-600"
-                        }`}
-                      >
-                        <FaThumbsUp className="text-lg" />
-                      </button>
-                      <span className="font-medium text-black">
-                        {likeCount}
-                      </span>
+                      <>
+                        <button
+                          onClick={() => toggleLike(post)}
+                          className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
+                            userLiked
+                              ? "text-green-600 border-green-600"
+                              : "text-gray-600 border-gray-400 hover:text-green-600 hover:border-green-600"
+                          }`}
+                        >
+                          <FaThumbsUp className="text-lg" />
+                        </button>
+                        <span className="font-medium text-black">
+                          {likeCount}
+                        </span>
+                      </>
 
                       {/* Dislike */}
-                      <button
-                        onClick={() => toggleDislike(post)}
-                        className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
-                          userDisliked
-                            ? "text-red-600 border-red-500"
-                            : "text-gray-600 border-gray-400 hover:text-red-600 hover:border-red-500"
-                        }`}
-                      >
-                        <FaThumbsDown className="text-lg" />
-                      </button>
-                      <span className="font-medium text-black">
-                        {dislikeCount}
-                      </span>
+                      <>
+                        <button
+                          onClick={() => toggleDislike(post)}
+                          className={`flex items-center gap-2 border p-3 rounded-full transition cursor-pointer ${
+                            userDisliked
+                              ? "text-red-600 border-red-500"
+                              : "text-gray-600 border-gray-400 hover:text-red-600 hover:border-red-500"
+                          }`}
+                        >
+                          <FaThumbsDown className="text-lg" />
+                        </button>
+                        <span className="font-medium text-black">
+                          {dislikeCount}
+                        </span>
+                      </>
 
                       {/* Comment */}
-                      <button
-                        className="flex items-center gap-2 border border-gray-400 p-3 rounded-full text-gray-600 hover:text-yellow-600 hover:border-yellow-500 transition cursor-pointer"
-                        onClick={() => {
-                          setSelectedPost(post);
-                          document
-                            .getElementById("Post_Details_Modal")
-                            .showModal();
-                        }}
-                      >
-                        <FaCommentAlt className="text-lg" />
-                      </button>
-                      <span className="font-medium text-black">
-                        {commentCount}
-                      </span>
+                      <>
+                        <button
+                          className="flex items-center gap-2 border border-gray-400 p-3 rounded-full text-gray-600 hover:text-yellow-600 hover:border-yellow-500 transition cursor-pointer"
+                          onClick={() => {
+                            setSelectedPost(post);
+                            document
+                              .getElementById("Post_Details_Modal")
+                              .showModal();
+                          }}
+                        >
+                          <FaCommentAlt className="text-lg" />
+                        </button>
+                        <span className="font-medium text-black">
+                          {commentCount}
+                        </span>
+                      </>
                     </div>
                   </div>
                 </div>
@@ -523,6 +539,19 @@ const Community = () => {
         <PostDetails
           selectedPost={selectedPost}
           setSelectedPost={setSelectedPost}
+          CommunityPostsRefetch={CommunityPostsRefetch}
+        />
+      </dialog>
+
+      {/* Add Community Post Modal */}
+      <dialog id="Add_Community_Post_Modal" className="modal">
+        <AddCommunityPostModal CommunityPostsRefetch={CommunityPostsRefetch} />
+      </dialog>
+
+      {/* Edit Community Post Modal */}
+      <dialog id="Edit_Community_Post_Modal" className="modal">
+        <EditCommunityPostModal
+          selectedPost={selectedPost}
           CommunityPostsRefetch={CommunityPostsRefetch}
         />
       </dialog>
