@@ -30,6 +30,7 @@ const PostDetailsComment = ({
   id,
   comment,
   refetch,
+  adminOverride,
   CommunityPostsRefetch,
 }) => {
   const axiosPublic = useAxiosPublic();
@@ -42,8 +43,8 @@ const PostDetailsComment = ({
   const [confirming, setConfirming] = useState(false);
   const [messageType, setMessageType] = useState(null);
 
-  // Handle comment deletion
-  const handleDelete = async () => {
+  // Handle comment deletion - accepts email string now
+  const handleDelete = async (email) => {
     try {
       setDeleting(true);
       setMessage(null);
@@ -52,15 +53,13 @@ const PostDetailsComment = ({
       const res = await axiosPublic.delete(
         `/CommunityPosts/Post/Comments/${id}`,
         {
-          data: { email: user.email },
+          data: { email },
         }
       );
 
       // Handle success response
       if (res.data?.message === "Comment deleted successfully") {
         setMessage("Comment deleted successfully.");
-
-        // Hide the comment after deletion
         setMessageType("success");
         setIsDeleted(true);
 
@@ -110,7 +109,7 @@ const PostDetailsComment = ({
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <CommonButton
-              clickEvent={handleDelete}
+              clickEvent={() => handleDelete(comment.email)}
               text={deleting ? "Deleting..." : "Yes"}
               isLoading={deleting}
               bgColor="DarkRed"
@@ -165,15 +164,16 @@ const PostDetailsComment = ({
             {formatDate(comment?.time)}
           </span>
 
-          {/* Only show delete icon if user is the commenter and not confirming yet */}
-          {user && user.email === comment?.email && !confirming && (
-            <button
-              onClick={() => setConfirming(true)}
-              className="text-red-500 bg-red-200 hover:bg-red-300 p-2 rounded-full border border-red-500 mt-1 cursor-pointer"
-            >
-              <FaRegTrashAlt />
-            </button>
-          )}
+          {/* Show delete icon if user is commenter or admin */}
+          {(user?.email === comment?.email || adminOverride === "Admin") &&
+            !confirming && (
+              <button
+                onClick={() => setConfirming(true)}
+                className="text-red-500 bg-red-200 hover:bg-red-300 p-2 rounded-full border border-red-500 mt-1 cursor-pointer"
+              >
+                <FaRegTrashAlt />
+              </button>
+            )}
         </div>
       </div>
 
@@ -183,7 +183,6 @@ const PostDetailsComment = ({
   );
 };
 
-// Add prop validation here
 PostDetailsComment.propTypes = {
   id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   comment: PropTypes.shape({
@@ -196,6 +195,7 @@ PostDetailsComment.propTypes = {
   }).isRequired,
   refetch: PropTypes.func,
   CommunityPostsRefetch: PropTypes.func.isRequired,
+  adminOverride: PropTypes.string,
 };
 
 export default PostDetailsComment;

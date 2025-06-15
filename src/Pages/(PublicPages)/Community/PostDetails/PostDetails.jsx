@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 
 // Import Icons
 import {
-  FaCommentAlt,
   FaRegTrashAlt,
   FaThumbsDown,
   FaThumbsUp,
@@ -47,6 +46,7 @@ const formatDate = (dateStr) => {
 
 const PostDetails = ({
   selectedPost,
+  adminOverride,
   setSelectedPost,
   CommunityPostsRefetch,
 }) => {
@@ -289,7 +289,11 @@ const PostDetails = ({
       setLocalError("Failed to delete comment.");
     } finally {
       setDeleting(false);
+      setLocalError("");
+      setSelectedPost("");
       CommunityPostsRefetch();
+      setShowDeleteConfirm(false);
+      document.getElementById("Post_Details_Modal")?.close();
     }
   };
 
@@ -298,7 +302,6 @@ const PostDetails = ({
 
   const likeCount = selectedPost?.liked?.length ?? 0;
   const dislikeCount = selectedPost?.disliked?.length ?? 0;
-  const commentCount = selectedPost?.comments?.length ?? 0;
 
   const userLiked = selectedPost?.liked?.includes(user?.email);
   const userDisliked = selectedPost?.disliked?.includes(user?.email);
@@ -330,16 +333,6 @@ const PostDetails = ({
         <div className="flex items-center gap-4">
           {/* Poster Avatar */}
           <CommunityAuthorAvatar post={selectedPost} />
-
-          {/* Poster Name & Role */}
-          <div>
-            {/* Name */}
-            <h4 className="text-lg font-semibold text-gray-800">
-              {selectedPost?.authorName}
-            </h4>
-            {/* Role */}
-            <p className="text-sm text-gray-500">{selectedPost?.authorRole}</p>
-          </div>
         </div>
 
         {/* Posted Date */}
@@ -424,41 +417,52 @@ const PostDetails = ({
               <CommonButton
                 text={showCommentBox ? "Hide Comment Box" : "Add Comment"}
                 clickEvent={() => {
+                  if (adminOverride === "Admin") return; // Prevent action if adminOverride
                   if (!user?.email) {
                     setLocalError("Please log in to Comment.");
+                    return;
                   }
                   toggleCommentBox();
                 }}
+                disabled={adminOverride === "Admin"}
                 bgColor="blue"
                 textColor="text-white"
                 py="py-2"
                 width="full sm:[200px]"
                 iconPosition="before"
+                className={`${
+                  adminOverride === "Admin"
+                    ? "cursor-not-allowed opacity-50"
+                    : ""
+                }`}
               />
             </div>
 
-            {user?.email === selectedPost?.authorEmail && (
+            {(user?.email === selectedPost?.authorEmail ||
+              adminOverride === "Admin") && (
               <>
                 {/* Delete Button */}
                 <button
-                  onClick={() => handleDeletePost(selectedPost?._id)}
+                  onClick={() => setShowDeleteConfirm(true)}
                   className="flex items-center text-red-700 bg-red-100 hover:bg-red-200 border border-red-500 p-3 rounded-full transition cursor-pointer"
                 >
                   <FaRegTrashAlt className="text-lg" />
                 </button>
 
-                {/* Edit Button */}
-                <button
-                  onClick={() => {
-                    setSelectedPost(selectedPost);
-                    document
-                      .getElementById("Edit_Community_Post_Modal")
-                      .showModal();
-                  }}
-                  className="flex items-center text-yellow-700 bg-yellow-100 hover:bg-yellow-200 border border-yellow-500 p-3 rounded-full transition cursor-pointer"
-                >
-                  <MdEdit className="text-lg" />
-                </button>
+                {/* Edit Button (only for author) */}
+                {user?.email === selectedPost?.authorEmail && (
+                  <button
+                    onClick={() => {
+                      setSelectedPost(selectedPost);
+                      document
+                        .getElementById("Edit_Community_Post_Modal")
+                        .showModal();
+                    }}
+                    className="flex items-center text-yellow-700 bg-yellow-100 hover:bg-yellow-200 border border-yellow-500 p-3 rounded-full transition cursor-pointer"
+                  >
+                    <MdEdit className="text-lg" />
+                  </button>
+                )}
               </>
             )}
           </div>
@@ -469,7 +473,12 @@ const PostDetails = ({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => toggleLike(selectedPost)}
-                className={`flex items-center justify-center border p-3 rounded-full transition cursor-pointer ${
+                disabled={adminOverride === "Admin"}
+                className={`flex items-center justify-center border p-3 rounded-full transition ${
+                  adminOverride === "Admin"
+                    ? "cursor-not-allowed opacity-50"
+                    : "cursor-pointer"
+                } ${
                   userLiked
                     ? "text-green-600 border-green-600"
                     : "text-gray-600 border-gray-400 hover:text-green-600 hover:border-green-600"
@@ -484,7 +493,12 @@ const PostDetails = ({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => toggleDislike(selectedPost)}
-                className={`flex items-center justify-center border p-3 rounded-full transition cursor-pointer ${
+                disabled={adminOverride === "Admin"}
+                className={`flex items-center justify-center border p-3 rounded-full transition ${
+                  adminOverride === "Admin"
+                    ? "cursor-not-allowed opacity-50"
+                    : "cursor-pointer"
+                } ${
                   userDisliked
                     ? "text-red-600 border-red-500"
                     : "text-gray-600 border-gray-400 hover:text-red-600 hover:border-red-500"
@@ -493,20 +507,6 @@ const PostDetails = ({
                 <FaThumbsDown className="text-lg" />
               </button>
               <span className="font-medium text-black">{dislikeCount}</span>
-            </div>
-
-            {/* Comment */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => {
-                  setSelectedPost(selectedPost);
-                  document.getElementById("Post_Details_Modal").showModal();
-                }}
-                className="flex items-center justify-center border border-gray-400 p-3 rounded-full text-gray-600 hover:text-yellow-600 hover:border-yellow-500 transition cursor-pointer"
-              >
-                <FaCommentAlt className="text-lg" />
-              </button>
-              <span className="font-medium text-black">{commentCount}</span>
             </div>
           </div>
         </div>
@@ -571,6 +571,7 @@ const PostDetails = ({
           {selectedPost?.comments?.map((comment, index) => (
             <PostDetailsComment
               key={index}
+              adminOverride={adminOverride}
               comment={comment}
               id={selectedPost._id}
               CommunityPostsRefetch={CommunityPostsRefetch}
@@ -584,32 +585,36 @@ const PostDetails = ({
 
 // Prop Validation
 PostDetails.propTypes = {
-  selectedPost: PropTypes.shape({
-    _id: PropTypes.string,
-    authorName: PropTypes.string,
-    authorEmail: PropTypes.string,
-    authorRole: PropTypes.string,
-    authorId: PropTypes.string,
-    postTitle: PropTypes.string,
-    postContent: PropTypes.string,
-    tags: PropTypes.arrayOf(PropTypes.string),
-    createdAt: PropTypes.string,
-    liked: PropTypes.arrayOf(PropTypes.string),
-    disliked: PropTypes.arrayOf(PropTypes.string),
-    comments: PropTypes.arrayOf(
-      PropTypes.shape({
-        user: PropTypes.string,
-        role: PropTypes.string,
-        userImg: PropTypes.string,
-        time: PropTypes.string,
-        content: PropTypes.string,
-        liked: PropTypes.arrayOf(PropTypes.string),
-        disliked: PropTypes.arrayOf(PropTypes.string),
-      })
-    ),
-  }),
+  selectedPost: PropTypes.oneOfType([
+    PropTypes.shape({
+      _id: PropTypes.string,
+      authorName: PropTypes.string,
+      authorEmail: PropTypes.string,
+      authorRole: PropTypes.string,
+      authorId: PropTypes.string,
+      postTitle: PropTypes.string,
+      postContent: PropTypes.string,
+      tags: PropTypes.arrayOf(PropTypes.string),
+      createdAt: PropTypes.string,
+      liked: PropTypes.arrayOf(PropTypes.string),
+      disliked: PropTypes.arrayOf(PropTypes.string),
+      comments: PropTypes.arrayOf(
+        PropTypes.shape({
+          user: PropTypes.string,
+          role: PropTypes.string,
+          userImg: PropTypes.string,
+          time: PropTypes.string,
+          content: PropTypes.string,
+          liked: PropTypes.arrayOf(PropTypes.string),
+          disliked: PropTypes.arrayOf(PropTypes.string),
+        })
+      ),
+    }),
+    PropTypes.string, // allow string type as well
+  ]),
   setSelectedPost: PropTypes.func,
   CommunityPostsRefetch: PropTypes.func.isRequired,
+  adminOverride: PropTypes.string,
 };
 
 export default PostDetails;

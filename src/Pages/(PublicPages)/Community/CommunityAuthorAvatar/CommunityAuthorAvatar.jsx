@@ -61,9 +61,7 @@ const CommunityAuthorAvatar = ({ post }) => {
       {/* Poster Name & Role */}
       <div>
         {/* Name */}
-        <h4 className=" font-semibold text-gray-800">
-          {post?.authorName}
-        </h4>
+        <h4 className=" font-semibold text-gray-800">{post?.authorName}</h4>
         {/* Role */}
         <p className="text-sm text-gray-500">{post?.authorRole}</p>
       </div>
@@ -78,7 +76,7 @@ CommunityAuthorAvatar.propTypes = {
     authorEmail: PropTypes.string,
     authorName: PropTypes.string.isRequired,
     authorRole: PropTypes.oneOf(["Trainer", "Member"]).isRequired,
-  }).isRequired,
+  }),
 };
 
 export default CommunityAuthorAvatar;

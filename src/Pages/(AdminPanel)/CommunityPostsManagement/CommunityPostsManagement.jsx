@@ -128,6 +128,7 @@ const CommunityPostsManagement = ({ CommunityPostsData, Refetch }) => {
           selectedPost={selectedPost}
           setSelectedPost={setSelectedPost}
           CommunityPostsRefetch={Refetch}
+          adminOverride="Admin"
         />
       </dialog>
     </div>
