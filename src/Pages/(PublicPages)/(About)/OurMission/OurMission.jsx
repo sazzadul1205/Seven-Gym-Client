@@ -1,165 +1,171 @@
+
+// import Packages
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
 
-// Background Asset
-import MissionWall from "../../../../assets/MissionWall.jpg";
-import HomeBackground from "../../../../assets/Home-Background/Home-Background.jpeg";
-
+// Import icons
 import { FaCheckCircle, FaPlayCircle, FaSyncAlt } from "react-icons/fa";
 
-
-import Loading from "../../../../Shared/Loading/Loading";
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
-import CallToAction from "../../Home/CallToAction/CallToAction";
+// import Hooks and Shared
 import FetchingError from "../../../../Shared/Component/FetchingError";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import Loading from "../../../../Shared/Loading/Loading";
+
+// Import Component
+import CallToAction from "../../Home/CallToAction/CallToAction";
 
 const OurMission = () => {
   const axiosPublic = useAxiosPublic();
 
-  // Fetch mission data from the server using React Query
-  const { data, isLoading, error } = useQuery({
+  // Fetch mission data
+  const {
+    data: mission,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["OurMissions"],
     queryFn: () => axiosPublic.get(`/Our_Missions`).then((res) => res.data),
   });
 
-  // Memoize the mission data (Always define hooks before any early return)
-  const mission = useMemo(() => data?.[0] || {}, [data]);
-
-  // Show loading state
   if (isLoading) return <Loading />;
-
-  // Show error state if data fetching fails
   if (error) return <FetchingError />;
 
   return (
-    <div>
-      {/* Header Section */}
-      <img
-        src={MissionWall}
-        alt="Mission Wall"
-        className="w-full h-[500px] object-cover"
-      />
-
-      {/* Main Content with Background Image */}
-      <div
-        className="min-h-screen bg-fixed bg-cover bg-center"
-        style={{
-          backgroundImage: `url(${HomeBackground})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="bg-linear-to-b from-black/50 to-black/30 pt-4">
-          {/* Our Mission & Vision Section */}
-          <div className="flex flex-col md:flex-row mx-auto max-w-7xl gap-4">
-            {/* Mission Introduction Card */}
-            <section className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-400 p-8 rounded-lg shadow-xl w-full lg:w-1/2">
-              <img
-                src={mission?.introduction?.img}
-                alt={mission?.introduction?.title}
-                className="w-[100px] mx-auto"
-              />
-              <h2 className="text-4xl font-bold text-center text-gray-900 mb-6">
-                {mission?.introduction?.title}
-              </h2>
-              <p className="text-lg text-gray-950 text-center">
-                {mission?.introduction?.description}
-              </p>
-            </section>
-
-            {/* Vision Card */}
-            <section className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-400 p-8 rounded-lg shadow-xl w-full lg:w-1/2">
-              <img
-                src={mission?.vision?.img}
-                alt={mission?.vision?.title}
-                className="w-[100px] mx-auto"
-              />
-              <h2 className="text-4xl font-bold text-center text-gray-900 mb-6">
-                {mission?.vision?.title}
-              </h2>
-              <p className="text-lg text-gray-950 text-center">
-                {mission?.vision?.description}
-              </p>
-            </section>
-          </div>
-
-          {/* Core Values Section */}
-          <section className="mx-auto max-w-7xl pb-5">
-            {/* Title Section */}
-            <div className="py-5">
-              <h2 className="text-4xl font-bold text-center text-white pb-2">
-                Our Core Values
-              </h2>
-              <div className="bg-white p-[2px] md:w-1/6 mx-auto"></div>
-            </div>
-            {/* Content Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
-              {mission?.coreValues?.map((value, index) => (
-                <div
-                  key={index}
-                  className="flex bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-400 p-5 rounded-lg shadow-xs gap-6"
-                >
-                  <img
-                    src={value.img}
-                    alt={value.title}
-                    className="w-[100px]"
-                  />
-                  <div>
-                    <h3 className="font-semibold text-2xl text-gray-800">
-                      {value.title}
-                    </h3>
-                    <p className="text-sm lg:text-lg text-black mt-2">
-                      {value.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Mission Goals Section */}
-          <section className="mx-auto max-w-7xl pb-5">
-            {/* Title Section */}
-            <div className="py-5">
-              <h2 className="text-4xl font-bold text-center text-white pb-2">
-                Mission Goals
-              </h2>
-              <div className="bg-white p-[2px] md:w-1/6 mx-auto"></div>
-            </div>
-
-            {/* Goals List */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6">
-              {mission?.missionGoals?.map((goal, index) => (
-                <div
-                  key={index}
-                  className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-400  p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-                >
-                  <h4 className="font-semibold text-xl text-gray-800 mb-2">
-                    {goal.goal}
-                  </h4>
-
-                  {/* Progress Status */}
-                  <div className="flex items-center space-x-2 mb-2">
-                    {goal.progress === "In Progress" && (
-                      <FaSyncAlt className="h-6 w-6 text-blue-500 animate-spin" />
-                    )}
-                    {goal.progress === "On Track" && (
-                      <FaCheckCircle className="h-6 w-6 text-green-500" />
-                    )}
-                    {goal.progress === "Initiated" && (
-                      <FaPlayCircle className="h-6 w-6 text-yellow-500" />
-                    )}
-                    <p className="text-gray-600">Progress: {goal.progress}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Call to Action */}
-          <CallToAction />
+    <div
+      className="bg-fixed bg-center bg-cover space-y-16 bg-black/50"
+      style={{ backgroundImage: `url(${mission.background})` }}
+    >
+      {/* HERO */}
+      <div className="relative h-[500px]">
+        <img
+          src={mission?.hero?.img}
+          alt={mission?.hero?.title}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gray-500/60 flex flex-col items-center justify-center">
+          <h1 className="text-5xl font-extrabold text-white mb-4">
+            {mission?.hero?.title}
+          </h1>
+          <p className="text-xl text-white font-bold  max-w-2xl text-center">
+            {mission?.hero?.subTitle}
+          </p>
         </div>
       </div>
+
+      {/* MISSION & VISION */}
+      <div className="container mx-auto px-1 lg:px-12 grid gap-12 lg:grid-cols-2">
+        {/* Mission Card */}
+        <div className="relative overflow-hidden rounded-xl bg-white shadow-lg transition-transform hover:scale-[1.025] duration-500">
+          {/* Accent Stripe */}
+          <div className="absolute top-0 left-0 h-1 w-full bg-red-600" />
+          <div className="p-8 flex flex-col items-center text-center">
+            <img
+              src={mission.mission.img}
+              alt={mission.mission?.title}
+              className="mb-4 h-24 w-24 object-contain"
+            />
+            <h2 className="mb-3 text-3xl font-bold text-gray-900">
+              {mission.mission?.title}
+            </h2>
+            <p className="text-gray-700 leading-relaxed">
+              {mission.mission?.description}
+            </p>
+          </div>
+        </div>
+
+        {/* Vision Card */}
+        <div className="relative overflow-hidden rounded-xl bg-white shadow-lg transition-transform hover:scale-[1.025] duration-500">
+          {/* Accent Stripe */}
+          <div className="absolute top-0 left-0 h-1 w-full bg-red-600" />
+          <div className="p-8 flex flex-col items-center text-center">
+            <img
+              src={mission.vision?.img}
+              alt={mission.vision?.title}
+              className="mb-4 h-24 w-24 object-contain"
+            />
+            <h2 className="mb-3 text-3xl font-bold text-gray-900">
+              {mission.vision?.title}
+            </h2>
+            <p className="text-gray-700 leading-relaxed">
+              {mission.vision?.description}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* CORE VALUES */}
+      <section className="mx-auto px-2 lg:px-12">
+        <header className="text-center mb-5 md:mb-12">
+          <h3 className="text-4xl font-bold text-white">Core Values</h3>
+          <div className="w-24 h-1 bg-red-600 mx-auto mt-2 rounded" />
+        </header>
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {mission.coreValues?.map((value, i) => (
+            <div
+              key={i}
+              className="flex flex-col items-center p-6 bg-white rounded-lg shadow hover:shadow-lg transition"
+            >
+              <img
+                src={value.img}
+                alt={value.title}
+                className="w-16 h-16 mb-4"
+              />
+              <h4 className="text-2xl font-semibold text-gray-800 mb-2">
+                {value.title}
+              </h4>
+              <p className="text-gray-600 text-center">{value.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* MISSION GOALS */}
+      <section className="mx-auto px-2 lg:px-12">
+        <header className="text-center mb-5 md:mb-12">
+          <h3 className="text-4xl font-bold text-white">Mission Goals</h3>
+          <div className="w-24 h-1 bg-red-600 mx-auto mt-2 rounded" />
+        </header>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {mission.missionGoals?.map((goal, i) => {
+            const progressMap = {
+              Initiated: 25,
+              "In Progress": 60,
+              "On Track": 100,
+            };
+            const pct = progressMap[goal.progress] || 0;
+            return (
+              <div
+                key={i}
+                className="p-6 bg-white rounded-lg shadow hover:shadow-lg transition"
+              >
+                <h4 className="text-xl font-semibold text-gray-800 mb-4">
+                  {goal.goal}
+                </h4>
+                <div className="flex items-center mb-3">
+                  {goal.progress === "Initiated" && (
+                    <FaPlayCircle className="text-red-500 mr-2" />
+                  )}
+                  {goal.progress === "In Progress" && (
+                    <FaSyncAlt className="animate-spin text-red-500 mr-2" />
+                  )}
+                  {goal.progress === "On Track" && (
+                    <FaCheckCircle className="text-green-500 mr-2" />
+                  )}
+                  <span className="text-gray-700">{goal.progress}</span>
+                </div>
+                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-red-600"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* CALL TO ACTION */}
+      <CallToAction />
     </div>
   );
 };

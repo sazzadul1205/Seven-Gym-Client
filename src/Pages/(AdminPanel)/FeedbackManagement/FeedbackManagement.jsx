@@ -1,15 +1,15 @@
-import { useState, useMemo } from "react"; 
+import { useState, useMemo } from "react";
 
 // Import Icons
-import { FaSearch } from "react-icons/fa"; 
+import { FaSearch } from "react-icons/fa";
 
 // Import Packages
-import Swal from "sweetalert2"; 
-import PropTypes from "prop-types"; 
+import Swal from "sweetalert2";
+import PropTypes from "prop-types";
 
 // import Shared & Hooks
-import CommonButton from "../../../Shared/Buttons/CommonButton"; 
-import useAxiosPublic from "../../../Hooks/useAxiosPublic"; 
+import CommonButton from "../../../Shared/Buttons/CommonButton";
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 
 const FeedbackManagement = ({ FeedbackData, Refetch }) => {
   const axiosPublic = useAxiosPublic(); // Get Axios instance with public API config
@@ -140,13 +140,18 @@ const FeedbackManagement = ({ FeedbackData, Refetch }) => {
 
   return (
     <div className="text-black pb-5">
-      {/* Header showing total feedback count */}
+      {/* Header */}
       <div className="bg-gray-400 py-2 flex items-center">
-        <div className="flex-shrink-0 w-10" /> {/* spacer */}
+        {/* Left: Add Button */}
+        <div className="flex-shrink-0 w-10" />
+
+        {/* Center: Title */}
         <h3 className="flex-grow text-white font-semibold text-lg text-center">
           Feedback (Admin) [ Total Feedback&apos;s: {FeedbackData.length} ]
         </h3>
-        <div className="flex-shrink-0 w-10" /> {/* spacer */}
+
+        {/* Right: Empty div to balance flex */}
+        <div className="flex-shrink-0 w-10" />
       </div>
 
       {/* Filter section */}
@@ -232,7 +237,7 @@ const FeedbackManagement = ({ FeedbackData, Refetch }) => {
             <tbody>
               {/* Map over filtered feedback data */}
               {filteredData.map((feedback) => {
-                const isSelected = selectedIds.includes(feedback._id); 
+                const isSelected = selectedIds.includes(feedback._id);
                 return (
                   <tr
                     key={feedback._id}
@@ -335,7 +340,7 @@ const FeedbackManagement = ({ FeedbackData, Refetch }) => {
 FeedbackManagement.propTypes = {
   FeedbackData: PropTypes.arrayOf(
     PropTypes.shape({
-      _id: PropTypes.string.isRequired,
+      _id: PropTypes.string,
       name: PropTypes.string,
       email: PropTypes.string,
       feedback: PropTypes.string,
@@ -346,7 +351,7 @@ FeedbackManagement.propTypes = {
         PropTypes.instanceOf(Date),
       ]),
     })
-  ).isRequired,
+  ),
   Refetch: PropTypes.func.isRequired,
 };
 

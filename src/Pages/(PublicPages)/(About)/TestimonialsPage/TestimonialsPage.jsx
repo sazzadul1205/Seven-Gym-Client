@@ -38,7 +38,7 @@ const TestimonialsPage = () => {
       <div className="bg-linear-to-b from-black/50 to-black/20">
         {/* Header */}
 
-        <div className="mx-auto max-w-7xl  pt-5">
+        <div className="pt-5 px-5">
           <Title titleContent={" Testimonials"} />
           {/* Testimonials Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 py-10">

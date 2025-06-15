@@ -268,7 +268,7 @@ const useAdminPanelData = () => {
     isLoading: GalleryIsLoading,
     error: GalleryError,
     refetch: GalleryRefetch,
-  } = useFetchData("Gallery", "/Gallery");
+  } = useFetchData("GalleryData", "/Gallery");
 
   // 29. Fetch Promotions
   const {
@@ -276,7 +276,7 @@ const useAdminPanelData = () => {
     isLoading: PromotionsIsLoading,
     error: PromotionsError,
     refetch: PromotionsRefetch,
-  } = useFetchData("Promotions", "/Promotions");
+  } = useFetchData("PromotionsData", "/Promotions");
 
   // 30. Fetch Gym Features
   const {
@@ -284,7 +284,7 @@ const useAdminPanelData = () => {
     isLoading: GymFeaturesIsLoading,
     error: GymFeaturesError,
     refetch: GymFeaturesRefetch,
-  } = useFetchData("GymFeatures", "/Gym_Features");
+  } = useFetchData("GymFeaturesData", "/Gym_Features");
 
   // 31. Fetch Testimonials
   const {
@@ -292,7 +292,7 @@ const useAdminPanelData = () => {
     isLoading: TestimonialsIsLoading,
     error: TestimonialsError,
     refetch: TestimonialsRefetch,
-  } = useFetchData("Testimonials", "/Testimonials");
+  } = useFetchData("TestimonialsData", "/Testimonials");
 
   // 32. Fetch Community Posts
   const {
@@ -300,7 +300,7 @@ const useAdminPanelData = () => {
     isLoading: CommunityPostsIsLoading,
     error: CommunityPostsError,
     refetch: CommunityPostsRefetch,
-  } = useFetchData("CommunityPosts", "/CommunityPosts");
+  } = useFetchData("CommunityPostsData", "/CommunityPosts");
 
   // 32. Fetch Feedback
   const {
@@ -308,7 +308,15 @@ const useAdminPanelData = () => {
     isLoading: FeedbackIsLoading,
     error: FeedbackError,
     refetch: FeedbackRefetch,
-  } = useFetchData("Feedback", "/Feedback");
+  } = useFetchData("FeedbackData", "/Feedback");
+
+  // 33. Fetch Feedback
+  const {
+    data: OurMissionsData,
+    isLoading: OurMissionsIsLoading,
+    error: OurMissionsError,
+    refetch: OurMissionsRefetch,
+  } = useFetchData("OurMissionsData", "/Our_Missions");
 
   // Unified refetch function
   const refetchAll = async () => {
@@ -316,6 +324,7 @@ const useAdminPanelData = () => {
     await AllUsersRefetch();
     await FeedbackRefetch();
     await PromotionsRefetch();
+    await OurMissionsRefetch();
     await AllTrainersRefetch();
     await GymFeaturesRefetch();
     await TestimonialsRefetch();
@@ -353,6 +362,7 @@ const useAdminPanelData = () => {
     FeedbackIsLoading ||
     PromotionsIsLoading ||
     AllTrainersIsLoading ||
+    OurMissionsIsLoading ||
     GymFeaturesIsLoading ||
     TestimonialsIsLoading ||
     CommunityPostsIsLoading ||
@@ -388,6 +398,7 @@ const useAdminPanelData = () => {
     FeedbackError ||
     PromotionsError ||
     AllTrainersError ||
+    OurMissionsError ||
     GymFeaturesError ||
     TestimonialsError ||
     CommunityPostsError ||
@@ -430,6 +441,7 @@ const useAdminPanelData = () => {
     FeedbackData,
     PromotionsData,
     GymFeaturesData,
+    OurMissionsData,
     AllTrainersData,
     TestimonialsData,
     CommunityPostsData,

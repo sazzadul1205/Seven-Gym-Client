@@ -9,6 +9,7 @@ import { FaRegCircleDot } from "react-icons/fa6";
 import CommonButton from "../Shared/Buttons/CommonButton";
 
 // Import Assets
+import add from "../assets/AdminPanel/add.png";
 import users from "../assets/AdminPanel/users.png";
 import coach from "../assets/AdminPanel/coach.png";
 import weekly from "../assets/AdminPanel/weekly.png";
@@ -43,6 +44,7 @@ import GalleryPageAdminControl from "../Pages/(AdminPanel)/GalleryPageAdminContr
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
 import CommunityPostsManagement from "../Pages/(AdminPanel)/CommunityPostsManagement/CommunityPostsManagement";
 import FeedbackManagement from "../Pages/(AdminPanel)/FeedbackManagement/FeedbackManagement";
+import AllExtraPageManagement from "../Pages/(AdminPanel)/AllExtraPageManagement/AllExtraPageManagement";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -89,6 +91,7 @@ const AdminPanelLayout = () => {
     FeedbackData,
     PromotionsData,
     GymFeaturesData,
+    OurMissionsData,
     AllTrainersData,
     TestimonialsData,
     CommunityPostsData,
@@ -265,6 +268,14 @@ const AdminPanelLayout = () => {
       title: "Feedback",
       content: (
         <FeedbackManagement Refetch={refetchAll} FeedbackData={FeedbackData} />
+      ),
+    },
+    {
+      id: "All_Extra_Page_Management",
+      Icon: add,
+      title: "All Extra Page Management",
+      content: (
+        <AllExtraPageManagement Refetch={refetchAll} OurMissionsData={OurMissionsData} />
       ),
     },
   ];
