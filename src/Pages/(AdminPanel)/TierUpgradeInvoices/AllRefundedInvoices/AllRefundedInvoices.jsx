@@ -15,6 +15,9 @@ import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerB
 import TierUpgradeRefundInvoiceModal from "../../../(UserPages)/UserSettings/UserRefundInvoices/TierUpgradeRefundInvoiceModal/TierUpgradeRefundInvoiceModal";
 
 const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
+  // Ref to control the refund invoice modal
+  const modalRefundInvoiceRef = useRef(null);
+
   // Current page number for pagination
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -26,9 +29,6 @@ const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
 
   // Payment ID filter input
   const [paymentIdFilter, setPaymentIdFilter] = useState("");
-
-  // Ref to control the refund invoice modal
-  const modalRefundInvoiceRef = useRef(null);
 
   // How many refunds to show per page
   const refundsPerPage = 10;

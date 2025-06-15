@@ -302,10 +302,19 @@ const useAdminPanelData = () => {
     refetch: CommunityPostsRefetch,
   } = useFetchData("CommunityPosts", "/CommunityPosts");
 
+  // 32. Fetch Feedback
+  const {
+    data: FeedbackData,
+    isLoading: FeedbackIsLoading,
+    error: FeedbackError,
+    refetch: FeedbackRefetch,
+  } = useFetchData("Feedback", "/Feedback");
+
   // Unified refetch function
   const refetchAll = async () => {
     await GalleryRefetch();
     await AllUsersRefetch();
+    await FeedbackRefetch();
     await PromotionsRefetch();
     await AllTrainersRefetch();
     await GymFeaturesRefetch();
@@ -341,6 +350,7 @@ const useAdminPanelData = () => {
   const isLoading =
     GalleryIsLoading ||
     AllUsersIsLoading ||
+    FeedbackIsLoading ||
     PromotionsIsLoading ||
     AllTrainersIsLoading ||
     GymFeaturesIsLoading ||
@@ -375,6 +385,7 @@ const useAdminPanelData = () => {
   const error =
     GalleryError ||
     AllUsersError ||
+    FeedbackError ||
     PromotionsError ||
     AllTrainersError ||
     GymFeaturesError ||
@@ -416,6 +427,7 @@ const useAdminPanelData = () => {
     // Data State
     GalleryData,
     AllUsersData,
+    FeedbackData,
     PromotionsData,
     GymFeaturesData,
     AllTrainersData,

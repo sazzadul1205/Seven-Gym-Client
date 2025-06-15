@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
 import Background from "../../../../assets/Home-Background/Home-Background.jpeg";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 const Feedback = () => {
   const axiosPublic = useAxiosPublic();
@@ -166,13 +167,19 @@ const Feedback = () => {
 
             {/* Submit Button */}
             <div className="flex justify-end">
-              <button
+              <CommonButton
                 type="submit"
-                className="w-1/2 bg-gradient-to-bl hover:bg-gradient-to-tr from-[#F72C5B] to-[#cc0530] text-white rounded-xl shadow-lg hover:shadow-2xl py-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : "Submit Feedback"}
-              </button>
+                width="1/3"
+                bgFromColor="#F72C5B"
+                bgToColor="#cc0530"
+                text="Submit Feedback"
+                textColor="text-white"
+                py="py-3"
+                borderRadius="rounded-xl"
+                isLoading={loading}
+                loadingText="Submitting..."
+                className="shadow-lg hover:shadow-2xl"
+              />
             </div>
           </form>
         </div>

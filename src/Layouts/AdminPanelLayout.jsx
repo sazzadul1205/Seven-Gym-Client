@@ -18,6 +18,7 @@ import gallery from "../assets/AdminPanel/gallery.png";
 import homepage from "../assets/AdminPanel/homepage.png";
 import costumer from "../assets/AdminPanel/costumer.png";
 import ProfileDefault from "../assets/ProfileDefault.jpg";
+import satisfaction from "../assets/AdminPanel/satisfaction.png";
 import trainerInvoice from "../assets/AdminPanel/trainerInvoice.png";
 import communityPosts from "../assets/AdminPanel/communityPosts.png";
 
@@ -41,6 +42,7 @@ import TestimonialsManagement from "../Pages/(AdminPanel)/TestimonialsManagement
 import GalleryPageAdminControl from "../Pages/(AdminPanel)/GalleryPageAdminControl/GalleryPageAdminControl";
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
 import CommunityPostsManagement from "../Pages/(AdminPanel)/CommunityPostsManagement/CommunityPostsManagement";
+import FeedbackManagement from "../Pages/(AdminPanel)/FeedbackManagement/FeedbackManagement";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -84,6 +86,7 @@ const AdminPanelLayout = () => {
     // Data States
     GalleryData,
     AllUsersData,
+    FeedbackData,
     PromotionsData,
     GymFeaturesData,
     AllTrainersData,
@@ -254,6 +257,14 @@ const AdminPanelLayout = () => {
           Refetch={refetchAll}
           CommunityPostsData={CommunityPostsData}
         />
+      ),
+    },
+    {
+      id: "Feedback",
+      Icon: satisfaction,
+      title: "Feedback",
+      content: (
+        <FeedbackManagement Refetch={refetchAll} FeedbackData={FeedbackData} />
       ),
     },
   ];
