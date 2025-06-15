@@ -19,6 +19,7 @@ import homepage from "../assets/AdminPanel/homepage.png";
 import costumer from "../assets/AdminPanel/costumer.png";
 import ProfileDefault from "../assets/ProfileDefault.jpg";
 import trainerInvoice from "../assets/AdminPanel/trainerInvoice.png";
+import communityPosts from "../assets/AdminPanel/communityPosts.png";
 
 // Import Packages
 import Swal from "sweetalert2";
@@ -87,6 +88,7 @@ const AdminPanelLayout = () => {
     GymFeaturesData,
     AllTrainersData,
     TestimonialsData,
+    CommunityPostsData,
     TrainersScheduleData,
     HomeBannerSectionData,
     TierUpgradeRefundData,
@@ -245,9 +247,14 @@ const AdminPanelLayout = () => {
     },
     {
       id: "Community_Posts",
-      Icon: gallery,
+      Icon: communityPosts,
       title: "Community Posts",
-      content: <CommunityPostsManagement />,
+      content: (
+        <CommunityPostsManagement
+          Refetch={refetchAll}
+          CommunityPostsData={CommunityPostsData}
+        />
+      ),
     },
   ];
 

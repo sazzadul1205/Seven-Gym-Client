@@ -1,4 +1,10 @@
 import { useEffect, useState } from "react";
+
+// import Packages
+import Swal from "sweetalert2";
+import { useQuery } from "@tanstack/react-query";
+
+// Import Icons
 import {
   FaPlus,
   FaCommentAlt,
@@ -8,20 +14,28 @@ import {
   FaSearch,
 } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import Forums_Background from "../../../assets/Forums-Background/Forums-Background.jfif";
-import PostDetails from "./PostDetails/PostDetails";
-import useAxiosPublic from "../../../Hooks/useAxiosPublic";
-import { useQuery } from "@tanstack/react-query";
+import { HiOutlineFilter } from "react-icons/hi";
+import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
+
+// Shared
 import Loading from "../../../Shared/Loading/Loading";
-import FetchingError from "../../../Shared/Component/FetchingError";
 import CommonButton from "../../../Shared/Buttons/CommonButton";
+import FetchingError from "../../../Shared/Component/FetchingError";
+import Forums_Background from "../../../assets/Forums-Background/Forums-Background.jfif";
+
+// Hooks
 import useAuth from "../../../Hooks/useAuth";
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
+
+// Details Modal
+import PostDetails from "./PostDetails/PostDetails";
+
+// Author Component
 import CommunityAuthorAvatar from "./CommunityAuthorAvatar/CommunityAuthorAvatar";
-import Swal from "sweetalert2";
+
+// Modals
 import AddCommunityPostModal from "./PostDetails/AddCommunityPostModal/AddCommunityPostModal";
 import EditCommunityPostModal from "./PostDetails/EditCommunityPostModal/EditCommunityPostModal";
-import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
-import { HiOutlineFilter } from "react-icons/hi";
 
 // Utility function to format date to a human-readable string
 const formatDate = (dateStr) => {
@@ -458,19 +472,9 @@ const Community = () => {
               >
                 {/* Post Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between p-6 border-b">
+                  {/* Poster Avatar */}
                   <div className="flex items-center gap-4">
-                    {/* Poster Avatar */}
                     <CommunityAuthorAvatar post={post} />
-
-                    {/* Poster Name & Role */}
-                    <div>
-                      {/* Name */}
-                      <h4 className="text-lg font-semibold text-gray-800">
-                        {post.authorName}
-                      </h4>
-                      {/* Role */}
-                      <p className="text-sm text-gray-500">{post.authorRole}</p>
-                    </div>
                   </div>
 
                   {/* Posted Date */}

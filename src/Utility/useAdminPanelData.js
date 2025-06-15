@@ -294,6 +294,14 @@ const useAdminPanelData = () => {
     refetch: TestimonialsRefetch,
   } = useFetchData("Testimonials", "/Testimonials");
 
+  // 32. Fetch Community Posts
+  const {
+    data: CommunityPostsData,
+    isLoading: CommunityPostsIsLoading,
+    error: CommunityPostsError,
+    refetch: CommunityPostsRefetch,
+  } = useFetchData("CommunityPosts", "/CommunityPosts");
+
   // Unified refetch function
   const refetchAll = async () => {
     await GalleryRefetch();
@@ -302,6 +310,7 @@ const useAdminPanelData = () => {
     await AllTrainersRefetch();
     await GymFeaturesRefetch();
     await TestimonialsRefetch();
+    await CommunityPostsRefetch();
     await TrainersScheduleRefetch();
     await HomeBannerSectionRefetch();
     await TierUpgradeRefundRefetch();
@@ -336,6 +345,7 @@ const useAdminPanelData = () => {
     AllTrainersIsLoading ||
     GymFeaturesIsLoading ||
     TestimonialsIsLoading ||
+    CommunityPostsIsLoading ||
     TrainersScheduleIsLoading ||
     TierUpgradeRefundIsLoading ||
     HomeBannerSectionIsLoading ||
@@ -369,6 +379,7 @@ const useAdminPanelData = () => {
     AllTrainersError ||
     GymFeaturesError ||
     TestimonialsError ||
+    CommunityPostsError ||
     TrainersScheduleError ||
     HomeBannerSectionError ||
     TierUpgradeRefundError ||
@@ -409,6 +420,7 @@ const useAdminPanelData = () => {
     GymFeaturesData,
     AllTrainersData,
     TestimonialsData,
+    CommunityPostsData,
     TrainersScheduleData,
     HomeBannerSectionData,
     TierUpgradeRefundData,

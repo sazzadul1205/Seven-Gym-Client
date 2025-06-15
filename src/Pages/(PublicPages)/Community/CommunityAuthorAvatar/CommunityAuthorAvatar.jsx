@@ -52,12 +52,21 @@ const CommunityAuthorAvatar = ({ post }) => {
   }
 
   return (
-    <div>
+    <div className="flex items-center gap-2">
       <img
         src={authorImg}
         alt={post?.authorName}
         className="w-12 h-12 rounded-full"
       />
+      {/* Poster Name & Role */}
+      <div>
+        {/* Name */}
+        <h4 className=" font-semibold text-gray-800">
+          {post?.authorName}
+        </h4>
+        {/* Role */}
+        <p className="text-sm text-gray-500">{post?.authorRole}</p>
+      </div>
     </div>
   );
 };
