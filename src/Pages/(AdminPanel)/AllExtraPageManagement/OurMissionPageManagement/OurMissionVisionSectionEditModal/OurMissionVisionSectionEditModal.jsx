@@ -308,6 +308,8 @@ OurMissionVisionSectionEditModal.propTypes = {
 
 export default OurMissionVisionSectionEditModal;
 
+
+// CompressedSelect Box
 export const SectionBlock = ({
   title,
   imagePreview,

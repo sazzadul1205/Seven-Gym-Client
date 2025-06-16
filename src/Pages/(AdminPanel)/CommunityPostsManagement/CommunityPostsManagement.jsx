@@ -353,7 +353,7 @@ CommunityPostsManagement.propTypes = {
       comments: PropTypes.array,
       createdAt: PropTypes.string,
     })
-  ).isRequired,
+  ),
   Refetch: PropTypes.func.isRequired,
 };
 

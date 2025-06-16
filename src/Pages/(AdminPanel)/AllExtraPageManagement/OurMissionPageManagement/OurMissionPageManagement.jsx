@@ -1,4 +1,9 @@
-/* eslint-disable react/prop-types */
+// import Packages
+import Swal from "sweetalert2";
+import PropTypes from "prop-types";
+import { Tooltip } from "react-tooltip";
+
+// Import Icons
 import {
   FaCheckCircle,
   FaCog,
@@ -7,19 +12,22 @@ import {
   FaRegTrashAlt,
   FaSyncAlt,
 } from "react-icons/fa";
-import { Tooltip } from "react-tooltip";
+
+// Import Modals
+import OurMissionCoreValueAddModal from "./OurMissionCoreValueAddModal/OurMissionCoreValueAddModal";
 import OurMissionBackgroundEditModal from "./OurMissionBackgroundEditModal/OurMissionBackgroundEditModal";
+import OurMissionMissionGoalAddModal from "./OurMissionMissionGoalAddModal/OurMissionMissionsGoalAddModal";
 import OurMissionHeroSectionEditModal from "./OurMissionHeroSectionEditModal/OurMissionHeroSectionEditModal";
 import OurMissionVisionSectionEditModal from "./OurMissionVisionSectionEditModal/OurMissionVisionSectionEditModal";
-import OurMissionCoreValueAddModal from "./OurMissionCoreValueAddModal/OurMissionCoreValueAddModal";
-import Swal from "sweetalert2";
+
+// import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
   const axiosPublic = useAxiosPublic();
 
   // Handle Delete
-  const handleDeleteService = async (valueId) => {
+  const handleDeleteCoreValue = async (valueId) => {
     const confirm = await Swal.fire({
       title: "Are you sure?",
       text: "This Core Value will be permanently deleted.",
@@ -51,6 +59,44 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
         icon: "error",
         title: "Failed!",
         text: "Core Value could not be deleted.",
+        confirmButtonColor: "#F72C5B",
+      });
+    }
+  };
+
+  // Handle Delete
+  const handleDeleteGoal = async (valueId) => {
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: "This Goal will be permanently deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#F72C5B",
+      cancelButtonColor: "#d1d5db",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    try {
+      await axiosPublic.patch(`/Our_Missions/DeleteMissionGoal/${valueId}`);
+      await Refetch();
+
+      Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "Goal has been removed.",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+    } catch (error) {
+      console.error(error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Failed!",
+        text: "Goal could not be deleted.",
         confirmButtonColor: "#F72C5B",
       });
     }
@@ -221,7 +267,7 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
                   <button
                     id={`delete-value-btn-${value.id}`}
                     className="absolute top-3 left-3 border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200 z-10"
-                    onClick={() => handleDeleteService(value.id)}
+                    onClick={() => handleDeleteCoreValue(value.id)}
                   >
                     <FaRegTrashAlt className="text-red-500" />
                   </button>
@@ -270,13 +316,18 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
         </div>
 
         {/* Goals Section */}
-        <div className="relative px-2 lg:px-12">
-          <header className="text-center mb-5 md:mb-12">
+        <div className="relative">
+          {/* Header */}
+          <header className="text-center py-5 bg-gray-900/90">
+            {/* Title  */}
             <h3 className="text-4xl font-bold text-white">Mission Goals</h3>
+
+            {/* Box */}
             <div className="w-24 h-1 bg-red-600 mx-auto mt-2 rounded" />
           </header>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Body */}
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 pt-2 px-5">
             {OurMissionsData?.missionGoals?.map((goal, i) => {
               const progressMap = {
                 Initiated: 25,
@@ -287,11 +338,28 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
               return (
                 <div
                   key={i}
-                  className="p-6 bg-white rounded-lg shadow hover:shadow-lg transition"
+                  className="relative p-6 bg-white rounded-lg shadow hover:shadow-lg transition"
                 >
+                  {/* Delete Button */}
+                  <>
+                    <button
+                      id={`delete-goal-btn-${goal.id}`}
+                      className="absolute top-3 right-3 border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200 z-10"
+                      onClick={() => handleDeleteGoal(goal.id)}
+                    >
+                      <FaRegTrashAlt className="text-red-500" />
+                    </button>
+                    <Tooltip
+                      anchorSelect={`#delete-goal-btn-${goal.id}`}
+                      content="Delete goal"
+                    />
+                  </>
+                  {/* Goals */}
                   <h4 className="text-xl font-semibold text-gray-800 mb-4">
                     {goal.goal}
                   </h4>
+
+                  {/* Progress Title */}
                   <div className="flex items-center mb-3">
                     {goal.progress === "Initiated" && (
                       <FaPlayCircle className="text-red-500 mr-2" />
@@ -304,6 +372,8 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
                     )}
                     <span className="text-gray-700">{goal.progress}</span>
                   </div>
+
+                  {/* Progress Radian */}
                   <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-red-600"
@@ -315,18 +385,22 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
             })}
           </div>
 
-          {/* Edit Icon with Tooltip */}
-          <div className="absolute top-4 right-4 z-10 group ">
+          {/* Add Icon with Tooltip */}
+          <div className="absolute top-6 left-4 z-10 group ">
             <button
-              id="edit-mission-goals-btn"
-              className="p-2 bg-white rounded-full shadow-lg hover:bg-red-100 transition cursor-pointer"
-              aria-label="Edit mission-goals"
+              id={`add-mission-goal-btn`}
+              className="border-2 border-green-500 bg-green-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200 z-10"
+              onClick={() => {
+                document
+                  .getElementById("Our_Mission_Goal_Add_Modal")
+                  .showModal();
+              }}
             >
-              <FaCog className="text-red-600 w-6 h-6 group-hover:rotate-90 transition-transform" />
+              <FaPlus className="text-green-500" />
             </button>
             <Tooltip
-              anchorSelect="#edit-mission-goals-btn"
-              content="Edit Mission Goals Section"
+              anchorSelect={`#add-mission-goal-btn`}
+              content="Add Mission Goal"
             />
           </div>
         </div>
@@ -362,9 +436,61 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
         <dialog id="Our_Mission_Core_Value_Add_Modal" className="modal">
           <OurMissionCoreValueAddModal Refetch={Refetch} />
         </dialog>
+
+        {/* Edit Core Values Section Modal */}
+        <dialog id="Our_Mission_Goal_Add_Modal" className="modal">
+          <OurMissionMissionGoalAddModal Refetch={Refetch} />
+        </dialog>
       </>
     </>
   );
+};
+
+// Prop Validation
+OurMissionPageManagement.propTypes = {
+  OurMissionsData: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    background: PropTypes.string.isRequired,
+    hero: PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      subTitle: PropTypes.string.isRequired,
+      img: PropTypes.string.isRequired,
+    }).isRequired,
+    mission: PropTypes.shape({
+      img: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+    }).isRequired,
+    vision: PropTypes.shape({
+      img: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+    }).isRequired,
+    coreValues: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+          .isRequired,
+        img: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+    missionGoals: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+          .isRequired,
+        goal: PropTypes.string.isRequired,
+        progress: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+    callToAction: PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+    }).isRequired,
+    subTitle: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+  }).isRequired,
+  Refetch: PropTypes.func.isRequired,
 };
 
 export default OurMissionPageManagement;

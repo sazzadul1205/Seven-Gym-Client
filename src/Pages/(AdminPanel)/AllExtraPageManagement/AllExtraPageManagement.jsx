@@ -2,8 +2,6 @@
 import OurMissionPageManagement from "./OurMissionPageManagement/OurMissionPageManagement";
 
 const AllExtraPageManagement = ({ OurMissionsData, Refetch }) => {
-  console.log(OurMissionsData);
-
   return (
     <div className="text-black">
       <OurMissionPageManagement

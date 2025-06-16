@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 
 // Import PAckages
-import { useForm } from "react-hook-form";
-import PropTypes from "prop-types";
-import Swal from "sweetalert2";
 import axios from "axios";
+import Swal from "sweetalert2";
+import PropTypes from "prop-types";
+import { useForm } from "react-hook-form";
 
 // Import Icons
 import { ImCross } from "react-icons/im";
