@@ -1,11 +1,19 @@
-/* eslint-disable react/prop-types */
-import { ImCross } from "react-icons/im";
-import CommonButton from "../../../../../Shared/Buttons/CommonButton";
-import { RiImageAddFill } from "react-icons/ri";
 import { useEffect, useRef, useState } from "react";
+
+// Import PAckages
 import { useForm } from "react-hook-form";
-import axios from "axios";
+import PropTypes from "prop-types";
 import Swal from "sweetalert2";
+import axios from "axios";
+
+// Import Icons
+import { ImCross } from "react-icons/im";
+import { RiImageAddFill } from "react-icons/ri";
+
+// Import Common Button
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+
+// Import Hooks
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
 // Image upload requirements
@@ -20,7 +28,6 @@ const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Ke
 const OurMissionBackgroundEditModal = ({ Refetch, OurMissionsData }) => {
   const axiosPublic = useAxiosPublic();
   const fileInputRef = useRef(null);
-  console.log(OurMissionsData);
 
   // Local state variables
   const [preview, setPreview] = useState(null);
@@ -256,6 +263,15 @@ const OurMissionBackgroundEditModal = ({ Refetch, OurMissionsData }) => {
       </form>
     </div>
   );
+};
+
+// Prop Validation
+OurMissionBackgroundEditModal.propTypes = {
+  Refetch: PropTypes.func.isRequired,
+  OurMissionsData: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    background: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default OurMissionBackgroundEditModal;
