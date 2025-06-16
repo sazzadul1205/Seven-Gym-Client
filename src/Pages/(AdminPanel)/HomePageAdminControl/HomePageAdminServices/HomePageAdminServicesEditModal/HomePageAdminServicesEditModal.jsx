@@ -14,6 +14,7 @@ import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
 // Import Hooks
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import Swal from "sweetalert2";
 
 // Image hosting API
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
@@ -154,9 +155,18 @@ const HomePageAdminServicesEditModal = ({
         payload
       );
 
-      setSelectedServices(null);
       Refetch();
+      setSelectedServices(null);
+
       document.getElementById("Edit_Service_Modal").close();
+
+      Swal.fire({
+        icon: "success",
+        title: "Updated Successfully",
+        text: "Mission and Vision section updated.",
+        showConfirmButton: false,
+        timer: 1000,
+      });
     } catch (error) {
       console.error(error);
       setModalError(error.message || "Unexpected error occurred.");
@@ -166,7 +176,7 @@ const HomePageAdminServicesEditModal = ({
   };
 
   return (
-    <div className="modal-box max-w-5xl w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black">
+    <div className="modal-box max-w-3xl w-full p-0 bg-gradient-to-b from-white to-gray-100 text-black">
       {/* Header */}
       <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
         <h3 className="font-bold text-lg">

@@ -1,4 +1,3 @@
-
 // import Packages
 import { useQuery } from "@tanstack/react-query";
 
@@ -93,26 +92,37 @@ const OurMission = () => {
       </div>
 
       {/* CORE VALUES */}
-      <section className="mx-auto px-2 lg:px-12">
-        <header className="text-center mb-5 md:mb-12">
+      <section className="mx-auto ">
+        {/* Header */}
+        <header className="text-center py-5 bg-gray-900/90">
+          {/* Title  */}
           <h3 className="text-4xl font-bold text-white">Core Values</h3>
+
+          {/* Box */}
           <div className="w-24 h-1 bg-red-600 mx-auto mt-2 rounded" />
         </header>
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+
+        {/* Body */}
+        <div className="grid  gap-5  md:grid-cols-2 lg:grid-cols-3 pt-2 px-1 md:px-5 ">
           {mission.coreValues?.map((value, i) => (
             <div
               key={i}
-              className="flex flex-col items-center p-6 bg-white rounded-lg shadow hover:shadow-lg transition"
+              className="flex flex-col items-center p-6 bg-linear-to-bl hover:bg-linear-to-tr from-white to-gray-400 rounded-lg shadow hover:shadow-lg transition"
             >
+              {/* Images */}
               <img
                 src={value.img}
                 alt={value.title}
                 className="w-16 h-16 mb-4"
               />
+
+              {/* Title */}
               <h4 className="text-2xl font-semibold text-gray-800 mb-2">
                 {value.title}
               </h4>
-              <p className="text-gray-600 text-center">{value.description}</p>
+
+              {/* Description */}
+              <p className="text-center text-black">{value.description}</p>
             </div>
           ))}
         </div>

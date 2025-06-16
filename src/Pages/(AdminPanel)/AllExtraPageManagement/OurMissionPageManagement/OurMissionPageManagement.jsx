@@ -1,10 +1,61 @@
 /* eslint-disable react/prop-types */
-import { FaCheckCircle, FaCog, FaPlayCircle, FaSyncAlt } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaCog,
+  FaPlayCircle,
+  FaPlus,
+  FaRegTrashAlt,
+  FaSyncAlt,
+} from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
 import OurMissionBackgroundEditModal from "./OurMissionBackgroundEditModal/OurMissionBackgroundEditModal";
 import OurMissionHeroSectionEditModal from "./OurMissionHeroSectionEditModal/OurMissionHeroSectionEditModal";
+import OurMissionVisionSectionEditModal from "./OurMissionVisionSectionEditModal/OurMissionVisionSectionEditModal";
+import OurMissionCoreValueAddModal from "./OurMissionCoreValueAddModal/OurMissionCoreValueAddModal";
+import Swal from "sweetalert2";
+import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 
 const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
+  const axiosPublic = useAxiosPublic();
+
+  // Handle Delete
+  const handleDeleteService = async (valueId) => {
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: "This Core Value will be permanently deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#F72C5B",
+      cancelButtonColor: "#d1d5db",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    try {
+      await axiosPublic.patch(`/Our_Missions/DeleteCoreValue/${valueId}`);
+      await Refetch();
+
+      Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "Core Value has been removed.",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+    } catch (error) {
+      console.error(error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Failed!",
+        text: "Core Value could not be deleted.",
+        confirmButtonColor: "#F72C5B",
+      });
+    }
+  };
+
   return (
     <>
       {/* Header */}
@@ -88,6 +139,11 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
           {/* Edit Icon */}
           <div className="absolute top-0 right-4 z-10 group">
             <button
+              onClick={() => {
+                document
+                  .getElementById("Our_Mission_Vision_Section_Edit_Modal")
+                  .showModal();
+              }}
               id="edit-mission-vision-btn"
               className="p-2 bg-white rounded-full shadow-lg hover:bg-red-100 transition cursor-pointer"
               aria-label="Edit Mission & Vision Section"
@@ -143,44 +199,72 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
         </div>
 
         {/* Core Section */}
-        <div className="relative px-2 lg:px-12">
+        <div className="relative">
           {/* Header */}
-          <header className="text-center mb-5 md:mb-12">
+          <header className="text-center py-5 bg-gray-900/90">
+            {/* Title  */}
             <h3 className="text-4xl font-bold text-white">Core Values</h3>
+
+            {/* Box */}
             <div className="w-24 h-1 bg-red-600 mx-auto mt-2 rounded" />
           </header>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {OurMissionsData?.coreValues?.map((value, i) => (
+          {/* Body */}
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 pt-2 px-5">
+            {OurMissionsData?.coreValues?.map((value) => (
               <div
-                key={i}
-                className="flex flex-col items-center p-6 bg-white rounded-lg shadow hover:shadow-lg transition"
+                key={value.id}
+                className="relative flex flex-col items-center p-6 bg-linear-to-bl hover:bg-linear-to-tr from-white to-gray-400 rounded-lg shadow hover:shadow-lg transition"
               >
+                {/* Delete Button */}
+                <>
+                  <button
+                    id={`delete-value-btn-${value.id}`}
+                    className="absolute top-3 left-3 border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200 z-10"
+                    onClick={() => handleDeleteService(value.id)}
+                  >
+                    <FaRegTrashAlt className="text-red-500" />
+                  </button>
+                  <Tooltip
+                    anchorSelect={`#delete-value-btn-${value.id}`}
+                    content="Delete Value"
+                  />
+                </>
+
+                {/* Images */}
                 <img
                   src={value.img}
                   alt={value.title}
                   className="w-16 h-16 mb-4"
                 />
+
+                {/* Title */}
                 <h4 className="text-2xl font-semibold text-gray-800 mb-2">
                   {value.title}
                 </h4>
-                <p className="text-gray-600 text-center">{value.description}</p>
+
+                {/* Description */}
+                <p className="text-center">{value.description}</p>
               </div>
             ))}
           </div>
 
-          {/* Edit Icon with Tooltip */}
-          <div className="absolute top-4 right-4 z-10 group ">
+          {/* Add Icon with Tooltip */}
+          <div className="absolute top-6 left-4 z-10 group ">
             <button
-              id="edit-core-values-btn"
-              className="p-2 bg-white rounded-full shadow-lg hover:bg-red-100 transition cursor-pointer"
-              aria-label="Edit core-values"
+              id={`add-core-value-btn`}
+              className="border-2 border-green-500 bg-green-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200 z-10"
+              onClick={() => {
+                document
+                  .getElementById("Our_Mission_Core_Value_Add_Modal")
+                  .showModal();
+              }}
             >
-              <FaCog className="text-red-600 w-6 h-6 group-hover:rotate-90 transition-transform" />
+              <FaPlus className="text-green-500" />
             </button>
             <Tooltip
-              anchorSelect="#edit-core-values-btn"
-              content="Edit Core Values Section"
+              anchorSelect={`#add-core-value-btn`}
+              content="Add Core Value"
             />
           </div>
         </div>
@@ -264,6 +348,19 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
             Refetch={Refetch}
             OurMissionsData={OurMissionsData}
           />
+        </dialog>
+
+        {/* Edit Mission & Vision Section Modal */}
+        <dialog id="Our_Mission_Vision_Section_Edit_Modal" className="modal">
+          <OurMissionVisionSectionEditModal
+            Refetch={Refetch}
+            OurMissionsData={OurMissionsData}
+          />
+        </dialog>
+
+        {/* Edit Core Values Section Modal */}
+        <dialog id="Our_Mission_Core_Value_Add_Modal" className="modal">
+          <OurMissionCoreValueAddModal Refetch={Refetch} />
         </dialog>
       </>
     </>
