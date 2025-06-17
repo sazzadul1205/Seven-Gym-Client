@@ -318,9 +318,18 @@ const useAdminPanelData = () => {
     refetch: OurMissionsRefetch,
   } = useFetchData("OurMissionsData", "/Our_Missions");
 
+  // 34. Fetch Feedback
+  const {
+    data: AboutUsData,
+    isLoading: AboutUsIsLoading,
+    error: AboutUsError,
+    refetch: AboutUsRefetch,
+  } = useFetchData("AboutUsData", "/AboutUs");
+
   // Unified refetch function
   const refetchAll = async () => {
     await GalleryRefetch();
+    await AboutUsRefetch();
     await AllUsersRefetch();
     await FeedbackRefetch();
     await PromotionsRefetch();
@@ -358,6 +367,7 @@ const useAdminPanelData = () => {
 
   const isLoading =
     GalleryIsLoading ||
+    AboutUsIsLoading ||
     AllUsersIsLoading ||
     FeedbackIsLoading ||
     PromotionsIsLoading ||
@@ -394,6 +404,7 @@ const useAdminPanelData = () => {
 
   const error =
     GalleryError ||
+    AboutUsError ||
     AllUsersError ||
     FeedbackError ||
     PromotionsError ||
@@ -437,6 +448,7 @@ const useAdminPanelData = () => {
 
     // Data State
     GalleryData,
+    AboutUsData,
     AllUsersData,
     FeedbackData,
     PromotionsData,

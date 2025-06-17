@@ -87,6 +87,7 @@ const AdminPanelLayout = () => {
 
     // Data States
     GalleryData,
+    AboutUsData,
     AllUsersData,
     FeedbackData,
     PromotionsData,
@@ -275,7 +276,11 @@ const AdminPanelLayout = () => {
       Icon: add,
       title: "All Extra Page Management",
       content: (
-        <AllExtraPageManagement Refetch={refetchAll} OurMissionsData={OurMissionsData} />
+        <AllExtraPageManagement
+          Refetch={refetchAll}
+          AboutUsData={AboutUsData}
+          OurMissionsData={OurMissionsData}
+        />
       ),
     },
   ];

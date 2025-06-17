@@ -141,7 +141,7 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
         style={{ backgroundImage: `url(${OurMissionsData?.background})` }}
       >
         {/* Hero Section */}
-        <div className="relative h-[500px]">
+        <section className="relative h-[500px]">
           {/* Hero Background Image */}
           <img
             src={OurMissionsData?.hero?.img}
@@ -178,10 +178,10 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
               content="Edit Hero Section"
             />
           </div>
-        </div>
+        </section>
 
         {/* Mission & Vision Section */}
-        <div className="mx-auto px-12 relative">
+        <section className="mx-auto px-12 relative">
           {/* Edit Icon */}
           <div className="absolute top-0 right-4 z-10 group">
             <button
@@ -242,10 +242,10 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Core Section */}
-        <div className="relative">
+        <section className="relative">
           {/* Header */}
           <header className="text-center py-5 bg-gray-900/90">
             {/* Title  */}
@@ -313,10 +313,10 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
               content="Add Core Value"
             />
           </div>
-        </div>
+        </section>
 
         {/* Goals Section */}
-        <div className="relative">
+        <section className="relative">
           {/* Header */}
           <header className="text-center py-5 bg-gray-900/90">
             {/* Title  */}
@@ -403,7 +403,7 @@ const OurMissionPageManagement = ({ OurMissionsData, Refetch }) => {
               content="Add Mission Goal"
             />
           </div>
-        </div>
+        </section>
       </div>
 
       {/* Modals */}

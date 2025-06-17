@@ -1,12 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
-// Shared Components
+// Import Packages
+import { useQuery } from "@tanstack/react-query";
+import { Tooltip } from "react-tooltip";
+
+// Import Shared
 import Loading from "../../../../Shared/Loading/Loading";
 import FetchingError from "../../../../Shared/Component/FetchingError";
+
+// Import Hooks
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+
+// Import Call to Action
 import CallToAction from "../../Home/CallToAction/CallToAction";
 
+// Import icons
 import {
   FaLinkedin,
   FaTwitter,
@@ -14,7 +22,6 @@ import {
   FaGithub,
   FaGlobe,
 } from "react-icons/fa";
-import { Tooltip } from "react-tooltip";
 
 // Icon Map
 const iconsMap = {
@@ -49,7 +56,7 @@ const AboutUs = () => {
       style={{ backgroundImage: `url(${aboutUs.background})` }}
     >
       {/* Hero */}
-      <div className="relative h-[500px]">
+      <section className="relative h-[500px]">
         {/* Background image */}
         <img
           src={aboutUs.hero.img}
@@ -67,7 +74,7 @@ const AboutUs = () => {
             {aboutUs.hero.subTitle}
           </p>
         </div>
-      </div>
+      </section>
 
       {/* Introduction */}
       <section className="text-center py-10 mx-auto rounded-lg shadow-lg bg-black/80">
