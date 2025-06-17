@@ -40,6 +40,7 @@ import TrainersBookings from "./Pages/(PublicPages)/(Trainers)/TrainersBookings/
 import UserProfile from "./Pages/(UserPages)/UserProfile/UserProfile.jsx";
 import UserSettings from "./Pages/(UserPages)/UserSettings/UserSettings.jsx";
 import UserTierUpgrade from "./Pages/(UserPages)/UserTierUpgrade/UserTierUpgrade.jsx";
+import TermsOfService from "./Pages/(PublicPages)/(About)/TermsOfService/TermsOfService.jsx";
 import TearUpgradePayment from "./Pages/(UserPages)/TierUpgradePayment/TierUpgradePayment.jsx";
 import UserSchedulePlanner from "./Pages/(UserPages)/UserSchedulePlanner/UserSchedulePlanner.jsx";
 import UserTrainerManagement from "./Pages/(UserPages)/UserTrainerManagement/UserTrainerManagement.jsx";
@@ -112,6 +113,7 @@ createRoot(document.getElementById("root")).render(
               />
               <Route path="/About/AboutUs" element={<AboutUs />} />
               <Route path="/About/Feedback" element={<Feedback />} />
+              <Route path="/About/TermsOfServices" element={<TermsOfService />} />
 
               {/* User Pages Links */}
 

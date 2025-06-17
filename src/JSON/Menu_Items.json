@@ -17,7 +17,8 @@
       { "name": "Our Mission", "path": "/About/OurMission" },
       { "name": "Testimonials", "path": "/About/Testimonials" },
       { "name": "About Us", "path": "/About/AboutUs" },
-      { "name": "Feedback", "path": "/About/Feedback" }
+      { "name": "Feedback", "path": "/About/Feedback" },
+      { "name": "Terms Of Services", "path": "/About/TermsOfServices" }
     ]
   }
 ]

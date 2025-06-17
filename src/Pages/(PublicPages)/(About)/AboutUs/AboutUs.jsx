@@ -48,8 +48,6 @@ const AboutUs = () => {
   if (isLoading) return <Loading />;
   if (error) return <FetchingError />;
 
-  console.log(aboutUs);
-
   return (
     <div
       className="bg-fixed bg-center bg-cover"
