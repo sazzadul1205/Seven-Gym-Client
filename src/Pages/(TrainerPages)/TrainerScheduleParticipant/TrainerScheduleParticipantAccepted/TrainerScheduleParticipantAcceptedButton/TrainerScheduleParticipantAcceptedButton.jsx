@@ -22,11 +22,11 @@ import TrainerBookingInfoModal from "../../../TrainerBookingRequest/TrainerBooki
 
 // Generate a unique Refund ID using user email, current date, and random digits.
 const generateRefundID = (userEmail) => {
-  const randomDigits = Math.floor(10000 + Math.random() * 90000); // Generate 5 random digits.
+  const randomDigits = Math.floor(10000 + Math.random() * 90000);
   const currentDate = new Date()
-    .toLocaleDateString("en-GB") // Format: DD/MM/YYYY.
+    .toLocaleDateString("en-GB")
     .split("/")
-    .join(""); // Convert to DDMMYYYY format.
+    .join("");
   return `SR${currentDate}${userEmail}${randomDigits}`;
 };
 
@@ -34,7 +34,7 @@ const generateRefundID = (userEmail) => {
 const getCurrentDateTime = () => {
   const now = new Date();
   const day = String(now.getDate()).padStart(2, "0");
-  const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-based.
+  const month = String(now.getMonth() + 1).padStart(2, "0");
   const year = now.getFullYear();
   const hours = String(now.getHours()).padStart(2, "0");
   const minutes = String(now.getMinutes()).padStart(2, "0");
@@ -47,31 +47,14 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
 
   // Ref to control modal visibility using native <dialog> element
   const modalRef = useRef(null);
-
   const modalRefClock = useRef(null);
 
-  // State to track which booking is selected for modal view
+  // local states
   const [selectedBooking, setSelectedBooking] = useState(null);
-
-  // State to track which booking is selected for modal view
   const [selectedAcceptedBooking, setSelectedAcceptedBooking] = useState(null);
-
-  // Processing Sate
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Modal close handler
-  const closeModal = () => {
-    modalRef.current?.close();
-    setSelectedBooking(null);
-  };
-
-  // Modal close handler
-  const closeClockModal = () => {
-    modalRefClock.current?.close();
-    setSelectedAcceptedBooking(null);
-  };
-
-  // 🔹 Function: Clear a Booking that has already ended
+  // Function: Clear a Booking that has already ended
   const handleClearEndedBooking = async (booking) => {
     const id = booking?._id;
     if (!id) return;
@@ -110,8 +93,7 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
         showConfirmButton: false,
       });
 
-      // Optional: Refetch state or update local UI
-      // refetchBookings?.();
+      refetch();
     } catch (error) {
       console.error("Error clearing ended booking:", error);
       Swal.fire({
@@ -124,16 +106,14 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
     }
   };
 
-  // 🔹 Function: Drop a currently running session with refund + history tracking
+  // Function: Drop a currently running session with refund + history tracking
   const handleDropSession = async (booking) => {
     const id = booking?._id;
     if (!id) return console.warn("No booking ID found.");
 
     try {
       setIsProcessing(true);
-      // ===========================
-      // 🔸 STEP 1: Confirm Drop Intent
-      // ===========================
+      // STEP 1: Confirm Drop Intent
       const confirm = await Swal.fire({
         title: "Are you sure?",
         text: "This will clear the booking permanently.",
@@ -146,15 +126,11 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
 
       if (!confirm.isConfirmed) return;
 
-      // ================================
-      // 🔸 STEP 2: Prompt for Drop Reason
-      // ================================
-      const reason = await getRejectionReason(); // Should return string
+      // STEP 2: Prompt for Drop Reason
+      const reason = await getRejectionReason();
       if (!reason) return;
 
-      // =========================================
-      // 🔸 STEP 3: Prompt for Refund Percentage
-      // =========================================
+      // STEP 3: Prompt for Refund Percentage
       const totalPrice = booking?.totalPrice || 0;
 
       // Passing reason and price to refund selector modal
@@ -165,32 +141,30 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
 
       if (selectedRefundPercentage === undefined) return;
 
-      // ====================================
-      // 🔸 STEP 4: Prepare Data for Insertion
-      // ====================================
+      // STEP 4: Prepare Data for Insertion
       const refundAmount = Number(
         ((selectedRefundPercentage / 100) * totalPrice).toFixed(2)
       );
       const refundID = generateRefundID(booking?.bookerEmail);
-      const todayDateTime = getCurrentDateTime(); // Ex: "15-04-2025T12:34"
+      const todayDateTime = getCurrentDateTime();
 
       // eslint-disable-next-line no-unused-vars
       const { _id, ...bookingDataForHistory } = booking;
 
-      // ✅ Enrich booking data for archiving
+      // Enrich booking data for archiving
       bookingDataForHistory.droppedAt = todayDateTime;
       bookingDataForHistory.status = "Dropped";
       bookingDataForHistory.reason = reason;
       bookingDataForHistory.RefundAmount = refundAmount;
       bookingDataForHistory.RefundPercentage = `${selectedRefundPercentage}%`;
 
-      // ✅ Refund transaction details
+      // Refund transaction details
       const PaymentRefund = {
         stripePaymentID: booking?.paymentID,
         refundAmount,
       };
 
-      // ✅ Session refund metadata
+      // Session refund metadata
       const SessionRefundData = {
         bookingDataForHistory,
         refundedAt: todayDateTime,
@@ -199,16 +173,14 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
         refundTime: new Date().toISOString(),
       };
 
-      // ✅ Reset trainer schedule (remove participant)
+      // Reset trainer schedule (remove participant)
       const ResetSessionPayload = {
         trainerName: booking?.trainer,
         ids: booking?.sessions,
         bookerEmail: booking?.bookerEmail,
       };
 
-      // ==================================
-      // 🔸 STEP 5: Fire All Requests Together
-      // ==================================
+      // STEP 5: Fire All Requests Together
       await Promise.all([
         // 1. Archive booking
         axiosPublic.post("/Trainer_Booking_History", bookingDataForHistory),
@@ -229,9 +201,7 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
         ),
       ]);
 
-      // ========================
-      // 🔸 STEP 6: Show Success UI
-      // ========================
+      // STEP 6: Show Success UI
       Swal.fire({
         title: "Cleared!",
         text: `Booking archived with ${selectedRefundPercentage}% refund ($${refundAmount}).`,
@@ -243,7 +213,7 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
       // Optional: Refetch UI/State
       refetch?.();
     } catch (error) {
-      // 🔻 Error Catch Block
+      // Error Catch Block
       console.error("Error during drop:", error);
       Swal.fire({
         title: "Error!",
@@ -253,6 +223,18 @@ const TrainerScheduleParticipantAcceptedButton = ({ booking, refetch }) => {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  // Modal close handler
+  const closeModal = () => {
+    modalRef.current?.close();
+    setSelectedBooking(null);
+  };
+
+  // Modal close handler
+  const closeClockModal = () => {
+    modalRefClock.current?.close();
+    setSelectedAcceptedBooking(null);
   };
 
   return (
@@ -371,8 +353,8 @@ TrainerScheduleParticipantAcceptedButton.propTypes = {
     bookerEmail: PropTypes.string.isRequired,
     trainer: PropTypes.string,
     sessions: PropTypes.arrayOf(PropTypes.string),
-    startAt: PropTypes.string, // could be null or undefined if not set
-    status: PropTypes.string, // e.g., "Accepted", "Started", "Ended", "Dropped"
+    startAt: PropTypes.string,
+    status: PropTypes.string,
     totalPrice: PropTypes.string,
     paymentID: PropTypes.string,
   }).isRequired,

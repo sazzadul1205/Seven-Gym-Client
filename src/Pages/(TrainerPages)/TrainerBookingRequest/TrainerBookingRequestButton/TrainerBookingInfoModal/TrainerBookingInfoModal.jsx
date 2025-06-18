@@ -109,6 +109,16 @@ const TrainerBookingInfoModal = ({
         </div>
       )}
 
+      {(!bookingValidity || selectedBooking?.status === "Ended") && (
+        <div className="px-5 pt-4">
+          <p className="text-sm text-red-600 font-semibold">
+            {selectedBooking?.status === "Ended"
+              ? "❗ Status Ended"
+              : `❗ ${bookingInvalidReason}`}
+          </p>
+        </div>
+      )}
+
       {/* Basic Information : Booker Info , Booking Details */}
       <div className="overflow-auto px-4 py-6 sm:px-6 md:px-8">
         <div className="flex bg-gray-200 flex-col lg:flex-row items-start lg:items-center justify-between gap-6 py-2">
@@ -174,7 +184,7 @@ const TrainerBookingInfoModal = ({
             </div>
 
             {/* Status */}
-            <div className="flex justify-between">
+            <div className={`flex justify-between`}>
               <strong>Status:</strong>
               <span>{selectedBooking?.status || "N/A"}</span>
             </div>

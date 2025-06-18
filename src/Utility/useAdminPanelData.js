@@ -326,6 +326,14 @@ const useAdminPanelData = () => {
     refetch: AboutUsRefetch,
   } = useFetchData("AboutUsData", "/AboutUs");
 
+  // 35. Fetch Terms Of Service
+  const {
+    data: TermsOfServiceData,
+    isLoading: TermsOfServiceIsLoading,
+    error: TermsOfServiceError,
+    refetch: TermsOfServiceRefetch,
+  } = useFetchData("TermsOfServiceData", "/Terms_Of_Service");
+
   // Unified refetch function
   const refetchAll = async () => {
     await GalleryRefetch();
@@ -338,6 +346,7 @@ const useAdminPanelData = () => {
     await GymFeaturesRefetch();
     await TestimonialsRefetch();
     await CommunityPostsRefetch();
+    await TermsOfServiceRefetch();
     await TrainersScheduleRefetch();
     await HomeBannerSectionRefetch();
     await TierUpgradeRefundRefetch();
@@ -375,6 +384,7 @@ const useAdminPanelData = () => {
     OurMissionsIsLoading ||
     GymFeaturesIsLoading ||
     TestimonialsIsLoading ||
+    TermsOfServiceIsLoading ||
     CommunityPostsIsLoading ||
     TrainersScheduleIsLoading ||
     TierUpgradeRefundIsLoading ||
@@ -412,6 +422,7 @@ const useAdminPanelData = () => {
     OurMissionsError ||
     GymFeaturesError ||
     TestimonialsError ||
+    TermsOfServiceError ||
     CommunityPostsError ||
     TrainersScheduleError ||
     HomeBannerSectionError ||
@@ -456,6 +467,7 @@ const useAdminPanelData = () => {
     OurMissionsData,
     AllTrainersData,
     TestimonialsData,
+    TermsOfServiceData,
     CommunityPostsData,
     TrainersScheduleData,
     HomeBannerSectionData,

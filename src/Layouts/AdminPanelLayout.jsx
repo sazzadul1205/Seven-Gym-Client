@@ -19,6 +19,7 @@ import gallery from "../assets/AdminPanel/gallery.png";
 import homepage from "../assets/AdminPanel/homepage.png";
 import costumer from "../assets/AdminPanel/costumer.png";
 import ProfileDefault from "../assets/ProfileDefault.jpg";
+import dashboard from "../assets/AdminPanel/dashboard.png";
 import satisfaction from "../assets/AdminPanel/satisfaction.png";
 import trainerInvoice from "../assets/AdminPanel/trainerInvoice.png";
 import communityPosts from "../assets/AdminPanel/communityPosts.png";
@@ -33,18 +34,19 @@ import useAdminPanelData from "../Utility/useAdminPanelData";
 import FetchingError from "../Shared/Component/FetchingError";
 
 // Import Tabs Components
+import AdminDashboard from "../Pages/(AdminPanel)/AdminDashboard/AdminDashboard";
 import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserManagement";
 import AllTrainerBookings from "../Pages/(AdminPanel)/AllTrainerBookings/AllTrainerBookings";
+import FeedbackManagement from "../Pages/(AdminPanel)/FeedbackManagement/FeedbackManagement";
 import AllTrainerSchedule from "../Pages/(AdminPanel)/AllTrainerSchedule/AllTrainerSchedule";
 import TierUpgradeInvoices from "../Pages/(AdminPanel)/TierUpgradeInvoices/TierUpgradeInvoices";
 import HomePageAdminControl from "../Pages/(AdminPanel)/HomePageAdminControl/HomePageAdminControl";
 import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
 import TestimonialsManagement from "../Pages/(AdminPanel)/TestimonialsManagement/TestimonialsManagement";
+import AllExtraPageManagement from "../Pages/(AdminPanel)/AllExtraPageManagement/AllExtraPageManagement";
 import GalleryPageAdminControl from "../Pages/(AdminPanel)/GalleryPageAdminControl/GalleryPageAdminControl";
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
 import CommunityPostsManagement from "../Pages/(AdminPanel)/CommunityPostsManagement/CommunityPostsManagement";
-import FeedbackManagement from "../Pages/(AdminPanel)/FeedbackManagement/FeedbackManagement";
-import AllExtraPageManagement from "../Pages/(AdminPanel)/AllExtraPageManagement/AllExtraPageManagement";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -95,6 +97,7 @@ const AdminPanelLayout = () => {
     OurMissionsData,
     AllTrainersData,
     TestimonialsData,
+    TermsOfServiceData,
     CommunityPostsData,
     TrainersScheduleData,
     HomeBannerSectionData,
@@ -137,6 +140,24 @@ const AdminPanelLayout = () => {
   };
 
   const tabs = [
+    {
+      id: "Dashboard",
+      Icon: dashboard,
+      title: "Dashboard",
+      content: (
+        <AdminDashboard
+          TrainerSessionRefundStatusData={TrainerSessionRefundStatusData}
+          TrainerSessionActiveStatusData={TrainerSessionActiveStatusData}
+          TrainerSessionPaymentStatusData={TrainerSessionPaymentStatusData}
+          TrainerSessionCompletedStatusData={TrainerSessionCompletedStatusData}
+          DailyTierUpgradePaymentData={DailyTierUpgradePaymentData}
+          DailyTierUpgradeRefundData={DailyTierUpgradeRefundData}
+          AllTrainersData={AllTrainersData}
+          AllUsersData={AllUsersData}
+          Refetch={refetchAll}
+        />
+      ),
+    },
     {
       id: "All_Users",
       Icon: users,
@@ -280,6 +301,7 @@ const AdminPanelLayout = () => {
           Refetch={refetchAll}
           AboutUsData={AboutUsData}
           OurMissionsData={OurMissionsData}
+          TermsOfServiceData={TermsOfServiceData}
         />
       ),
     },

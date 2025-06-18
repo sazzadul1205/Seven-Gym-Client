@@ -60,6 +60,10 @@ const TrainerScheduleParticipantAccepted = ({
                     key={booking._id}
                     className={`transition-colors duration-200 hover:bg-gray-100 border-b border-gray-500 ${
                       !booking.startAt ? "bg-green-100 hover:bg-green-50" : ""
+                    } ${
+                      booking.status === "Ended"
+                        ? "bg-red-100 hover:bg-red-50"
+                        : ""
                     }`}
                   >
                     {/* Booker Info */}
@@ -132,7 +136,11 @@ const TrainerScheduleParticipantAccepted = ({
             {TrainerBookingAcceptedData.map((booking) => (
               <div
                 key={booking._id}
-                className="p-4 rounded-lg shadow-md border bg-white"
+                className={`transition-colors duration-200 hover:bg-gray-100 border-b border-gray-500 ${
+                  !booking.startAt ? "bg-green-100 hover:bg-green-50" : ""
+                } ${
+                  booking.status === "Ended" ? "bg-red-100 hover:bg-red-50" : ""
+                }`}
               >
                 {/* User Info */}
                 <div className="mb-2 font-medium">
@@ -143,10 +151,12 @@ const TrainerScheduleParticipantAccepted = ({
 
                 {/* Booking Data */}
                 <div className="text-sm space-y-1">
+
                   {/* Accept */}
                   <div className="flex justify-between">
                     <strong>Accept At:</strong> {formatDate(booking.acceptedAt)}
                   </div>
+
                   {/* Price */}
                   <p className="flex justify-between">
                     <strong>Price:</strong>{" "}
@@ -154,11 +164,13 @@ const TrainerScheduleParticipantAccepted = ({
                       ? "Free"
                       : `$ ${booking?.totalPrice}`}
                   </p>
+
                   {/* Duration */}
                   <p className="flex justify-between">
                     <strong>Duration:</strong> {booking.durationWeeks}{" "}
                     {booking.durationWeeks === 1 ? "Week" : "Weeks"}
                   </p>
+                  
                   {/* Status */}
                   <p className="flex justify-between">
                     <strong>Status:</strong>{" "}
