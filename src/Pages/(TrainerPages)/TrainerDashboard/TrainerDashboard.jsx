@@ -31,6 +31,8 @@ const TrainerDashboard = ({
         TrainerData={TrainerData}
         TrainerBookingHistory={TrainerBookingHistory}
         TrainerBookingAccepted={TrainerBookingAccepted}
+        TrainerBookingAcceptedDailyStats={TrainerBookingAcceptedDailyStats}
+        TrainerBookingHistoryDailyStats={TrainerBookingHistoryDailyStats}
       />
 
       {/* Divider */}
