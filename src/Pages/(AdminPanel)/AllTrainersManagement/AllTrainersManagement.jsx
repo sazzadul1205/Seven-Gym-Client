@@ -97,7 +97,7 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
   }, [currentPage]);
 
   return (
-    <div className="text-black">
+    <div className="text-black pb-5">
       {/* Header */}
       <div className="bg-gray-400 py-2">
         <h3 className="font-semibold text-white text-center text-lg">

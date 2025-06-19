@@ -54,7 +54,7 @@ const TierUpgradeInvoices = ({
 
   useEffect(() => {
     setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 300); // Adjust delay if needed
+    const timer = setTimeout(() => setIsLoading(false), 300);
     return () => clearTimeout(timer);
   }, [activeTab]);
 

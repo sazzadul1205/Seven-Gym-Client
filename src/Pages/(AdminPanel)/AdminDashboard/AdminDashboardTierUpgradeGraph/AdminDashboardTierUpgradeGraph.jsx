@@ -20,11 +20,11 @@ const formatDate = (dateStr) => {
   const date = new Date(dateStr + "T00:00:00Z");
 
   return {
-    full: date.toISOString().split("T")[0], // Full ISO date string yyyy-mm-dd
-    day: String(date.getUTCDate()).padStart(2, "0"), // Day of month, zero-padded
-    month: date.toLocaleString("default", { month: "long", timeZone: "UTC" }), // Month name in UTC
-    year: date.getUTCFullYear(), // Year number
-    timestamp: date.getTime(), // Milliseconds since epoch UTC
+    full: date.toISOString().split("T")[0],
+    day: String(date.getUTCDate()).padStart(2, "0"),
+    month: date.toLocaleString("default", { month: "long", timeZone: "UTC" }),
+    year: date.getUTCFullYear(),
+    timestamp: date.getTime(),
   };
 };
 
@@ -37,13 +37,13 @@ const generateAllDays = (year, month) => {
   // Loop while the month is still the target month
   while (date.getUTCMonth() === targetMonth) {
     days.push({
-      _id: date.toISOString().split("T")[0], // yyyy-mm-dd string
-      day: String(date.getUTCDate()).padStart(2, "0"), // zero-padded day
-      totalRevenue: 0, // initialize revenue to zero
-      totalRefunded: 0, // initialize refunded to zero
-      paymentCount: 0, // initialize payment count
-      refundCount: 0, // initialize refund count
-      timestamp: date.getTime(), // timestamp in ms
+      _id: date.toISOString().split("T")[0],
+      day: String(date.getUTCDate()).padStart(2, "0"),
+      totalRevenue: 0,
+      totalRefunded: 0,
+      paymentCount: 0,
+      refundCount: 0,
+      timestamp: date.getTime(),
     });
     // Move to the next day by adding 24 hours in ms
     date = new Date(date.getTime() + 24 * 60 * 60 * 1000);
@@ -96,7 +96,7 @@ const AdminDashboardTierUpgradeGraph = ({
         if (dataMap[date]) {
           dataMap[date].totalRevenue = item.totalRevenue || 0;
           dataMap[date].paymentCount = item.count || 0;
-          dataMap[date].day = formatDate(item._id).day; // recalc day for consistency
+          dataMap[date].day = formatDate(item._id).day;
         }
       });
 
@@ -121,6 +121,7 @@ const AdminDashboardTierUpgradeGraph = ({
 
   // List of available months sorted newest first
   const availableMonths = Object.keys(mergedDataByMonth).sort().reverse();
+
   // Selected month state, default to latest month or empty string if none
   const [selectedMonth, setSelectedMonth] = useState(availableMonths[0] || "");
 
@@ -149,7 +150,7 @@ const AdminDashboardTierUpgradeGraph = ({
     });
   };
   return (
-    <div>
+    <>
       {/* Header and month selector */}
       <div className="relative bg-gray-400 px-4 py-3 text-white rounded-t flex items-center justify-center">
         {/* Centered Title */}
@@ -161,7 +162,7 @@ const AdminDashboardTierUpgradeGraph = ({
         <div className="absolute right-4 flex items-center gap-2">
           <label className="text-white">Select Month</label>
           <select
-            className="border rounded min-w-[250px] bg-white hover:cursor-pointer px-2 py-1"
+            className="border rounded min-w-[250px] bg-white text-black hover:cursor-pointer px-2 py-1"
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
           >
@@ -184,35 +185,55 @@ const AdminDashboardTierUpgradeGraph = ({
       </div>
 
       {/* Line Chart for revenue and refunded amounts */}
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={selectedData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="timestamp"
-            type="number"
-            domain={["dataMin", "dataMax"]}
-            tickFormatter={xAxisTickFormatter}
-            scale="time"
-          />
-          <YAxis />
-          <Tooltip labelFormatter={tooltipLabelFormatter} />
-          <Legend />
-          <Line
-            type="monotone"
-            dataKey="totalRevenue"
-            stroke="#00C49F"
-            name="Revenue"
-          />
-          <Line
-            type="monotone"
-            dataKey="totalRefunded"
-            stroke="#FF8042"
-            name="Refunded"
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
+      <div className="py-10 px-5">
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={selectedData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="timestamp"
+              type="number"
+              domain={["dataMin", "dataMax"]}
+              tickFormatter={xAxisTickFormatter}
+              scale="time"
+            />
+            <YAxis />
+            <Tooltip labelFormatter={tooltipLabelFormatter} />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="totalRevenue"
+              stroke="#00C49F"
+              name="Revenue"
+            />
+            <Line
+              type="monotone"
+              dataKey="totalRefunded"
+              stroke="#FF8042"
+              name="Refunded"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </>
   );
+};
+
+// Prop Validation
+AdminDashboardTierUpgradeGraph.propTypes = {
+  DailyTierUpgradePaymentData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      totalRevenue: PropTypes.number,
+      count: PropTypes.number,
+    })
+  ).isRequired,
+  DailyTierUpgradeRefundData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      totalRefunded: PropTypes.number,
+      count: PropTypes.number,
+    })
+  ).isRequired,
 };
 
 export default AdminDashboardTierUpgradeGraph;
