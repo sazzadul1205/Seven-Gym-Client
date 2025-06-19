@@ -20,7 +20,6 @@ import booking from "../assets/AdminPanel/booking.png";
 import gallery from "../assets/AdminPanel/gallery.png";
 import homepage from "../assets/AdminPanel/homepage.png";
 import costumer from "../assets/AdminPanel/costumer.png";
-import ProfileDefault from "../assets/ProfileDefault.jpg";
 import dashboard from "../assets/AdminPanel/dashboard.png";
 import satisfaction from "../assets/AdminPanel/satisfaction.png";
 import trainerInvoice from "../assets/AdminPanel/trainerInvoice.png";
@@ -57,7 +56,7 @@ const AdminPanelLayout = () => {
   const [tabLoading, setTabLoading] = useState(false);
 
   const searchParams = new URLSearchParams(location.search);
-  const initialTab = searchParams.get("tab") || "Admin_Dashboard";
+  const initialTab = searchParams.get("tab") || "Dashboard";
   const [activeTab, setActiveTab] = useState(initialTab);
 
   useEffect(() => {
@@ -69,7 +68,7 @@ const AdminPanelLayout = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const urlTab = params.get("tab") || "Admin_Dashboard";
+    const urlTab = params.get("tab") || "Dashboard";
     if (urlTab !== activeTab) {
       setActiveTab(urlTab);
     }
@@ -84,6 +83,7 @@ const AdminPanelLayout = () => {
     error,
 
     // Data
+    UserData,
     GalleryData,
     AboutUsData,
     AllUsersData,
@@ -129,6 +129,8 @@ const AdminPanelLayout = () => {
     refetchAll();
     setTimeout(() => setSpinning(false), 1000);
   };
+
+  // console.log(UserData);
 
   const tabs = [
     {
@@ -338,6 +340,10 @@ const AdminPanelLayout = () => {
     }
   };
 
+  if (!UserData) {
+    return <div>Loading user info...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -346,16 +352,18 @@ const AdminPanelLayout = () => {
         <div className="flex gap-2 items-center">
           {/* Avatar */}
           <img
-            src={ProfileDefault}
+            src={UserData?.profileImage || ""}
             alt="Admin Profile"
             className="w-12 h-12 rounded-full border border-gray-300"
           />
           {/* Basic Info */}
           <div className="text-black">
             {/* Name */}
-            <p className="font-semibold">Admin</p>
+            <p className="font-semibold">
+              {UserData?.fullName || "I Am Admin"}
+            </p>
             {/* Role */}
-            <p className="text-sm font-light">Admin</p>
+            <p className="text-sm font-light">{UserData?.role || "Admin"}</p>
           </div>
         </div>
 

@@ -10,6 +10,7 @@ import SocialLinks from "../../../Shared/SocialLinks/SocialLinks";
 // Background Image
 import LoginBack from "../../../assets/Background-Auth/LoginBack.jpeg";
 import CommonButton from "../../../Shared/Buttons/CommonButton";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const SignUp = () => {
   // Custom authentication hook
@@ -18,6 +19,9 @@ const SignUp = () => {
 
   // Loading state for form submission
   const [loading, setLoading] = useState(false);
+
+  // Inside the component
+  const [showPassword, setShowPassword] = useState(false);
 
   // Form validation & state handling using react-hook-form
   const {
@@ -105,18 +109,28 @@ const SignUp = () => {
               <label className="block text-gray-700 font-semibold text-xl pb-2">
                 Password
               </label>
-              <input
-                type="password"
-                placeholder="********"
-                className="input w-full text-black bg-white shadow-lg hover:shadow-xl"
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters long",
-                  },
-                })}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="********"
+                  className="input w-full text-black bg-white shadow-lg hover:shadow-xl pr-10 cursor-pointer"
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters long",
+                    },
+                  })}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-600 focus:outline-none"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <FiEye size={20} /> : <FiEyeOff size={20} />}
+                </button>
+              </div>
               {errors.password && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors.password.message}

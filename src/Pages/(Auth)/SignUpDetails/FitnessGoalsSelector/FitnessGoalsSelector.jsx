@@ -154,12 +154,29 @@ const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
 
   return (
     <div className="space-y-4">
+      {/* Selector Dropdown */}
+      <div className="mb-4 pt-2">
+        <Select
+          options={availableGoals}
+          onChange={handleSelect}
+          placeholder="Search and select goals..."
+          isSearchable
+          className="basic-multi-select text-black"
+        />
+      </div>
+
+      {/* Goals Area  */}
       <div
         className="w-full"
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
       >
-        <p className="font-semibold text-lg text-black py-3">My Fitness Goals</p>
+        {/* Title */}
+        <h3 className="font-semibold text-lg text-black py-3">
+          My Fitness Goals
+        </h3>
+
+        {/* Area */}
         <div className="flex flex-wrap bg-white gap-2 py-4 px-2">
           {selectedGoals.map((goal) => {
             const bgColor = goalColors[goal] || "#F72C5B";
@@ -168,7 +185,7 @@ const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
             return (
               <div
                 key={goal}
-                className="flex text-sm md:text-md cursor-pointer font-semibold items-center rounded-full px-4 md:px-5 py-2 gap-5 hover:opacity-90"
+                className="flex text-sm cursor-pointer font-semibold items-center rounded-full px-4 md:px-4 py-2 gap-5 hover:opacity-90"
                 style={{
                   backgroundColor: bgColor,
 
@@ -181,17 +198,6 @@ const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
             );
           })}
         </div>
-      </div>
-
-      {/* Selector Dropdown */}
-      <div className="mb-4 pt-2">
-        <Select
-          options={availableGoals}
-          onChange={handleSelect}
-          placeholder="Search and select goals..."
-          isSearchable
-          className="basic-multi-select text-black"
-        />
       </div>
     </div>
   );

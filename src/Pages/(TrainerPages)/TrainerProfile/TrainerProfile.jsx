@@ -10,9 +10,6 @@ import TrainerProfileSchedule from "./TrainerProfileSchedule/TrainerProfileSched
 import TrainerDetailsTestimonials from "../../(PublicPages)/(Trainers)/TrainersDetails/TrainerDetailsTestimonials/TrainerDetailsTestimonials";
 
 const TrainerProfile = ({ TrainerScheduleData, TrainerData, refetch }) => {
-  // Extract trainer details
-  // const TrainerProfileData = TrainerData?.[0] || null;
-
   // Extract schedule details
   const TrainerProfileScheduleData = TrainerScheduleData?.[0] || null;
 

@@ -11,9 +11,9 @@ import Loading from "../Shared/Loading/Loading";
 import FetchingError from "../Shared/Component/FetchingError";
 
 const TrainerPrivateRoute = ({ children }) => {
-  const { user, loading } = useAuth(); // Get current user and loading status
-  const location = useLocation(); // For redirecting back after login
-  const axiosPublic = useAxiosPublic(); // Axios instance for public API calls
+  const { user, loading } = useAuth(); 
+  const location = useLocation(); 
+  const axiosPublic = useAxiosPublic(); 
 
   // Step 1: Fetch user's role based on their email
   const {
@@ -26,7 +26,7 @@ const TrainerPrivateRoute = ({ children }) => {
       axiosPublic
         .get(`/Users/UserRole?email=${user.email}`)
         .then((res) => res.data),
-    enabled: !!user?.email, // Only run this query when the user's email is available
+    enabled: !!user?.email, 
   });
 
   // Step 2: If the role is Trainer, check if they're banned

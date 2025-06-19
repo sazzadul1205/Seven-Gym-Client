@@ -359,7 +359,7 @@ AdminDashboardCards.propTypes = {
 export default AdminDashboardCards;
 
 // Card component with comparison arrow
-const Card = ({ icon: Icon, title, value, currency, change }) => {
+const Card = ({ icon: Icon, title, value, currency = false, change }) => {
   const isUp = change.direction === "up";
   const isDown = change.direction === "down";
 
@@ -377,7 +377,6 @@ const Card = ({ icon: Icon, title, value, currency, change }) => {
               })
             : value.toLocaleString()
           : value}
-        {/* Change indicator */}
         {isUp && (
           <FiArrowUp
             className="text-green-500 font-bold text-xl"
@@ -414,8 +413,4 @@ Card.propTypes = {
     direction: PropTypes.oneOf(["up", "down", "neutral"]),
     percent: PropTypes.number,
   }).isRequired,
-};
-
-Card.defaultProps = {
-  currency: false,
 };

@@ -1,6 +1,9 @@
+import useAuth from "../Hooks/useAuth";
 import useFetchData from "./useFetchData";
 
 const useAdminPanelData = () => {
+  const { user } = useAuth();
+
   // 1. All Users
   const {
     data: AllUsersData,
@@ -334,8 +337,17 @@ const useAdminPanelData = () => {
     refetch: TermsOfServiceRefetch,
   } = useFetchData("TermsOfServiceData", "/Terms_Of_Service");
 
+  // 35. Fetch Terms Of Service
+  const {
+    data: UserData,
+    isLoading: UserIsLoading,
+    error: UserError,
+    refetch: UserRefetch,
+  } = useFetchData("UserData", `/Users?email=${user?.email}`);
+
   // Unified refetch function
   const refetchAll = async () => {
+    await UserRefetch();
     await GalleryRefetch();
     await AboutUsRefetch();
     await AllUsersRefetch();
@@ -375,6 +387,7 @@ const useAdminPanelData = () => {
   };
 
   const isLoading =
+    UserIsLoading ||
     GalleryIsLoading ||
     AboutUsIsLoading ||
     AllUsersIsLoading ||
@@ -413,6 +426,7 @@ const useAdminPanelData = () => {
     TrainerBookingCancelledStatusIsLoading;
 
   const error =
+    UserError ||
     GalleryError ||
     AboutUsError ||
     AllUsersError ||
@@ -458,6 +472,7 @@ const useAdminPanelData = () => {
     error,
 
     // Data State
+    UserData,
     GalleryData,
     AboutUsData,
     AllUsersData,

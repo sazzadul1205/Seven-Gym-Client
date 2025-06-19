@@ -61,6 +61,8 @@ import AdminPanelLayout from "./Layouts/AdminPanelLayout.jsx";
 
 // Banned Page
 import BannedPage from "./Pages/BannedPage/BannedPage.jsx";
+import AdminPrivateRoute from "./Routes/AdminPrivateRoute.jsx";
+import ScrollToTop from "./Routes/ScrollToTop.jsx";
 
 // React Query Client
 const queryClient = new QueryClient();
@@ -71,6 +73,7 @@ createRoot(document.getElementById("root")).render(
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             {/* Page Not Found */}
             <Route path="*" element={<PageNotFound />} />
@@ -113,7 +116,10 @@ createRoot(document.getElementById("root")).render(
               />
               <Route path="/About/AboutUs" element={<AboutUs />} />
               <Route path="/About/Feedback" element={<Feedback />} />
-              <Route path="/About/TermsOfServices" element={<TermsOfService />} />
+              <Route
+                path="/About/TermsOfServices"
+                element={<TermsOfService />}
+              />
 
               {/* User Pages Links */}
 
@@ -187,7 +193,14 @@ createRoot(document.getElementById("root")).render(
             />
 
             {/* Admin Page Links */}
-            <Route path="/Admin" element={<AdminPanelLayout />} />
+            <Route
+              path="/Admin"
+              element={
+                <AdminPrivateRoute>
+                  <AdminPanelLayout />
+                </AdminPrivateRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>

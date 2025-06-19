@@ -1,11 +1,26 @@
+import { useRef, useState } from "react";
+
+// Import Packages
 import PropTypes from "prop-types";
+
+// Import Common Button
+import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+
+// Import Modal
 import ClassBookingFormModal from "./ClassBookingFormModal/ClassBookingFormModal";
 
 // Reusable Pricing Card Component
 const PriceCard = ({ title, price }) => (
-  <div className="flex flex-col items-center text-center border border-black bg-gradient-to-bl from-gray-400 to-gray-300 shadow-lg hover:shadow-2xl p-4 rounded-md transition-transform duration-300 hover:scale-105">
-    <h4 className="text-lg font-semibold text-gray-700">{title}</h4>
-    <p className="text-2xl font-bold text-gray-900 mt-2">${price}</p>
+  <div
+    className="flex flex-col items-center text-center
+      bg-gradient-to-bl from-white to-gray-400
+      hover:bg-gradient-to-tr
+      shadow-lg hover:shadow-2xl
+      p-6 rounded-md
+      transition-transform duration-500 hover:scale-105"
+  >
+    <h4 className="text-lg font-semibold text-black">{title}</h4>
+    <p className="text-3xl font-extrabold text-gray-900 mt-3">${price}</p>
   </div>
 );
 
@@ -15,39 +30,41 @@ PriceCard.propTypes = {
 };
 
 const ClassesDetailsPrice = ({ ThisModule, user, UsersData }) => {
-  // Destructure properties with default values
-  const { dailyClassFee = 0 } = ThisModule || {};
+  const bookingModalRef = useRef(null);
 
-  // Calculate fees with an extra $20 added
+  // Local State Management
+  const [loading, setLoading] = useState(false);
+
+  // Fee calculations
+  const { dailyClassFee = 0 } = ThisModule || {};
   const updatedDailyFee = (dailyClassFee + 20).toFixed(2);
   const updatedWeeklyFee = (dailyClassFee * 7 + 20).toFixed(2);
   const updatedMonthlyFee = (dailyClassFee * 30 + 20).toFixed(2);
   const updatedYearlyFee = (dailyClassFee * 365 + 20).toFixed(2);
 
-  // Handle Join Class button click
-  const handleJoinClass = () => {
-    const modal = document.getElementById("Class_Booking_Modal");
-    if (modal?.showModal) {
-      modal.showModal();
+  // Modal controls
+  const openBookingModal = () => {
+    setLoading(true);
+    if (bookingModalRef.current?.showModal) {
+      bookingModalRef.current.showModal();
     } else {
-      console.error("Modal not found or showModal method is not supported.");
+      console.error("Modal not found or unsupported.");
     }
+    setTimeout(() => setLoading(false), 300);
   };
 
   return (
-    <div className="max-w-7xl bg-gradient-to-bl from-gray-200 to-gray-400 rounded-lg shadow-lg mx-auto p-6">
-      {/* Header Section */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 border-b-2 border-gray-100 pb-2">
-        <h3 className="text-2xl font-semibold text-gray-800">
-          Detailed Prices
-        </h3>
-        <p className="px-5 py-1 bg-blue-100 text-blue-800 text-lg font-medium rounded-full hover:scale-105 transform transition-all duration-300">
+    <div className="bg-gradient-to-bl from-gray-200/80 to-gray-400/50 px-6 py-2 mx-4 md:mx-32 rounded-xl shadow-inner">
+      {/* Header */}
+      <header className="flex justify-between items-center border-b-2 border-gray-100 pb-3">
+        <h3 className="text-2xl text-white font-semibold">Detailed Prices</h3>
+        <p className="px-10 py-2 bg-red-100 text-red-800 text-lg font-medium rounded-xl select-none">
           Price without Discount
         </p>
-      </div>
+      </header>
 
-      {/* Pricing Details Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center pt-2">
+      {/* Pricing Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-3">
         <PriceCard title="Daily Class Fee" price={updatedDailyFee} />
         <PriceCard title="Weekly Fee" price={updatedWeeklyFee} />
         <PriceCard title="Monthly Fee" price={updatedMonthlyFee} />
@@ -55,45 +72,54 @@ const ClassesDetailsPrice = ({ ThisModule, user, UsersData }) => {
       </div>
 
       {/* Join Class Button */}
-      <div className="flex justify-center mt-5">
+      <div className="flex justify-center py-2">
         {user && UsersData ? (
-          <button
-            onClick={handleJoinClass}
-            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 border-2 border-red-500 bg-linear-to-tl hover:bg-linear-to-br from-[#c23e5f] to-[#ff0040] py-2 font-semibold rounded-xl hover:text-white"
-          >
-            Join Class
-          </button>
+          <CommonButton
+            clickEvent={openBookingModal}
+            type="button"
+            text="Join Class"
+            isLoading={loading}
+            loadingText="Preparing..."
+            bgColor="OriginalRed"
+            textColor="text-white"
+            px="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 px-0"
+            py="py-3"
+            borderRadius="rounded-xl"
+            cursorStyle="cursor-pointer"
+            width="auto"
+            className="shadow-md hover:shadow-lg transition-transform"
+          />
         ) : (
-          <button
+          <CommonButton
+            text="Login to Join Class"
+            type="button"
             disabled
-            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 border-2 border-gray-400 bg-gray-300 py-2 font-semibold rounded-xl cursor-not-allowed"
-          >
-            Login to Join Class
-          </button>
+            bgColor="gray"
+            textColor="text-gray-600"
+            px="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 px-0"
+            py="py-3"
+            borderRadius="rounded-xl"
+            cursorStyle="cursor-not-allowed"
+            className="select-none"
+          />
         )}
       </div>
 
-      {/* Class Booking Modal */}
-      {user && UsersData && (
-        <dialog id="Class_Booking_Modal" className="modal">
-          <ClassBookingFormModal
-            ThisModule={ThisModule}
-            user={user}
-            UsersData={UsersData}
-          />
-        </dialog>
-      )}
+      {/* Modal */}
+      <dialog ref={bookingModalRef} id="Class_Booking_Modal" className="modal">
+        <ClassBookingFormModal ThisModule={ThisModule} UsersData={UsersData} />
+      </dialog>
     </div>
   );
 };
 
-// PropTypes validation
+// Prop Validation
 ClassesDetailsPrice.propTypes = {
   ThisModule: PropTypes.shape({
     dailyClassFee: PropTypes.number,
   }),
-  user: PropTypes.object, // You can add a more specific shape if needed
-  UsersData: PropTypes.object, // You can add a more specific shape if needed
+  user: PropTypes.object,
+  UsersData: PropTypes.object,
 };
 
 export default ClassesDetailsPrice;

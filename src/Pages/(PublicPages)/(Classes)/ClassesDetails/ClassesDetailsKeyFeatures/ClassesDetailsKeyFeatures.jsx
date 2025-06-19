@@ -3,13 +3,13 @@ import PropTypes from "prop-types";
 const ClassesDetailsKeyFeatures = ({ ThisModule }) => {
   // Predefined color palette for tags
   const tagColors = [
-    "#F72C5B", // Vibrant Red
-    "#FFD700", // Gold (bright, so black text)
-    "#4CAF50", // Green
-    "#1E90FF", // Dodger Blue
-    "#FF4500", // Orange Red
-    "#8A2BE2", // Blue Violet
-    "#FF69B4", // Hot Pink (bright, so black text)
+    "#F72C5B",
+    "#FFD700",
+    "#4CAF50",
+    "#1E90FF",
+    "#FF4500",
+    "#8A2BE2",
+    "#FF69B4",
   ];
 
   const getContrastColor = (hexColor) => {
@@ -33,7 +33,7 @@ const ClassesDetailsKeyFeatures = ({ ThisModule }) => {
       return (
         <p
           key={index}
-          className="font-semibold px-4 md:px-6 py-2 rounded-xl text-center text-sm sm:text-base hover:scale-110 transition-transform duration-300 ease-in-out"
+          className="font-semibold px-2 md:px-10 py-2 rounded-xl text-center text-sm sm:text-base hover:scale-110 transition-transform duration-300 ease-in-out cursor-pointer "
           style={{ backgroundColor: bgColor, color: textColor }}
         >
           {feature}
@@ -43,13 +43,13 @@ const ClassesDetailsKeyFeatures = ({ ThisModule }) => {
   };
 
   return (
-    <div className="mx-auto max-w-7xl bg-gradient-to-bl from-gray-200 to-gray-400 rounded-lg shadow-2xl py-5 px-5">
-      <h3 className="text-2xl font-semibold text-gray-800 pb-2 border-b-2 border-gray-100">
+    <div className="bg-gradient-to-bl from-gray-200/80 to-gray-400/50 p-6 md:p-10 mx-4 md:mx-32 rounded-xl shadow-inner">
+      {/* Section Title */}
+      <h3 className="text-2xl text-white font-semibold  pb-2 border-b-2 border-gray-100">
         Key Features:
       </h3>
-      <div className="flex flex-wrap px-3 gap-2 md:gap-5 pt-5">
-        {renderTags()}
-      </div>
+      {/* Tags */}
+      <div className="flex flex-wrap gap-2 md:gap-2 pt-3">{renderTags()}</div>
     </div>
   );
 };

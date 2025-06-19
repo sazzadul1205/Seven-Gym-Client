@@ -304,15 +304,16 @@ const HomePageAdminServicesEditModal = ({
   );
 };
 
+// Prop Validation
 HomePageAdminServicesEditModal.propTypes = {
   setSelectedServices: PropTypes.func.isRequired,
   selectedServices: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
+    _id: PropTypes.string,
     title: PropTypes.string,
     description: PropTypes.string,
     link: PropTypes.string,
     icon: PropTypes.string,
-  }).isRequired,
+  }),
   Refetch: PropTypes.func.isRequired,
 };
 

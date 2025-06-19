@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 
 const ClassesDetailsSchedule = ({ ClassScheduleData }) => {
-  // Define the order of days for sorting (starting from Friday)
   const daysOrder = [
     "Friday",
     "Saturday",
@@ -12,74 +11,76 @@ const ClassesDetailsSchedule = ({ ClassScheduleData }) => {
     "Thursday",
   ];
 
-  // Helper function to convert time from 24-hour format to 12-hour AM/PM format
+  // Convert 24h time "HH:mm" to 12h time with AM/PM
   const convertTo12HourFormat = (time) => {
-    const [hour, minute] = time.split(":").map(Number);
+    const [hourStr, minuteStr] = time.split(":");
+    const hour = Number(hourStr);
+    const minute = Number(minuteStr);
     const period = hour >= 12 ? "PM" : "AM";
-    const formattedHour = hour % 12 || 12; // Convert 0 to 12 for AM
+    const formattedHour = hour % 12 || 12;
     return `${formattedHour}:${minute.toString().padStart(2, "0")} ${period}`;
   };
 
-  // Sort ClassScheduleData based on the predefined order of days
+  // Sort schedule by predefined day order
   const sortedSchedule = [...ClassScheduleData].sort(
     (a, b) => daysOrder.indexOf(a.day) - daysOrder.indexOf(b.day)
   );
 
   return (
-    <div className="max-w-7xl mx-auto bg-gradient-to-bl from-gray-200 to-gray-400 rounded-xl shadow-xl my-4 px-5 py-5">
-      {/* Title Section */}
-      <h3 className="text-2xl font-semibold text-gray-800 pb-2 border-b-2 border-gray-100">
-        Class Schedule
-      </h3>
+    <section
+      aria-labelledby="class-schedule-title"
+      className="bg-gradient-to-bl from-gray-200/80 to-gray-400/50 p-6 mx-4 md:mx-32 rounded-xl shadow-inner"
+    >
+      <header className="mb-4 border-b-2 border-gray-100 pb-3">
+        <h3 className="text-2xl text-white font-semibold">Class Schedule</h3>
+      </header>
 
-      {/* Table Container */}
-      <div className="overflow-x-auto text-black pt-5">
-        <table className="table w-full border-collapse border border-gray-200">
-          {/* Table Head */}
-          <thead className="bg-gray-200 text-black">
+      <div className="overflow-x-auto">
+        {/* Table Content */}
+        <table className="w-full border-collapse border border-gray-300 text-left text-gray-900">
+          {/* Table Header */}
+          <thead className="bg-gray-300 uppercase text-sm font-medium tracking-wider">
             <tr>
-              <th className="border border-gray-300 px-4 py-2 text-left">#</th>
-              <th className="border border-gray-300 px-4 py-2 text-left">
-                Day
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left">
-                Start Time
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left">
-                End Time
-              </th>
+              <th className="border border-gray-300 px-4 py-3 w-12">#</th>
+              <th className="border border-gray-300 px-4 py-3">Day</th>
+              <th className="border border-gray-300 px-4 py-3">Start Time</th>
+              <th className="border border-gray-300 px-4 py-3">End Time</th>
             </tr>
           </thead>
 
           {/* Table Body */}
           <tbody>
-            {sortedSchedule.map((schedule, index) => (
+            {sortedSchedule.map(({ day, startTime, endTime }, idx) => (
               <tr
-                key={index}
-                className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
+                key={`${day}-${startTime}-${endTime}`}
+                className={idx % 2 === 0 ? "bg-white" : "bg-gray-100"}
               >
-                <td className="border border-gray-300 px-4 py-2">
-                  {index + 1}
+                {/* index */}
+                <td className="border border-gray-300 px-4 py-2 font-medium">
+                  {idx + 1}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {schedule.day}
+                {/* Day */}
+                <td className="border border-gray-300 px-4 py-2 capitalize">
+                  {day}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {convertTo12HourFormat(schedule.startTime)}
+                {/* Start */}
+                <td className="border border-gray-300 px-4 py-2 font-mono">
+                  {convertTo12HourFormat(startTime)}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {convertTo12HourFormat(schedule.endTime)}
+                {/* End */}
+                <td className="border border-gray-300 px-4 py-2 font-mono">
+                  {convertTo12HourFormat(endTime)}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
   );
 };
 
-// PropTypes Validation
+// Prop Validation
 ClassesDetailsSchedule.propTypes = {
   ClassScheduleData: PropTypes.arrayOf(
     PropTypes.shape({

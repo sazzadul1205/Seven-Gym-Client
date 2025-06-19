@@ -81,7 +81,7 @@ const Login = () => {
           userData.data.role === "Admin" ||
           userData.data.role === "Manager"
         ) {
-          navigate("/Dashboard", { replace: true });
+          navigate("/Admin", { replace: true });
         } else if (userData.data.role === "Trainer") {
           navigate("/Trainer", { replace: true });
         } else {
@@ -160,7 +160,7 @@ const Login = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="********"
-                className="input w-full text-black bg-white shadow-lg hover:shadow-xl pr-10"
+                className="input w-full text-black bg-white shadow-lg hover:shadow-xl pr-10 cursor-pointer"
                 {...register("password", {
                   required: "Password is required",
                   minLength: {
@@ -175,7 +175,7 @@ const Login = () => {
                 className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-600 focus:outline-none"
                 tabIndex={-1}
               >
-                {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+                {showPassword ? <FiEye size={20} /> : <FiEyeOff size={20} />}
               </button>
             </div>
             {errors.password && (

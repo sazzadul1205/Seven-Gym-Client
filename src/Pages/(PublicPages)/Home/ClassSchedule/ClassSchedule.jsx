@@ -20,6 +20,7 @@ import {
 // Import Shared
 import Title from "../../../../Shared/Component/Title";
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
+import { FiAlertCircle, FiCheckCircle, FiClock, FiPlay } from "react-icons/fi";
 
 const ClassSchedule = ({ ourClasses, classDetails }) => {
   // State to track the current time
@@ -71,19 +72,16 @@ const ClassSchedule = ({ ourClasses, classDetails }) => {
       : 0;
 
     return (
-      <div
-        key={index}
-        className="relative group border p-1 hover:bg-gray-200/20"
-      >
+      <div key={index} className="relative group">
         {/* Class Card */}
         <div
-          className={`relative border-2 border-gray-400 transition duration-300 rounded-lg lg:hover:scale-105 space-y-2 items-center py-4 h-48 
+          className={`relative p-4  transition duration-300 rounded-lg
             ${
               isCurrent
                 ? "bg-green-200 text-gray-800"
                 : isCompleted
-                ? "bg-gray-200 text-gray-600"
-                : "bg-white text-gray-800"
+                ? "bg-linear-to-bl hover:bg-linear-to-tr from-white to-gray-300 text-black"
+                : "bg-linear-to-bl hover:bg-linear-to-tr from-white to-gray-300 text-black"
             }`}
         >
           {/* Class Icon */}
@@ -101,18 +99,20 @@ const ClassSchedule = ({ ourClasses, classDetails }) => {
           </p>
 
           {/* Class Timing */}
-          <p className="text-xs ms:text-sm font-bold bg-blue-300 py-1">
+          <p className="text-sm font-medium mb-4 bg-blue-300 py-1">
             {format(startTime, "hh:mm a")} - {format(endTime, "hh:mm a")}
           </p>
 
           {/* Class Status */}
           {isCurrent ? (
             <>
-              <p className="text-sm font-semibold text-green-600">
-                Class Ongoing
-              </p>
+              <div className="flex items-center gap-1 text-sm font-semibold text-green-600">
+                <FiPlay className="text-base" />
+                <span>Class Ongoing</span>
+              </div>
+
               {/* Progress Bar */}
-              <div className="absolute bottom-0 left-0 w-full h-2 bg-green-300">
+              <div className="absolute bottom-0 left-0 w-full h-2 bg-green-200">
                 <div
                   className="h-full bg-green-600 transition-all duration-1000"
                   style={{ width: `${progressPercent}%` }}
@@ -120,22 +120,33 @@ const ClassSchedule = ({ ourClasses, classDetails }) => {
               </div>
             </>
           ) : isCompleted ? (
-            <p className="text-sm font-semibold text-gray-500">Class Ended</p>
+            <div className="flex items-center gap-1 text-sm font-semibold text-gray-500">
+              <FiCheckCircle className="text-base" />
+              <span>Class Ended</span>
+            </div>
           ) : (
-            <p
-              className={`text-sm font-semibold ${
+            <div
+              className={`flex items-center gap-1 text-sm font-semibold ${
                 isSoon ? "text-orange-500" : "text-blue-500"
               }`}
             >
-              {isSoon
-                ? `Starts in ${timeToStart} minutes`
-                : `Starts at ${format(startTime, "hh:mm a")}`}
-            </p>
+              {isSoon ? (
+                <>
+                  <FiAlertCircle className="text-base" />
+                  <span>Starts in {timeToStart} minutes</span>
+                </>
+              ) : (
+                <>
+                  <FiClock className="text-base" />
+                  <span>Starts at {format(startTime, "hh:mm a")}</span>
+                </>
+              )}
+            </div>
           )}
         </div>
 
         {/* Hover Overlay for Join Button */}
-        <div className="hidden lg:flex absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition duration-300 items-center justify-center rounded-lg">
+        <div className="hidden lg:flex absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition duration-300 items-center justify-center">
           <Link to={`/Classes/${classItem.module}`}>
             <CommonButton
               text=""

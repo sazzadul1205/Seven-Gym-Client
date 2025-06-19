@@ -118,61 +118,62 @@ const ClassesDetails = () => {
       className="min-h-screen bg-fixed bg-cover bg-center"
       style={{
         backgroundImage: `url(${Classes_Background})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
       }}
     >
-      {/* Header Section */}
-      <div className="relative w-full h-[300px] md:h-[400px] overflow-hidden">
-        {/* Background Image with Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-transparent z-10"></div>
-        <img
-          src={ThisModule.mainImage}
-          alt={ThisModule.module}
-          className="w-full h-full object-cover brightness-75"
-        />
-        {/* Centered Title */}
-        <div className="absolute inset-0 flex justify-center items-center z-20">
-          <h1 className="text-3xl md:text-5xl text-white font-extrabold shadow-md px-6 py-3 bg-black/50 rounded-lg backdrop-blur-sm">
-            {ThisModule.module}
-          </h1>
-        </div>
-      </div>
-
-      <div className="space-y-2 bg-linear-to-b from-gray-500/40 to-gray-500/80 pb-2">
-        {/* Class Details Content */}
+      <div className="bg-linear-to-b from-black/30 to-gray-700/70 min-h-screen space-y-3">
+        {/* Header Section */}
         <ClassesDetailsContent ThisModule={ThisModule} />
-
-        {/* Detailed Description */}
+        {/* Class Details */}
         <ClassesDetailsDescription ThisModule={ThisModule} />
-
-        {/* Key Features */}
+        {/* Class Key Features */}
         <ClassesDetailsKeyFeatures ThisModule={ThisModule} />
-
-        {/* Pricing Section */}
+        {/* Detail Pricing */}
         <ClassesDetailsPrice
           ThisModule={ThisModule}
           user={user}
           UsersData={UsersData}
         />
-
-        {/* Class Schedule */}
+        {/* Class schedule */}
         <ClassesDetailsSchedule ClassScheduleData={ClassScheduleData} />
-
-        {/* Trainers Section */}
-        <ClassesDetailsTrainers
-          TrainersData={TrainersData || []}
-          ThisModule={ThisModule}
-        />
-
-        {/* Additional Information */}
-        <ClassesDetailsMore ThisModule={ThisModule} />
-
-        {/* Reviews Section */}
-        <ClassesDetailsReview ThisModule={ThisModule} />
       </div>
     </div>
   );
 };
 
 export default ClassesDetails;
+
+// {/* Header with second background layered */}
+// <div className="relative w-full h-[300px] md:h-[500px] overflow-hidden">
+//   {/* Module-specific background image */}
+//   <div
+//     className="absolute inset-0 bg-cover bg-center brightness-75"
+//     style={{ backgroundImage: `url(${ThisModule.mainImage})` }}
+//   ></div>
+
+//   {/* Dark overlay */}
+//   <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/30 "></div>
+
+//   {/* Title */}
+//   <div className="relative z-20 flex justify-center items-center h-full px-4 text-center">
+//     <h1 className="text-white text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight drop-shadow-lg bg-black/50 px-6 py-3 rounded-xl backdrop-blur-sm animate-fadeIn">
+//       {ThisModule.module}
+//     </h1>
+//   </div>
+// </div>
+
+// {/* Content below header */}
+// <div className="-mt-10 md:-mt-16 px-3 md:px-10 space-y-2 bg-white/90 rounded-t-3xl shadow-md backdrop-blur-md">
+
+//   <ClassesDetailsPrice
+//     ThisModule={ThisModule}
+//     user={user}
+//     UsersData={UsersData}
+//   />
+//   <ClassesDetailsSchedule ClassScheduleData={ClassScheduleData} />
+//   <ClassesDetailsTrainers
+//     TrainersData={TrainersData || []}
+//     ThisModule={ThisModule}
+//   />
+//   <ClassesDetailsMore ThisModule={ThisModule} />
+//   <ClassesDetailsReview ThisModule={ThisModule} />
+// </div>

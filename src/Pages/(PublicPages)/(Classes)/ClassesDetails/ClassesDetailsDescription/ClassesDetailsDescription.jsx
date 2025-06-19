@@ -8,15 +8,13 @@ const ClassesDetailsDescription = ({ ThisModule }) => {
     "No detailed description available.";
 
   return (
-    <div className="mx-auto max-w-7xl bg-gradient-to-bl from-gray-200 to-gray-400 rounded-lg shadow-2xl py-5 px-5">
+    <div className="bg-gradient-to-bl from-gray-200/80 to-gray-500/50 p-6 md:p-10 mx-4 md:mx-32 rounded-xl shadow-inner">
       {/* Section Title */}
-      <h3 className="text-2xl font-semibold text-gray-800 pb-2 border-b-2 border-gray-100">
+      <h3 className="text-2xl text-white font-semibold  pb-2 border-b-2 border-gray-100">
         Detailed Description
       </h3>
       {/* Description Content */}
-      <p className="mt-4 leading-relaxed text-lg italic text-gray-700">
-        {description}
-      </p>
+      <p className="pt-4 text-white leading-relaxed text-lg italic ">{description}</p>
     </div>
   );
 };

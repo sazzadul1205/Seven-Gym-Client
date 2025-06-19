@@ -1,5 +1,14 @@
-import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
+
+// import Packages
+import PropTypes from "prop-types";
+
+// import Icons
+import { SlCalender } from "react-icons/sl";
+import { FaRegClock } from "react-icons/fa";
+import { FiAlertCircle, FiCheckCircle, FiClock, FiPlay } from "react-icons/fi";
+
+// Import Date Fns
 import {
   addDays,
   differenceInMinutes,
@@ -9,10 +18,6 @@ import {
   isBefore,
   parseISO,
 } from "date-fns";
-import { SlCalender } from "react-icons/sl";
-import { FaRegClock } from "react-icons/fa";
-
-import Title from "../../../../../Shared/Component/Title";
 
 const AllClasses = ({ OurClasses, ClassDetails }) => {
   // State for tracking the current time
@@ -51,9 +56,11 @@ const AllClasses = ({ OurClasses, ClassDetails }) => {
     ClassDetails?.find((detail) => detail.module === moduleName);
 
   return (
-    <div className="max-w-7xl mx-auto pt-20 text-center pb-5">
+    <div className="px-10 mx-auto text-center pb-5">
       {/* Page Title */}
-      <Title titleContent="All Of Our Classes" />
+      <h2 className="text-white text-3xl font-bold mb-2 text-center">
+        Our Class Schedule
+      </h2>
 
       {/* Current Time Display */}
       <div className="flex justify-between items-center font-medium border-2 border-white bg-gray-700/80 text-xl px-5 py-3">
@@ -72,15 +79,15 @@ const AllClasses = ({ OurClasses, ClassDetails }) => {
         {reorderedSchedule.map((dayData, dayIndex) => (
           <div
             key={dayData.day}
-            className="bg-gradient-to-br from-gray-400/80 to-gray-300/60 border-2 border-white  pb-5 mb-3"
+            className="bg-gradient-to-br from-gray-400/80 to-gray-300/60 border-2 border-white pb-5"
           >
             {/* Day Title */}
-            <h2 className="text-3xl font-bold mb-4 text-white bg-gray-500/80 border-b border-white py-2">
+            <h2 className="text-3xl font-bold text-white bg-gray-500/80 border-b border-white py-2">
               {dayData.day}
             </h2>
 
             {/* Class Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-2 p-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 p-1">
               {dayData.classes.map((classItem) => {
                 const classDetail = getClassDetails(classItem.module);
 
@@ -114,13 +121,13 @@ const AllClasses = ({ OurClasses, ClassDetails }) => {
                 return (
                   <div key={classItem.module} className="relative group">
                     <div
-                      className={`relative p-4 border-2 border-gray-400 transition duration-300 rounded-lg lg:hover:scale-105 h-[220px]
+                      className={`relative p-4 border-2 border-gray-400 transition duration-300 rounded-lg
                         ${
                           isCurrent
                             ? "bg-green-200 text-gray-800"
                             : isCompleted
-                            ? "bg-gray-200 text-gray-600"
-                            : "bg-white text-gray-800"
+                            ? "bg-linear-to-bl hover:bg-linear-to-tr from-white to-gray-300 text-black"
+                            : "bg-linear-to-bl hover:bg-linear-to-tr from-white to-gray-300 text-black"
                         }`}
                     >
                       {/* Class Icon */}
@@ -138,7 +145,7 @@ const AllClasses = ({ OurClasses, ClassDetails }) => {
                       </p>
 
                       {/* Class Timing */}
-                      <p className="text-sm font-medium mb-4 bg-blue-300">
+                      <p className="text-sm font-medium mb-4 bg-blue-300 py-1">
                         {format(startTime, "hh:mm a")} -{" "}
                         {format(endTime, "hh:mm a")}
                       </p>
@@ -146,11 +153,13 @@ const AllClasses = ({ OurClasses, ClassDetails }) => {
                       {/* Class Status */}
                       {isCurrent ? (
                         <>
-                          <p className="text-sm font-semibold text-green-600">
-                            Class Ongoing
-                          </p>
+                          <div className="flex items-center gap-1 text-sm font-semibold text-green-600">
+                            <FiPlay className="text-base" />
+                            <span>Class Ongoing</span>
+                          </div>
+
                           {/* Progress Bar */}
-                          <div className="absolute bottom-0 left-0 w-full h-2 bg-green-300">
+                          <div className="absolute bottom-0 left-0 w-full h-2 bg-green-200">
                             <div
                               className="h-full bg-green-600 transition-all duration-1000"
                               style={{ width: `${progressPercent}%` }}
@@ -158,19 +167,30 @@ const AllClasses = ({ OurClasses, ClassDetails }) => {
                           </div>
                         </>
                       ) : isCompleted ? (
-                        <p className="text-sm font-semibold text-gray-500">
-                          Class Ended
-                        </p>
+                        <div className="flex items-center gap-1 text-sm font-semibold text-gray-500">
+                          <FiCheckCircle className="text-base" />
+                          <span>Class Ended</span>
+                        </div>
                       ) : (
-                        <p
-                          className={`text-sm font-semibold ${
+                        <div
+                          className={`flex items-center gap-1 text-sm font-semibold ${
                             isSoon ? "text-orange-500" : "text-blue-500"
                           }`}
                         >
-                          {isSoon
-                            ? `Starts in ${timeToStart} minutes`
-                            : `Starts at ${format(startTime, "hh:mm a")}`}
-                        </p>
+                          {isSoon ? (
+                            <>
+                              <FiAlertCircle className="text-base" />
+                              <span>Starts in {timeToStart} minutes</span>
+                            </>
+                          ) : (
+                            <>
+                              <FiClock className="text-base" />
+                              <span>
+                                Starts at {format(startTime, "hh:mm a")}
+                              </span>
+                            </>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>

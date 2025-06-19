@@ -113,7 +113,7 @@ AllExtraPageManagement.propTypes = {
         ]).isRequired,
       })
     ).isRequired,
-  }).isRequired,
+  }),
 
   OurMissionsData: PropTypes.shape({
     _id: PropTypes.string.isRequired,
@@ -156,7 +156,7 @@ AllExtraPageManagement.propTypes = {
     }).isRequired,
     subTitle: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-  }).isRequired,
+  }),
 
   AboutUsData: PropTypes.shape({
     _id: PropTypes.string.isRequired,
@@ -202,12 +202,12 @@ AllExtraPageManagement.propTypes = {
           facebook: PropTypes.string,
           github: PropTypes.string,
           portfolio: PropTypes.string,
-        }).isRequired,
+        }),
       })
     ).isRequired,
-  }).isRequired,
+  }),
 
-  Refetch: PropTypes.func.isRequired,
+  Refetch: PropTypes.func,
 };
 
 export default AllExtraPageManagement;

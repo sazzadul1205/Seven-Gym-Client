@@ -1,4 +1,7 @@
+// import packages
 import PropTypes from "prop-types";
+
+// import icons
 import {
   FaRegFileAlt,
   FaInfoCircle,
@@ -7,75 +10,72 @@ import {
 } from "react-icons/fa";
 
 const ClassesDetailsContent = ({ ThisModule }) => {
+  const {
+    module,
+    description,
+    additionalInfo,
+    difficultyLevel,
+    prerequisites,
+    icon,
+  } = ThisModule || {};
+
   return (
-    <div className="max-w-7xl mx-auto bg-gradient-to-bl from-gray-200 to-gray-400 rounded-lg shadow-2xl relative z-10 p-6 md:p-12 -mt-32">
+    <div className="bg-gradient-to-bl from-gray-200/80 to-gray-400/50 p-6 md:p-10 mx-4 md:mx-32 rounded-xl shadow-inner">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Left Content - Module Details */}
+        {/* Left Section - Details */}
         <div className="md:col-span-2 space-y-6">
-          {/* Description Section */}
-          <div className="flex flex-col">
-            <h3 className="flex items-center text-xl md:text-2xl font-semibold text-gray-800">
-              <FaRegFileAlt className="mr-2 text-indigo-600" />
-              Description
-            </h3>
-            <p className="text-black mt-2 ml-5">
-              {ThisModule?.description || "No description available."}
-            </p>
-          </div>
-
-          {/* Additional Information Section */}
-          <div className="flex flex-col">
-            <h3 className="flex items-center text-xl md:text-2xl font-semibold text-gray-800">
-              <FaInfoCircle className="mr-2 text-indigo-600" />
-              Additional Info
-            </h3>
-            <p className="text-black mt-2 ml-5">
-              {ThisModule?.additionalInfo ||
-                "No additional information provided."}
-            </p>
-          </div>
-
-          {/* Difficulty Level Section */}
-          <div className="flex flex-col">
-            <h3 className="flex items-center text-xl md:text-2xl font-semibold text-gray-800">
-              <FaChartLine className="mr-2 text-indigo-600" />
-              Difficulty Level
-            </h3>
-            <p className="text-black mt-2 ml-5">
-              {ThisModule?.difficultyLevel || "Not specified."}
-            </p>
-          </div>
-
-          {/* Prerequisites Section */}
-          <div className="flex flex-col">
-            <h3 className="flex items-center text-xl md:text-2xl font-semibold text-gray-800">
-              <FaClipboardList className="mr-2 text-indigo-600" />
-              Prerequisites
-            </h3>
-            <p className="text-black mt-2 ml-5">
-              {ThisModule?.prerequisites || "No prerequisites required."}
-            </p>
-          </div>
+          <InfoSection
+            icon={FaRegFileAlt}
+            title="Description"
+            content={description || "No description available."}
+          />
+          <InfoSection
+            icon={FaInfoCircle}
+            title="Additional Info"
+            content={additionalInfo || "No additional information provided."}
+          />
+          <InfoSection
+            icon={FaChartLine}
+            title="Difficulty Level"
+            content={difficultyLevel || "Not specified."}
+          />
+          <InfoSection
+            icon={FaClipboardList}
+            title="Prerequisites"
+            content={prerequisites || "No prerequisites required."}
+          />
         </div>
 
-        {/* Right Content - Module Overview */}
-        <div className="flex flex-col items-center border-2 border-dotted border-black rounded-lg p-6 bg-linear-to-br hover:bg-linear-to-tl from-gray-300 to-gray-100 shadow-xl hover:shadow-2xl hover:scale-105 transition-transform duration-300 ease-in-out">
-          {/* Module Icon */}
-          <img
-            src={ThisModule?.icon}
-            alt={ThisModule?.module}
-            className="w-20 h-20 md:w-24 md:h-24 object-cover mb-4"
-          />
+        {/* Right Section - Module Card */}
+        <div
+          className="flex flex-col items-center justify-center gap-4
+             border border-black/30 border-dashed rounded-2xl
+             p-6 bg-linear-to-bl hover:bg-linear-to-tr from-white/50 to-gray-300/90 shadow-lg
+             hover:shadow-2xl hover:-translate-y-1 transform
+             transition-all duration-300 ease-in-out
+             min-h-[320px] md:min-h-[380px]"
+        >
+          {/* Icon */}
+          <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-red-300 shadow-md bg-white">
+            <img
+              src={icon}
+              alt={module || "Module Icon"}
+              className="w-full h-full object-cover"
+            />
+          </div>
 
           {/* Module Name */}
-          <p className="text-lg font-medium text-gray-800 text-center">
-            {ThisModule?.module}
-          </p>
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 text-center">
+            {module || "Untitled Module"}
+          </h2>
 
-          {/* Brief Overview */}
-          <p className="text-black mt-2 text-center">
-            Explore and enjoy this exciting and engaging activity tailored for
-            all!
+          {/* Divider */}
+          <div className="w-16 border-b-2 border-red-400" />
+
+          {/* Overview Text */}
+          <p className="text-sm md:text-base text-gray-700 text-center leading-relaxed px-2">
+            Dive into an engaging and thoughtfully designed experience crafted
+            for learners of all levels.
           </p>
         </div>
       </div>
@@ -83,7 +83,6 @@ const ClassesDetailsContent = ({ ThisModule }) => {
   );
 };
 
-/* PropTypes Validation */
 ClassesDetailsContent.propTypes = {
   ThisModule: PropTypes.shape({
     module: PropTypes.string.isRequired,
@@ -96,3 +95,29 @@ ClassesDetailsContent.propTypes = {
 };
 
 export default ClassesDetailsContent;
+
+// Info Section Card
+const InfoSection = ({ icon: Icon, title, content }) => (
+  <div className="flex flex-col gap-2 p-4 rounded-xl bg-white/100 shadow-sm hover:shadow-md transition-shadow duration-200">
+    {/* Title  */}
+    <div className="flex items-center gap-3">
+      {/* Icons */}
+      <Icon className="text-red-600 text-xl md:text-2xl" />
+
+      {/* Title */}
+      <h3 className="text-lg md:text-xl font-semibold text-gray-800">
+        {title}
+      </h3>
+    </div>
+
+    {/* Content */}
+    <p className="text-gray-700 ml-1 pl-8 leading-relaxed">{content}</p>
+  </div>
+);
+
+// Prop Validation
+InfoSection.propTypes = {
+  icon: PropTypes.elementType.isRequired,
+  title: PropTypes.string.isRequired,
+  content: PropTypes.string.isRequired,
+};

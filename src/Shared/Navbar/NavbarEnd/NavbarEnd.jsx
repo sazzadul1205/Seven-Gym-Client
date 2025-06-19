@@ -68,10 +68,7 @@ const NavbarEnd = ({ UsersData }) => {
     ],
     ClassManager: [{ name: "Dashboard", path: "/ClassManagerDashboard" }],
     Moderator: [{ name: "Moderator Dashboard", path: "/ModeratorDashboard" }],
-    Admin: [
-      { name: "Admin Dashboard", path: "/AdminDashboard" },
-      { name: "User Management", path: "/UserManagement" },
-    ],
+    Admin: [{ name: "Admin Dashboard", path: "/Admin" }],
   };
 
   // Logout function

@@ -149,12 +149,12 @@ const SignUpDetails = () => {
     // Post the data to the server
     try {
       await axiosPublic.post("/Users", formDataWithImage);
-      setLoading(false); // Stop loading on success
-      navigate("/"); // Redirect to the home page
-      window.location.reload(); // Reload the page after navigation
+      setLoading(false);
+      navigate("/", { replace: true });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       console.error("Failed to create the account:", error);
-      setLoading(false); // Stop loading on error
+      setLoading(false);
       Swal.fire({
         icon: "error",
         title: "Account Creation Failed",
