@@ -293,9 +293,6 @@ ClassesDetailsModal.propTypes = {
     dailyClassFee: PropTypes.number.isRequired,
     module: PropTypes.string.isRequired,
   }).isRequired,
-  user: PropTypes.shape({
-    email: PropTypes.string.isRequired,
-  }).isRequired,
   UsersData: PropTypes.shape({
     _id: PropTypes.string,
     email: PropTypes.string,

@@ -2,11 +2,13 @@ import PropTypes from "prop-types";
 
 const ClassesDetailsMore = ({ ThisModule }) => {
   return (
-    <div className="max-w-7xl mx-auto bg-gradient-to-bl from-gray-200 to-gray-400 rounded-xl shadow-xl my-4 px-5 py-5">
-      <h3 className="text-2xl font-semibold text-gray-800 pb-2 border-b-2 border-gray-100">
-        Class More Info
-      </h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-5">
+    <section className="bg-gradient-to-bl from-gray-200/80 to-gray-500/50 p-2 md:p-10 mx-0 md:mx-32 rounded-none md:rounded-xl shadow-inner">
+      {/* Title */}
+      <header className="mb-4 border-b-2 border-gray-100 pb-3">
+        <h3 className="text-2xl text-white font-semibold">Class Information</h3>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Reusable Section Component */}
         {[
           {
@@ -32,16 +34,21 @@ const ClassesDetailsMore = ({ ThisModule }) => {
         ].map(({ title, image, list }, index) => (
           <div
             key={index}
-            className="bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-400 to-gray-500 p-6 rounded-lg shadow-md"
+            className="bg-gradient-to-bl hover:bg-gradient-to-tr from-white to-gray-200 p-6 rounded-lg shadow-md hover:shadow-2xl cursor-default"
           >
+            {/* Icon */}
             <img src={image} alt={title} className="w-20 mx-auto" />
+
+            {/* Title */}
             <h3 className="text-2xl font-semibold text-gray-800 text-center mt-4">
               {title}
             </h3>
+
+            {/* List */}
             {list?.length > 0 ? (
               <ul className="text-gray-200 mt-4 list-disc pl-6 space-y-2">
                 {list.map((item, i) => (
-                  <li className="text-lg" key={i}>
+                  <li className="text-lg text-black " key={i}>
                     {item}
                   </li>
                 ))}
@@ -54,7 +61,7 @@ const ClassesDetailsMore = ({ ThisModule }) => {
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 };
 

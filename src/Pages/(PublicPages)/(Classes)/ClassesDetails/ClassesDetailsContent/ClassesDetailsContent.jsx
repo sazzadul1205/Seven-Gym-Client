@@ -20,10 +20,10 @@ const ClassesDetailsContent = ({ ThisModule }) => {
   } = ThisModule || {};
 
   return (
-    <div className="bg-gradient-to-bl from-gray-200/80 to-gray-400/50 p-6 md:p-10 mx-4 md:mx-32 rounded-xl shadow-inner">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div className="bg-gradient-to-bl from-gray-200/80 to-gray-400/50 p-1 md:p-10 mx-0 md:mx-32 rounded-none md:rounded-xl shadow-inner">
+      <div className="flex flex-col-reverse md:flex-row gap-2 md:gap-8">
         {/* Left Section - Details */}
-        <div className="md:col-span-2 space-y-6">
+        <div className="md:col-span-2 space-y-2 md:space-y-6 md:w-2/3">
           <InfoSection
             icon={FaRegFileAlt}
             title="Description"
@@ -53,7 +53,7 @@ const ClassesDetailsContent = ({ ThisModule }) => {
              p-6 bg-linear-to-bl hover:bg-linear-to-tr from-white/50 to-gray-300/90 shadow-lg
              hover:shadow-2xl hover:-translate-y-1 transform
              transition-all duration-300 ease-in-out
-             min-h-[320px] md:min-h-[380px]"
+             min-h-[320px] md:min-h-[380px] md:w-1/3"
         >
           {/* Icon */}
           <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-red-300 shadow-md bg-white">

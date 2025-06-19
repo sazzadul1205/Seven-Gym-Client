@@ -54,9 +54,9 @@ const ClassesDetailsPrice = ({ ThisModule, user, UsersData }) => {
   };
 
   return (
-    <div className="bg-gradient-to-bl from-gray-200/80 to-gray-400/50 px-6 py-2 mx-4 md:mx-32 rounded-xl shadow-inner">
+    <div className="bg-gradient-to-bl from-gray-200/80 to-gray-500/50 p-2 md:p-10 mx-0 md:mx-32 rounded-none md:rounded-xl shadow-inner">
       {/* Header */}
-      <header className="flex justify-between items-center border-b-2 border-gray-100 pb-3">
+      <header className="flex flex-col md:flex-row justify-between items-center border-b-2 border-gray-100 pb-3">
         <h3 className="text-2xl text-white font-semibold">Detailed Prices</h3>
         <p className="px-10 py-2 bg-red-100 text-red-800 text-lg font-medium rounded-xl select-none">
           Price without Discount
@@ -64,7 +64,7 @@ const ClassesDetailsPrice = ({ ThisModule, user, UsersData }) => {
       </header>
 
       {/* Pricing Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6 pt-3">
         <PriceCard title="Daily Class Fee" price={updatedDailyFee} />
         <PriceCard title="Weekly Fee" price={updatedWeeklyFee} />
         <PriceCard title="Monthly Fee" price={updatedMonthlyFee} />

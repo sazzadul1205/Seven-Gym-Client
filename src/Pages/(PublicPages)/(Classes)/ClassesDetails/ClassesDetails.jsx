@@ -24,13 +24,30 @@ const ClassesDetails = () => {
   const { module } = useParams();
   const { user } = useAuth();
 
+  // Fetch User Data (Only if user exists)
+  const {
+    data: UsersData,
+    isLoading: UsersDataIsLoading,
+    error: UsersDataError,
+  } = useQuery({
+    queryKey: ["UsersData", user?.email],
+    queryFn: async () =>
+      axiosPublic
+        .get(`/Users?email=${user?.email}`)
+        .then((res) => res.data)
+        .catch((error) =>
+          error.response?.status === 404 ? [] : Promise.reject(error)
+        ),
+    enabled: !!user,
+  });
+
   // Fetch Module Data
   const {
-    data: ModuleData,
-    isLoading: ModuleDataIsLoading,
-    error: ModuleDataError,
+    data: ClassData,
+    isLoading: ClassDataIsLoading,
+    error: ClassDataError,
   } = useQuery({
-    queryKey: ["ModuleData", module],
+    queryKey: ["ClassData", module],
     queryFn: async () =>
       axiosPublic
         .get(`/Class_Details?module=${module}`)
@@ -50,15 +67,8 @@ const ClassesDetails = () => {
         .then((res) => res.data),
   });
 
-  // Extract teacher names dynamically for Trainers Data
-  const teacherNames =
-    ModuleData?.length > 0
-      ? [
-          ModuleData[0].classTeacher,
-          ...ModuleData[0].helperTeachers,
-          ModuleData[0].fallbackTeacher,
-        ].filter(Boolean)
-      : [];
+  // Map through all and get _id array
+  const trainerIds = ClassData?.trainers?.map((trainer) => trainer._id) || [];
 
   // Fetch Trainers Data
   const {
@@ -66,52 +76,33 @@ const ClassesDetails = () => {
     isLoading: TrainersDataIsLoading,
     error: TrainersDataError,
   } = useQuery({
-    queryKey: ["TrainersData", teacherNames],
+    queryKey: ["TrainersDataByIds", trainerIds],
     queryFn: async () =>
       axiosPublic
-        .get(`/Trainers/SearchTrainersByNames?names=${teacherNames.join(",")}`)
+        .get(`/Trainers/BasicInfo?ids=${trainerIds.join(",")}`)
         .then((res) => res.data),
-    enabled: teacherNames.length > 0,
-  });
-
-  // Fetch User Data (Only if user exists)
-  const {
-    data: UsersData,
-    isLoading: UsersDataIsLoading,
-    error: UsersDataError,
-  } = useQuery({
-    queryKey: ["UsersData", user?.email],
-    queryFn: async () =>
-      axiosPublic
-        .get(`/Users?email=${user?.email}`)
-        .then((res) => res.data)
-        .catch((error) =>
-          error.response?.status === 404 ? null : Promise.reject(error)
-        ),
-    enabled: !!user,
+    enabled: trainerIds.length > 0,
   });
 
   // Handle Loading State
   if (
-    ModuleDataIsLoading ||
+    ClassDataIsLoading ||
+    UsersDataIsLoading ||
     TrainersDataIsLoading ||
-    ClassScheduleDataIsLoading ||
-    UsersDataIsLoading
+    ClassScheduleDataIsLoading
   ) {
     return <Loading />;
   }
 
-  // Handle Errors
+  // // Handle Errors
   if (
-    ModuleDataError ||
+    ClassDataError ||
+    UsersDataError ||
     TrainersDataError ||
-    ClassScheduleDataError ||
-    UsersDataError
+    ClassScheduleDataError
   ) {
     return <FetchingError />;
   }
-
-  const ThisModule = ModuleData[0];
 
   return (
     <div
@@ -122,58 +113,35 @@ const ClassesDetails = () => {
     >
       <div className="bg-linear-to-b from-black/30 to-gray-700/70 min-h-screen space-y-3">
         {/* Header Section */}
-        <ClassesDetailsContent ThisModule={ThisModule} />
+        <ClassesDetailsContent ThisModule={ClassData} />
+
         {/* Class Details */}
-        <ClassesDetailsDescription ThisModule={ThisModule} />
+        <ClassesDetailsDescription ThisModule={ClassData} />
+
         {/* Class Key Features */}
-        <ClassesDetailsKeyFeatures ThisModule={ThisModule} />
+        <ClassesDetailsKeyFeatures ThisModule={ClassData} />
+
         {/* Detail Pricing */}
         <ClassesDetailsPrice
-          ThisModule={ThisModule}
+          ThisModule={ClassData}
           user={user}
           UsersData={UsersData}
         />
+
         {/* Class schedule */}
         <ClassesDetailsSchedule ClassScheduleData={ClassScheduleData} />
+
+        {/* Classes Trainer */}
+        <ClassesDetailsTrainers TrainersData={TrainersData} />
+
+        {/* Class Details */}
+        <ClassesDetailsMore ThisModule={ClassData} />
+
+        {/* Class Testimonials */}
+        <ClassesDetailsReview ThisModule={ClassData} />
       </div>
     </div>
   );
 };
 
 export default ClassesDetails;
-
-// {/* Header with second background layered */}
-// <div className="relative w-full h-[300px] md:h-[500px] overflow-hidden">
-//   {/* Module-specific background image */}
-//   <div
-//     className="absolute inset-0 bg-cover bg-center brightness-75"
-//     style={{ backgroundImage: `url(${ThisModule.mainImage})` }}
-//   ></div>
-
-//   {/* Dark overlay */}
-//   <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/30 "></div>
-
-//   {/* Title */}
-//   <div className="relative z-20 flex justify-center items-center h-full px-4 text-center">
-//     <h1 className="text-white text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight drop-shadow-lg bg-black/50 px-6 py-3 rounded-xl backdrop-blur-sm animate-fadeIn">
-//       {ThisModule.module}
-//     </h1>
-//   </div>
-// </div>
-
-// {/* Content below header */}
-// <div className="-mt-10 md:-mt-16 px-3 md:px-10 space-y-2 bg-white/90 rounded-t-3xl shadow-md backdrop-blur-md">
-
-//   <ClassesDetailsPrice
-//     ThisModule={ThisModule}
-//     user={user}
-//     UsersData={UsersData}
-//   />
-//   <ClassesDetailsSchedule ClassScheduleData={ClassScheduleData} />
-//   <ClassesDetailsTrainers
-//     TrainersData={TrainersData || []}
-//     ThisModule={ThisModule}
-//   />
-//   <ClassesDetailsMore ThisModule={ThisModule} />
-//   <ClassesDetailsReview ThisModule={ThisModule} />
-// </div>

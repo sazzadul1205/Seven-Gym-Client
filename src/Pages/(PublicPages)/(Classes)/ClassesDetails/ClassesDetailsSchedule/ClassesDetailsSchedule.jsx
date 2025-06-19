@@ -27,21 +27,22 @@ const ClassesDetailsSchedule = ({ ClassScheduleData }) => {
   );
 
   return (
-    <section
-      aria-labelledby="class-schedule-title"
-      className="bg-gradient-to-bl from-gray-200/80 to-gray-400/50 p-6 mx-4 md:mx-32 rounded-xl shadow-inner"
-    >
+    <section className="bg-gradient-to-bl from-gray-200/80 to-gray-500/50 p-2 md:p-10 mx-0 md:mx-32 rounded-none md:rounded-xl shadow-inner">
+      {/* Header Section */}
       <header className="mb-4 border-b-2 border-gray-100 pb-3">
         <h3 className="text-2xl text-white font-semibold">Class Schedule</h3>
       </header>
 
+      {/* Body Section */}
       <div className="overflow-x-auto">
         {/* Table Content */}
         <table className="w-full border-collapse border border-gray-300 text-left text-gray-900">
           {/* Table Header */}
           <thead className="bg-gray-300 uppercase text-sm font-medium tracking-wider">
             <tr>
-              <th className="border border-gray-300 px-4 py-3 w-12">#</th>
+              <th className="hidden md:flex border border-gray-300 px-4 py-3 w-12">
+                #
+              </th>
               <th className="border border-gray-300 px-4 py-3">Day</th>
               <th className="border border-gray-300 px-4 py-3">Start Time</th>
               <th className="border border-gray-300 px-4 py-3">End Time</th>
@@ -56,19 +57,19 @@ const ClassesDetailsSchedule = ({ ClassScheduleData }) => {
                 className={idx % 2 === 0 ? "bg-white" : "bg-gray-100"}
               >
                 {/* index */}
-                <td className="border border-gray-300 px-4 py-2 font-medium">
+                <td className="hidden md:flex border border-gray-300 px-4 py-2 text-sm md:text-md font-medium">
                   {idx + 1}
                 </td>
                 {/* Day */}
-                <td className="border border-gray-300 px-4 py-2 capitalize">
+                <td className="border border-gray-300 px-4 py-2 text-sm md:text-md capitalize">
                   {day}
                 </td>
                 {/* Start */}
-                <td className="border border-gray-300 px-4 py-2 font-mono">
+                <td className="border border-gray-300 px-4 py-2 text-sm md:text-md font-mono">
                   {convertTo12HourFormat(startTime)}
                 </td>
                 {/* End */}
-                <td className="border border-gray-300 px-4 py-2 font-mono">
+                <td className="border border-gray-300 px-4 py-2 text-sm md:text-md font-mono">
                   {convertTo12HourFormat(endTime)}
                 </td>
               </tr>
