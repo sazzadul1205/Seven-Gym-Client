@@ -133,7 +133,7 @@ const TrainerDetailsSchedule = ({ TrainerDetails, TrainerSchedule }) => {
 
   // Main Render Section
   return (
-    <div className="max-w-7xl mx-auto bg-linear-to-bl from-gray-200 to-gray-400 px-2 lg:px-6 py-6 mt-8 lg:rounded-2xl shadow-lg">
+    <div className="md:mx-10 bg-linear-to-bl from-gray-200 to-gray-400 px-2 lg:px-6 py-6 mt-8 lg:rounded-2xl shadow-lg">
       {/* Title */}
       <h2 className="text-xl md:text-2xl text-center md:text-left text-black font-semibold pb-3 border-b-2 border-black">
         {TrainerDetails.name || "Unknown Trainer"}&apos;s Weekly Schedule

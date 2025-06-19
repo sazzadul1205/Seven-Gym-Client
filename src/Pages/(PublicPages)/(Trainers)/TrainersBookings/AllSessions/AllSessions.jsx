@@ -63,10 +63,10 @@ const AllSessions = ({ AllSessionData, listedSessions, setListedSessions }) => {
 
   return (
     <div
-      className="bg-gradient-to-t from-gray-500/80 to-gray-500/50 py-5"
+      className="bg-gradient-to-t from-gray-500/80 to-gray-500/50 py-3"
       id="all-schedule-section"
     >
-      <div className="max-w-7xl mx-auto py-5 px-4 bg-white/80 rounded-xl">
+      <div className="md:mx-10 py-5 px-4 bg-white/80 rounded-xl">
         {/* Title and To top Button */}
         <div className="flex justify-between items-center py-1">
           {/* Title */}

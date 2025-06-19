@@ -63,6 +63,7 @@ import AdminPanelLayout from "./Layouts/AdminPanelLayout.jsx";
 import BannedPage from "./Pages/BannedPage/BannedPage.jsx";
 import AdminPrivateRoute from "./Routes/AdminPrivateRoute.jsx";
 import ScrollToTop from "./Routes/ScrollToTop.jsx";
+import ClassManagementLayout from "./Layouts/ClassManagementLayout.jsx";
 
 // React Query Client
 const queryClient = new QueryClient();
@@ -200,6 +201,12 @@ createRoot(document.getElementById("root")).render(
                   <AdminPanelLayout />
                 </AdminPrivateRoute>
               }
+            />
+
+            {/* Class Management */}
+            <Route
+              path="/Class_Management"
+              element={<ClassManagementLayout />}
             />
           </Routes>
         </BrowserRouter>

@@ -52,8 +52,8 @@ const AdminPanelLayout = () => {
   const navigate = useNavigate();
 
   const [spinning, setSpinning] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [tabLoading, setTabLoading] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const searchParams = new URLSearchParams(location.search);
   const initialTab = searchParams.get("tab") || "Dashboard";

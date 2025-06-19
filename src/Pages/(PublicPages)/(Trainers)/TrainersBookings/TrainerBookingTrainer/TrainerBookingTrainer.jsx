@@ -15,8 +15,8 @@ const TrainerBookingTrainer = ({ trainer }) => {
   const { icon } = getGenderIcon(trainer?.gender);
 
   return (
-    <div className="bg-gradient-to-t from-gray-500/80 to-gray-500/50 py-5">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center py-10 px-4 bg-black/20 rounded-4xl">
+    <div className="bg-gradient-to-t from-gray-500/80 to-gray-500/50 py-3">
+      <div className="md:mx-10 flex flex-col md:flex-row justify-between items-center py-10 px-4 bg-black/20 rounded-4xl">
         {/* Left Section : Trainer image and basic info */}
         <div className="w-full md:w-1/4 items-center space-x-4 mx-auto my-auto border-r border-white">
           {/* Trainer Profile Picture */}

@@ -92,8 +92,6 @@ const TrainerSettingsLayout = () => {
   // Get initial tab from URL
   const searchParams = new URLSearchParams(location.search);
   const initialTab = searchParams.get("tab") || "Trainer_Dashboard";
-
-  // Tab State
   const [activeTab, setActiveTab] = useState(initialTab);
 
   // Update URL when activeTab changes

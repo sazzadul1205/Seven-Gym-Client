@@ -169,9 +169,10 @@ const UserTrainerManagement = () => {
       style={{ backgroundImage: `url(${UserTrainerManagementBackground})` }}
     >
       <div className="bg-gradient-to-b from-gray-500/50 to-gray-800/50 min-h-screen">
-        <div className="flex flex-col md:flex-row  mx-auto max-w-7xl ">
+        <div className="flex flex-col md:flex-row">
           {/* Sidebar with icons */}
-          <div className="flex flex-row md:flex-col items-center space-x-1 md:pt-2 bg-white/40">
+          <div className="flex flex-row md:flex-col items-center  bg-white/40">
+            <div className="bg-[#A1662F] py-5 w-full" />
             {icons.map(({ src, alt, id, label }) => (
               <TooltipIcon
                 key={id}
@@ -179,8 +180,8 @@ const UserTrainerManagement = () => {
                 alt={alt}
                 id={id}
                 label={label}
-                onClick={() => setActiveTab(id)} // Set active tab on click
-                isActive={activeTab === id} // Highlight active tab
+                onClick={() => setActiveTab(id)}
+                isActive={activeTab === id}
               />
             ))}
           </div>
@@ -246,21 +247,29 @@ const TooltipIcon = ({ src, alt, id, label, onClick, isActive }) => (
     <div
       key={id}
       data-tooltip-id={id}
+      data-tooltip-content={label}
       onClick={onClick}
-      className={`${
-        isActive ? "bg-[#c4a07f]" : "bg-[#A1662F]"
-      } hover:bg-[#c4a07f] text-black w-16 h-16 flex items-center justify-center shadow-md hover:scale-105 transition-transform border-r border-amber-100 cursor-pointer`}
+      className={`group w-full px-4 py-5 flex items-center gap-3 border-r border-amber-100 shadow-md transition-all cursor-pointer
+    ${isActive ? "bg-[#c4a07f]" : "bg-[#A1662F]"} hover:bg-[#c4a07f]`}
+      title={label} // fallback if tooltip fails
     >
-      <img src={src} alt={alt} className="w-6 h-6" />
+      <img src={src} alt={alt} className="w-6 h-6 object-contain" />
+      <p className="text-sm font-medium text-black truncate">{label}</p>
     </div>
+
     <Tooltip
       id={id}
       place="right"
       effect="solid"
-      style={{ backgroundColor: "#c4a07f" }}
-    >
-      <p className="bg-[#c4a07f] text-black py-1 px-0 font-semibold">{label}</p>
-    </Tooltip>
+      style={{
+        backgroundColor: "#c4a07f",
+        color: "#000",
+        fontWeight: "600",
+        padding: "6px 10px",
+        borderRadius: "4px",
+        fontSize: "0.85rem",
+      }}
+    />
   </>
 );
 

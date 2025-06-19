@@ -173,10 +173,10 @@ const BookedSessionTable = ({ listedSessions, setListedSessions }) => {
 
   return (
     <div
-      className="bg-gradient-to-b from-gray-500/80 to-gray-500/50 py-5"
+      className="bg-gradient-to-b from-gray-500/80 to-gray-500/50 py-3"
       id="billing-section"
     >
-      <div className="max-w-7xl mx-auto items-center py-5 px-4 bg-white/80 rounded-xl">
+      <div className="md:mx-10 items-center py-5 px-4 bg-white/80 rounded-xl">
         {/* Title */}
         <h2 className="flex items-center text-xl font-bold text-black mb-2">
           <FaBookmark className="text-green-500 mr-2" />
