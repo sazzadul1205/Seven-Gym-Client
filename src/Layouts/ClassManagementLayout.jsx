@@ -14,13 +14,16 @@ import Swal from "sweetalert2";
 import useAuth from "../Hooks/useAuth";
 
 // Import Shared
-import CommonButton from "../Shared/Buttons/CommonButton";
 import Loading from "../Shared/Loading/Loading";
+import CommonButton from "../Shared/Buttons/CommonButton";
+import FetchingError from "../Shared/Component/FetchingError";
 
 // Import Tabs Component
 import ClassRequest from "../Pages/(ClassManagement)/ClassRequest/ClassRequest";
+
+// import Utility
 import useClassManagementData from "../Utility/useClassManagementData";
-import FetchingError from "../Shared/Component/FetchingError";
+import ClassAccepted from "../Pages/(ClassManagement)/ClassAccepted/ClassAccepted";
 
 const ClassManagementLayout = () => {
   const { logOut } = useAuth();
@@ -28,11 +31,11 @@ const ClassManagementLayout = () => {
 
   // State Management
   const [spinning, setSpinning] = useState(false);
-  const [tabLoading, setTabLoading] = useState(false);
+  const [tabLoading] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const searchParams = new URLSearchParams(location.search);
-  const initialTab = searchParams.get("tab") || "Dashboard";
+  const initialTab = searchParams.get("tab") || "Class_Request";
   const [activeTab, setActiveTab] = useState(initialTab);
 
   const {
@@ -44,6 +47,7 @@ const ClassManagementLayout = () => {
 
     // Data
     ClassBookingRequestData,
+    ClassBookingAcceptedData,
 
     // Refetch All
     refetchAll,
@@ -64,6 +68,17 @@ const ClassManagementLayout = () => {
       content: (
         <ClassRequest
           ClassBookingRequestData={ClassBookingRequestData}
+          Refetch={handleRefetch}
+        />
+      ),
+    },
+    {
+      id: "Class_Accepted",
+      Icon: worksheet,
+      title: "Class Accepted",
+      content: (
+        <ClassAccepted
+          ClassBookingAcceptedData={ClassBookingAcceptedData}
           Refetch={handleRefetch}
         />
       ),
@@ -162,7 +177,7 @@ const ClassManagementLayout = () => {
         <div className="hidden lg:block w-1/5 bg-gray-200 text-black border-r border-gray-500">
           {/* Title */}
           <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2">
-            Trainer Settings Options
+            Class Management Options
           </p>
 
           {/* Navigation Tab */}
@@ -185,9 +200,9 @@ const ClassManagementLayout = () => {
         </div>
 
         {/* Main Content */}
-        <div className="w-5/6">
+        <div className="w-full md:w-5/6">
           {tabLoading ? (
-            <div className="h-[80vh] flex justify-center items-center">
+            <div className="md:h-[80vh] flex justify-center items-center">
               <Loading />
             </div>
           ) : (
@@ -196,6 +211,60 @@ const ClassManagementLayout = () => {
                 activeTab === tab.id && <div key={tab.id}>{tab.content}</div>
             )
           )}
+        </div>
+      </div>
+
+      {/* Drawer for Mobile & Tablet View */}
+      <div className="drawer z-50 lg:hidden">
+        <input
+          id="trainer-settings-drawer"
+          type="checkbox"
+          className="drawer-toggle"
+        />
+        <div className="drawer-content">
+          {/* Hidden drawer button, but still accessible */}
+          <label
+            htmlFor="trainer-settings-drawer"
+            className="btn btn-primary drawer-button hidden"
+          >
+            Open drawer
+          </label>
+        </div>
+
+        <div className="drawer-side">
+          <label
+            htmlFor="trainer-settings-drawer"
+            aria-label="close sidebar"
+            className="drawer-overlay"
+          ></label>
+          <div className="menu bg-gray-300 text-black border-r border-gray-500 min-h-full w-3/4 md:w-80 p-0">
+            {/* Title */}
+            <p className="text-base font-semibold italic bg-gray-400 text-white px-1 lg:px-5 py-6">
+              Class Management Options
+            </p>
+
+            <div className="space-y-2">
+              {tabs.map((tab) => (
+                <div
+                  key={tab.id}
+                  className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold cursor-pointer ${
+                    activeTab === tab.id
+                      ? "bg-blue-500 text-white border border-gray-500"
+                      : "hover:bg-blue-300 border border-gray-500"
+                  }`}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    document.getElementById(
+                      "trainer-settings-drawer"
+                    ).checked = false; // Close the drawer
+                  }}
+                >
+                  <img src={tab.Icon} alt="Tab Icon" className="w-5" />
+                  {tab.title}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
