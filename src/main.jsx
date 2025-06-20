@@ -64,6 +64,7 @@ import BannedPage from "./Pages/BannedPage/BannedPage.jsx";
 import AdminPrivateRoute from "./Routes/AdminPrivateRoute.jsx";
 import ScrollToTop from "./Routes/ScrollToTop.jsx";
 import ClassManagementLayout from "./Layouts/ClassManagementLayout.jsx";
+import UserClassManagement from "./Pages/(UserPages)/UserClassManagement/UserClassManagement.jsx";
 
 // React Query Client
 const queryClient = new QueryClient();
@@ -169,6 +170,15 @@ createRoot(document.getElementById("root")).render(
                 element={
                   <MemberPrivateRoute>
                     <UserTrainerManagement />
+                  </MemberPrivateRoute>
+                }
+              />
+
+              <Route
+                path="/User/UserClassManagement"
+                element={
+                  <MemberPrivateRoute>
+                    <UserClassManagement />
                   </MemberPrivateRoute>
                 }
               />

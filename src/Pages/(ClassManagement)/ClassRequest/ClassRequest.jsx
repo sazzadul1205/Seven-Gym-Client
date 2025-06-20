@@ -24,10 +24,13 @@ import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 const ClassRequest = ({ ClassBookingRequestData, Refetch }) => {
   const axiosPublic = useAxiosPublic();
 
+  // State Management
   const [userSearchTerm, setUserSearchTerm] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedDuration, setSelectedDuration] = useState("");
   const [selectedMonthYear, setSelectedMonthYear] = useState("");
+
+  // Local Cache fo User Data
   const [userInfoCache, setUserInfoCache] = useState({});
 
   const normalizedUserSearch = useMemo(

@@ -24,6 +24,9 @@ import ClassRequest from "../Pages/(ClassManagement)/ClassRequest/ClassRequest";
 // import Utility
 import useClassManagementData from "../Utility/useClassManagementData";
 import ClassAccepted from "../Pages/(ClassManagement)/ClassAccepted/ClassAccepted";
+import ClassRejected from "../Pages/(ClassManagement)/ClassRejected/ClassRejected";
+import ClassCompleted from "../Pages/(ClassManagement)/ClassCompleted/ClassCompleted";
+import ClassDetailsManagement from "../Pages/(ClassManagement)/ClassDetailsManagement/ClassDetailsManagement";
 
 const ClassManagementLayout = () => {
   const { logOut } = useAuth();
@@ -46,8 +49,11 @@ const ClassManagementLayout = () => {
     error,
 
     // Data
+    ClassDetailsData,
     ClassBookingRequestData,
     ClassBookingAcceptedData,
+    ClassBookingRejectedData,
+    ClassBookingCompletedData,
 
     // Refetch All
     refetchAll,
@@ -61,6 +67,17 @@ const ClassManagementLayout = () => {
   };
 
   const tabs = [
+    {
+      id: "Class_Details_Management",
+      Icon: worksheet,
+      title: "Class Details Management",
+      content: (
+        <ClassDetailsManagement
+          ClassDetailsData={ClassDetailsData}
+          Refetch={handleRefetch}
+        />
+      ),
+    },
     {
       id: "Class_Request",
       Icon: worksheet,
@@ -79,6 +96,28 @@ const ClassManagementLayout = () => {
       content: (
         <ClassAccepted
           ClassBookingAcceptedData={ClassBookingAcceptedData}
+          Refetch={handleRefetch}
+        />
+      ),
+    },
+    {
+      id: "Class_Rejected",
+      Icon: worksheet,
+      title: "Class Rejected",
+      content: (
+        <ClassRejected
+          ClassBookingRejectedData={ClassBookingRejectedData}
+          Refetch={handleRefetch}
+        />
+      ),
+    },
+    {
+      id: "Class_Completed",
+      Icon: worksheet,
+      title: "Class Completed",
+      content: (
+        <ClassCompleted
+          ClassBookingCompletedData={ClassBookingCompletedData}
           Refetch={handleRefetch}
         />
       ),

@@ -68,7 +68,7 @@ const ClassesDetails = () => {
   });
 
   // Map through all and get _id array
-  const trainerIds = ClassData?.trainers?.map((trainer) => trainer._id) || [];
+  const trainerIds = ClassData?.trainers?.map((trainer) => trainer?._id) || [];
 
   // Fetch Trainers Data
   const {

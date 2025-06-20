@@ -11,7 +11,7 @@ import useAuth from "../../../Hooks/useAuth";
 // Import Icons
 import { ImExit } from "react-icons/im";
 import { GiUpgrade } from "react-icons/gi";
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdOutlineClass } from "react-icons/md";
 import { AiTwotoneSchedule } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaStopwatch, FaUser } from "react-icons/fa";
@@ -57,6 +57,11 @@ const NavbarEnd = ({ UsersData }) => {
         name: "My Trainer Management",
         path: "/User/UserTrainerManagement",
         icon: <FaStopwatch />,
+      },
+      {
+        name: "User Class Management",
+        path: "/User/UserClassManagement",
+        icon: <MdOutlineClass />,
       },
     ],
     Trainer: [
