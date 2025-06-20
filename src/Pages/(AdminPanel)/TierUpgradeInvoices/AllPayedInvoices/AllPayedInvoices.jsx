@@ -13,28 +13,29 @@ import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerB
 
 // Import Modal
 import TierUpgradePaymentInvoiceModal from "../../../(UserPages)/UserSettings/UserPaymentInvoices/TierUpgradePaymentInvoiceModal/TierUpgradePaymentInvoiceModal";
+import CachedUserInfo from "../../AllTrainerBookings/CachedUserInfo";
 
 const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
-  // State for current page number
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // State for selected invoice (for the modal)
-  const [selectedPaymentInvoice, setSelectedPaymentInvoice] = useState(null);
-
-  // State for search input
-  const [searchTerm, setSearchTerm] = useState("");
-
-  // State for selected tier filter
-  const [selectedTier, setSelectedTier] = useState("");
-
-  // State for selected duration filter
-  const [selectedDuration, setSelectedDuration] = useState("");
-
-  // Ref to control the modal
   const modalPaymentInvoiceRef = useRef(null);
 
-  // Items to show per page
+  // Filter State
+  const [selectedTier, setSelectedTier] = useState("");
+  const [selectedDuration, setSelectedDuration] = useState("");
+  const [userSearchTerm, setUserSearchTerm] = useState("");
+  const [selectedPaymentInvoice, setSelectedPaymentInvoice] = useState(null);
+
+  // Cache to store loaded user data by email
+  const [userInfoCache, setUserInfoCache] = useState({});
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  // Normalize and memoize search term
+  const normalizedUserSearch = useMemo(
+    () => userSearchTerm.trim().toLowerCase(),
+    [userSearchTerm]
+  );
 
   // Get unique tier options for filter dropdown
   const tierOptions = useMemo(() => {
@@ -46,21 +47,32 @@ const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
     return [...new Set(TierUpgradePaymentData?.map((item) => item.duration))];
   }, [TierUpgradePaymentData]);
 
-  // Filter data by search term, selected tier, and duration
-  const filteredData =
-    TierUpgradePaymentData?.filter((item) => {
-      const matchesSearch = item.email
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
+  // Filtered Data Logic
+  const filteredData = useMemo(() => {
+    if (!TierUpgradePaymentData) return [];
+
+    return TierUpgradePaymentData.filter((item) => {
+      const email = item.email?.toLowerCase();
+      const user = userInfoCache[email];
+      const userFullName = user?.fullName?.toLowerCase() || "";
+
+      const matchesUser =
+        !normalizedUserSearch || userFullName.includes(normalizedUserSearch);
 
       const matchesTier = selectedTier ? item.tier === selectedTier : true;
-
       const matchesDuration = selectedDuration
         ? item.duration === selectedDuration
         : true;
 
-      return matchesSearch && matchesTier && matchesDuration;
-    }) || [];
+      return matchesUser && matchesTier && matchesDuration;
+    });
+  }, [
+    TierUpgradePaymentData,
+    userInfoCache,
+    normalizedUserSearch,
+    selectedTier,
+    selectedDuration,
+  ]);
 
   // Calculate total number of pages
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -88,23 +100,19 @@ const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
 
       {/* Filter Section: Search, Tier, Duration */}
       <div className="flex flex-wrap justify-center gap-4 w-full p-4 bg-gray-400 border border-t-white">
-        {/* Search by Email */}
-        <div className="flex flex-col flex-1 max-w-[500px]">
-          <label className="text-sm text-white mb-1">Search by Email</label>
-          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
-            {/* Search Icon */}
-          <FaSearch className="h-4 w-4 text-gray-500" />
-
-            {/* Search Input Field */}
+        {/* Search by Name */}
+        <div className="flex flex-col flex-1 max-w-[300px]">
+          <label className="text-sm font-semibold text-white mb-1">
+            Search by User Name
+          </label>
+          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm">
+            <FaSearch className="h-4 w-4 text-gray-500" />
             <input
               type="text"
-              placeholder="Search users..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="w-full outline-none text-gray-700 placeholder-gray-400 bg-transparent"
+              placeholder="Search user..."
+              value={userSearchTerm}
+              onChange={(e) => setUserSearchTerm(e.target.value)}
+              className="w-full outline-none text-gray-700 bg-transparent"
             />
           </div>
         </div>
@@ -182,7 +190,17 @@ const AllPayedInvoices = ({ TierUpgradePaymentData }) => {
 
                   {/* User Info */}
                   <td className="border px-4 py-2">
-                    <TrainerBookingRequestUserBasicInfo email={item.email} />
+                    <TrainerBookingRequestUserBasicInfo
+                      email={item?.email}
+                      renderUserInfo={(user) => (
+                        <CachedUserInfo
+                          user={user}
+                          email={item?.email}
+                          setUserInfoCache={setUserInfoCache}
+                          userInfoCache={userInfoCache}
+                        />
+                      )}
+                    />
                   </td>
 
                   {/* Tier */}

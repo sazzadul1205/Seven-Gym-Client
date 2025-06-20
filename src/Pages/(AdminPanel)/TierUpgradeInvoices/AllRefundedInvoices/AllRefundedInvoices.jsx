@@ -13,52 +13,68 @@ import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerB
 
 // Import Invoice Modal
 import TierUpgradeRefundInvoiceModal from "../../../(UserPages)/UserSettings/UserRefundInvoices/TierUpgradeRefundInvoiceModal/TierUpgradeRefundInvoiceModal";
+import CachedUserInfo from "../../AllTrainerBookings/CachedUserInfo";
 
 const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
-  // Ref to control the refund invoice modal
   const modalRefundInvoiceRef = useRef(null);
 
-  // Current page number for pagination
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // Selected refund invoice (for modal)
+  // State
+  const [userSearchTerm, setUserSearchTerm] = useState("");
+  const [paymentIdFilter, setPaymentIdFilter] = useState("");
   const [selectedRefundInvoice, setSelectedRefundInvoice] = useState(null);
 
-  // Email filter input
-  const [emailFilter, setEmailFilter] = useState("");
+  // Cache to store loaded user data by email
+  const [userInfoCache, setUserInfoCache] = useState({});
 
-  // Payment ID filter input
-  const [paymentIdFilter, setPaymentIdFilter] = useState("");
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  // How many refunds to show per page
-  const refundsPerPage = 10;
-
-  // Filter refunds by email and payment ID
-  const filteredRefunds = useMemo(() => {
-    return TierUpgradeRefundData.filter((item) => {
-      const emailMatch = item.email
-        .toLowerCase()
-        .includes(emailFilter.toLowerCase());
-      const paymentMatch = item.linkedPaymentReceptID
-        .toLowerCase()
-        .includes(paymentIdFilter.toLowerCase());
-      return emailMatch && paymentMatch;
-    });
-  }, [TierUpgradeRefundData, emailFilter, paymentIdFilter]);
-
-  // Total number of pages
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredRefunds.length / refundsPerPage)
+  // Normalized search term
+  const normalizedUserSearch = useMemo(
+    () => userSearchTerm.trim().toLowerCase(),
+    [userSearchTerm]
   );
 
-  // Refunds to display on the current page
-  const currentRefunds = useMemo(() => {
-    const start = (currentPage - 1) * refundsPerPage;
-    return filteredRefunds.slice(start, start + refundsPerPage);
-  }, [filteredRefunds, currentPage]);
+  const normalizedPaymentSearch = useMemo(
+    () => paymentIdFilter.trim().toLowerCase(),
+    [paymentIdFilter]
+  );
 
-  // Close the modal and clear selection
+  // Filtered Data
+  const filteredData = useMemo(() => {
+    return TierUpgradeRefundData.filter((item) => {
+      const user = userInfoCache[item.email?.toLowerCase()];
+      const userFullName = user?.fullName?.toLowerCase() || "";
+
+      const matchesUser =
+        !normalizedUserSearch || userFullName.includes(normalizedUserSearch);
+
+      const matchesPayment =
+        !normalizedPaymentSearch ||
+        item.linkedPaymentReceptID
+          ?.toLowerCase()
+          .includes(normalizedPaymentSearch);
+
+      return matchesUser && matchesPayment;
+    });
+  }, [
+    TierUpgradeRefundData,
+    userInfoCache,
+    normalizedUserSearch,
+    normalizedPaymentSearch,
+  ]);
+
+  // Calculate total number of pages
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  // Get current page's data
+  const currentData = filteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Close modal and reset selected invoice
   const closeRefundInvoiceModal = () => {
     modalRefundInvoiceRef.current?.close();
     setSelectedRefundInvoice(null);
@@ -75,20 +91,19 @@ const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
 
       {/* Filters */}
       <div className="flex flex-wrap justify-center gap-4 w-full p-4 bg-gray-400 border border-t-white">
-        {/* Email Filter */}
-        <div className="flex flex-col flex-1 max-w-[500px]">
-          <label className="text-sm text-white mb-1">Search by Email</label>
-          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+        {/* Search by Name */}
+        <div className="flex flex-col flex-1 max-w-[300px]">
+          <label className="text-sm font-semibold text-white mb-1">
+            Search by User Name
+          </label>
+          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm">
             <FaSearch className="h-4 w-4 text-gray-500" />
             <input
               type="text"
-              placeholder="Search email..."
-              value={emailFilter}
-              onChange={(e) => {
-                setEmailFilter(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="w-full outline-none text-gray-700 placeholder-gray-400 bg-transparent"
+              placeholder="Search user..."
+              value={userSearchTerm}
+              onChange={(e) => setUserSearchTerm(e.target.value)}
+              className="w-full outline-none text-gray-700 bg-transparent"
             />
           </div>
         </div>
@@ -115,7 +130,7 @@ const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
       </div>
 
       {/* Table */}
-      {filteredRefunds.length > 0 ? (
+      {currentData.length > 0 ? (
         <div className="overflow-x-auto">
           {/* Data Table */}
           <table className="min-w-full table-auto border border-gray-300 text-sm">
@@ -136,16 +151,26 @@ const AllRefundedInvoices = ({ TierUpgradeRefundData }) => {
 
             {/* Table Body */}
             <tbody>
-              {currentRefunds.map((item, index) => (
+              {currentData.map((item, index) => (
                 <tr key={item._id} className="hover:bg-gray-50">
                   {/* Serial Number */}
                   <td className="border px-4 py-2">
-                    {(currentPage - 1) * refundsPerPage + index + 1}
+                    {(currentPage - 1) * itemsPerPage + index + 1}
                   </td>
 
                   {/* User info */}
                   <td className="border px-4 py-2">
-                    <TrainerBookingRequestUserBasicInfo email={item.email} />
+                    <TrainerBookingRequestUserBasicInfo
+                      email={item?.email}
+                      renderUserInfo={(user) => (
+                        <CachedUserInfo
+                          user={user}
+                          email={item?.email}
+                          setUserInfoCache={setUserInfoCache}
+                          userInfoCache={userInfoCache}
+                        />
+                      )}
+                    />
                   </td>
 
                   {/* Linked Payment ID */}

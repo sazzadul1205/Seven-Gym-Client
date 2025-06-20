@@ -62,7 +62,10 @@ const ClassManagementLayout = () => {
       Icon: worksheet,
       title: "Class Request",
       content: (
-        <ClassRequest ClassBookingRequestData={ClassBookingRequestData} />
+        <ClassRequest
+          ClassBookingRequestData={ClassBookingRequestData}
+          Refetch={handleRefetch}
+        />
       ),
     },
   ];
@@ -154,10 +157,9 @@ const ClassManagementLayout = () => {
         </div>
       </div>
 
-      {/* Body */}
-      <div className="flex">
-        {/* Sidebar */}
-        <div className="w-1/6 border-r border-gray-300 bg-gradient-to-bl from-gray-300 to-gray-100 min-h-screen">
+      {/*  Tabs Section */}
+      <div className="flex min-h-screen mx-auto bg-gray-100 border-t border-gray-500">
+        <div className="hidden lg:block w-1/5 bg-gray-200 text-black border-r border-gray-500">
           {/* Title */}
           <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2">
             Trainer Settings Options

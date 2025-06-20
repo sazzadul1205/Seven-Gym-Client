@@ -13,54 +13,66 @@ import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerB
 
 // Import Modal
 import TierUpgradePaymentInvoiceModal from "../../../(UserPages)/UserSettings/UserPaymentInvoices/TierUpgradePaymentInvoiceModal/TierUpgradePaymentInvoiceModal";
+import CachedUserInfo from "../../AllTrainerBookings/CachedUserInfo";
 
 const AllActiveInvoices = ({ ActiveTierPaymentData }) => {
-  // State for current page number
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // State for selected invoice (for the modal)
-  const [selectedPaymentInvoice, setSelectedPaymentInvoice] = useState(null);
-
-  // State for search input
-  const [searchTerm, setSearchTerm] = useState("");
-
-  // State for selected tier filter
-  const [selectedTier, setSelectedTier] = useState("");
-
-  // State for selected duration filter
-  const [selectedDuration, setSelectedDuration] = useState("");
-
-  // Ref to control the modal
   const modalPaymentInvoiceRef = useRef(null);
 
-  // Items to show per page
+  // Filter State
+  const [selectedTier, setSelectedTier] = useState("");
+  const [selectedDuration, setSelectedDuration] = useState("");
+  const [userSearchTerm, setUserSearchTerm] = useState("");
+  const [selectedPaymentInvoice, setSelectedPaymentInvoice] = useState(null);
+
+  // Cache to store loaded user data by email
+  const [userInfoCache, setUserInfoCache] = useState({});
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Get unique tier options for filter dropdown
+  // Normalize and memoize search term
+  const normalizedUserSearch = useMemo(
+    () => userSearchTerm.trim().toLowerCase(),
+    [userSearchTerm]
+  );
+
+  // Unique Tier options
   const tierOptions = useMemo(() => {
     return [...new Set(ActiveTierPaymentData?.map((item) => item.tier))];
   }, [ActiveTierPaymentData]);
 
-  // Get unique duration options for filter dropdown
+  // Unique Duration options
   const durationOptions = useMemo(() => {
     return [...new Set(ActiveTierPaymentData?.map((item) => item.duration))];
   }, [ActiveTierPaymentData]);
 
-  // Filter data by search term, selected tier, and duration
-  const filteredData =
-    ActiveTierPaymentData?.filter((item) => {
-      const matchesSearch = item.email
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
+  // Filtered Data Logic
+  const filteredData = useMemo(() => {
+    if (!ActiveTierPaymentData) return [];
+
+    return ActiveTierPaymentData.filter((item) => {
+      const email = item.email?.toLowerCase();
+      const user = userInfoCache[email];
+      const userFullName = user?.fullName?.toLowerCase() || "";
+
+      const matchesUser =
+        !normalizedUserSearch || userFullName.includes(normalizedUserSearch);
 
       const matchesTier = selectedTier ? item.tier === selectedTier : true;
-
       const matchesDuration = selectedDuration
         ? item.duration === selectedDuration
         : true;
 
-      return matchesSearch && matchesTier && matchesDuration;
-    }) || [];
+      return matchesUser && matchesTier && matchesDuration;
+    });
+  }, [
+    ActiveTierPaymentData,
+    userInfoCache,
+    normalizedUserSearch,
+    selectedTier,
+    selectedDuration,
+  ]);
 
   // Calculate total number of pages
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -76,9 +88,9 @@ const AllActiveInvoices = ({ ActiveTierPaymentData }) => {
     modalPaymentInvoiceRef.current?.close();
     setSelectedPaymentInvoice(null);
   };
-  
+
   return (
-    <div>
+    <>
       {/* Page Header */}
       <div className="bg-gray-400 py-2">
         <h3 className="font-semibold text-white text-center text-lg">
@@ -86,25 +98,21 @@ const AllActiveInvoices = ({ ActiveTierPaymentData }) => {
         </h3>
       </div>
 
-      {/* Filter Section: Search, Tier, Duration */}
+      {/* Filter Section */}
       <div className="flex flex-wrap justify-center gap-4 w-full p-4 bg-gray-400 border border-t-white">
-        {/* Search by Email */}
-        <div className="flex flex-col flex-1 max-w-[500px]">
-          <label className="text-sm text-white mb-1">Search by Email</label>
-          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
-            {/* Search Icon */}
-          <FaSearch className="h-4 w-4 text-gray-500" />
-
-            {/* Search Input Field */}
+        {/* Search by Name */}
+        <div className="flex flex-col flex-1 max-w-[300px]">
+          <label className="text-sm font-semibold text-white mb-1">
+            Search by User Name
+          </label>
+          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm">
+            <FaSearch className="h-4 w-4 text-gray-500" />
             <input
               type="text"
-              placeholder="Search users..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="w-full outline-none text-gray-700 placeholder-gray-400 bg-transparent"
+              placeholder="Search user..."
+              value={userSearchTerm}
+              onChange={(e) => setUserSearchTerm(e.target.value)}
+              className="w-full outline-none text-gray-700 bg-transparent"
             />
           </div>
         </div>
@@ -156,18 +164,24 @@ const AllActiveInvoices = ({ ActiveTierPaymentData }) => {
           {/* Data Table */}
           <table className="min-w-full table-auto border border-gray-300 text-sm">
             {/* Table Header */}
-            <thead>
-              <tr className="bg-gray-100 text-left">
-                <th className="px-4 py-2 border">#</th>
-                <th className="px-4 py-2 border">User</th>
-                <th className="px-4 py-2 border">Tier</th>
-                <th className="px-4 py-2 border">Duration</th>
-                <th className="px-4 py-2 border">Start Date</th>
-                <th className="px-4 py-2 border">End Date</th>
-                <th className="px-4 py-2 border">Total ($)</th>
-                <th className="px-4 py-2 border">Payed</th>
-                <th className="px-4 py-2 border">Payment Time</th>
-                <th className="px-4 py-2 border">Action</th>
+            <thead className="bg-gray-100 text-left text-sm">
+              <tr>
+                {[
+                  "#",
+                  "User",
+                  "Tier",
+                  "Duration",
+                  "Start Date",
+                  "End Date",
+                  "Total ($)",
+                  "Payed",
+                  "Payment Time",
+                  "Action",
+                ].map((heading) => (
+                  <th key={heading} className="px-4 py-2 border">
+                    {heading}
+                  </th>
+                ))}
               </tr>
             </thead>
 
@@ -182,7 +196,17 @@ const AllActiveInvoices = ({ ActiveTierPaymentData }) => {
 
                   {/* User Info */}
                   <td className="border px-4 py-2">
-                    <TrainerBookingRequestUserBasicInfo email={item.email} />
+                    <TrainerBookingRequestUserBasicInfo
+                      email={item?.email}
+                      renderUserInfo={(user) => (
+                        <CachedUserInfo
+                          user={user}
+                          email={item?.email}
+                          setUserInfoCache={setUserInfoCache}
+                          userInfoCache={userInfoCache}
+                        />
+                      )}
+                    />
                   </td>
 
                   {/* Tier */}
@@ -295,7 +319,7 @@ const AllActiveInvoices = ({ ActiveTierPaymentData }) => {
           Close={closePaymentInvoiceModal}
         />
       </dialog>
-    </div>
+    </>
   );
 };
 
