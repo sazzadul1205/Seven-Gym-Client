@@ -45,8 +45,6 @@ const UserClassManagement = () => {
   if (ClassBookingRequestError || ClassBookingAcceptedError)
     return <FetchingError />;
 
-  console.log(ClassBookingAcceptedData);
-
   return (
     <div
       className="bg-fixed bg-cover bg-center min-h-screen "
@@ -60,6 +58,7 @@ const UserClassManagement = () => {
         />
         <UserClassManagementAccepted
           ClassBookingAcceptedData={ClassBookingAcceptedData}
+          refetchAll={refetchAll}
         />
       </div>
     </div>

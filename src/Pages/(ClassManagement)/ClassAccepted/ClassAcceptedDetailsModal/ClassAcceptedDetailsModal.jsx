@@ -1,4 +1,3 @@
-import React from "react";
 import { ImCross } from "react-icons/im";
 import { FaMoneyBillAlt, FaClock, FaCalendarAlt } from "react-icons/fa";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
@@ -7,10 +6,21 @@ import Loading from "../../../../Shared/Loading/Loading";
 import FetchingError from "../../../../Shared/Component/FetchingError";
 import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
 
-const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData }) => {
+const ClassAcceptedDetailsModal = ({
+  selectedBookingAcceptedData,
+  setSelectedBookingAcceptedData,
+}) => {
   const axiosPublic = useAxiosPublic();
 
+  console.log("selected Booking Accepted Data : ", selectedBookingAcceptedData);
+
   const className = selectedBookingAcceptedData?.applicant?.classesName;
+  const applicant =
+    selectedBookingAcceptedData?.applicant?.applicantData ||
+    selectedBookingAcceptedData?.applicant;
+  const email =
+    applicant?.email || selectedBookingAcceptedData?.applicant?.applicantEmail;
+  const altEmail = selectedBookingAcceptedData?.applicant?.applicantEmail;
 
   const {
     data: ClassData,
@@ -28,13 +38,7 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData }) => {
   if (isLoading) return <Loading />;
   if (error) return <FetchingError />;
 
-  const applicant =
-    selectedBookingAcceptedData?.applicant?.applicantData ||
-    selectedBookingAcceptedData?.applicant;
-
-  const email =
-    applicant?.email || selectedBookingAcceptedData?.applicant?.applicantEmail;
-  const altEmail = selectedBookingAcceptedData?.applicant?.applicantEmail;
+  if (!selectedBookingAcceptedData) return null;
 
   return (
     <div className="modal-box p-0 bg-gradient-to-b from-white to-gray-200 text-black max-w-2xl">
@@ -43,9 +47,10 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData }) => {
         <h3 className="font-bold text-lg">Class Booking Accepted Details</h3>
         <ImCross
           className="text-xl text-gray-600 hover:text-red-500 cursor-pointer"
-          onClick={() =>
-            document.getElementById("Class_Accepted_Details_Modal")?.close()
-          }
+          onClick={() => {
+            document.getElementById("Class_Accepted_Details_Modal")?.close();
+            setSelectedBookingAcceptedData("");
+          }}
         />
       </div>
 

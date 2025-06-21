@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // import Packages
 import PropTypes from "prop-types";
@@ -27,12 +27,16 @@ import FetchingError from "../../../../Shared/Component/FetchingError";
 
 // import Modal
 import ClassAcceptedDetailsModal from "../../../(ClassManagement)/ClassAccepted/ClassAcceptedDetailsModal/ClassAcceptedDetailsModal";
+import ClassAcceptedPaymentDetailsModal from "./ClassAcceptedPaymentDetailsModal/ClassAcceptedPaymentDetailsModal";
+import PayedClassReceptModal from "./PayedClassReceptModal/PayedClassReceptModal";
 
-const UserClassAcceptedCard = ({ item }) => {
+const UserClassAcceptedCard = ({ item, refetchAll }) => {
   const axiosPublic = useAxiosPublic();
 
+  // State Management
   const [selectedBookingAcceptedData, setSelectedBookingAcceptedData] =
     useState("");
+  const [paymentSuccessData, setPaymentSuccessData] = useState("");
 
   const {
     data: ClassData,
@@ -106,14 +110,20 @@ const UserClassAcceptedCard = ({ item }) => {
           {/* Card Button */}
           <>
             <button
-              id={`details-applicant-btn-${item._id}`}
+              id={`payment-applicant-btn-${item._id}`}
               className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"
+              onClick={() => {
+                setSelectedBookingAcceptedData(item);
+                document
+                  .getElementById("Class_Accepted_Payment_Details_Modal")
+                  .showModal();
+              }}
             >
               <IoCardSharp className="text-blue-500" />
             </button>
             <Tooltip
-              anchorSelect={`#details-applicant-btn-${item._id}`}
-              content="details Applicant"
+              anchorSelect={`#payment-applicant-btn-${item._id}`}
+              content="Payment Applicant"
             />
           </>
 
@@ -141,9 +151,30 @@ const UserClassAcceptedCard = ({ item }) => {
       </div>
 
       {/* Modal */}
-      <dialog id="Class_Accepted_Details_Modal" className="modal">
+      <dialog
+        id="Class_Accepted_Details_Modal"
+        className="modal"
+      >
         <ClassAcceptedDetailsModal
           selectedBookingAcceptedData={selectedBookingAcceptedData}
+          setSelectedBookingAcceptedData={setSelectedBookingAcceptedData}
+        />
+      </dialog>
+
+      {/* Modal */}
+      <dialog id="Class_Accepted_Payment_Details_Modal" className="modal">
+        <ClassAcceptedPaymentDetailsModal
+          selectedBookingAcceptedData={selectedBookingAcceptedData}
+          setPaymentSuccessData={setPaymentSuccessData}
+          refetchAll={refetchAll}
+        />
+      </dialog>
+
+      {/* Modal */}
+      <dialog id="Payed_Class_Recept_Modal" className="modal">
+        <PayedClassReceptModal
+          paymentSuccessData={paymentSuccessData}
+          setPaymentSuccessData={setPaymentSuccessData}
         />
       </dialog>
     </div>
@@ -163,9 +194,13 @@ UserClassAcceptedCard.propTypes = {
       applicantData: PropTypes.object,
     }).isRequired,
   }).isRequired,
+  refetchAll: PropTypes.func.isRequired,
 };
 
-const UserClassManagementAccepted = ({ ClassBookingAcceptedData }) => {
+const UserClassManagementAccepted = ({
+  ClassBookingAcceptedData,
+  refetchAll,
+}) => {
   return (
     <div className="p-4 space-y-6">
       {/* Tittle */}
@@ -206,7 +241,11 @@ const UserClassManagementAccepted = ({ ClassBookingAcceptedData }) => {
         // Request Cards
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {ClassBookingAcceptedData.map((item) => (
-            <UserClassAcceptedCard key={item._id} item={item} />
+            <UserClassAcceptedCard
+              key={item._id}
+              item={item}
+              refetchAll={refetchAll}
+            />
           ))}
         </div>
       )}
@@ -229,5 +268,6 @@ UserClassManagementAccepted.propTypes = {
       }).isRequired,
     })
   ).isRequired,
+  refetchAll: PropTypes.func.isRequired,
 };
 export default UserClassManagementAccepted;
