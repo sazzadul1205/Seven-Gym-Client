@@ -6,8 +6,36 @@ import TrainerBookingRequestUserBasicInfo from "../../(TrainerPages)/TrainerBook
 import CachedUserInfo from "../../(AdminPanel)/AllTrainerBookings/CachedUserInfo";
 import ClassAcceptedDetailsModal from "./ClassAcceptedDetailsModal/ClassAcceptedDetailsModal";
 import PropTypes from "prop-types";
+import ClassAcceptedSetTimeModal from "./ClassAcceptedSetTimeModal/ClassAcceptedSetTimeModal";
+import { format, parse } from "date-fns";
 
-const ClassAccepted = ({ ClassBookingAcceptedData }) => {
+const isClassCompleted = (endDateStr) => {
+  if (!endDateStr) return false;
+
+  const [day, month, year] = endDateStr.split("-").map(Number);
+  const endDate = new Date(year, month - 1, day);
+  const today = new Date();
+
+  // Set both to midnight for date-only comparison
+  endDate.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+
+  return endDate < today; // strictly before today
+};
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  // Parse date from "dd-MM-yyyy" format
+  const parsedDate = parse(dateStr, "dd-MM-yyyy", new Date());
+
+  // If invalid date, fallback
+  if (isNaN(parsedDate)) return dateStr;
+
+  // Format to "MMM, d, yyyy" → e.g. Mar, 20, 2025
+  return format(parsedDate, "MMM, d  yyyy");
+};
+
+const ClassAccepted = ({ ClassBookingAcceptedData, Refetch }) => {
   // State Management
   const [selectedClass, setSelectedClass] = useState("");
   const [showOnlyPaid, setShowOnlyPaid] = useState(false);
@@ -113,11 +141,7 @@ const ClassAccepted = ({ ClassBookingAcceptedData }) => {
     // Your delete logic goes here
   };
 
-  // Handle Start Class Action
-  const handleStart = (item) => {
-    console.log("Start class for:", item._id);
-    // Your start logic here
-  };
+  console.log(ClassBookingAcceptedData);
 
   return (
     <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen text-black">
@@ -232,8 +256,8 @@ const ClassAccepted = ({ ClassBookingAcceptedData }) => {
           <thead className="bg-gray-100 text-left text-sm">
             <tr>
               <th className="py-3 px-4 border">#</th>
-              <th className="py-3 px-4 border">Class Name</th>
               <th className="py-3 px-4 border">Applicant</th>
+              <th className="py-3 px-4 border">Class Name</th>
               <th className="py-3 px-4 border">Phone</th>
               <th className="py-3 px-4 border">Price</th>
               <th className="py-3 px-4 border">Submitted</th>
@@ -250,11 +274,20 @@ const ClassAccepted = ({ ClassBookingAcceptedData }) => {
                 const applicant =
                   item.applicant.applicantData || item.applicant;
                 const altEmail = applicant.applicantEmail;
-                const { name, email, phone } = applicant;
+                const { email, phone } = applicant;
                 const paid = item.paid;
+                console.log(item.endDate);
 
+                const isCompleted = isClassCompleted(item.endDate);
                 return (
-                  <tr key={item._id} className="bg-white hover:bg-gray-50">
+                  <tr
+                    key={item._id}
+                    className={`${
+                      isCompleted
+                        ? "bg-red-100 hover:bg-red-200"
+                        : "bg-white hover:bg-gray-50"
+                    }`}
+                  >
                     {/* Serial Number */}
                     <td className="py-3 px-4 font-medium">{index + 1}</td>
 
@@ -273,9 +306,13 @@ const ClassAccepted = ({ ClassBookingAcceptedData }) => {
                       />
                     </td>
 
-                    {/* Applicant Name */}
-                    <td className="py-3 px-4">
-                      {name || applicant.applicantName}
+                    {/* Class Name */}
+                    <td className="py-3 px-4 font-semibold">
+                      {isCompleted ? (
+                        <span className="text-red-600">Completed</span>
+                      ) : (
+                        item.applicant.classesName
+                      )}
                     </td>
 
                     {/* Applicant Phone Number */}
@@ -296,9 +333,15 @@ const ClassAccepted = ({ ClassBookingAcceptedData }) => {
                     {/* Start At */}
                     <td className="py-3 px-4">
                       {paid ? (
-                        <span className="text-green-600 font-medium">
-                          Set on start
-                        </span>
+                        item.startDate ? (
+                          <span className="text-black font-medium">
+                            {formatDate(item.startDate)}
+                          </span>
+                        ) : (
+                          <span className="text-green-600 font-medium">
+                            Set Start Time ...
+                          </span>
+                        )
                       ) : (
                         <span className="italic text-gray-500">
                           Waiting for payment...
@@ -309,9 +352,15 @@ const ClassAccepted = ({ ClassBookingAcceptedData }) => {
                     {/* End At */}
                     <td className="py-3 px-4">
                       {paid ? (
-                        <span className="text-green-600 font-medium">
-                          Set on end
-                        </span>
+                        item.endDate ? (
+                          <span className="text-black font-medium">
+                            {formatDate(item.endDate)}
+                          </span>
+                        ) : (
+                          <span className="text-green-600 font-medium">
+                            Set End Time ...
+                          </span>
+                        )
                       ) : (
                         <span className="italic text-gray-500">
                           Waiting for payment...
@@ -355,12 +404,19 @@ const ClassAccepted = ({ ClassBookingAcceptedData }) => {
                         </>
                         {/* Start Button (Only if Paid) */}
                         <>
-                          {paid && (
+                          {paid && !item.startDate && (
                             <>
                               <button
                                 id={`start-class-btn-${item._id}`}
                                 className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                                onClick={() => handleStart(item)}
+                                onClick={() => {
+                                  setSelectedBookingAcceptedData(item);
+                                  document
+                                    .getElementById(
+                                      "Class_Accepted_Set_Time_Modal"
+                                    )
+                                    .showModal();
+                                }}
                               >
                                 <FaRegClock className="text-blue-600" />
                               </button>
@@ -520,6 +576,15 @@ const ClassAccepted = ({ ClassBookingAcceptedData }) => {
       <dialog id="Class_Accepted_Details_Modal" className="modal">
         <ClassAcceptedDetailsModal
           selectedBookingAcceptedData={selectedBookingAcceptedData}
+        />
+      </dialog>
+
+      {/* Modal */}
+      <dialog id="Class_Accepted_Set_Time_Modal" className="modal">
+        <ClassAcceptedSetTimeModal
+          setSelectedBookingAcceptedData={setSelectedBookingAcceptedData}
+          selectedBookingAcceptedData={selectedBookingAcceptedData}
+          Refetch={Refetch}
         />
       </dialog>
     </div>

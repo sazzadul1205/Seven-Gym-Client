@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import {
   CardElement,
   Elements,
@@ -16,6 +15,7 @@ import FetchingError from "../../../../../Shared/Component/FetchingError";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
+import PropTypes from "prop-types";
 
 // Stripe public key setup
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PROMISE);
@@ -36,6 +36,26 @@ const ClassAcceptedPaymentDetailsModal = ({
       />
     </Elements>
   );
+};
+
+// Prop Validation
+ClassAcceptedPaymentDetailsModal.propTypes = {
+  selectedBookingAcceptedData: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    applicant: PropTypes.shape({
+      classesName: PropTypes.string.isRequired,
+      duration: PropTypes.string.isRequired,
+      totalPrice: PropTypes.number.isRequired,
+      submittedDate: PropTypes.string.isRequired,
+      applicantData: PropTypes.shape({
+        email: PropTypes.string,
+      }),
+    }),
+    acceptedAt: PropTypes.string,
+    paid: PropTypes.bool,
+  }).isRequired,
+  setPaymentSuccessData: PropTypes.func.isRequired,
+  refetchAll: PropTypes.func.isRequired,
 };
 
 export default ClassAcceptedPaymentDetailsModal;
@@ -353,4 +373,24 @@ const ClassAcceptedPaymentDetailsModalInner = ({
       </div>
     </div>
   );
+};
+
+// Prop Validation
+ClassAcceptedPaymentDetailsModalInner.propTypes = {
+  applicantData: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    applicant: PropTypes.shape({
+      classesName: PropTypes.string.isRequired,
+      duration: PropTypes.string.isRequired,
+      totalPrice: PropTypes.number.isRequired,
+      submittedDate: PropTypes.string.isRequired,
+      applicantData: PropTypes.shape({
+        email: PropTypes.string,
+      }),
+    }),
+    acceptedAt: PropTypes.string,
+    paid: PropTypes.bool,
+  }).isRequired,
+  setPaymentSuccessData: PropTypes.func.isRequired,
+  refetchAll: PropTypes.func.isRequired,
 };

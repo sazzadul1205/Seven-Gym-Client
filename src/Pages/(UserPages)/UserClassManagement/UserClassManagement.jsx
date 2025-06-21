@@ -21,8 +21,6 @@ const UserClassManagement = () => {
     `/Class_Booking_Request?email=${user?.email}`
   );
 
-  console.log(ClassBookingRequestData);
-
   // 2. Fetch Class Accepted
   const {
     data: ClassBookingAcceptedData,

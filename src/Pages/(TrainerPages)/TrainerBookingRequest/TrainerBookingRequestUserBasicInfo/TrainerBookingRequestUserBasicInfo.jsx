@@ -58,7 +58,7 @@ const TrainerBookingRequestUserBasicInfo = ({
 };
 
 TrainerBookingRequestUserBasicInfo.propTypes = {
-  email: PropTypes.string.isRequired,
+  email: PropTypes.string,
   renderLoading: PropTypes.func,
   renderError: PropTypes.func,
   renderUserInfo: PropTypes.func,

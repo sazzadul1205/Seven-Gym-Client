@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { ImCross } from "react-icons/im";
 import { FaMoneyBillAlt, FaClock, FaCalendarAlt } from "react-icons/fa";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
@@ -6,13 +7,8 @@ import Loading from "../../../../Shared/Loading/Loading";
 import FetchingError from "../../../../Shared/Component/FetchingError";
 import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
 
-const ClassAcceptedDetailsModal = ({
-  selectedBookingAcceptedData,
-  setSelectedBookingAcceptedData,
-}) => {
+const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData }) => {
   const axiosPublic = useAxiosPublic();
-
-  console.log("selected Booking Accepted Data : ", selectedBookingAcceptedData);
 
   const className = selectedBookingAcceptedData?.applicant?.classesName;
   const applicant =
@@ -38,8 +34,6 @@ const ClassAcceptedDetailsModal = ({
   if (isLoading) return <Loading />;
   if (error) return <FetchingError />;
 
-  if (!selectedBookingAcceptedData) return null;
-
   return (
     <div className="modal-box p-0 bg-gradient-to-b from-white to-gray-200 text-black max-w-2xl">
       {/* Header */}
@@ -49,7 +43,6 @@ const ClassAcceptedDetailsModal = ({
           className="text-xl text-gray-600 hover:text-red-500 cursor-pointer"
           onClick={() => {
             document.getElementById("Class_Accepted_Details_Modal")?.close();
-            setSelectedBookingAcceptedData("");
           }}
         />
       </div>
@@ -91,17 +84,35 @@ const ClassAcceptedDetailsModal = ({
           <div className="flex items-center gap-2 text-gray-700">
             <FaCalendarAlt className="text-2xl text-blue-500" />
             <span>
-              Submitted: {selectedBookingAcceptedData?.applicant?.submittedDate}
+              Submitted At :{" "}
+              {new Date(
+                selectedBookingAcceptedData?.applicant?.submittedDate
+              ).toLocaleString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true,
+              })}
             </span>
           </div>
 
           <div className="flex items-center gap-2 text-gray-700">
             <FaClock className="text-2xl text-indigo-500" />
             <span>
-              Accepted:{" "}
-              {new Date(
-                selectedBookingAcceptedData?.acceptedAt
-              ).toLocaleString()}
+              Accepted At :{" "}
+              {new Date(selectedBookingAcceptedData?.acceptedAt).toLocaleString(
+                "en-US",
+                {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                }
+              )}
             </span>
           </div>
 
@@ -115,6 +126,24 @@ const ClassAcceptedDetailsModal = ({
                 Waiting for Payment
               </span>
             )}
+          </div>
+
+          <div className="flex items-center gap-2 text-gray-700">
+            <FaClock className="text-2xl text-green-600" />
+            <span>
+              Paid At:{" "}
+              {new Date(selectedBookingAcceptedData?.paidAt).toLocaleString(
+                "en-US",
+                {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                }
+              )}
+            </span>
           </div>
         </div>
       </div>

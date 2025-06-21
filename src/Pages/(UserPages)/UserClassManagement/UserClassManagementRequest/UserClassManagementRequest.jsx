@@ -175,7 +175,6 @@ UserClassManagementRequest.propTypes = {
       submittedDate: PropTypes.string.isRequired,
     })
   ).isRequired,
-  module: PropTypes.string.isRequired,
 };
 
 export default UserClassManagementRequest;
