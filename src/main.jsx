@@ -225,7 +225,7 @@ createRoot(document.getElementById("root")).render(
   </StrictMode>
 );
 
-// const FAKE_DATE_STRING = "2025-05-23"; // 👈 your custom date (YYYY-MM-DD)
+// const FAKE_DATE_STRING = "2025-06-20"; // 👈 your custom date (YYYY-MM-DD)
 
 // (function overrideDateWithRealTime() {
 //   const OriginalDate = Date;
@@ -234,7 +234,9 @@ createRoot(document.getElementById("root")).render(
 //     constructor(...args) {
 //       if (args.length === 0) {
 //         const now = new OriginalDate();
-//         const fakeDateTimeString = `${FAKE_DATE_STRING}T${now.toTimeString().split(" ")[0]}`;
+//         const fakeDateTimeString = `${FAKE_DATE_STRING}T${
+//           now.toTimeString().split(" ")[0]
+//         }`;
 //         return new OriginalDate(fakeDateTimeString);
 //       }
 //       return new OriginalDate(...args);
@@ -242,7 +244,9 @@ createRoot(document.getElementById("root")).render(
 
 //     static now() {
 //       const now = new OriginalDate();
-//       const fakeDateTimeString = `${FAKE_DATE_STRING}T${now.toTimeString().split(" ")[0]}`;
+//       const fakeDateTimeString = `${FAKE_DATE_STRING}T${
+//         now.toTimeString().split(" ")[0]  
+//       }`;
 //       return new OriginalDate(fakeDateTimeString).getTime();
 //     }
 
@@ -260,7 +264,8 @@ createRoot(document.getElementById("root")).render(
 //   console.warn(
 //     "📆 Date is now faked to:",
 //     new Date().toString(),
-//     "| Date Part:", FAKE_DATE_STRING,
+//     "| Date Part:",
+//     FAKE_DATE_STRING,
 //     "| Time Part: Real system time"
 //   );
 // })();

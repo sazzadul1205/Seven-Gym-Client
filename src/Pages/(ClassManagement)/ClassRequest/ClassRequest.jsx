@@ -532,18 +532,18 @@ const ClassRequest = ({ ClassBookingRequestData, Refetch }) => {
 ClassRequest.propTypes = {
   ClassBookingRequestData: PropTypes.arrayOf(
     PropTypes.shape({
-      _id: PropTypes.string.isRequired,
-      classesName: PropTypes.string.isRequired,
-      duration: PropTypes.string.isRequired,
+      _id: PropTypes.string,
+      classesName: PropTypes.string,
+      duration: PropTypes.string,
       totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      submittedDate: PropTypes.string.isRequired,
+      submittedDate: PropTypes.string,
       applicantData: PropTypes.shape({
         applicantEmail: PropTypes.string,
         applicantPhone: PropTypes.string,
         phone: PropTypes.string,
       }),
     })
-  ).isRequired,
+  ),
 
   Refetch: PropTypes.func.isRequired,
 };

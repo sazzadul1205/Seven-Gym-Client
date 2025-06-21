@@ -153,6 +153,7 @@ const ClassAcceptedPaymentDetailsModalInner = ({
 
       // 2. Update the accepted booking entry
       await axiosPublic.put(`/Class_Booking_Accepted/${bookingId}`, {
+        stripePaymentID: paymentIntent.id,
         paid: true,
         paidAt,
       });
