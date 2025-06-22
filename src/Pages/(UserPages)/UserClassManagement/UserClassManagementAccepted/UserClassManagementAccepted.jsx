@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { useState } from "react";
 
 // import Packages
 import PropTypes from "prop-types";
@@ -11,10 +12,11 @@ import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 // import Accepted Card
 import UserClassAcceptedCard from "./UserClassAcceptedCard/UserClassAcceptedCard";
-import ClassAcceptedDetailsModal from "../../../(ClassManagement)/ClassAccepted/ClassAcceptedDetailsModal/ClassAcceptedDetailsModal";
-import { useState } from "react";
-import ClassAcceptedPaymentDetailsModal from "./ClassAcceptedPaymentDetailsModal/ClassAcceptedPaymentDetailsModal";
+
+// Import Modals
 import PayedClassReceptModal from "./PayedClassReceptModal/PayedClassReceptModal";
+import ClassAcceptedPaymentDetailsModal from "./ClassAcceptedPaymentDetailsModal/ClassAcceptedPaymentDetailsModal";
+import ClassAcceptedDetailsModal from "../../../(ClassManagement)/ClassAccepted/ClassAcceptedDetailsModal/ClassAcceptedDetailsModal";
 
 const UserClassManagementAccepted = ({
   ClassBookingAcceptedData,

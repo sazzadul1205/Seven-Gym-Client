@@ -20,6 +20,30 @@ import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../../Shared/Component/FetchingError";
 import Loading from "../../../../../Shared/Loading/Loading";
 
+// Format date/time for tooltip (longer format with time)
+const formatDateTimeTooltip = (dateStr) => {
+  if (!dateStr) return "N/A";
+
+  const date = new Date(dateStr);
+  if (isNaN(date)) return dateStr;
+
+  return date.toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
+// Helper function to parse 'dd-mm-yyyy' to Date object
+const parseCustomDate = (str) => {
+  if (!str || typeof str !== "string") return new Date("Invalid");
+  const [day, month, year] = str.split("-");
+  return new Date(`${year}-${month}-${day}`);
+};
+
 const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
   const axiosPublic = useAxiosPublic();
 
@@ -43,18 +67,33 @@ const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
   const price = item?.applicant?.totalPrice;
   const submittedDate = item?.applicant?.submittedDate;
   const isPaid = item?.paid;
+  const endDate = item?.endDate;
 
   return (
     <div className="relative bg-white rounded-2xl shadow-md border border-dashed border-gray-200 p-5">
-      {/* Unpaid Badge */}
+      {/* Final Badge: Shows Ended / End At if endDate exists, otherwise PAID/UNPAID */}
       <div
-        className={`absolute -top-4 -right-4 p-2 px-10 rounded-full shadow text-white text-xs font-bold select-none ${
-          isPaid
-            ? "bg-linear-to-bl  from-green-300 to-green-600"
-            : "bg-linear-to-bl  from-red-300 to-red-600"
+        className={`absolute -top-4 -right-4 px-6 py-2 rounded-full shadow text-white text-xs font-bold select-none ${
+          endDate
+            ? parseCustomDate(endDate) < new Date()
+              ? "bg-gradient-to-bl from-gray-400 to-gray-700"
+              : "bg-gradient-to-bl from-indigo-300 to-indigo-600"
+            : isPaid
+            ? "bg-gradient-to-bl from-green-300 to-green-600"
+            : "bg-gradient-to-bl from-red-300 to-red-600"
         }`}
       >
-        {isPaid ? "PAID" : "UNPAID"}
+        {endDate
+          ? parseCustomDate(endDate) < new Date()
+            ? "Ended"
+            : `End At ${parseCustomDate(endDate).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}`
+          : isPaid
+          ? "PAID"
+          : "UNPAID"}
       </div>
 
       <div className="flex gap-4 items-center">
@@ -90,7 +129,7 @@ const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
           {/* Submitted date */}
           <div className="flex items-center gap-2 text-gray-700 text-sm">
             <FaCalendarAlt className="text-purple-500" />
-            <span>{submittedDate}</span>
+            <span>{formatDateTimeTooltip(submittedDate)}</span>
           </div>
         </div>
 
@@ -154,6 +193,7 @@ UserClassAcceptedCard.propTypes = {
       classesName: PropTypes.string.isRequired,
       duration: PropTypes.string.isRequired,
       totalPrice: PropTypes.number.isRequired,
+      endDate: PropTypes.string,
       submittedDate: PropTypes.string.isRequired,
       applicantData: PropTypes.shape({
         email: PropTypes.string,

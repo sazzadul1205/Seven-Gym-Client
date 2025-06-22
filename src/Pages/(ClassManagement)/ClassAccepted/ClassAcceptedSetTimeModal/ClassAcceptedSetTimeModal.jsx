@@ -189,14 +189,12 @@ const ClassAcceptedSetTimeModal = ({
 
 // Prop Validation
 ClassAcceptedSetTimeModal.propTypes = {
-  selectedBookingAcceptedData: PropTypes.shape({
-    _id: PropTypes.string,
-    applicant: PropTypes.shape({
-      duration: PropTypes.string,
-    }),
-  }),
-  setSelectedBookingAcceptedData: PropTypes.func,
-  Refetch: PropTypes.func,
+  selectedBookingAcceptedData: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.string,
+  ]),
+  setSelectedBookingAcceptedData: PropTypes.func.isRequired,
+  Refetch: PropTypes.func.isRequired,
 };
 
 export default ClassAcceptedSetTimeModal;

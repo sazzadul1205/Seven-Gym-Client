@@ -170,20 +170,23 @@ const PayedClassReceptModal = ({ paymentSuccessData }) => {
 
 // Prop Validation
 PayedClassReceptModal.propTypes = {
-  paymentSuccessData: PropTypes.shape({
-    stripePaymentID: PropTypes.string,
-    paid: PropTypes.bool,
-    paidAt: PropTypes.string,
-    paymentMethod: PropTypes.string,
-    applicant: PropTypes.shape({
-      duration: PropTypes.string,
-      classesName: PropTypes.string,
-      totalPrice: PropTypes.number,
-      applicantData: PropTypes.shape({
-        email: PropTypes.string,
+  paymentSuccessData: PropTypes.oneOfType([
+    PropTypes.shape({
+      stripePaymentID: PropTypes.string.isRequired,
+      paidAt: PropTypes.string.isRequired,
+      paid: PropTypes.bool.isRequired,
+      paymentMethod: PropTypes.string,
+      applicant: PropTypes.shape({
+        duration: PropTypes.string,
+        totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        classesName: PropTypes.string,
+        applicantData: PropTypes.shape({
+          email: PropTypes.string,
+        }),
       }),
     }),
-  }).isRequired,
+    PropTypes.string,
+  ]).isRequired,
 };
 
 export default PayedClassReceptModal;

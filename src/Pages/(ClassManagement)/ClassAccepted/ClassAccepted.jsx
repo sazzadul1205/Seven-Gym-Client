@@ -238,10 +238,18 @@ const ClassAccepted = ({ ClassBookingAcceptedData, Refetch }) => {
       await axiosPublic.post("/Stripe_Refund_Intent", {
         stripePaymentID: item?.stripePaymentID || "",
         refundAmount: parseFloat(refundAmount),
+      });
+
+      // Step 3.1: Move to Class_Booking_Refund
+      await axiosPublic.post("/Class_Booking_Refund", {
+        ...item,
+        status: "Dropped",
+        droppedAt: new Date().toISOString(),
+        refundAmount: parseFloat(refundAmount),
         reason,
       });
 
-      // Step 3: Move to Class_Booking_Rejected
+      // Step 3.2: Move to Class_Booking_Rejected
       await axiosPublic.post("/Class_Booking_Rejected", {
         ...item,
         status: "Dropped",

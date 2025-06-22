@@ -278,23 +278,12 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData }) => {
   );
 };
 
-// PropTypes validation for ClassAcceptedDetailsModal
+// Prop Validation
 ClassAcceptedDetailsModal.propTypes = {
-  selectedBookingAcceptedData: PropTypes.shape({
-    applicant: PropTypes.shape({
-      classesName: PropTypes.string,
-      applicantData: PropTypes.object,
-      applicantEmail: PropTypes.string,
-      duration: PropTypes.string,
-      totalPrice: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-      submittedDate: PropTypes.string,
-    }),
-    acceptedAt: PropTypes.string,
-    paid: PropTypes.bool,
-    paidAt: PropTypes.string,
-    startDate: PropTypes.string,
-    endDate: PropTypes.string,
-  }).isRequired,
+  selectedBookingAcceptedData: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.string,
+  ]),
 };
 
 // PropTypes validation for InfoRow
@@ -315,10 +304,11 @@ const InfoRow = ({ icon, label, value, tooltip }) => (
   </div>
 );
 
+// Prop Validation
 InfoRow.propTypes = {
   icon: PropTypes.node.isRequired,
   label: PropTypes.string.isRequired,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   tooltip: PropTypes.string,
 };
 
