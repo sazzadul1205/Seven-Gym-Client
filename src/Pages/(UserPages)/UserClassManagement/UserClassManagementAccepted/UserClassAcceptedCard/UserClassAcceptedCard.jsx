@@ -44,9 +44,10 @@ const parseCustomDate = (str) => {
   return new Date(`${year}-${month}-${day}`);
 };
 
-const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
+const UserClassAcceptedCard = ({ item, setSelectedAcceptedData, id }) => {
   const axiosPublic = useAxiosPublic();
 
+  // Fetch Class Data
   const {
     data: ClassData,
     isLoading,
@@ -59,9 +60,11 @@ const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
         .then((res) => res.data),
   });
 
+  // loading and Error State
   if (isLoading) return <Loading />;
   if (error) return <FetchingError />;
 
+  // Data Destructure
   const className = item?.applicant?.classesName;
   const duration = item?.applicant?.duration;
   const price = item?.applicant?.totalPrice;
@@ -71,21 +74,27 @@ const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
 
   return (
     <div className="relative bg-white rounded-2xl shadow-md border border-dashed border-gray-200 p-5">
-      {/* Final Badge: Shows Ended / End At if endDate exists, otherwise PAID/UNPAID */}
+      {/* Final Badge: Shows Rejected / Dropped / Ended / End At / PAID / UNPAID */}
       <div
-        className={`absolute -top-4 -right-4 px-6 py-2 rounded-full shadow text-white text-xs font-bold select-none ${
-          endDate
+        className={`absolute -top-4 -right-4 px-6 py-2 rounded-full shadow text-xs font-bold select-none ${
+          item?.status === "Rejected" || item?.status === "Dropped"
+            ? "border-3 border-red-600 bg-red-500 text-white"
+            : endDate
             ? parseCustomDate(endDate) < new Date()
-              ? "bg-gradient-to-bl from-gray-400 to-gray-700"
-              : "bg-gradient-to-bl from-indigo-300 to-indigo-600"
+              ? "border-3 border-gray-500 bg-gray-600 text-white"
+              : "border-3 border-indigo-500 bg-gradient-to-bl from-indigo-300 to-indigo-600 text-white"
             : isPaid
-            ? "bg-gradient-to-bl from-green-300 to-green-600"
-            : "bg-gradient-to-bl from-red-300 to-red-600"
+            ? "border-3 border-green-500 bg-gradient-to-bl from-green-300 to-green-600 text-white"
+            : "border-3 border-red-500 bg-gradient-to-bl from-red-300 to-red-600 text-white"
         }`}
       >
-        {endDate
+        {item?.status === "Rejected"
+          ? "Rejected"
+          : item?.status === "Dropped"
+          ? "Dropped"
+          : endDate
           ? parseCustomDate(endDate) < new Date()
-            ? "Ended"
+            ? "Completed"
             : `End At ${parseCustomDate(endDate).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
@@ -136,27 +145,29 @@ const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
         {/* Action Buttons */}
         <div className="flex flex-col items-center justify-between gap-2">
           {/* Card Button */}
-          {!item.paid && (
-            <>
-              <button
-                id={`payment-applicant-btn-${item._id}`}
-                className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                onClick={() => {
-                  setSelectedAcceptedData(item);
-                  document
-                    .getElementById("Class_Accepted_Payment_Details_Modal")
-                    .showModal();
-                }}
-              >
-                <IoCardSharp className="text-blue-500" />
-              </button>
-              <Tooltip
-                anchorSelect={`#payment-applicant-btn-${item._id}`}
-                className="!z-[9999]"
-                content="Payment Applicant"
-              />
-            </>
-          )}
+          {!item.paid &&
+            item.status !== "Rejected" &&
+            item.status !== "Dropped" && (
+              <>
+                <button
+                  id={`payment-applicant-btn-${item._id}`}
+                  className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                  onClick={() => {
+                    setSelectedAcceptedData(item);
+                    document
+                      .getElementById("Class_Accepted_Payment_Details_Modal")
+                      .showModal();
+                  }}
+                >
+                  <IoCardSharp className="text-blue-500" />
+                </button>
+                <Tooltip
+                  anchorSelect={`#payment-applicant-btn-${item._id}`}
+                  className="!z-[9999]"
+                  content="Payment Applicant"
+                />
+              </>
+            )}
 
           {/* Details icon */}
           <>
@@ -165,7 +176,7 @@ const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
               className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
               onClick={() => {
                 document
-                  .getElementById("Class_Accepted_Details_Modal")
+                  .getElementById(id || "Class_Accepted_Details_Modal")
                   .showModal();
                 setSelectedAcceptedData(item);
               }}
@@ -187,23 +198,30 @@ const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
 // Prop Validation
 UserClassAcceptedCard.propTypes = {
   item: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    paid: PropTypes.bool.isRequired,
+    _id: PropTypes.string,
+    paid: PropTypes.bool,
+    endDate: PropTypes.string,
+    status: PropTypes.oneOf([
+      "Rejected",
+      "Dropped",
+      "Accepted",
+      "Pending",
+      "Completed",
+    ]),
     applicant: PropTypes.shape({
-      classesName: PropTypes.string.isRequired,
-      duration: PropTypes.string.isRequired,
-      totalPrice: PropTypes.number.isRequired,
-      endDate: PropTypes.string,
-      submittedDate: PropTypes.string.isRequired,
+      classesName: PropTypes.string,
+      duration: PropTypes.string,
+      totalPrice: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      submittedDate: PropTypes.string,
       applicantData: PropTypes.shape({
         email: PropTypes.string,
         name: PropTypes.string,
         phone: PropTypes.string,
         Userid: PropTypes.string,
       }),
-    }).isRequired,
-  }).isRequired,
-  setSelectedAcceptedData: PropTypes.func.isRequired,
+    }),
+  }),
+  setSelectedAcceptedData: PropTypes.func,
 };
 
 export default UserClassAcceptedCard;

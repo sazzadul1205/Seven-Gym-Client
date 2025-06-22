@@ -642,7 +642,6 @@ const ClassAccepted = ({ ClassBookingAcceptedData, Refetch }) => {
 };
 
 // prop Validation
-
 ClassAccepted.propTypes = {
   ClassBookingAcceptedData: PropTypes.arrayOf(
     PropTypes.shape({

@@ -13,14 +13,15 @@ import {
 } from "react-icons/fa";
 
 // import Hooks
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
 // Shared
-import Loading from "../../../../Shared/Loading/Loading";
-import FetchingError from "../../../../Shared/Component/FetchingError";
+import Loading from "../../../../../Shared/Loading/Loading";
+import FetchingError from "../../../../../Shared/Component/FetchingError";
 
 // Import Basic info
-import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+import TrainerBookingRequestUserBasicInfo from "../../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+import { InfoRow } from "../../../../(ClassManagement)/ClassAccepted/ClassAcceptedDetailsModal/ClassAcceptedDetailsModal";
 
 // Format date string to "MMM d, yyyy", supports ISO & dd-MM-yyyy or dd/MM/yyyy formats
 const formatDateToDisplay = (dateStr) => {
@@ -109,26 +110,28 @@ const calculateDaysLeft = (dateStr) => {
   return diffDays >= 0 ? diffDays : null;
 };
 
-const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData, id }) => {
+const ClassCompletedDetailsModal = ({ selectedBookingCompletedData }) => {
   const axiosPublic = useAxiosPublic();
+
+  console.log("|", selectedBookingCompletedData);
 
   // Get class name or fallback to "N/A"
   const className =
-    selectedBookingAcceptedData?.applicant?.classesName || "N/A";
+    selectedBookingCompletedData?.applicant?.classesName || "N/A";
 
   // Get class name or fallback to "N/A"
-  const status = selectedBookingAcceptedData?.status || "N/A";
+  const status = selectedBookingCompletedData?.status || "N/A";
 
   // Get applicant data, fallback to empty object
   const applicant =
-    selectedBookingAcceptedData?.applicant?.applicantData ||
-    selectedBookingAcceptedData?.applicant ||
+    selectedBookingCompletedData?.applicant?.applicantData ||
+    selectedBookingCompletedData?.applicant ||
     {};
 
   // Get applicant email or fallback to "N/A"
   const email =
     applicant?.email ||
-    selectedBookingAcceptedData?.applicant?.applicantEmail ||
+    selectedBookingCompletedData?.applicant?.applicantEmail ||
     "N/A";
 
   // Fetch class details with react-query
@@ -159,9 +162,7 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData, id }) => {
         <ImCross
           className="text-xl text-gray-600 hover:text-red-600 cursor-pointer transition-colors"
           onClick={() => {
-            document
-              .getElementById(id || "Class_Accepted_Details_Modal")
-              ?.close();
+            document.getElementById("Class_Completed_Details_Modal")?.close();
           }}
         />
       </header>
@@ -185,7 +186,7 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData, id }) => {
               {/* Duration */}
               <p className="text-sm text-gray-600 capitalize tracking-wide">
                 Duration:{" "}
-                {selectedBookingAcceptedData?.applicant?.duration || "N/A"}
+                {selectedBookingCompletedData?.applicant?.duration || "N/A"}
               </p>
             </div>
           </div>
@@ -201,7 +202,7 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData, id }) => {
             icon={<FaMoneyBillAlt className="text-green-600" />}
             label="Total Price"
             value={`$${
-              selectedBookingAcceptedData?.applicant?.totalPrice ?? "N/A"
+              selectedBookingCompletedData?.applicant?.totalPrice ?? "N/A"
             }`}
           />
 
@@ -210,10 +211,10 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData, id }) => {
             icon={<FaCalendarAlt className="text-blue-600" />}
             label="Submitted At"
             value={formatDateTimeTooltip(
-              selectedBookingAcceptedData?.applicant?.submittedDate
+              selectedBookingCompletedData?.applicant?.submittedDate
             )}
             tooltip={new Date(
-              selectedBookingAcceptedData?.applicant?.submittedDate
+              selectedBookingCompletedData?.applicant?.submittedDate
             ).toString()}
           />
 
@@ -222,16 +223,16 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData, id }) => {
             icon={<FaClock className="text-indigo-600" />}
             label="Accepted At"
             value={formatDateTimeTooltip(
-              selectedBookingAcceptedData?.acceptedAt
+              selectedBookingCompletedData?.acceptedAt
             )}
             tooltip={new Date(
-              selectedBookingAcceptedData?.acceptedAt
+              selectedBookingCompletedData?.acceptedAt
             ).toString()}
           />
 
           {/* Payment status badge */}
           <div className="flex items-center gap-2 text-gray-700">
-            {selectedBookingAcceptedData?.paid ? (
+            {selectedBookingCompletedData?.paid ? (
               <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold select-none">
                 Paid
               </span>
@@ -243,34 +244,40 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData, id }) => {
           </div>
 
           {/* Paid at date row (if available) */}
-          {selectedBookingAcceptedData?.paidAt && (
+          {selectedBookingCompletedData?.paidAt && (
             <InfoRow
               icon={<FaClock className="text-green-600" />}
               label="Paid At"
-              value={formatDateTimeTooltip(selectedBookingAcceptedData?.paidAt)}
-              tooltip={new Date(selectedBookingAcceptedData?.paidAt).toString()}
+              value={formatDateTimeTooltip(
+                selectedBookingCompletedData?.paidAt
+              )}
+              tooltip={new Date(
+                selectedBookingCompletedData?.paidAt
+              ).toString()}
             />
           )}
 
           {/* Start Date row with icon */}
-          {selectedBookingAcceptedData?.startDate && (
+          {selectedBookingCompletedData?.startDate && (
             <InfoRow
               icon={<FaCalendarAlt className="text-blue-600" />}
               label="Start Date"
-              value={formatDateToDisplay(selectedBookingAcceptedData.startDate)}
+              value={formatDateToDisplay(
+                selectedBookingCompletedData.startDate
+              )}
             />
           )}
 
           {/* End Date row with icon and days left */}
-          {selectedBookingAcceptedData?.endDate && (
+          {selectedBookingCompletedData?.endDate && (
             <InfoRow
               icon={<FaHourglassEnd className="text-red-600" />}
               label="End Date"
               value={`${formatDateToDisplay(
-                selectedBookingAcceptedData.endDate
+                selectedBookingCompletedData.endDate
               )}${(() => {
                 const daysLeft = calculateDaysLeft(
-                  selectedBookingAcceptedData.endDate
+                  selectedBookingCompletedData.endDate
                 );
                 return daysLeft !== null
                   ? ` (${daysLeft} day${daysLeft !== 1 ? "s" : ""} left)`
@@ -290,39 +297,4 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData, id }) => {
   );
 };
 
-// Prop Validation
-ClassAcceptedDetailsModal.propTypes = {
-  selectedBookingAcceptedData: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.string,
-  ]),
-  id: PropTypes.string,
-};
-
-// PropTypes validation for InfoRow
-export const InfoRow = ({ icon, label, value, tooltip }) => (
-  <div className="flex items-center gap-3 text-gray-700">
-    <div className="text-2xl">{icon}</div>
-    <div className="flex flex-col">
-      <span className="text-sm font-medium text-gray-500 select-none">
-        {label}
-      </span>
-      <span
-        className="font-semibold text-gray-900 select-text"
-        title={tooltip || value}
-      >
-        {value || "N/A"}
-      </span>
-    </div>
-  </div>
-);
-
-// Prop Validation
-InfoRow.propTypes = {
-  icon: PropTypes.node.isRequired,
-  label: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  tooltip: PropTypes.string,
-};
-
-export default ClassAcceptedDetailsModal;
+export default ClassCompletedDetailsModal;

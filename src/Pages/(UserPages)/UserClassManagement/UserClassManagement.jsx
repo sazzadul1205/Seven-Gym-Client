@@ -6,6 +6,8 @@ import UserClassManagementRequest from "./UserClassManagementRequest/UserClassMa
 import Classes_Background from "../../../assets/Classes-Background/Classes_Background.jpg";
 import useAuth from "../../../Hooks/useAuth";
 import UserClassManagementAccepted from "./UserClassManagementAccepted/UserClassManagementAccepted";
+import UserClassManagementCompleted from "./UserClassManagementCompleted/UserClassManagementCompleted";
+import UserClassManagementRejected from "./UserClassManagementRejected/UserClassManagementRejected";
 
 const UserClassManagement = () => {
   const { user } = useAuth();
@@ -29,18 +31,46 @@ const UserClassManagement = () => {
     refetch: ClassBookingAcceptedRefetch,
   } = useFetchData("ClassBookingAcceptedData", "/Class_Booking_Accepted");
 
+  // 3. Fetch Class Completed
+  const {
+    data: ClassBookingCompletedData,
+    isLoading: ClassBookingCompletedIsLoading,
+    error: ClassBookingCompletedError,
+    refetch: ClassBookingCompletedRefetch,
+  } = useFetchData("ClassBookingCompletedData", "/Class_Booking_Completed");
+
+  // 4. Fetch Class Rejected
+  const {
+    data: ClassBookingRejectedData,
+    isLoading: ClassBookingRejectedIsLoading,
+    error: ClassBookingRejectedError,
+    refetch: ClassBookingRejectedRefetch,
+  } = useFetchData("ClassBookingRejectedData", "/Class_Booking_Rejected");
+
   // Unified refetch function
   const refetchAll = async () => {
     await ClassBookingRequestRefetch();
     await ClassBookingAcceptedRefetch();
+    await ClassBookingRejectedRefetch();
+    await ClassBookingCompletedRefetch();
   };
 
   // Loading state
-  if (ClassBookingRequestIsLoading || ClassBookingAcceptedIsLoading)
+  if (
+    ClassBookingRequestIsLoading ||
+    ClassBookingAcceptedIsLoading ||
+    ClassBookingCompletedIsLoading ||
+    ClassBookingRejectedIsLoading
+  )
     return <Loading />;
 
   // Error state
-  if (ClassBookingRequestError || ClassBookingAcceptedError)
+  if (
+    ClassBookingRequestError ||
+    ClassBookingAcceptedError ||
+    ClassBookingCompletedError ||
+    ClassBookingRejectedError
+  )
     return <FetchingError />;
 
   return (
@@ -56,6 +86,14 @@ const UserClassManagement = () => {
         />
         <UserClassManagementAccepted
           ClassBookingAcceptedData={ClassBookingAcceptedData}
+          refetchAll={refetchAll}
+        />
+        <UserClassManagementCompleted
+          ClassBookingCompletedData={ClassBookingCompletedData}
+          refetchAll={refetchAll}
+        />
+        <UserClassManagementRejected
+          ClassBookingRejectedData={ClassBookingRejectedData}
           refetchAll={refetchAll}
         />
       </div>

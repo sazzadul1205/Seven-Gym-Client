@@ -11,12 +11,12 @@ import { FaInfoCircle } from "react-icons/fa";
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 // import Accepted Card
-import UserClassAcceptedCard from "./UserClassAcceptedCard/UserClassAcceptedCard";
-
-// Import Modals
 import PayedClassReceptModal from "./PayedClassReceptModal/PayedClassReceptModal";
+import UserClassAcceptedCard from "./UserClassAcceptedCard/UserClassAcceptedCard";
 import ClassAcceptedPaymentDetailsModal from "./ClassAcceptedPaymentDetailsModal/ClassAcceptedPaymentDetailsModal";
 import ClassAcceptedDetailsModal from "../../../(ClassManagement)/ClassAccepted/ClassAcceptedDetailsModal/ClassAcceptedDetailsModal";
+
+// Import Modals
 
 const UserClassManagementAccepted = ({
   ClassBookingAcceptedData,
@@ -119,4 +119,5 @@ UserClassManagementAccepted.propTypes = {
   ).isRequired,
   refetchAll: PropTypes.func.isRequired,
 };
+
 export default UserClassManagementAccepted;
