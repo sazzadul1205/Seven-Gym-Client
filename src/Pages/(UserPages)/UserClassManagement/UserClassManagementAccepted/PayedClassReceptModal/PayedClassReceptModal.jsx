@@ -60,17 +60,35 @@ const PayedClassReceptModal = ({ paymentSuccessData }) => {
       {/* Details */}
       <div className="p-4 bg-[#f9fafb] border text-black rounded-md">
         <div className="pb-1 text-center border-b space-y-1">
+          {/* Recept No */}
           <p className="text-sm text-[#6b7280]">
-            Receipt : SG-TUPR-<span>{paymentSuccessData?.stripePaymentID}</span>
+            Receipt:&nbsp;
+            <span
+              className="max-w-[200px] sm:max-w-[300px] inline-block truncate align-middle"
+              title={`SG-TUPR-${paymentSuccessData?.stripePaymentID}`}
+            >
+              SG-TUPR-{paymentSuccessData?.stripePaymentID}
+            </span>
           </p>
+
+          {/* Customer */}
           <p className="text-sm font-semibold text-[#6b7280]">
             Customer:{" "}
             <span>{paymentSuccessData?.applicant?.applicantData?.email}</span>
           </p>
-          <p className="text-sm text-[#6b7280]">
-            Transaction ID: TX-
-            <span>{paymentSuccessData?.stripePaymentID}</span>
+
+          {/* Transaction ID */}
+          <p className="text-sm flex text-[#6b7280]">
+            Transaction ID:&nbsp;
+            <span
+              className="max-w-[150px] sm:max-w-[300px] inline-block truncate align-middle"
+              title={`TX-${paymentSuccessData?.stripePaymentID}`}
+            >
+              TX-{paymentSuccessData?.stripePaymentID}
+            </span>
           </p>
+
+          {/* Sate and Time */}
           <p className="text-sm text-[#6b7280]">
             Date & Time:{" "}
             <span>

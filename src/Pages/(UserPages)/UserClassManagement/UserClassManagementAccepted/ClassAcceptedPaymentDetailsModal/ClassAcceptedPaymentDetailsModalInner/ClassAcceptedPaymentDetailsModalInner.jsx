@@ -188,18 +188,20 @@ const ClassAcceptedPaymentDetailsModalInner = ({
   if (error) return <FetchingError />;
 
   return (
-    <div className="modal-box p-0 bg-gradient-to-b from-white to-gray-200 text-black max-w-2xl">
+    <div className="modal-box w-full max-w-2xl p-0 bg-gradient-to-b from-white to-gray-200 text-black max-h-[90vh] overflow-y-auto rounded-lg">
       {/* Header */}
-      <div className="flex justify-between items-center border-b-2 border-gray-300 px-5 py-4 bg-white rounded-t-lg">
-        <h3 className="font-bold text-lg">Class Booking Accepted Payment</h3>
+      <div className="flex justify-between items-center border-b-2 border-gray-300 px-4 sm:px-5 py-3 sm:py-4 bg-white rounded-t-lg">
+        <h3 className="font-bold text-lg sm:text-xl">
+          Class Booking Accepted Payment
+        </h3>
         <ImCross
           className="text-xl text-gray-600 hover:text-red-500 cursor-pointer"
           onClick={handleClose}
         />
       </div>
 
-      {/* Inline Confirmation at Top */}
-      <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 mx-5 mt-4 rounded-md">
+      {/* Warning / Info */}
+      <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 mx-4 sm:mx-5 mt-4 rounded-md text-sm sm:text-base">
         <p>
           Are you sure you want to proceed with the payment of{" "}
           <strong>${applicantData?.applicant?.totalPrice}</strong> for{" "}
@@ -207,10 +209,10 @@ const ClassAcceptedPaymentDetailsModalInner = ({
         </p>
       </div>
 
-      {/* Success or Error Feedback */}
+      {/* Success/Error Feedback */}
       {(paymentError || paymentSuccess) && (
         <div
-          className={`mx-5 mt-4 p-3 rounded-md text-sm ${
+          className={`mx-4 sm:mx-5 mt-4 p-3 rounded-md text-sm ${
             paymentError
               ? "bg-red-100 text-red-700 border border-red-400"
               : "bg-green-100 text-green-700 border border-green-400"
@@ -220,65 +222,57 @@ const ClassAcceptedPaymentDetailsModalInner = ({
         </div>
       )}
 
-      {/* Body */}
-      <div className="px-6 py-5 space-y-4">
-        {/* Class and User Info */}
-        <div className="flex justify-between items-center">
+      {/* Content */}
+      <div className="px-4 sm:px-6 py-5 space-y-6">
+        {/* Class & User Info */}
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
           {/* Class Info */}
-          <div className="flex items-center space-x-4">
-            {/* Class Icon */}
+          <div className="flex items-center gap-4">
             <img
               src={ClassData?.icon}
               alt={`${className} icon`}
               className="w-14 h-14 rounded-lg border border-gray-300"
             />
-
-            {/* Detail Info */}
             <div>
-              {/* Class Name */}
-              <h2 className="text-xl font-semibold">{className}</h2>
-
-              {/* Duration */}
-              <p className="text-gray-600 capitalize">
+              <h2 className="text-lg sm:text-xl font-semibold">{className}</h2>
+              <p className="text-gray-600 capitalize text-sm sm:text-base">
                 {applicantData?.applicant?.duration} duration
               </p>
             </div>
           </div>
 
           {/* User Info */}
-          <TrainerBookingRequestUserBasicInfo email={email} />
+          <div className="mt-2 md:mt-0">
+            <TrainerBookingRequestUserBasicInfo email={email} />
+          </div>
         </div>
 
-        {/* Details Data */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-10">
-          {/* Total Price */}
-          <div className="flex items-center gap-2 text-gray-700">
-            <FaMoneyBillAlt className="text-2xl text-green-600" />
+        {/* Details Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex items-center gap-2 text-gray-700 text-sm sm:text-base">
+            <FaMoneyBillAlt className="text-green-600 text-lg" />
             <span>Total Price: ${applicantData?.applicant?.totalPrice}</span>
           </div>
 
-          {/* Submitted At */}
-          <div className="flex items-center gap-2 text-gray-700">
-            <FaCalendarAlt className="text-2xl text-blue-500" />
+          <div className="flex items-center gap-2 text-gray-700 text-sm sm:text-base">
+            <FaCalendarAlt className="text-blue-500 text-lg" />
             <span>Submitted: {applicantData?.applicant?.submittedDate}</span>
           </div>
 
-          {/* Accepted At */}
-          <div className="flex items-center gap-2 text-gray-700">
-            <FaClock className="text-2xl text-indigo-500" />
+          <div className="flex items-center gap-2 text-gray-700 text-sm sm:text-base">
+            <FaClock className="text-indigo-500 text-lg" />
             <span>
               Accepted: {new Date(applicantData?.acceptedAt).toLocaleString()}
             </span>
           </div>
 
-          {/* Payed or Not */}
-          <div className="flex items-center gap-2 text-gray-700">
+          <div className="flex items-center gap-2 text-gray-700 text-sm sm:text-base">
             {applicantData?.paid ? (
-              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">
+              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs sm:text-sm">
                 Paid
               </span>
             ) : (
-              <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm">
+              <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs sm:text-sm">
                 Waiting for Payment
               </span>
             )}
@@ -287,20 +281,18 @@ const ClassAcceptedPaymentDetailsModalInner = ({
       </div>
 
       {/* Payment Form */}
-      <div className="w-full lg:flex-1">
-        {/* Title */}
-        <h2 className="text-xl font-semibold text-center bg-blue-600 text-white py-2">
+      <div className="w-full">
+        <h2 className="text-lg sm:text-xl font-semibold text-center bg-blue-600 text-white py-2">
           Payment Information
         </h2>
 
-        {/* Payment Form */}
         <form
-          className="flex flex-col px-6 pb-6"
+          className="flex flex-col gap-4 px-4 sm:px-6 pb-6"
           onSubmit={handleSubmit(onSubmit)}
         >
-          {/* Card Holder Name */}
-          <div className="pt-4">
-            <label className="block text-lg font-semibold text-black mb-2">
+          {/* Cardholder Name */}
+          <div className="pt-2">
+            <label className="block text-sm sm:text-base font-semibold text-black mb-2">
               Cardholder Name
             </label>
             <input
@@ -308,7 +300,7 @@ const ClassAcceptedPaymentDetailsModalInner = ({
               {...register("cardholderName", {
                 required: "Cardholder name is required.",
               })}
-              className="w-full bg-white text-black px-4 py-3 border rounded-lg"
+              className="w-full bg-white text-black px-4 py-2 border rounded-lg"
               placeholder="Enter cardholder name"
             />
             {errors.cardholderName && (
@@ -318,9 +310,9 @@ const ClassAcceptedPaymentDetailsModalInner = ({
             )}
           </div>
 
-          {/* Card details */}
-          <div className="pt-4">
-            <label className="block text-lg font-semibold text-black mb-2">
+          {/* Card Element */}
+          <div>
+            <label className="block text-sm sm:text-base font-semibold text-black mb-2">
               Card Details
             </label>
             <div className="w-full bg-white text-black px-4 py-3 border rounded-lg">
@@ -328,8 +320,8 @@ const ClassAcceptedPaymentDetailsModalInner = ({
             </div>
           </div>
 
-          {/* CheckBox */}
-          <div className="flex items-center gap-2 pt-4">
+          {/* Confirmation Checkbox */}
+          <div className="flex items-center gap-2 pt-2">
             <input
               type="checkbox"
               id="confirmation"
@@ -342,8 +334,8 @@ const ClassAcceptedPaymentDetailsModalInner = ({
             </label>
           </div>
 
-          {/* Confirm Payment */}
-          <div className="flex justify-center sm:justify-end mt-4">
+          {/* Submit Button */}
+          <div className="flex justify-center sm:justify-end mt-2">
             <CommonButton
               type="submit"
               text="Pay Now"

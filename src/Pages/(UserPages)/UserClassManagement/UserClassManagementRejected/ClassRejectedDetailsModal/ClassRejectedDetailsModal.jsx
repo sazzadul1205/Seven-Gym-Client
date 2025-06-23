@@ -13,14 +13,15 @@ import {
 } from "react-icons/fa";
 
 // import Hooks
-import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
+import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 
 // Shared
-import Loading from "../../../../Shared/Loading/Loading";
-import FetchingError from "../../../../Shared/Component/FetchingError";
+import Loading from "../../../../../Shared/Loading/Loading";
+import FetchingError from "../../../../../Shared/Component/FetchingError";
 
 // Import Basic info
-import TrainerBookingRequestUserBasicInfo from "../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+import TrainerBookingRequestUserBasicInfo from "../../../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+import { InfoRow } from "../../../../(ClassManagement)/ClassAccepted/ClassAcceptedDetailsModal/ClassAcceptedDetailsModal";
 
 // Format date string to "MMM d, yyyy", supports ISO & dd-MM-yyyy or dd/MM/yyyy formats
 const formatDateToDisplay = (dateStr) => {
@@ -109,26 +110,25 @@ const calculateDaysLeft = (dateStr) => {
   return diffDays >= 0 ? diffDays : null;
 };
 
-const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData, id }) => {
+const ClassRejectedDetailsModal = ({ selectedRejectedData }) => {
   const axiosPublic = useAxiosPublic();
 
   // Get class name or fallback to "N/A"
-  const className =
-    selectedBookingAcceptedData?.applicant?.classesName || "N/A";
+  const className = selectedRejectedData?.applicant?.classesName || "N/A";
 
   // Get class name or fallback to "N/A"
-  const status = selectedBookingAcceptedData?.status || "N/A";
+  const status = selectedRejectedData?.status || "N/A";
 
   // Get applicant data, fallback to empty object
   const applicant =
-    selectedBookingAcceptedData?.applicant?.applicantData ||
-    selectedBookingAcceptedData?.applicant ||
+    selectedRejectedData?.applicant?.applicantData ||
+    selectedRejectedData?.applicant ||
     {};
 
   // Get applicant email or fallback to "N/A"
   const email =
     applicant?.email ||
-    selectedBookingAcceptedData?.applicant?.applicantEmail ||
+    selectedRejectedData?.applicant?.applicantEmail ||
     "N/A";
 
   // Fetch class details with react-query
@@ -159,9 +159,7 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData, id }) => {
         <ImCross
           className="text-xl text-gray-600 hover:text-red-600 cursor-pointer transition-colors"
           onClick={() => {
-            document
-              .getElementById(id || "Class_Accepted_Details_Modal")
-              ?.close();
+            document.getElementById("Class_Reject_Details_Modal")?.close();
           }}
         />
       </header>
@@ -181,8 +179,7 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData, id }) => {
             <div>
               <h2 className="text-xl sm:text-2xl font-semibold">{className}</h2>
               <p className="text-sm text-gray-600 capitalize tracking-wide">
-                Duration:{" "}
-                {selectedBookingAcceptedData?.applicant?.duration || "N/A"}
+                Duration: {selectedRejectedData?.applicant?.duration || "N/A"}
               </p>
             </div>
           </div>
@@ -198,35 +195,29 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData, id }) => {
           <InfoRow
             icon={<FaMoneyBillAlt className="text-green-600" />}
             label="Total Price"
-            value={`$${
-              selectedBookingAcceptedData?.applicant?.totalPrice ?? "N/A"
-            }`}
+            value={`$${selectedRejectedData?.applicant?.totalPrice ?? "N/A"}`}
           />
 
           <InfoRow
             icon={<FaCalendarAlt className="text-blue-600" />}
             label="Submitted At"
             value={formatDateTimeTooltip(
-              selectedBookingAcceptedData?.applicant?.submittedDate
+              selectedRejectedData?.applicant?.submittedDate
             )}
             tooltip={new Date(
-              selectedBookingAcceptedData?.applicant?.submittedDate
+              selectedRejectedData?.applicant?.submittedDate
             ).toString()}
           />
 
           <InfoRow
             icon={<FaClock className="text-indigo-600" />}
             label="Accepted At"
-            value={formatDateTimeTooltip(
-              selectedBookingAcceptedData?.acceptedAt
-            )}
-            tooltip={new Date(
-              selectedBookingAcceptedData?.acceptedAt
-            ).toString()}
+            value={formatDateTimeTooltip(selectedRejectedData?.acceptedAt)}
+            tooltip={new Date(selectedRejectedData?.acceptedAt).toString()}
           />
 
           <div className="flex items-center gap-2 text-gray-700">
-            {selectedBookingAcceptedData?.paid ? (
+            {selectedRejectedData?.paid ? (
               <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold select-none">
                 Paid
               </span>
@@ -237,35 +228,35 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData, id }) => {
             )}
           </div>
 
-          {selectedBookingAcceptedData?.paidAt && (
+          {selectedRejectedData?.paidAt && (
             <InfoRow
               icon={<FaClock className="text-green-600" />}
               label="Paid At"
-              value={formatDateTimeTooltip(selectedBookingAcceptedData?.paidAt)}
-              tooltip={new Date(selectedBookingAcceptedData?.paidAt).toString()}
+              value={formatDateTimeTooltip(selectedRejectedData?.paidAt)}
+              tooltip={new Date(selectedRejectedData?.paidAt).toString()}
             />
           )}
 
-          {selectedBookingAcceptedData?.startDate && (
+          {selectedRejectedData?.startDate && (
             <InfoRow
               icon={<FaCalendarAlt className="text-blue-600" />}
               label="Start Date"
-              value={formatDateToDisplay(selectedBookingAcceptedData.startDate)}
+              value={formatDateToDisplay(selectedRejectedData.startDate)}
             />
           )}
 
-          {selectedBookingAcceptedData?.endDate && (
+          {selectedRejectedData?.endDate && (
             <InfoRow
               icon={<FaHourglassEnd className="text-red-600" />}
               label="End Date"
               value={
                 <>
                   <span className="whitespace-nowrap">
-                    {formatDateToDisplay(selectedBookingAcceptedData.endDate)}
+                    {formatDateToDisplay(selectedRejectedData.endDate)}
                   </span>
                   {(() => {
                     const daysLeft = calculateDaysLeft(
-                      selectedBookingAcceptedData.endDate
+                      selectedRejectedData.endDate
                     );
                     return daysLeft !== null
                       ? ` (${daysLeft} day${daysLeft !== 1 ? "s" : ""} left)`
@@ -288,38 +279,12 @@ const ClassAcceptedDetailsModal = ({ selectedBookingAcceptedData, id }) => {
 };
 
 // Prop Validation
-ClassAcceptedDetailsModal.propTypes = {
-  selectedBookingAcceptedData: PropTypes.oneOfType([
+ClassRejectedDetailsModal.propTypes = {
+  selectedRejectedData: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.string,
   ]),
   id: PropTypes.string,
 };
 
-// PropTypes validation for InfoRow
-export const InfoRow = ({ icon, label, value, tooltip }) => (
-  <div className="flex items-center gap-3 text-gray-700">
-    <div className="text-2xl">{icon}</div>
-    <div className="flex flex-col">
-      <span className="text-sm font-medium text-gray-500 select-none">
-        {label}
-      </span>
-      <span
-        className="font-semibold text-gray-900 select-text"
-        title={tooltip || value}
-      >
-        {value || "N/A"}
-      </span>
-    </div>
-  </div>
-);
-
-// Prop Validation
-InfoRow.propTypes = {
-  icon: PropTypes.node.isRequired,
-  label: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  tooltip: PropTypes.string,
-};
-
-export default ClassAcceptedDetailsModal;
+export default ClassRejectedDetailsModal;

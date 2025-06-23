@@ -11,7 +11,6 @@ import {
   FaDumbbell,
   FaInfo,
 } from "react-icons/fa";
-import { IoCardSharp } from "react-icons/io5";
 
 // Import Hooks
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
@@ -19,6 +18,7 @@ import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 // import Shared
 import FetchingError from "../../../../../Shared/Component/FetchingError";
 import Loading from "../../../../../Shared/Loading/Loading";
+import { IoCardSharp } from "react-icons/io5";
 
 // Format date/time for tooltip (longer format with time)
 const formatDateTimeTooltip = (dateStr) => {
@@ -44,10 +44,9 @@ const parseCustomDate = (str) => {
   return new Date(`${year}-${month}-${day}`);
 };
 
-const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
+const UserClassRejectedCard = ({ item, setSelectedRejectedData }) => {
   const axiosPublic = useAxiosPublic();
 
-  // Fetch Class Data
   const {
     data: ClassData,
     isLoading,
@@ -60,11 +59,10 @@ const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
         .then((res) => res.data),
   });
 
-  // loading and Error State
   if (isLoading) return <Loading />;
   if (error) return <FetchingError />;
 
-  // Data Destructure
+  // Destructure Data
   const className = item?.applicant?.classesName;
   const duration = item?.applicant?.duration;
   const price = item?.applicant?.totalPrice;
@@ -165,7 +163,7 @@ const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
                   id={`payment-applicant-btn-${item._id}`}
                   className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"
                   onClick={() => {
-                    setSelectedAcceptedData(item);
+                    setSelectedRejectedData(item);
                     document
                       .getElementById("Class_Accepted_Payment_Details_Modal")
                       .showModal();
@@ -190,7 +188,7 @@ const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
                 document
                   .getElementById("Class_Accepted_Details_Modal")
                   .showModal();
-                setSelectedAcceptedData(item);
+                setSelectedRejectedData(item);
               }}
             >
               <FaInfo className="text-yellow-500" />
@@ -198,7 +196,7 @@ const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
             <Tooltip
               anchorSelect={`#details-applicant-btn-${item._id}`}
               className="!z-[9999]"
-              content="Details Accepted Data"
+              content="Details Rejected Data"
             />
           </>
         </div>
@@ -208,7 +206,7 @@ const UserClassAcceptedCard = ({ item, setSelectedAcceptedData }) => {
 };
 
 // Prop Validation
-UserClassAcceptedCard.propTypes = {
+UserClassRejectedCard.propTypes = {
   item: PropTypes.shape({
     _id: PropTypes.string,
     paid: PropTypes.bool,
@@ -233,7 +231,7 @@ UserClassAcceptedCard.propTypes = {
       }),
     }),
   }),
-  setSelectedAcceptedData: PropTypes.func,
+  setSelectedRejectedData: PropTypes.func,
 };
 
-export default UserClassAcceptedCard;
+export default UserClassRejectedCard;

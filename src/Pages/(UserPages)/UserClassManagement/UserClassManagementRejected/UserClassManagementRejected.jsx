@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 // import Packages
 import PropTypes from "prop-types";
@@ -11,16 +11,15 @@ import { FaInfoCircle } from "react-icons/fa";
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 // import Accepted Card
-import UserClassAcceptedCard from "../UserClassManagementAccepted/UserClassAcceptedCard/UserClassAcceptedCard";
+import UserClassRejectedCard from "./UserClassRejectedCard/UserClassRejectedCard";
 
 // Import Modals
-import ClassAcceptedDetailsModal from "../../../(ClassManagement)/ClassAccepted/ClassAcceptedDetailsModal/ClassAcceptedDetailsModal";
 import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
+import ClassRejectedDetailsModal from "./ClassRejectedDetailsModal/ClassRejectedDetailsModal";
 
 const UserClassManagementRejected = ({ ClassBookingRejectedData }) => {
   const [selectedRejectedData, setSelectedRejectedData] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
-  const modalRef = useRef(null);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,11 +38,11 @@ const UserClassManagementRejected = ({ ClassBookingRejectedData }) => {
   );
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="p-1 pt-10 ms:p-4 space-y-2">
       {/* Title and Toggles Section */}
       <div className="flex flex-col items-center justify-center gap-4 mb-6">
         {/* Title at Top */}
-        <h2 className="text-3xl font-bold text-white text-center">
+        <h2 className="text-xl md:text-3xl font-bold text-white text-center">
           Your Class Booking Rejected ({ClassBookingRejectedData?.length})
         </h2>
 
@@ -81,6 +80,8 @@ const UserClassManagementRejected = ({ ClassBookingRejectedData }) => {
         </div>
       </div>
 
+      <div className="bg-white mx-auto p-[2px] w-1/3 mb-10" />
+
       {/* Cards and fallback */}
       {currentData?.length === 0 ? (
         <div className="flex flex-col items-center justify-center bg-blue-50 border border-blue-300 rounded-xl p-6 shadow-sm text-center text-blue-800">
@@ -115,10 +116,9 @@ const UserClassManagementRejected = ({ ClassBookingRejectedData }) => {
           {/* Request Cards */}
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {currentData.map((item) => (
-              <UserClassAcceptedCard
+              <UserClassRejectedCard
                 key={item._id}
                 item={item}
-                id="Class_Reject_Details_Modal"
                 setSelectedRejectedData={setSelectedRejectedData}
               />
             ))}
@@ -166,10 +166,9 @@ const UserClassManagementRejected = ({ ClassBookingRejectedData }) => {
 
       {/* Modal */}
       <dialog id="Class_Reject_Details_Modal" className="modal">
-        <ClassAcceptedDetailsModal
+        <ClassRejectedDetailsModal
           id="Class_Reject_Details_Modal"
-          selectedBookingAcceptedData={selectedRejectedData}
-          setSelectedBookingAcceptedData={setSelectedRejectedData}
+          selectedRejectedData={selectedRejectedData}
         />
       </dialog>
     </div>

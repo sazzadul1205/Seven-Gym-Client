@@ -110,28 +110,25 @@ const calculateDaysLeft = (dateStr) => {
   return diffDays >= 0 ? diffDays : null;
 };
 
-const ClassCompletedDetailsModal = ({ selectedBookingCompletedData }) => {
+const ClassCompletedDetailsModal = ({ selectedCompletedData }) => {
   const axiosPublic = useAxiosPublic();
 
-  console.log("|", selectedBookingCompletedData);
+  // Get class name or fallback to "N/A"
+  const className = selectedCompletedData?.applicant?.classesName || "N/A";
 
   // Get class name or fallback to "N/A"
-  const className =
-    selectedBookingCompletedData?.applicant?.classesName || "N/A";
-
-  // Get class name or fallback to "N/A"
-  const status = selectedBookingCompletedData?.status || "N/A";
+  const status = selectedCompletedData?.status || "N/A";
 
   // Get applicant data, fallback to empty object
   const applicant =
-    selectedBookingCompletedData?.applicant?.applicantData ||
-    selectedBookingCompletedData?.applicant ||
+    selectedCompletedData?.applicant?.applicantData ||
+    selectedCompletedData?.applicant ||
     {};
 
   // Get applicant email or fallback to "N/A"
   const email =
     applicant?.email ||
-    selectedBookingCompletedData?.applicant?.applicantEmail ||
+    selectedCompletedData?.applicant?.applicantEmail ||
     "N/A";
 
   // Fetch class details with react-query
@@ -153,86 +150,83 @@ const ClassCompletedDetailsModal = ({ selectedBookingCompletedData }) => {
   if (error) return <FetchingError />;
 
   return (
-    <div className="modal-box max-w-3xl p-0 bg-gradient-to-b from-white to-gray-100 text-gray-900 rounded-lg shadow-lg">
-      {/* Modal header with title and close icon */}
-      <header className="flex justify-between items-center border-b border-gray-300 px-6 py-4 bg-white rounded-t-lg">
-        <h3 className="text-xl font-semibold tracking-wide">
+    <div className="modal-box w-full max-w-3xl max-h-[90vh] overflow-y-auto p-0 bg-gradient-to-b from-white to-gray-100 text-gray-900 rounded-lg shadow-lg">
+      {/* Modal header */}
+      <header className="flex justify-between items-center border-b border-gray-300 px-4 sm:px-6 py-3 sm:py-4 bg-white rounded-t-lg">
+        <h3 className="text-md md:text-xl font-semibold tracking-wide">
           Class Booking Accepted Details
         </h3>
         <ImCross
           className="text-xl text-gray-600 hover:text-red-600 cursor-pointer transition-colors"
           onClick={() => {
-            document.getElementById("Class_Completed_Details_Modal")?.close();
+            document
+              .getElementById("Class_Completed_Details_Modal")
+              ?.close();
           }}
         />
       </header>
 
       {/* Modal body */}
-      <section className="px-8 py-6 space-y-8">
-        {/* Class info and user info section */}
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-5">
-            {/* Show class icon if available */}
+      <section className="px-4 sm:px-8 py-6 space-y-6 sm:space-y-8">
+        {/* Class info and user info */}
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+          <div className="flex items-center gap-4 sm:gap-5">
             {ClassData?.icon && (
               <img
                 src={ClassData.icon}
                 alt={`${className} icon`}
-                className="w-16 h-16 rounded-md border border-gray-300 shadow-sm"
+                className="w-14 h-14 sm:w-16 sm:h-16 rounded-md border border-gray-300 shadow-sm"
               />
             )}
             <div>
-              {/* Class name */}
-              <h2 className="text-2xl font-semibold">{className}</h2>
-              {/* Duration */}
+              <h2 className="text-xl sm:text-2xl font-semibold">{className}</h2>
               <p className="text-sm text-gray-600 capitalize tracking-wide">
                 Duration:{" "}
-                {selectedBookingCompletedData?.applicant?.duration || "N/A"}
+                {selectedCompletedData?.applicant?.duration || "N/A"}
               </p>
             </div>
           </div>
 
-          {/* Applicant user basic info */}
-          <TrainerBookingRequestUserBasicInfo email={email} />
+          {/* User info */}
+          <div className="md:mt-0 mt-2">
+            <TrainerBookingRequestUserBasicInfo email={email} />
+          </div>
         </div>
 
-        {/* Booking and payment info grid */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Total price row */}
+        {/* Grid Info Section */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <InfoRow
             icon={<FaMoneyBillAlt className="text-green-600" />}
             label="Total Price"
             value={`$${
-              selectedBookingCompletedData?.applicant?.totalPrice ?? "N/A"
+              selectedCompletedData?.applicant?.totalPrice ?? "N/A"
             }`}
           />
 
-          {/* Submitted date row */}
           <InfoRow
             icon={<FaCalendarAlt className="text-blue-600" />}
             label="Submitted At"
             value={formatDateTimeTooltip(
-              selectedBookingCompletedData?.applicant?.submittedDate
+              selectedCompletedData?.applicant?.submittedDate
             )}
             tooltip={new Date(
-              selectedBookingCompletedData?.applicant?.submittedDate
+              selectedCompletedData?.applicant?.submittedDate
             ).toString()}
           />
 
-          {/* Accepted date row */}
           <InfoRow
             icon={<FaClock className="text-indigo-600" />}
             label="Accepted At"
             value={formatDateTimeTooltip(
-              selectedBookingCompletedData?.acceptedAt
+              selectedCompletedData?.acceptedAt
             )}
             tooltip={new Date(
-              selectedBookingCompletedData?.acceptedAt
+              selectedCompletedData?.acceptedAt
             ).toString()}
           />
 
-          {/* Payment status badge */}
           <div className="flex items-center gap-2 text-gray-700">
-            {selectedBookingCompletedData?.paid ? (
+            {selectedCompletedData?.paid ? (
               <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold select-none">
                 Paid
               </span>
@@ -243,46 +237,42 @@ const ClassCompletedDetailsModal = ({ selectedBookingCompletedData }) => {
             )}
           </div>
 
-          {/* Paid at date row (if available) */}
-          {selectedBookingCompletedData?.paidAt && (
+          {selectedCompletedData?.paidAt && (
             <InfoRow
               icon={<FaClock className="text-green-600" />}
               label="Paid At"
-              value={formatDateTimeTooltip(
-                selectedBookingCompletedData?.paidAt
-              )}
-              tooltip={new Date(
-                selectedBookingCompletedData?.paidAt
-              ).toString()}
+              value={formatDateTimeTooltip(selectedCompletedData?.paidAt)}
+              tooltip={new Date(selectedCompletedData?.paidAt).toString()}
             />
           )}
 
-          {/* Start Date row with icon */}
-          {selectedBookingCompletedData?.startDate && (
+          {selectedCompletedData?.startDate && (
             <InfoRow
               icon={<FaCalendarAlt className="text-blue-600" />}
               label="Start Date"
-              value={formatDateToDisplay(
-                selectedBookingCompletedData.startDate
-              )}
+              value={formatDateToDisplay(selectedCompletedData.startDate)}
             />
           )}
 
-          {/* End Date row with icon and days left */}
-          {selectedBookingCompletedData?.endDate && (
+          {selectedCompletedData?.endDate && (
             <InfoRow
               icon={<FaHourglassEnd className="text-red-600" />}
               label="End Date"
-              value={`${formatDateToDisplay(
-                selectedBookingCompletedData.endDate
-              )}${(() => {
-                const daysLeft = calculateDaysLeft(
-                  selectedBookingCompletedData.endDate
-                );
-                return daysLeft !== null
-                  ? ` (${daysLeft} day${daysLeft !== 1 ? "s" : ""} left)`
-                  : "";
-              })()}`}
+              value={
+                <>
+                  <span className="whitespace-nowrap">
+                    {formatDateToDisplay(selectedCompletedData.endDate)}
+                  </span>
+                  {(() => {
+                    const daysLeft = calculateDaysLeft(
+                      selectedCompletedData.endDate
+                    );
+                    return daysLeft !== null
+                      ? ` (${daysLeft} day${daysLeft !== 1 ? "s" : ""} left)`
+                      : "";
+                  })()}
+                </>
+              }
             />
           )}
 
@@ -295,6 +285,15 @@ const ClassCompletedDetailsModal = ({ selectedBookingCompletedData }) => {
       </section>
     </div>
   );
+};
+
+// Prop Validation
+ClassCompletedDetailsModal.propTypes = {
+  selectedCompletedData: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.string,
+  ]),
+  id: PropTypes.string,
 };
 
 export default ClassCompletedDetailsModal;

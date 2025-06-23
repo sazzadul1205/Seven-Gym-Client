@@ -26,11 +26,13 @@ const UserClassManagementAccepted = ({
   const [PaymentSuccessData, setPaymentSuccessData] = useState("");
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="p-1 pt-10 md:p-4 space-y-2">
       {/* Tittle */}
-      <h2 className="text-3xl font-bold text-center text-white">
+      <h2 className="text-xl md:text-3xl font-bold text-center text-white">
         Your Class Booking Accepted
       </h2>
+
+      <div className="bg-white mx-auto p-[2px] w-1/3 mb-8 mb:mb-10" />
 
       {/* Cards and fallback */}
       {ClassBookingAcceptedData.length === 0 ? (
@@ -68,8 +70,7 @@ const UserClassManagementAccepted = ({
             <UserClassAcceptedCard
               key={item._id}
               item={item}
-              refetchAll={refetchAll}
-              selectedAcceptedData={selectedAcceptedData}
+              id="Class_Accepted_Details_Modal"
               setSelectedAcceptedData={setSelectedAcceptedData}
             />
           ))}

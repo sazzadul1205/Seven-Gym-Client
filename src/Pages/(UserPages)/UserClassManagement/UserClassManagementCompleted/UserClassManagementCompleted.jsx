@@ -6,20 +6,19 @@ import PropTypes from "prop-types";
 
 // import Icons
 import { FaInfoCircle } from "react-icons/fa";
+import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
 // import Common Button
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
-// import Accepted Card
-import UserClassAcceptedCard from "../UserClassManagementAccepted/UserClassAcceptedCard/UserClassAcceptedCard";
+// import Completed Card
+import UserClassCompletedCard from "./UserClassCompletedCard/UserClassCompletedCard";
 
 // Import Modals
-import ClassAcceptedDetailsModal from "../../../(ClassManagement)/ClassAccepted/ClassAcceptedDetailsModal/ClassAcceptedDetailsModal";
-import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 import ClassCompletedDetailsModal from "./ClassCompletedDetailsModal/ClassCompletedDetailsModal";
 
 const UserClassManagementCompleted = ({ ClassBookingCompletedData }) => {
-  const [selectedAcceptedData, setSelectedAcceptedData] = useState("");
+  const [selectedCompletedData, setSelectedCompletedData] = useState("");
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,11 +31,13 @@ const UserClassManagementCompleted = ({ ClassBookingCompletedData }) => {
   );
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="p-1 pt-10 md:p-4 space-y-2">
       {/* Tittle */}
-      <h2 className="text-3xl font-bold text-center text-white">
+      <h2 className="text-xl md:text-3xl font-bold text-center text-white">
         Your Class Booking Accepted
       </h2>
+
+      <div className="bg-white mx-auto p-[2px] w-1/3 mb-10" />
 
       {/* Cards and fallback */}
       {currentData.length === 0 ? (
@@ -72,11 +73,10 @@ const UserClassManagementCompleted = ({ ClassBookingCompletedData }) => {
           {/* Request Cards */}
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {currentData.map((item) => (
-              <UserClassAcceptedCard
+              <UserClassCompletedCard
                 key={item._id}
                 item={item}
-                id="Class_Completed_Details_Modal"
-                setSelectedAcceptedData={setSelectedAcceptedData}
+                setSelectedCompletedData={setSelectedCompletedData}
               />
             ))}
           </div>
@@ -123,7 +123,7 @@ const UserClassManagementCompleted = ({ ClassBookingCompletedData }) => {
       {/* Modal */}
       <dialog id="Class_Completed_Details_Modal" className="modal">
         <ClassCompletedDetailsModal
-          selectedBookingAcceptedData={selectedAcceptedData}
+          selectedCompletedData={selectedCompletedData}
         />
       </dialog>
     </div>

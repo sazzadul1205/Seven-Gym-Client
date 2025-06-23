@@ -46,9 +46,9 @@ const UserClassRequestCard = ({ item }) => {
   if (error) return <FetchingError />;
 
   return (
-    <div className="flex gap-4 items-center bg-white rounded-2xl shadow-md hover:shadow-2xl border border-dashed border-gray-200 p-5 transition-transform hover:scale-105 duration-200">
+    <div className="flex flex-col sm:flex-row gap-4 items-center bg-white rounded-2xl shadow-md hover:shadow-2xl border border-dashed border-gray-200 p-5 transition-transform hover:scale-105 duration-200">
       {/* Class Icon */}
-      <div className="w-20 h-20 rounded-xl overflow-hidden shadow-inner border">
+      <div className="w-24 h-24 rounded-xl overflow-hidden shadow-inner border">
         <img
           src={ClassData?.icon}
           alt={item.classesName}
@@ -57,46 +57,50 @@ const UserClassRequestCard = ({ item }) => {
       </div>
 
       {/* Info */}
-      <div className="flex-1 space-y-1">
+      <div className="flex-1 w-full space-y-0 text-center sm:text-left">
         {/* Class Name */}
-        <div className="flex items-center gap-2 text-blue-600 text-lg font-semibold">
+        <div className="flex items-center justify-center sm:justify-start gap-2 text-blue-600 text-lg font-semibold">
           <FaDumbbell />
           <span>{item.classesName}</span>
         </div>
 
-        {/* Duration */}
-        <div className="flex items-center gap-2 text-gray-700 text-sm">
-          <FaClock className="text-blue-500" />
-          <span className="capitalize">{item.duration}</span>
-        </div>
+        <div className="mx-auto justify-center gap-5 md:gap-0 flex flex-row md:flex-col">
+          {/* Duration */}
+          <div className="flex items-center justify-center sm:justify-start gap-2 text-gray-700 text-sm">
+            <FaClock className="text-blue-500" />
+            <span className="capitalize">{item.duration}</span>
+          </div>
 
-        {/* Price */}
-        <div className="flex items-center gap-2 text-gray-700 text-sm">
-          <FaDollarSign className="text-green-500" />
-          <span>${parseFloat(item.totalPrice).toFixed(2)}</span>
+          {/* Price */}
+          <div className="flex items-center justify-center sm:justify-start gap-2 text-gray-700 text-sm">
+            <FaDollarSign className="text-green-500" />
+            <span>${parseFloat(item.totalPrice).toFixed(2)}</span>
+          </div>
         </div>
 
         {/* Submitted Date */}
-        <div className="flex items-center gap-2 text-gray-700 text-sm">
+        <div className="flex items-center justify-center sm:justify-start gap-2 text-gray-700 text-sm">
           <FaCalendarAlt className="text-purple-500" />
           <span>{item.submittedDate}</span>
         </div>
       </div>
 
       {/* View Button with Tooltip */}
-      <Link to={`/Classes/${item?.classesName}`}>
-        <button
-          id={`view-class-btn-${item._id}`}
-          className="p-2 border-2 border-blue-600 bg-blue-300 hover:bg-blue-600 rounded-full shadow text-white transition cursor-pointer"
-        >
-          <FaArrowLeft className="text-xl" />
-        </button>
-        <Tooltip
-          anchorSelect={`#view-class-btn-${item._id}`}
-          content="View class details"
-          place="top"
-        />
-      </Link>
+      <div className="mt-4 sm:mt-0 sm:ml-auto">
+        <Link to={`/Classes/${item?.classesName}`}>
+          <button
+            id={`view-class-btn-${item._id}`}
+            className="p-2 border-2 border-blue-600 bg-blue-300 hover:bg-blue-600 rounded-full shadow text-white transition cursor-pointer"
+          >
+            <FaArrowLeft className="text-xl" />
+          </button>
+          <Tooltip
+            anchorSelect={`#view-class-btn-${item._id}`}
+            content="View class details"
+            place="top"
+          />
+        </Link>
+      </div>
     </div>
   );
 };
@@ -116,11 +120,13 @@ UserClassRequestCard.propTypes = {
 // Main Container for Requests
 const UserClassManagementRequest = ({ ClassBookingRequestData }) => {
   return (
-    <div className="p-4 space-y-6">
+    <div className="p-1 md:p-4 space-y-2">
       {/* Tittle */}
-      <h2 className="text-3xl font-bold text-center text-white">
+      <h2 className="text-xl md:text-3xl font-bold text-center text-white">
         Your Class Booking Requests
       </h2>
+
+      <div className="bg-white mx-auto p-[2px] w-1/3 md:mb-10" />
 
       {/* Cards and fallback */}
       {ClassBookingRequestData.length === 0 ? (
