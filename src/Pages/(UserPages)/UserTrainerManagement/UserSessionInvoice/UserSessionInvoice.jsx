@@ -2,7 +2,11 @@ import { useRef, useState } from "react";
 
 // Import Icons
 import { FaFileInvoiceDollar } from "react-icons/fa";
-import { FaTriangleExclamation } from "react-icons/fa6";
+import {
+  FaAnglesLeft,
+  FaAnglesRight,
+  FaTriangleExclamation,
+} from "react-icons/fa6";
 
 // Import Utility
 import { formatDate } from "../../../../Utility/formatDate";
@@ -49,7 +53,28 @@ const UserSessionInvoice = ({
     (a, b) => new Date(b.refundedAt) - new Date(a.refundedAt)
   );
 
-  console.log(SessionRefundInvoicesData);
+  // Pagination
+  const [currentPaymentPage, setCurrentPaymentPage] = useState(1);
+  const [currentRefundPage, setCurrentRefundPage] = useState(1);
+  const itemsPerPage = 6;
+
+  const totalPaymentPages = Math.ceil(
+    sortedPaymentInvoices.length / itemsPerPage
+  );
+
+  const currentPaymentData = sortedPaymentInvoices.slice(
+    (currentPaymentPage - 1) * itemsPerPage,
+    currentPaymentPage * itemsPerPage
+  );
+
+  const totalRefundPages = Math.ceil(
+    sortedRefundInvoices.length / itemsPerPage
+  );
+
+  const currentRefundData = sortedRefundInvoices.slice(
+    (currentRefundPage - 1) * itemsPerPage,
+    currentRefundPage * itemsPerPage
+  );
 
   return (
     <div>
@@ -69,7 +94,7 @@ const UserSessionInvoice = ({
         </div>
 
         {/* Content */}
-        {sortedPaymentInvoices?.length > 0 ? (
+        {currentPaymentData?.length > 0 ? (
           <>
             {/* Desktop View */}
             <div className="overflow-x-auto hidden md:block">
@@ -99,14 +124,14 @@ const UserSessionInvoice = ({
 
                 {/* Table Body */}
                 <tbody>
-                  {sortedPaymentInvoices?.map((item, index) => (
+                  {currentPaymentData?.map((item, index) => (
                     <tr
                       key={`List_No_${item?._id}_${index}`}
                       className={`border-b bg-white hover:bg-gray-200 cursor-default`}
                     >
                       {/* Number */}
                       <td className="px-4 py-2 border-r border-b border-gray-300">
-                        {index + 1} .
+                        {(currentPaymentPage - 1) * itemsPerPage + index + 1}
                       </td>
 
                       {/* Session Payment Id */}
@@ -172,7 +197,7 @@ const UserSessionInvoice = ({
 
             {/* Mobile view */}
             <div className="md:hidden space-y-4">
-              {sortedPaymentInvoices?.map((item, index) => (
+              {currentPaymentData?.map((item, index) => (
                 <div
                   key={`mobile_List_No_${item?._id}_${index}`}
                   className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-green-500"
@@ -181,7 +206,7 @@ const UserSessionInvoice = ({
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <span className="text-lg font-semibold text-gray-800">
-                        #{index + 1}
+                        # {(currentPaymentPage - 1) * itemsPerPage + index + 1}
                       </span>
                       <FaFileInvoiceDollar className="text-green-500 text-xl" />
                     </div>
@@ -254,6 +279,48 @@ const UserSessionInvoice = ({
                 </div>
               ))}
             </div>
+
+            {/* Pagination Controls */}
+            <div className="mt-6 flex justify-center items-center gap-4">
+              <div className="join">
+                {/* Previous Page Button */}
+                <button
+                  onClick={() =>
+                    setCurrentPaymentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPaymentPage === 1}
+                  className={`join-item bg-white btn btn-sm h-10 px-5 text-sm transition-all duration-200 ${
+                    currentPaymentPage === 1
+                      ? "cursor-not-allowed opacity-50"
+                      : "hover:bg-blue-100 text-blue-600"
+                  }`}
+                >
+                  <FaAnglesLeft />
+                </button>
+
+                {/* Page Info */}
+                <span className="join-item h-10 px-5 text-sm flex items-center justify-center border border-gray-300 bg-white text-gray-800 font-semibold">
+                  Page {currentPaymentPage} / {totalPaymentPages}
+                </span>
+
+                {/* Next Page Button */}
+                <button
+                  onClick={() =>
+                    setCurrentPaymentPage((prev) =>
+                      Math.min(prev + 1, totalPaymentPages)
+                    )
+                  }
+                  disabled={currentPaymentPage === totalPaymentPages}
+                  className={`join-item bg-white btn btn-sm h-10 px-5 text-sm transition-all duration-200 ${
+                    currentPaymentPage === totalPaymentPages
+                      ? "cursor-not-allowed opacity-50"
+                      : "hover:bg-blue-100 text-blue-600"
+                  }`}
+                >
+                  <FaAnglesRight />
+                </button>
+              </div>
+            </div>
           </>
         ) : (
           // If No Payment are fetched then show this
@@ -274,7 +341,7 @@ const UserSessionInvoice = ({
         </div>
 
         {/* Content */}
-        {sortedRefundInvoices.length > 0 ? (
+        {currentRefundData.length > 0 ? (
           <>
             {/* Desktop View */}
             <div className="overflow-x-auto hidden md:block">
@@ -304,14 +371,14 @@ const UserSessionInvoice = ({
 
                 {/* Table Body */}
                 <tbody>
-                  {sortedRefundInvoices?.map((item, index) => (
+                  {currentRefundData?.map((item, index) => (
                     <tr
                       key={`List_No_${item?._id}_${index}`}
                       className={`border-b bg-white hover:bg-gray-200 cursor-default`}
                     >
                       {/* Number */}
                       <td className="px-4 py-2 border-r border-b border-gray-300">
-                        {index + 1} .
+                        {(currentRefundPage - 1) * itemsPerPage + index + 1}
                       </td>
 
                       {/* Session Payment Id */}
@@ -384,7 +451,7 @@ const UserSessionInvoice = ({
 
             {/* Mobile View  */}
             <div className="md:hidden space-y-4">
-              {sortedRefundInvoices?.map((item, index) => (
+              {currentRefundData?.map((item, index) => (
                 <div
                   key={`mobile_refund_List_No_${item?._id}_${index}`}
                   className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-red-500"
@@ -393,7 +460,7 @@ const UserSessionInvoice = ({
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <span className="text-lg font-semibold text-gray-800">
-                        #{index + 1}
+                        # {(currentRefundPage - 1) * itemsPerPage + index + 1}
                       </span>
                       <FaFileInvoiceDollar className="text-red-500 text-xl" />
                     </div>
@@ -470,6 +537,48 @@ const UserSessionInvoice = ({
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Pagination Controls */}
+            <div className="mt-6 flex justify-center items-center gap-4">
+              <div className="join">
+                {/* Previous Page Button */}
+                <button
+                  onClick={() =>
+                    setCurrentRefundPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentRefundPage === 1}
+                  className={`join-item bg-white btn btn-sm h-10 px-5 text-sm transition-all duration-200 ${
+                    currentRefundPage === 1
+                      ? "cursor-not-allowed opacity-50"
+                      : "hover:bg-blue-100 text-blue-600"
+                  }`}
+                >
+                  <FaAnglesLeft />
+                </button>
+
+                {/* Page Info */}
+                <span className="join-item h-10 px-5 text-sm flex items-center justify-center border border-gray-300 bg-white text-gray-800 font-semibold">
+                  Page {currentRefundPage} / {totalRefundPages}
+                </span>
+
+                {/* Next Page Button */}
+                <button
+                  onClick={() =>
+                    setCurrentRefundPage((prev) =>
+                      Math.min(prev + 1, totalRefundPages)
+                    )
+                  }
+                  disabled={currentRefundPage === totalRefundPages}
+                  className={`join-item bg-white btn btn-sm h-10 px-5 text-sm transition-all duration-200 ${
+                    currentRefundPage === totalRefundPages
+                      ? "cursor-not-allowed opacity-50"
+                      : "hover:bg-blue-100 text-blue-600"
+                  }`}
+                >
+                  <FaAnglesRight />
+                </button>
+              </div>
             </div>
           </>
         ) : (
