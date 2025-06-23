@@ -10,15 +10,24 @@ const TrainerBookingRequestUserBasicInfo = ({
 }) => {
   const axiosPublic = useAxiosPublic();
 
+  // Validate the email: must be a non-empty, valid string, not "undefined" or "N/A"
+  const isValidEmail =
+    typeof email === "string" &&
+    email.trim() !== "" &&
+    email !== "undefined" &&
+    email !== "N/A";
+
+  // Fetch user basic info with React Query; only run if email is valid
   const { data, isLoading, error } = useQuery({
     queryKey: ["UserBasicInfo", email],
     queryFn: () =>
       axiosPublic
         .get(`/Users/BasicProfile?email=${email}`)
         .then((res) => res.data),
-    enabled: !!email,
+    enabled: isValidEmail, // skip query if email invalid
   });
 
+  // Show loading state; use custom loader if provided
   if (isLoading) {
     return renderLoading ? (
       renderLoading()
@@ -27,6 +36,7 @@ const TrainerBookingRequestUserBasicInfo = ({
     );
   }
 
+  // Show error state or fallback if data not found; use custom error renderer if provided
   if (error || !data) {
     return renderError ? (
       renderError(error)
@@ -35,8 +45,10 @@ const TrainerBookingRequestUserBasicInfo = ({
     );
   }
 
+  // If custom render function for user info is provided, use it
   if (renderUserInfo) return renderUserInfo(data);
 
+  // Default UI: display user avatar and name with email
   return (
     <div className="flex items-center gap-2">
       {/* Avatar */}
@@ -57,6 +69,7 @@ const TrainerBookingRequestUserBasicInfo = ({
   );
 };
 
+// Prop validation for component props
 TrainerBookingRequestUserBasicInfo.propTypes = {
   email: PropTypes.string,
   renderLoading: PropTypes.func,

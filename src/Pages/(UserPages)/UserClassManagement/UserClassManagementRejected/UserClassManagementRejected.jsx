@@ -38,7 +38,7 @@ const UserClassManagementRejected = ({ ClassBookingRejectedData }) => {
   );
 
   return (
-    <div className="p-1 pt-10 ms:p-4 space-y-2">
+    <div className="p-1 pt-10 md:p-10 space-y-2">
       {/* Title and Toggles Section */}
       <div className="flex flex-col items-center justify-center gap-4 mb-6">
         {/* Title at Top */}

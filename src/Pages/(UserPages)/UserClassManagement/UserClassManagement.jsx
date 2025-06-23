@@ -1,13 +1,21 @@
-import useFetchData from "../../../Utility/useFetchData";
+// Import Shared
 import Loading from "../../../Shared/Loading/Loading";
 import FetchingError from "../../../Shared/Component/FetchingError";
-import UserClassManagementRequest from "./UserClassManagementRequest/UserClassManagementRequest";
 
-import Classes_Background from "../../../assets/Classes-Background/Classes_Background.jpg";
+// Import Hooks
 import useAuth from "../../../Hooks/useAuth";
+
+// Import Utility
+import useFetchData from "../../../Utility/useFetchData";
+
+// Import Background Assets
+import Classes_Background from "../../../assets/Classes-Background/Classes_Background.jpg";
+
+// Import Components
+import UserClassManagementRequest from "./UserClassManagementRequest/UserClassManagementRequest";
 import UserClassManagementAccepted from "./UserClassManagementAccepted/UserClassManagementAccepted";
-import UserClassManagementCompleted from "./UserClassManagementCompleted/UserClassManagementCompleted";
 import UserClassManagementRejected from "./UserClassManagementRejected/UserClassManagementRejected";
+import UserClassManagementCompleted from "./UserClassManagementCompleted/UserClassManagementCompleted";
 
 const UserClassManagement = () => {
   const { user } = useAuth();
@@ -20,7 +28,8 @@ const UserClassManagement = () => {
     refetch: ClassBookingRequestRefetch,
   } = useFetchData(
     "ClassBookingRequestData",
-    `/Class_Booking_Request?email=${user?.email}`
+    `/Class_Booking_Request?email=${user?.email}`,
+    []
   );
 
   // 2. Fetch Class Accepted
@@ -31,7 +40,8 @@ const UserClassManagement = () => {
     refetch: ClassBookingAcceptedRefetch,
   } = useFetchData(
     "ClassBookingAcceptedData",
-    `/Class_Booking_Accepted?email=${user?.email}`
+    `/Class_Booking_Accepted?email=${user?.email}`,
+    []
   );
 
   // 3. Fetch Class Completed
@@ -42,7 +52,8 @@ const UserClassManagement = () => {
     refetch: ClassBookingCompletedRefetch,
   } = useFetchData(
     "ClassBookingCompletedData",
-    `/Class_Booking_Completed?email=${user?.email}`
+    `/Class_Booking_Completed?email=${user?.email}`,
+    []
   );
 
   // 4. Fetch Class Rejected
@@ -53,7 +64,8 @@ const UserClassManagement = () => {
     refetch: ClassBookingRejectedRefetch,
   } = useFetchData(
     "ClassBookingRejectedData",
-    `/Class_Booking_Rejected?email=${user?.email}`
+    `/Class_Booking_Rejected?email=${user?.email}`,
+    []
   );
 
   // Unified refetch function
@@ -81,8 +93,6 @@ const UserClassManagement = () => {
     ClassBookingRejectedError
   )
     return <FetchingError />;
-
-  console.log(ClassBookingCompletedData);
 
   return (
     <div

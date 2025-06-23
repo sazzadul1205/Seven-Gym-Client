@@ -318,7 +318,7 @@ export const InfoRow = ({ icon, label, value, tooltip }) => (
 InfoRow.propTypes = {
   icon: PropTypes.node.isRequired,
   label: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  value: PropTypes.node,
   tooltip: PropTypes.string,
 };
 

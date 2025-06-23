@@ -192,21 +192,24 @@ const PayedClassReceptModal = ({ paymentSuccessData }) => {
 
 // Prop Validation
 PayedClassReceptModal.propTypes = {
-  paymentSuccessData: PropTypes.shape({
-    stripePaymentID: PropTypes.string,
-    paidAt: PropTypes.string,
-    droppedAt: PropTypes.string,
-    paid: PropTypes.bool,
-    paymentMethod: PropTypes.string,
-    applicant: PropTypes.shape({
-      duration: PropTypes.string,
-      totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      classesName: PropTypes.string,
-      applicantData: PropTypes.shape({
-        email: PropTypes.string,
+  paymentSuccessData: PropTypes.oneOfType([
+    PropTypes.shape({
+      stripePaymentID: PropTypes.string,
+      paidAt: PropTypes.string,
+      droppedAt: PropTypes.string,
+      paid: PropTypes.bool,
+      paymentMethod: PropTypes.string,
+      applicant: PropTypes.shape({
+        duration: PropTypes.string,
+        totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        classesName: PropTypes.string,
+        applicantData: PropTypes.shape({
+          email: PropTypes.string,
+        }),
       }),
     }),
-  }),
+    PropTypes.string, // Allow string as well to prevent warnings
+  ]),
 };
 
 export default PayedClassReceptModal;

@@ -186,7 +186,7 @@ const UserClassRejectedCard = ({ item, setSelectedRejectedData }) => {
               className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
               onClick={() => {
                 document
-                  .getElementById("Class_Accepted_Details_Modal")
+                  .getElementById("Class_Reject_Details_Modal")
                   .showModal();
                 setSelectedRejectedData(item);
               }}

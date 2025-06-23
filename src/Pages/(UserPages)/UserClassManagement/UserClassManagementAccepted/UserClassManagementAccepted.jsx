@@ -26,7 +26,7 @@ const UserClassManagementAccepted = ({
   const [PaymentSuccessData, setPaymentSuccessData] = useState("");
 
   return (
-    <div className="p-1 pt-10 md:p-4 space-y-2">
+    <div className="p-1 pt-10 md:p-10 space-y-2">
       {/* Tittle */}
       <h2 className="text-xl md:text-3xl font-bold text-center text-white">
         Your Class Booking Accepted
