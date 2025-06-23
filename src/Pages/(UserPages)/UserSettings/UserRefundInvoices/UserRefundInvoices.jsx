@@ -247,7 +247,7 @@ UserRefundInvoices.propTypes = {
       refundAmount: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
         .isRequired,
       refundedReason: PropTypes.string.isRequired,
-      dateTime: PropTypes.string.isRequired,
+      dateTime: PropTypes.string,
       refunded: PropTypes.bool.isRequired,
     })
   ),

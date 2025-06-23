@@ -8,8 +8,30 @@ import domToImage from "dom-to-image";
 // import Common Button
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 
-const PayedClassReceptModal = ({ paymentSuccessData }) => {
+const getDaysLeft = (endDateStr, droppedAtStr) => {
+  if (!endDateStr || !droppedAtStr) return 0;
+
+  const [endDay, endMonth, endYear] = endDateStr.split("-").map(Number);
+  const endDate = new Date(endYear, endMonth - 1, endDay);
+  const droppedAt = new Date(droppedAtStr);
+
+  const timeDiff = endDate.getTime() - droppedAt.getTime();
+  const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+  return daysLeft > 0 ? daysLeft : 0;
+};
+
+const RejectedClassReceptModal = ({ SelectRefundInvoice }) => {
   const receiptRef = useRef();
+
+  const daysLeft = getDaysLeft(
+    SelectRefundInvoice?.endDate,
+    SelectRefundInvoice?.droppedAt
+  );
+
+  const NonRefundedAmount =
+    SelectRefundInvoice?.applicant?.totalPrice -
+    SelectRefundInvoice?.refundAmount;
 
   // PDF generation function
   const generatePDF = async () => {
@@ -35,7 +57,7 @@ const PayedClassReceptModal = ({ paymentSuccessData }) => {
 
         pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
         pdf.save(
-          `PaymentClassBookingReceipt_${paymentSuccessData?.stripePaymentID}.pdf`
+          `SelectRefundInvoice_${SelectRefundInvoice?.stripePaymentID}.pdf`
         );
 
         URL.revokeObjectURL(imgData); // Clean up
@@ -46,15 +68,13 @@ const PayedClassReceptModal = ({ paymentSuccessData }) => {
   };
 
   return (
-    <div className="modal-box bg-[#ffffff] shadow-lg rounded-lg w-full max-w-md mx-auto p-4 sm:p-6 overflow-y-auto">
+    <div className="modal-box bg-[#ffffff] shadow-lg rounded-lg w-full max-w-md mx-auto p-4 sm:p-6 overflow-y-auto text-black">
       {/* Receipt Section */}
       <div ref={receiptRef} id="receipt">
         {/* Header */}
         <div className="text-center border-b pb-4 mb-1">
           <h4 className="text-2xl font-bold text-[#1f2937]">Seven Gym</h4>
-          <p className="text-sm text-[#6b7280]">
-            Class Booking Payment Receipt
-          </p>
+          <p className="text-sm text-[#6b7280]">Class Booking Refund Receipt</p>
           <p className="text-sm text-[#6b7280]">www.SevenGym.com</p>
         </div>
 
@@ -66,16 +86,18 @@ const PayedClassReceptModal = ({ paymentSuccessData }) => {
               Receipt:&nbsp;
               <span
                 className="max-w-[200px] sm:max-w-[300px] inline-block truncate align-middle"
-                title={`SG-CBPR-${paymentSuccessData?.stripePaymentID}`}
+                title={`SG-CBPR-${SelectRefundInvoice?.stripePaymentID}`}
               >
-                SG-CBPR-{paymentSuccessData?.stripePaymentID}
+                SG-CBPR-{SelectRefundInvoice?.stripePaymentID}
               </span>
             </p>
 
             {/* Customer */}
             <p className="text-sm font-semibold text-[#6b7280]">
               Customer:{" "}
-              <span>{paymentSuccessData?.applicant?.applicantData?.email}</span>
+              <span>
+                {SelectRefundInvoice?.applicant?.applicantData?.email}
+              </span>
             </p>
 
             {/* Transaction ID */}
@@ -83,9 +105,9 @@ const PayedClassReceptModal = ({ paymentSuccessData }) => {
               Transaction ID:&nbsp;
               <span
                 className="mx-auto max-w-[180px] sm:max-w-[300px] inline-block truncate align-middle"
-                title={`TX-${paymentSuccessData?.stripePaymentID}`}
+                title={`TX-${SelectRefundInvoice?.stripePaymentID}`}
               >
-                TX-{paymentSuccessData?.stripePaymentID}
+                TX-{SelectRefundInvoice?.stripePaymentID}
               </span>
             </p>
 
@@ -93,7 +115,7 @@ const PayedClassReceptModal = ({ paymentSuccessData }) => {
             <p className="text-sm text-[#6b7280]">
               Date & Time:{" "}
               <span>
-                {new Date(paymentSuccessData?.droppedAt)
+                {new Date(SelectRefundInvoice?.droppedAt)
                   .toLocaleString("en-US", {
                     month: "short",
                     day: "2-digit",
@@ -107,32 +129,6 @@ const PayedClassReceptModal = ({ paymentSuccessData }) => {
             </p>
           </div>
 
-          {/* Status, Duration, Method */}
-          <div className="space-y-2 mt-4 text-sm">
-            <div className="flex justify-between">
-              <p className="font-semibold">Payment Status:</p>
-              <p
-                className={`${
-                  paymentSuccessData?.paid ? "text-[#22c55e]" : "text-[#ef4444]"
-                } font-bold`}
-              >
-                {paymentSuccessData?.paid ? "Successful" : "Failed"}
-              </p>
-            </div>
-            <div className="flex justify-between">
-              <p className="font-semibold">Duration:</p>
-              <p className="text-[#374151]">
-                {paymentSuccessData?.applicant?.duration}
-              </p>
-            </div>
-            <div className="flex justify-between">
-              <p className="font-semibold">Payment Method:</p>
-              <p className="text-[#374151]">
-                {paymentSuccessData?.paymentMethod}
-              </p>
-            </div>
-          </div>
-
           {/* Price list */}
           <div className="space-y-2 mt-8">
             <div className="flex justify-between font-bold px-2">
@@ -140,13 +136,28 @@ const PayedClassReceptModal = ({ paymentSuccessData }) => {
               <p>Price</p>
             </div>
 
-            <div className="flex justify-between font-semibold border-b border-[#9ca3af] pb-2 px-2">
-              <p>{paymentSuccessData?.applicant?.classesName}</p>
-              <p> $ {paymentSuccessData?.applicant?.totalPrice}</p>
+            <div className="flex justify-between font-semibold px-2">
+              <p>{SelectRefundInvoice?.applicant?.classesName}</p>
+              <p> $ {SelectRefundInvoice?.applicant?.totalPrice}</p>
             </div>
+
+            <div className="p-[1px] bg-black" />
+
             <div className="flex justify-between font-semibold px-2">
               <p>Total :</p>
-              <p> $ {paymentSuccessData?.applicant?.totalPrice}</p>
+              <p> $ {SelectRefundInvoice?.applicant?.totalPrice}</p>
+            </div>
+
+            <div className="flex justify-between font-semibold px-2">
+              <p>Deducted ( {daysLeft} Days ) </p>
+              <p> $ {NonRefundedAmount.toFixed(2)}</p>
+            </div>
+
+            <div className="p-[1px] bg-black" />
+
+            <div className="flex justify-between font-semibold px-2">
+              <p>Refunded : </p>
+              <p> $ {SelectRefundInvoice?.refundAmount}</p>
             </div>
           </div>
 
@@ -164,7 +175,7 @@ const PayedClassReceptModal = ({ paymentSuccessData }) => {
         <div className="w-full sm:w-auto">
           <CommonButton
             clickEvent={() =>
-              document.getElementById("Payed_Class_Recept_Modal").close()
+              document.getElementById("Rejected_Class_Recept_Modal").close()
             }
             text="Close"
             bgColor="blue"
@@ -174,7 +185,7 @@ const PayedClassReceptModal = ({ paymentSuccessData }) => {
           />
         </div>
 
-        {paymentSuccessData?.paid && (
+        {SelectRefundInvoice?.paid && (
           <div className="w-full sm:w-auto">
             <CommonButton
               clickEvent={generatePDF}
@@ -191,22 +202,25 @@ const PayedClassReceptModal = ({ paymentSuccessData }) => {
 };
 
 // Prop Validation
-PayedClassReceptModal.propTypes = {
-  paymentSuccessData: PropTypes.shape({
+RejectedClassReceptModal.propTypes = {
+  SelectRefundInvoice: PropTypes.shape({
     stripePaymentID: PropTypes.string,
+    paid: PropTypes.bool,
     paidAt: PropTypes.string,
     droppedAt: PropTypes.string,
-    paid: PropTypes.bool,
-    paymentMethod: PropTypes.string,
+    endDate: PropTypes.string,
+    refundAmount: PropTypes.number,
     applicant: PropTypes.shape({
-      duration: PropTypes.string,
-      totalPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       classesName: PropTypes.string,
+      totalPrice: PropTypes.number,
       applicantData: PropTypes.shape({
         email: PropTypes.string,
+        name: PropTypes.string,
+        phone: PropTypes.string,
+        Userid: PropTypes.string,
       }),
     }),
   }),
 };
 
-export default PayedClassReceptModal;
+export default RejectedClassReceptModal;
