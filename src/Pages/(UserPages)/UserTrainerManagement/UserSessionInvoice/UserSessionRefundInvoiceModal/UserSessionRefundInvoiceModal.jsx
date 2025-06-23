@@ -292,7 +292,7 @@ const UserSessionRefundInvoiceModal = ({
         </div>
       </div>
       {/* Close Button and PDF Generation Button */}
-      <div className="modal-action mt-6 flex justify-between">
+      <div className="modal-action mt-6 flex flex-col md:flex-row justify-between px-2">
         {/* Close Button */}
 
         <CommonButton

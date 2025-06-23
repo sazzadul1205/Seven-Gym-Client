@@ -54,14 +54,13 @@ const UserSessionPaymentInvoiceModal = ({
   };
 
   return (
-    <div className="modal-box p-0 md:p-4 bg-[#ffffff] shadow-lg rounded-lg max-w-md mx-auto">
+    <div className="modal-box p-0 py-5 md:p-4 bg-[#ffffff] shadow-lg rounded-lg max-w-md mx-auto">
       {/* Receipt Section */}
       <div ref={receiptRef} id="receipt">
         {/* Receipt Header */}
         <div className="text-center border-b pb-4 mb-1">
           <h4 className="text-2xl font-bold text-[#1f2937]">Seven Gym</h4>
           <p className="text-sm text-[#6b7280]">Tier Upgrade Payment Receipt</p>
-          {/* Change This */}
           <p className="text-sm text-[#6b7280]">www.SevenGym.com</p>
         </div>
 
@@ -196,7 +195,7 @@ const UserSessionPaymentInvoiceModal = ({
       </div>
 
       {/* Close Button and PDF Generation Button */}
-      <div className="modal-action mt-6 flex justify-between">
+      <div className="modal-action mt-6 flex flex-col md:flex-row justify-between px-2">
         {/* Close Button */}
         <CommonButton
           text="Close"

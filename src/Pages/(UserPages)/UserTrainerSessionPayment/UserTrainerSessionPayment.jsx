@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 // Import Background
 import UserTrainerManagementBackground from "../../../assets/User-Trainer-Management-Background/UserTrainerManagementBackground.jpg";
@@ -21,6 +21,7 @@ import { formatDate } from "../../../Utility/formatDate";
 
 // Import Form
 import UserTrainerSessionPaymentForm from "./UserTrainerSessionPaymentForm/UserTrainerSessionPaymentForm";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 // Stripe promise
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PROMISE);
@@ -30,6 +31,9 @@ const UserTrainerSessionPayment = () => {
 
   // Get id from params
   const { id } = useParams();
+
+  // Hooks
+  const navigate = useNavigate();
 
   // Fetch Trainer Booking Request By ID Data
   const {
@@ -78,7 +82,16 @@ const UserTrainerSessionPayment = () => {
       style={{ backgroundImage: `url(${UserTrainerManagementBackground})` }}
     >
       <div className="bg-gradient-to-b from-gray-500/50 to-gray-800/50 min-h-screen">
-        <div className="mx-auto max-w-7xl items-center text-black">
+        {/* Back Button */}
+        <button
+          className="flex items-center gap-3 text-xl px-5 py-2 bg-gray-500 hover:bg-gray-500/80 rounded-lg cursor-pointer"
+          onClick={() => navigate(-1)}
+        >
+          <IoMdArrowRoundBack />
+          Back
+        </button>
+
+        <div className="mx-auto max-w-7xl items-center text-black px-2">
           {/* Booking Details and Payment Info */}
           <div className="flex flex-col sm:flex-row py-5 gap-5">
             {/* Details */}

@@ -384,7 +384,7 @@ const UserTrainerActiveSession = ({ TrainersBookingAcceptedData }) => {
                         modalRef.current?.showModal();
                       }}
                     >
-                      <FaInfo className="text-yellow-500 inline-block" />{" "}
+                      <FaInfo className="text-yellow-500" />{" "}
                     </button>
                     <Tooltip
                       anchorSelect={`#view-details-btn-${b._id}`}

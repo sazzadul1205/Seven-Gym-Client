@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
 // Import Icons
-import { FaArrowUp, FaRegTrashAlt } from "react-icons/fa";
+import { FaCreditCard, FaRegTrashAlt } from "react-icons/fa";
 
 // Import Packages
 import Swal from "sweetalert2";
@@ -28,6 +27,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
   const handleDeleteBooking = async (booking) => {
     if (!booking || !booking.status) return;
 
+    // eslint-disable-next-line no-unused-vars
     const { _id, ...rest } = booking;
     let updatedBooking = { ...rest };
 
@@ -205,7 +205,7 @@ const TrainerBookingSessionButton = ({ booking, refetch }) => {
               id={getButtonId()}
               className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"
             >
-              <FaArrowUp className="text-blue-500" />
+              <FaCreditCard className="text-blue-500" />
             </button>
           </Link>
           <Tooltip anchorSelect={`#${getButtonId()}`} content="Pay Session" />

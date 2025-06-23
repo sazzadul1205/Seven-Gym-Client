@@ -172,7 +172,7 @@ const UserTrainerManagement = () => {
         <div className="flex flex-col md:flex-row">
           {/* Sidebar with icons */}
           <div className="flex flex-row md:flex-col items-center  bg-white/40">
-            <div className="bg-[#A1662F] py-5 w-full" />
+            <div className="bg-[#A1662F] md:py-5 md:w-full" />
             {icons.map(({ src, alt, id, label }) => (
               <TooltipIcon
                 key={id}
@@ -254,7 +254,7 @@ const TooltipIcon = ({ src, alt, id, label, onClick, isActive }) => (
       title={label} // fallback if tooltip fails
     >
       <img src={src} alt={alt} className="w-6 h-6 object-contain" />
-      <p className="text-sm font-medium text-black truncate">{label}</p>
+      <p className="hidden md:flex text-sm font-medium text-white truncate">{label}</p>
     </div>
 
     <Tooltip

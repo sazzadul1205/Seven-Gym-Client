@@ -49,6 +49,8 @@ const UserSessionInvoice = ({
     (a, b) => new Date(b.refundedAt) - new Date(a.refundedAt)
   );
 
+  console.log(SessionRefundInvoicesData);
+
   return (
     <div>
       {/* Header */}
@@ -62,7 +64,7 @@ const UserSessionInvoice = ({
       {/* Session Payment Invoices List */}
       <div className="py-1">
         {/* Title */}
-        <div className="flex gap-3 justify-center items-center text-2xl bg-[#A1662F] font-bold text-center border border-white text-white py-1">
+        <div className="flex gap-3 justify-center items-center text-xl md:text-2xl bg-[#A1662F] font-bold text-center border border-white text-white py-1">
           Session Payment Invoices
         </div>
 
@@ -188,18 +190,25 @@ const UserSessionInvoice = ({
                     </span>
                   </div>
 
+                  {/* Payment Id */}
+                  <div className="flex text-sm gap-2 pb-2">
+                    <dt className="font-medium">Payment ID : </dt>
+                    <dd className="truncate">
+                      {item?.stripePaymentID?.slice(0, 15)}...
+                    </dd>
+                  </div>
+
+                  {/* Trainer Name */}
+                  <div className="flex text-sm gap-2 pb-2">
+                    <dt className="font-medium">Trainer :</dt>
+                    <dd>{item?.BookingInfo?.trainer}</dd>
+                  </div>
+
                   {/* Details Grid */}
                   <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-700">
-                    <div>
-                      <dt className="font-medium">Payment ID</dt>
-                      <dd className="truncate">{item?.stripePaymentID}</dd>
-                    </div>
-                    <div>
-                      <dt className="font-medium">Trainer</dt>
-                      <dd>{item?.BookingInfo?.trainer}</dd>
-                    </div>
-                    <div>
-                      <dt className="font-medium">Price</dt>
+                    {/* Price */}
+                    <div className="flex gap-2">
+                      <dt className="font-medium">Price :</dt>
                       <dd>
                         {item?.BookingInfo?.totalPrice === "0.00" ||
                         item?.BookingInfo?.totalPrice === 0.0
@@ -207,17 +216,23 @@ const UserSessionInvoice = ({
                           : `$ ${item?.BookingInfo?.totalPrice}`}
                       </dd>
                     </div>
-                    <div>
-                      <dt className="font-medium">Sessions</dt>
+
+                    {/* Sessions */}
+                    <div className="flex gap-2">
+                      <dt className="font-medium">Sessions :</dt>
                       <dd>{item?.BookingInfo?.sessions?.length}</dd>
                     </div>
-                    <div>
-                      <dt className="font-medium">Duration</dt>
-                      <dd>
-                        {item?.BookingInfo?.durationWeeks}{" "}
-                        {item?.BookingInfo?.durationWeeks > 1
-                          ? "Weeks"
-                          : "Week"}
+
+                    {/* Duration */}
+                    <div className="flex gap-2">
+                      <dt className="font-medium">Duration: </dt>
+                      <dd className="flex gap-1">
+                        <p> {item?.BookingInfo?.durationWeeks} </p>
+                        <p>
+                          {item?.BookingInfo?.durationWeeks > 1
+                            ? "Weeks"
+                            : "Week"}
+                        </p>
                       </dd>
                     </div>
                   </dl>
@@ -387,35 +402,48 @@ const UserSessionInvoice = ({
                     </span>
                   </div>
 
+                  {/* Payment Id */}
+                  <div className="flex text-sm gap-2 pb-2">
+                    <dt className="font-medium">Refund ID : </dt>
+                    <dd className="truncate">
+                      {item?.refundID?.slice(0, 15)}...
+                    </dd>
+                  </div>
+
+                  {/* Trainer Name */}
+                  <div className="flex text-sm gap-2 pb-2">
+                    <dt className="font-medium">Trainer :</dt>
+                    <dd>{item?.bookingDataForHistory?.trainer}</dd>
+                  </div>
+
                   {/* Details Grid */}
                   <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-700">
-                    <div>
-                      <dt className="font-medium">Refund ID</dt>
-                      <dd className="truncate">{item?.refundID}</dd>
-                    </div>
-                    <div>
-                      <dt className="font-medium">Trainer</dt>
-                      <dd>{item?.bookingDataForHistory?.trainer}</dd>
-                    </div>
-                    <div>
-                      <dt className="font-medium">Refund %</dt>
+                    {/* Refund Percentage */}
+                    <div className="flex gap-2">
+                      <dt className="font-medium">Refund :</dt>
                       <dd>{item?.bookingDataForHistory?.RefundPercentage}</dd>
                     </div>
-                    <div>
+
+                    {/* Amount */}
+                    <div className="flex gap-2">
                       <dt className="font-medium">Amount</dt>
                       <dd>
                         {item?.bookingDataForHistory?.RefundAmount !== undefined
-                          ? `$ ${Number(
+                          ? `${Number(
                               item.bookingDataForHistory.RefundAmount
                             ).toFixed(2)}`
                           : "N/A"}
                       </dd>
                     </div>
-                    <div>
+
+                    {/* Sessions */}
+                    <div className="flex gap-2">
                       <dt className="font-medium">Sessions</dt>
                       <dd>{item?.bookingDataForHistory?.sessions?.length}</dd>
                     </div>
-                    <div>
+
+                    {/* Duration */}
+                    <div className="flex gap-2">
                       <dt className="font-medium">Duration</dt>
                       <dd>
                         {item?.bookingDataForHistory?.durationWeeks}{" "}
