@@ -29,7 +29,10 @@ const UserClassManagement = () => {
     isLoading: ClassBookingAcceptedIsLoading,
     error: ClassBookingAcceptedError,
     refetch: ClassBookingAcceptedRefetch,
-  } = useFetchData("ClassBookingAcceptedData", "/Class_Booking_Accepted");
+  } = useFetchData(
+    "ClassBookingAcceptedData",
+    `/Class_Booking_Accepted?email=${user?.email}`
+  );
 
   // 3. Fetch Class Completed
   const {
@@ -37,7 +40,10 @@ const UserClassManagement = () => {
     isLoading: ClassBookingCompletedIsLoading,
     error: ClassBookingCompletedError,
     refetch: ClassBookingCompletedRefetch,
-  } = useFetchData("ClassBookingCompletedData", "/Class_Booking_Completed");
+  } = useFetchData(
+    "ClassBookingCompletedData",
+    `/Class_Booking_Completed?email=${user?.email}`
+  );
 
   // 4. Fetch Class Rejected
   const {
@@ -45,7 +51,10 @@ const UserClassManagement = () => {
     isLoading: ClassBookingRejectedIsLoading,
     error: ClassBookingRejectedError,
     refetch: ClassBookingRejectedRefetch,
-  } = useFetchData("ClassBookingRejectedData", "/Class_Booking_Rejected");
+  } = useFetchData(
+    "ClassBookingRejectedData",
+    `/Class_Booking_Rejected?email=${user?.email}`
+  );
 
   // Unified refetch function
   const refetchAll = async () => {
@@ -72,6 +81,8 @@ const UserClassManagement = () => {
     ClassBookingRejectedError
   )
     return <FetchingError />;
+
+  console.log(ClassBookingCompletedData);
 
   return (
     <div

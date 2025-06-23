@@ -227,7 +227,7 @@ const NavbarEnd = ({ UsersData }) => {
             type="button"
             text="Login"
             bgColor="blue"
-            px="px-14"
+            px="px-10 md:px-14"
             py="py-3"
             borderRadius="rounded-xl"
             textColor="text-white"

@@ -56,7 +56,7 @@ const AllClasses = ({ OurClasses, ClassDetails }) => {
     ClassDetails?.find((detail) => detail.module === moduleName);
 
   return (
-    <div className="px-10 mx-auto text-center pb-5">
+    <div className="md:px-10 mx-auto text-center pb-5">
       {/* Page Title */}
       <h2 className="text-white text-3xl font-bold mb-2 text-center">
         Our Class Schedule

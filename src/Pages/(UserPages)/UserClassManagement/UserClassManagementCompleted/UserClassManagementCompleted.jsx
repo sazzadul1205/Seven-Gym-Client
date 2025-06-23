@@ -34,7 +34,7 @@ const UserClassManagementCompleted = ({ ClassBookingCompletedData }) => {
     <div className="p-1 pt-10 md:p-4 space-y-2">
       {/* Tittle */}
       <h2 className="text-xl md:text-3xl font-bold text-center text-white">
-        Your Class Booking Accepted
+        Your Class Booking Completed
       </h2>
 
       <div className="bg-white mx-auto p-[2px] w-1/3 mb-10" />

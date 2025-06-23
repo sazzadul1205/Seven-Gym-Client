@@ -98,7 +98,7 @@ const Navbar = () => {
           : "bg-transparent"
       }`}
     >
-      <div className="navbar flex-none w-full justify-between items-center px-0 py-0 lg:px-24">
+      <div className="navbar flex-none w-full justify-between items-center px-0 py-0 lg:px-10">
         {/* Navbar Start */}
         <div className="navbar-start flex items-center py-0">
           {/* Mobile Menu Button */}

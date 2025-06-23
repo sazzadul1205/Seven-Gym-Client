@@ -11,12 +11,12 @@ import { FaInfoCircle } from "react-icons/fa";
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 // import Accepted Card
-import PayedClassReceptModal from "./PayedClassReceptModal/PayedClassReceptModal";
 import UserClassAcceptedCard from "./UserClassAcceptedCard/UserClassAcceptedCard";
-import ClassAcceptedPaymentDetailsModal from "./ClassAcceptedPaymentDetailsModal/ClassAcceptedPaymentDetailsModal";
-import ClassAcceptedDetailsModal from "../../../(ClassManagement)/ClassAccepted/ClassAcceptedDetailsModal/ClassAcceptedDetailsModal";
 
 // Import Modals
+import PayedClassReceptModal from "./PayedClassReceptModal/PayedClassReceptModal";
+import ClassAcceptedPaymentDetailsModal from "./ClassAcceptedPaymentDetailsModal/ClassAcceptedPaymentDetailsModal";
+import ClassAcceptedDetailsModal from "../../../(ClassManagement)/ClassAccepted/ClassAcceptedDetailsModal/ClassAcceptedDetailsModal";
 
 const UserClassManagementAccepted = ({
   ClassBookingAcceptedData,
@@ -94,10 +94,7 @@ const UserClassManagementAccepted = ({
       </dialog>
 
       <dialog id="Payed_Class_Recept_Modal" className="modal">
-        <PayedClassReceptModal
-          paymentSuccessData={PaymentSuccessData}
-          setPaymentSuccessData={setPaymentSuccessData}
-        />
+        <PayedClassReceptModal paymentSuccessData={PaymentSuccessData} />
       </dialog>
     </div>
   );

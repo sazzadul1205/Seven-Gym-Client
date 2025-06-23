@@ -11,6 +11,8 @@ import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 const PayedClassReceptModal = ({ paymentSuccessData }) => {
   const receiptRef = useRef();
 
+  console.log(paymentSuccessData);
+
   // PDF generation function
   const generatePDF = async () => {
     if (!receiptRef.current) return;

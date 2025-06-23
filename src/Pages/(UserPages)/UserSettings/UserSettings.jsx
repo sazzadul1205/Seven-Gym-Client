@@ -16,13 +16,18 @@ import FetchingError from "../../../Shared/Component/FetchingError";
 
 // Import Tabs Component
 import UserSettingsAward from "./UserSettingsAward/UserSettingsAward";
-import UserSettingsClass from "./UserSettingsClass/UserSettingsClass";
 import UserRefundInvoices from "./UserRefundInvoices/UserRefundInvoices";
 import UserSettingsWorkout from "./UserSettingsWorkout/UserSettingsWorkout";
 import UserPaymentInvoices from "./UserPaymentInvoices/UserPaymentInvoices";
 import UserSettingsSchedule from "./UserSettingsSchedule/UserSettingsSchedule";
 import UserSettingsInformation from "./UserSettingsInformation/UserSettingsInformation";
 import UserSettingsTestimonials from "./UserSettingsTestimonials/UserSettingsTestimonials";
+
+// import Assets
+import ClassPayment from "../../../assets/UserClassInvoices/Payment.png";
+import ClassRefund from "../../../assets/UserClassInvoices/Refund.png";
+import UserClassPaymentInvoices from "./UserClassPaymentInvoices/UserClassPaymentInvoices";
+import UserClassRefundInvoices from "./UserClassRefundInvoices/UserClassRefundInvoices";
 
 const UserSettings = () => {
   const { user } = useAuth();
@@ -130,6 +135,40 @@ const UserSettings = () => {
     enabled: !!user?.email, // Only run if email exists
   });
 
+  // Fetch User Class Payment Data
+  const {
+    data: UserClassPaymentData,
+    isLoading: UserClassPaymentIsLoading,
+    error: UserClassPaymentError,
+  } = useQuery({
+    queryKey: ["UserClassPaymentData"],
+    queryFn: async () => {
+      if (!user?.email) return []; // Prevent query if email is undefined
+      const res = await axiosPublic.get(
+        `/Class_booking_Payment?email=${user?.email}`
+      );
+      return res.data;
+    },
+    enabled: !!user?.email, // Only run if email exists
+  });
+
+  // Fetch User Class Refund Data
+  const {
+    data: UserClassRefundData,
+    isLoading: UserClassRefundIsLoading,
+    error: UserClassRefundError,
+  } = useQuery({
+    queryKey: ["UserClassRefundData"],
+    queryFn: async () => {
+      if (!user?.email) return []; // Prevent query if email is undefined
+      const res = await axiosPublic.get(
+        `/Class_booking_Refund?email=${user?.email}`
+      );
+      return res.data;
+    },
+    enabled: !!user?.email, // Only run if email exists
+  });
+
   // Ensure safe access
   const userSchedule = schedulesData?.[0] || null;
 
@@ -174,17 +213,6 @@ const UserSettings = () => {
       ),
     },
     {
-      id: "User_Class_Settings",
-      Icon: "https://i.ibb.co.com/hPg1wsX/group-class.png",
-      title: "User Class Settings",
-      content: (
-        <UserSettingsClass
-          userSchedule={userSchedule}
-          refetch={schedulesDataRefetch}
-        />
-      ),
-    },
-    {
       id: "User_Testimonials_Settings",
       Icon: "https://i.ibb.co.com/MkWZ1sPW/testimonial.png",
       title: "User Testimonial",
@@ -216,6 +244,22 @@ const UserSettings = () => {
         />
       ),
     },
+    {
+      id: "User_Class_Payment_Invoices",
+      Icon: ClassPayment,
+      title: "User Class Payment Invoices",
+      content: (
+        <UserClassPaymentInvoices UserClassPaymentData={UserClassPaymentData} />
+      ),
+    },
+    {
+      id: "User_Class_Refund_Invoices",
+      Icon: ClassRefund,
+      title: "User Class Refund Invoices",
+      content: (
+        <UserClassRefundInvoices UserClassRefundData={UserClassRefundData} />
+      ),
+    },
     // Add more tabs as needed
   ];
 
@@ -223,7 +267,9 @@ const UserSettings = () => {
   if (
     UsersIsLoading ||
     scheduleDataIsLoading ||
+    UserClassRefundIsLoading ||
     UserTestimonialsILoading ||
+    UserClassPaymentIsLoading ||
     UserTierUpgradePaymentIsLoading ||
     UserTierUpgradeRefundIsLoading
   )
@@ -234,6 +280,8 @@ const UserSettings = () => {
     UsersError ||
     scheduleDataError ||
     UserTestimonialError ||
+    UserClassRefundError ||
+    UserClassPaymentError ||
     UserTierUpgradePaymentError ||
     UserTierUpgradeRefundError
   ) {

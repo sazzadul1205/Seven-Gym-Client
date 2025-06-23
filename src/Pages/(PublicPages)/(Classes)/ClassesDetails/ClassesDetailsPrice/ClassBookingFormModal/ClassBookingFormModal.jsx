@@ -126,15 +126,13 @@ const ClassesDetailsModal = ({ ThisModule, UsersData }) => {
   };
 
   return (
-    <div className="modal-box min-w-4xl p-0 bg-linear-to-b from-white to-gray-300 text-black">
+    <div className="modal-box max-w-full md:max-w-4xl p-4 md:p-6 bg-gradient-to-b from-white to-gray-300 text-black rounded-lg mx-2 md:mx-auto">
       {/* Modal Header */}
-      <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
-        {/* Title */}
-        <h3 className="font-bold text-lg">
+      <div className="flex justify-between items-center border-b-2 border-gray-200 px-4 py-3 md:px-5 md:py-4">
+        <h3 className="font-bold text-lg md:text-xl truncate">
           Join Class Form ( {ThisModule.module} )
         </h3>
 
-        {/* Exit */}
         <ImCross
           className="text-xl hover:text-[#F72C5B] cursor-pointer"
           onClick={() => document.getElementById("Class_Booking_Modal").close()}
@@ -142,34 +140,29 @@ const ClassesDetailsModal = ({ ThisModule, UsersData }) => {
       </div>
 
       {/* Modal Form */}
-      <form onSubmit={handleSubmit} className="space-y-2 text-black">
+      <form onSubmit={handleSubmit} className="space-y-4 text-black">
         {/* Duration Selector */}
         <>
-          {/* Tittle */}
           <h3 className="font-semibold text-xl text-center py-2">
             Please Select the Duration
           </h3>
 
-          {/* Grids */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 py-2 px-5">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 py-2 px-4 md:px-5">
             {validDurations.map((type) => (
               <div
                 key={type}
                 onClick={() => setDuration(type)}
-                className={`flex flex-col items-center text-center p-4 rounded-lg shadow-lg transition-transform duration-300 transform hover:scale-105 cursor-pointer ${
+                className={`flex flex-col items-center text-center p-4 rounded-lg shadow-lg transition-transform duration-300 transform hover:scale-105 cursor-pointer select-none ${
                   duration === type
-                    ? "bg-gradient-to-tr hover:bg-gradient-to-bl from-red-100 to-red-300 border-2 border-red-500 "
+                    ? "bg-gradient-to-tr hover:bg-gradient-to-bl from-red-100 to-red-300 border-2 border-red-500"
                     : "bg-gradient-to-tr hover:bg-gradient-to-bl from-white to-gray-300 border-2 border-white hover:border-red-500"
                 }`}
               >
-                {/* Title */}
-                <h4 className="text-lg font-semibold text-black capitalize">
+                <h4 className="text-lg font-semibold text-black capitalize truncate">
                   {type} Class Fee
                 </h4>
-
-                {/* Fees */}
                 <p className="text-2xl font-bold text-gray-900 mt-2">
-                  $ {fees[type].toFixed(2)}
+                  ${fees[type].toFixed(2)}
                 </p>
               </div>
             ))}
@@ -178,13 +171,11 @@ const ClassesDetailsModal = ({ ThisModule, UsersData }) => {
 
         {/* Fee Breakdown Section */}
         <>
-          {/* Title */}
           <h3 className="font-semibold text-xl text-center py-2">
             Fee Breakdown
           </h3>
 
-          {/* Fee Breakdown */}
-          <div className="text-lg text-gray-700 space-y-2 pt-4 px-5 py-2">
+          <div className="text-lg text-gray-700 space-y-3 pt-4 px-4 md:px-5 py-2">
             {[
               { label: "Registration Fee", value: registrationFee },
               {
@@ -204,35 +195,34 @@ const ClassesDetailsModal = ({ ThisModule, UsersData }) => {
                     : ""
                 })`,
                 value: -discountAmount,
-                className: "text-green-500",
+                className: "text-green-600",
               },
             ].map(({ label, value, className }) => (
               <div
                 key={label}
-                className={`flex items-center justify-between ${
+                className={`flex flex-col sm:flex-row sm:items-center justify-between ${
                   className || ""
                 }`}
               >
-                <p className="font-semibold text-black mr-2">{label}</p>
-                <div className="flex-grow border-b border-dotted border-gray-500 mx-2"></div>
-                <p className="font-semibold text-black ml-2">
-                  {Number(value).toFixed(2)} $
+                <p className="font-semibold text-black">{label}</p>
+                <div className="hidden md:flex flex-grow border-b border-dotted border-gray-500 mx-0 sm:mx-3 my-1 sm:my-0"></div>
+                <p className="font-semibold text-black flex justify-end">
+                  ${Number(value).toFixed(2)}
                 </p>
               </div>
             ))}
 
-            <hr className="border-b border-gray-500 my-2" />
-            {/* Fees */}
-            <div className="flex justify-between font-bold text-gray-900">
+            <hr className="border-b border-gray-500 my-3" />
+            <div className="flex justify-between font-bold text-gray-900 text-lg">
               <span>Total Fee:</span>
-              <span>{totalFee.toFixed(2)} $</span>
+              <span>${totalFee.toFixed(2)}</span>
             </div>
           </div>
         </>
 
-        <div className="flex justify-between items-center px-5 py-3">
-          {/* Terms & Risk Agreement */}
-          <div className="">
+        {/* Terms & Submit */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center px-4 md:px-5 py-3 space-y-4 md:space-y-0">
+          <div className="flex flex-col space-y-3 md:space-y-1">
             {[
               {
                 id: "agree",
@@ -247,26 +237,23 @@ const ClassesDetailsModal = ({ ThisModule, UsersData }) => {
                 label: "I understand the risks and repercussions",
               },
             ].map(({ id, checked, setChecked, label }) => (
-              <div key={id} className="flex items-center gap-2">
+              <label
+                key={id}
+                className="flex items-center gap-2 cursor-pointer select-none text-lg font-semibold text-black"
+              >
                 <input
                   type="checkbox"
                   id={id}
                   checked={checked}
                   onChange={(e) => setChecked(e.target.checked)}
-                  className="w-5 h-5 text-[#F72C5B] border-gray-300 rounded-sm focus:ring-[#F72C5B] cursor-pointer"
+                  className="w-5 h-5 text-[#F72C5B] border-gray-300 rounded-sm focus:ring-[#F72C5B]"
                   required
                 />
-                <label
-                  htmlFor={id}
-                  className="text-lg font-semibold text-black"
-                >
-                  {label}
-                </label>
-              </div>
+                {label}
+              </label>
             ))}
           </div>
 
-          {/* Submit Button */}
           <CommonButton
             type="submit"
             text="Submit Request"
@@ -274,11 +261,12 @@ const ClassesDetailsModal = ({ ThisModule, UsersData }) => {
             loadingText="Processing..."
             disabled={!understandRisks}
             bgColor="OriginalRed"
-            px="px-16"
+            px="px-10 md:px-16"
             py="py-3"
             textColor="text-white"
             borderRadius="rounded-lg"
             width="auto"
+            className="self-center"
           />
         </div>
       </form>

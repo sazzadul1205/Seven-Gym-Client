@@ -63,7 +63,7 @@ const Classes = () => {
         backgroundImage: `url(${Classes_Background})`,
       }}
     >
-      <div className="bg-gradient-to-b from-gray-700/80 to-black/90 py-10 px-4">
+      <div className="bg-gradient-to-b from-gray-700/80 to-black/90 py-10 px-1 md:px-4">
         <section className="max-w-7xl mx-auto">
           {/* Title */}
           <h2 className="text-white text-3xl font-bold mb-2 text-center">
