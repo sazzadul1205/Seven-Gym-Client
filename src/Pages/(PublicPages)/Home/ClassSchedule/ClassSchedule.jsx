@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 // Import Icons
 import { FaUserPlus } from "react-icons/fa";
 
-// Import Date Controle
+// Import Date Control
 import {
   format,
   isAfter,

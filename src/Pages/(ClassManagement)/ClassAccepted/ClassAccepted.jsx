@@ -1,17 +1,33 @@
 import { useMemo, useState } from "react";
-import { RiArchiveDrawerLine } from "react-icons/ri";
-import { FaRegTrashAlt, FaRegClock, FaSearch, FaInfo } from "react-icons/fa";
-import { Tooltip } from "react-tooltip";
-import TrainerBookingRequestUserBasicInfo from "../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
-import CachedUserInfo from "../../(AdminPanel)/AllTrainerBookings/CachedUserInfo";
-import ClassAcceptedDetailsModal from "./ClassAcceptedDetailsModal/ClassAcceptedDetailsModal";
-import PropTypes from "prop-types";
-import ClassAcceptedSetTimeModal from "./ClassAcceptedSetTimeModal/ClassAcceptedSetTimeModal";
-import { format, parse } from "date-fns";
-import { IoMdDownload } from "react-icons/io";
-import { getRejectionReason } from "../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestButton/getRejectionReasonPrompt";
+
+// import Packages
 import Swal from "sweetalert2";
+import PropTypes from "prop-types";
+import { Tooltip } from "react-tooltip";
+
+// import Icons
+import { FaInfo, FaRegClock, FaRegTrashAlt, FaSearch } from "react-icons/fa";
+import { RiArchiveDrawerLine } from "react-icons/ri";
+import { IoMdDownload } from "react-icons/io";
+
+// Import Booking Request User Info
+import TrainerBookingRequestUserBasicInfo from "../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+
+// Import User Info Card
+import CachedUserInfo from "../../(AdminPanel)/AllTrainerBookings/CachedUserInfo";
+
+// Import Reject5 Reason
+import { getRejectionReason } from "../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestButton/getRejectionReasonPrompt";
+
+// import Hooks
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
+
+// Import Date Formation
+import { format, parse } from "date-fns";
+
+// import Modals
+import ClassAcceptedDetailsModal from "./ClassAcceptedDetailsModal/ClassAcceptedDetailsModal";
+import ClassAcceptedSetTimeModal from "./ClassAcceptedSetTimeModal/ClassAcceptedSetTimeModal";
 
 const isClassCompleted = (endDateStr) => {
   if (!endDateStr) return false;
@@ -412,6 +428,7 @@ const ClassAccepted = ({ ClassBookingAcceptedData, Refetch }) => {
               <th className="py-3 px-4 border">Submitted</th>
               <th className="py-3 px-4 border">Start At</th>
               <th className="py-3 px-4 border">End At</th>
+              <th className="py-3 px-4 border">Paid</th>
               <th className="py-3 px-4 border">Actions</th>
             </tr>
           </thead>
@@ -548,6 +565,16 @@ const ClassAccepted = ({ ClassBookingAcceptedData, Refetch }) => {
                       )}
                     </td>
 
+                    {/* End At */}
+
+                    <td className="p-3 font-bold">
+                      {paid ? (
+                        <span className="text-green-600">Paid</span>
+                      ) : (
+                        <span className="text-red-500">Unpaid</span>
+                      )}
+                    </td>
+
                     {/* Action */}
                     <td className="py-3 px-4 text-center">
                       <div className="flex gap-3">
@@ -635,7 +662,7 @@ const ClassAccepted = ({ ClassBookingAcceptedData, Refetch }) => {
             ) : (
               <tr>
                 <td
-                  colSpan={10}
+                  colSpan={11}
                   className="text-center py-6 bg-white text-black font-semibold italic"
                 >
                   No Booking Accepted Data Available.

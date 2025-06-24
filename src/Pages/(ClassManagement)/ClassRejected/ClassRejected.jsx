@@ -1,13 +1,22 @@
 import { useMemo, useState } from "react";
-import { RiArchiveDrawerLine } from "react-icons/ri";
-import { FaSearch, FaInfo } from "react-icons/fa";
-import { Tooltip } from "react-tooltip";
-import TrainerBookingRequestUserBasicInfo from "../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
-import CachedUserInfo from "../../(AdminPanel)/AllTrainerBookings/CachedUserInfo";
-import PropTypes from "prop-types";
 
-import ClassRejectedDetailsModal from "../../(UserPages)/UserClassManagement/UserClassManagementRejected/ClassRejectedDetailsModal/ClassRejectedDetailsModal";
+// import Packages
+import PropTypes from "prop-types";
+import { Tooltip } from "react-tooltip";
+
+// import Icons
+import { FaInfo, FaSearch } from "react-icons/fa";
+import { RiArchiveDrawerLine } from "react-icons/ri";
 import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
+
+// Import Booking Request User Info
+import TrainerBookingRequestUserBasicInfo from "../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+
+// Import User Info Card
+import CachedUserInfo from "../../(AdminPanel)/AllTrainerBookings/CachedUserInfo";
+
+// import Hooks
+import ClassRejectedDetailsModal from "../../(UserPages)/UserClassManagement/UserClassManagementRejected/ClassRejectedDetailsModal/ClassRejectedDetailsModal";
 
 const ClassRejected = ({ ClassBookingRejectedData }) => {
   // Local Cache fo User Data
@@ -262,7 +271,7 @@ const ClassRejected = ({ ClassBookingRejectedData }) => {
                 const applicant =
                   item.applicant.applicantData || item.applicant;
                 const altEmail = applicant.applicantEmail;
-                const { email} = applicant;
+                const { email } = applicant;
 
                 return (
                   <tr key={item?._id} className="bg-white hover:bg-gray-50">
@@ -450,26 +459,26 @@ const ClassRejected = ({ ClassBookingRejectedData }) => {
 ClassRejected.propTypes = {
   ClassBookingRejectedData: PropTypes.arrayOf(
     PropTypes.shape({
-      _id: PropTypes.string.isRequired,
+      _id: PropTypes.string,
       applicant: PropTypes.shape({
-        _id: PropTypes.string.isRequired,
-        classesName: PropTypes.string.isRequired,
-        duration: PropTypes.string.isRequired,
-        totalPrice: PropTypes.number.isRequired,
-        submittedDate: PropTypes.string.isRequired,
+        _id: PropTypes.string,
+        classesName: PropTypes.string,
+        duration: PropTypes.string,
+        totalPrice: PropTypes.number,
+        submittedDate: PropTypes.string,
         applicantData: PropTypes.shape({
-          Userid: PropTypes.string.isRequired,
-          name: PropTypes.string.isRequired,
+          Userid: PropTypes.string,
+          name: PropTypes.string,
           email: PropTypes.string,
           phone: PropTypes.string,
         }),
       }),
-      status: PropTypes.string.isRequired,
+      status: PropTypes.string,
       rejectedAt: PropTypes.string,
       droppedAt: PropTypes.string,
-      reason: PropTypes.string.isRequired,
+      reason: PropTypes.string,
     })
-  ).isRequired,
+  ),
 };
 
 export default ClassRejected;

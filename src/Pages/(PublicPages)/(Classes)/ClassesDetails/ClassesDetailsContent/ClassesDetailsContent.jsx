@@ -97,7 +97,7 @@ ClassesDetailsContent.propTypes = {
 export default ClassesDetailsContent;
 
 // Info Section Card
-const InfoSection = ({ icon: Icon, title, content }) => (
+export const InfoSection = ({ icon: Icon, title, content }) => (
   <div className="flex flex-col gap-2 p-4 rounded-xl bg-white/100 shadow-sm hover:shadow-md transition-shadow duration-200">
     {/* Title  */}
     <div className="flex items-center gap-3">
