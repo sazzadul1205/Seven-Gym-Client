@@ -28,7 +28,7 @@ const ManagementClassDetailsContent = ({ selectedClass }) => {
               .showModal()
           }
         >
-          <IoSettings className="text-red-500 text-4xl transition-transform duration-500 hover:rotate-180 hover:text-red-400" />
+          <IoSettings className="text-red-500 text-3xl transition-transform duration-500 hover:rotate-180 hover:text-red-400" />
         </div>
         <Tooltip
           id="Class_Detail_Content_Edit"

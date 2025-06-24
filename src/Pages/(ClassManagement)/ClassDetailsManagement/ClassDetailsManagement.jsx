@@ -5,7 +5,9 @@ import Classes_Background from "../../../assets/Classes-Background/Classes_Backg
 
 // Import Components
 import ManagementClassDetailsContent from "./ManagementClassDetailsContent/ManagementClassDetailsContent";
-import TrainerProfileHeaderUpdateModal from "./ManagementClassDetailsContent/TrainerProfileHeaderUpdateModal/TrainerProfileHeaderUpdateModal";
+import ManagementClassKeyFeatures from "./ManagementClassKeyFeatures/ManagementClassKeyFeatures";
+import ClassDetailsContentEditModal from "./ManagementClassDetailsContent/ClassDetailsContentEditModal/ClassDetailsContentEditModal";
+import ClassDetailsKeyFeaturesEditModal from "./ManagementClassKeyFeatures/ClassDetailsKeyFeaturesEditModal/ClassDetailsKeyFeaturesEditModal";
 
 const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
   const [selectedClassId, setSelectedClassId] = useState(
@@ -68,7 +70,7 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
             backgroundImage: `url(${Classes_Background})`,
           }}
         >
-          <div className="bg-gradient-to-b from-black/30 to-gray-700/70 min-h-full border-l-2 border-white">
+          <div className="bg-gradient-to-b from-black/30 to-gray-700/70 min-h-full border-l-2 border-white space-y-2">
             {/* Header */}
             <div className="flex text-lg font-semibold bg-gray-400 py-4 text-white px-5">
               <p className="text-blue-600">{selectedClass?.module}</p>
@@ -76,17 +78,26 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
             </div>
 
             {/* Class Header Section */}
-            <ManagementClassDetailsContent
-              selectedClass={selectedClass}
-              Refetch={Refetch}
-            />
+            <ManagementClassDetailsContent selectedClass={selectedClass} />
+
+            {/* Class Key Features */}
+            <ManagementClassKeyFeatures selectedClass={selectedClass} />
           </div>
         </div>
       </div>
 
-      {/* Update Modal */}
+      {/* Update Modal - Class Detail */}
+      {/* Content Edit Modal */}
       <dialog id="Class_Detail_Content_Edit_Modal" className="modal">
-        <TrainerProfileHeaderUpdateModal
+        <ClassDetailsContentEditModal
+          selectedClass={selectedClass}
+          Refetch={Refetch}
+        />
+      </dialog>
+
+      {/* Key Features Edit */}
+      <dialog id="Class_Details_Key_Features_Edit_Modal" className="modal">
+        <ClassDetailsKeyFeaturesEditModal
           selectedClass={selectedClass}
           Refetch={Refetch}
         />

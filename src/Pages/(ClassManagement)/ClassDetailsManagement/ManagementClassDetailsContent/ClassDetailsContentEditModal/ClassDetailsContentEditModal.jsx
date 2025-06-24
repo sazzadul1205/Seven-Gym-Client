@@ -18,7 +18,7 @@ import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 const Image_Hosting_Key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const Image_Hosting_API = `https://api.imgbb.com/1/upload?key=${Image_Hosting_Key}`;
 
-const TrainerProfileHeaderUpdateModal = ({ selectedClass, Refetch }) => {
+const ClassDetailsContentEditModal = ({ selectedClass, Refetch }) => {
   const fileInputRef = useRef(null);
   const axiosPublic = useAxiosPublic();
 
@@ -159,19 +159,6 @@ const TrainerProfileHeaderUpdateModal = ({ selectedClass, Refetch }) => {
       <form onSubmit={handleSubmit(onSubmit)} className="px-5 py-3">
         <div className="flex gap-5 ">
           <div className="w-3/4 space-y-2">
-            {/* Module */}
-            <div>
-              <label className="label font-bold text-black pb-1">Module</label>
-              <input
-                type="text"
-                {...register("module", { required: "Module is required" })}
-                className="input input-bordered w-full bg-white"
-              />
-              {errors.module && (
-                <p className="text-red-500 text-sm">{errors.module.message}</p>
-              )}
-            </div>
-
             {/* Difficulty Level */}
             <div>
               <label className="label font-bold text-black pb-1">
@@ -287,7 +274,7 @@ const TrainerProfileHeaderUpdateModal = ({ selectedClass, Refetch }) => {
 };
 
 // Prop Validation
-TrainerProfileHeaderUpdateModal.propTypes = {
+ClassDetailsContentEditModal.propTypes = {
   selectedClass: PropTypes.shape({
     _id: PropTypes.string,
     module: PropTypes.string,
@@ -300,4 +287,4 @@ TrainerProfileHeaderUpdateModal.propTypes = {
   Refetch: PropTypes.func,
 };
 
-export default TrainerProfileHeaderUpdateModal;
+export default ClassDetailsContentEditModal;
