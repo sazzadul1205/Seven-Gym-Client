@@ -378,7 +378,25 @@ const ClassRequest = ({ ClassBookingRequestData, Refetch }) => {
 
                     {/* Applicant Number */}
                     <td className="py-3 px-4">
-                      {applicant?.applicantPhone || applicant?.phone}
+                      {/* Applicant Number */}
+                      <td className="p-3">
+                        {(() => {
+                          const rawPhone =
+                            applicant?.applicantPhone || applicant?.phone || "";
+
+                          // Ensure it starts with a '+' and add a space after the first 3 digits
+                          const formattedPhone = rawPhone
+                            ? `${
+                                rawPhone.startsWith("+") ? "" : "+"
+                              }${rawPhone}`.replace(
+                                /^(\+\d{3})(\d+)/,
+                                (_, code, rest) => `${code} ${rest}`
+                              )
+                            : "N/A";
+
+                          return formattedPhone;
+                        })()}
+                      </td>
                     </td>
 
                     {/* Action */}

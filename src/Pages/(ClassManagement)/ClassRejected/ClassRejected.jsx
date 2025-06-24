@@ -63,30 +63,30 @@ const ClassRejected = ({ ClassBookingRejectedData }) => {
       const applicant = item.applicant || {};
       const applicantData = applicant.applicantData || {};
 
+      // ✅ Fallback order: Cache > applicantData.name > applicant.name
       const email =
         applicant.applicantEmail?.toLowerCase() ||
         applicantData.email?.toLowerCase() ||
         "";
 
-      const phone =
-        applicant.applicantPhone?.toLowerCase() ||
-        applicantData.phone?.toLowerCase() ||
-        "";
+      const userFullName = (
+        userInfoCache[email]?.fullName ||
+        applicantData?.name ||
+        applicant?.name ||
+        ""
+      ).toLowerCase();
 
-      const cachedUser = userInfoCache[email];
-      const userFullName = cachedUser?.fullName?.toLowerCase() || "";
-
+      // 🔍 Search only by full name
       const matchesSearch =
-        !normalizedUserSearch ||
-        email.includes(normalizedUserSearch) ||
-        phone.includes(normalizedUserSearch) ||
-        userFullName.includes(normalizedUserSearch);
+        !normalizedUserSearch || userFullName.includes(normalizedUserSearch);
 
+      // 🗓 Month-Year Filtering
       const date = new Date(applicant?.submittedDate);
       const monthYear = `${date.toLocaleString("default", {
         month: "short",
       })}, ${date.getFullYear()}`;
 
+      // ✅ Class, Duration, Month-Year, and Status Filters
       const matchesFilters =
         (!selectedClass || applicant.classesName === selectedClass) &&
         (!selectedDuration || applicant.duration === selectedDuration) &&
@@ -244,6 +244,7 @@ const ClassRejected = ({ ClassBookingRejectedData }) => {
             <tr>
               <th className="py-3 px-4 border">#</th>
               <th className="py-3 px-4 border">Applicant</th>
+              <th className="py-3 px-4 border">Phone</th>
               <th className="py-3 px-4 border">Class Name</th>
               <th className="py-3 px-4 border">Duration</th>
               <th className="py-3 px-4 border">Submitted</th>
@@ -261,7 +262,7 @@ const ClassRejected = ({ ClassBookingRejectedData }) => {
                 const applicant =
                   item.applicant.applicantData || item.applicant;
                 const altEmail = applicant.applicantEmail;
-                const { email } = applicant;
+                const { email} = applicant;
 
                 return (
                   <tr key={item?._id} className="bg-white hover:bg-gray-50">
@@ -281,6 +282,28 @@ const ClassRejected = ({ ClassBookingRejectedData }) => {
                           />
                         )}
                       />
+                    </td>
+
+                    {/* Applicant Number */}
+                    <td className="p-3">
+                      {(() => {
+                        const rawPhone =
+                          item.applicant?.applicantData?.phone ||
+                          item.applicant?.applicantPhone ||
+                          "";
+
+                        // Ensure it starts with a '+' and add a space after the first 3 digits
+                        const formattedPhone = rawPhone
+                          ? `${
+                              rawPhone.startsWith("+") ? "" : "+"
+                            }${rawPhone}`.replace(
+                              /^(\+\d{3})(\d+)/,
+                              (_, code, rest) => `${code} ${rest}`
+                            )
+                          : "N/A";
+
+                        return formattedPhone;
+                      })()}
                     </td>
 
                     {/* Class NAme */}
@@ -363,8 +386,11 @@ const ClassRejected = ({ ClassBookingRejectedData }) => {
               })
             ) : (
               <tr>
-                <td colSpan="8" className="p-4 text-center text-gray-600">
-                  No rejected or dropped classes found.
+                <td
+                  colSpan={11}
+                  className="text-center py-6 bg-white text-black font-semibold italic"
+                >
+                  No Booking Rejected / Dropped Data Available.
                 </td>
               </tr>
             )}

@@ -97,19 +97,16 @@ const ClassAccepted = ({ ClassBookingAcceptedData, Refetch }) => {
         applicantData.email?.toLowerCase() ||
         "";
 
-      const phone =
-        applicant.applicantPhone?.toLowerCase() ||
-        applicantData.phone?.toLowerCase() ||
-        "";
+      const userFullName = (
+        userInfoCache[email]?.fullName ||
+        applicantData?.name ||
+        applicant?.name ||
+        ""
+      ).toLowerCase();
 
-      const cachedUser = userInfoCache[email];
-      const userFullName = cachedUser?.fullName?.toLowerCase() || "";
-
+      // 🔍 Search only by full name
       const matchesSearch =
-        !normalizedUserSearch ||
-        email.includes(normalizedUserSearch) ||
-        phone.includes(normalizedUserSearch) ||
-        userFullName.includes(normalizedUserSearch);
+        !normalizedUserSearch || userFullName.includes(normalizedUserSearch);
 
       const date = new Date(applicant?.submittedDate);
       const monthYear = `${date.toLocaleString("default", {
@@ -426,7 +423,7 @@ const ClassAccepted = ({ ClassBookingAcceptedData, Refetch }) => {
                 const applicant =
                   item.applicant.applicantData || item.applicant;
                 const altEmail = applicant.applicantEmail;
-                const { email, phone } = applicant;
+                const { email } = applicant;
                 const paid = item.paid;
 
                 const isCompleted = isClassCompleted(item.endDate);
@@ -468,9 +465,26 @@ const ClassAccepted = ({ ClassBookingAcceptedData, Refetch }) => {
                       )}
                     </td>
 
-                    {/* Applicant Phone Number */}
-                    <td className="py-3 px-4">
-                      {phone || applicant.applicantPhone}
+                    {/* Applicant Number */}
+                    <td className="p-3">
+                      {(() => {
+                        const rawPhone =
+                          item.applicant?.applicantData?.phone ||
+                          item.applicant?.applicantPhone ||
+                          "";
+
+                        // Ensure it starts with a '+' and add a space after the first 3 digits
+                        const formattedPhone = rawPhone
+                          ? `${
+                              rawPhone.startsWith("+") ? "" : "+"
+                            }${rawPhone}`.replace(
+                              /^(\+\d{3})(\d+)/,
+                              (_, code, rest) => `${code} ${rest}`
+                            )
+                          : "N/A";
+
+                        return formattedPhone;
+                      })()}
                     </td>
 
                     {/* Applicant Phone Number */}
@@ -483,7 +497,17 @@ const ClassAccepted = ({ ClassBookingAcceptedData, Refetch }) => {
 
                     {/* Submitted At */}
                     <td className="py-3 px-4">
-                      {item.applicant.submittedDate}
+                      {new Date(item?.applicant?.submittedDate).toLocaleString(
+                        "en-US",
+                        {
+                          month: "short",
+                          day: "2-digit",
+                          year: "numeric",
+                          hour: "numeric",
+                          minute: "2-digit",
+                          hour12: true,
+                        }
+                      )}
                     </td>
 
                     {/* Start At */}
@@ -611,7 +635,7 @@ const ClassAccepted = ({ ClassBookingAcceptedData, Refetch }) => {
             ) : (
               <tr>
                 <td
-                  colSpan={9}
+                  colSpan={10}
                   className="text-center py-6 bg-white text-black font-semibold italic"
                 >
                   No Booking Accepted Data Available.
