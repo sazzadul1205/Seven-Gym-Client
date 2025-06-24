@@ -185,7 +185,8 @@ ViewAllRecentWorkoutModal.propTypes = {
       name: PropTypes.string.isRequired,
       duration: PropTypes.string.isRequired,
       date: PropTypes.string.isRequired,
-      calories: PropTypes.number.isRequired,
+      calories: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+        .isRequired,
       location: PropTypes.string.isRequired,
       type: PropTypes.string.isRequired,
       intensity: PropTypes.string.isRequired,

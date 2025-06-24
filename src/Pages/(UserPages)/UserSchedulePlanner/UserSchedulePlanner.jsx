@@ -129,34 +129,36 @@ const UserSchedulePlanner = () => {
   });
 
   return (
-    <div className="bg-linear-to-b from-gray-200 to-gray-500 min-h-screen">
+    <div className="bg-gradient-to-b from-gray-200 to-gray-500 min-h-screen">
       <div className="pb-5 relative">
-        {/* Settings Part */}
-        <div className="absolute top-2 right-2 p-3 rounded-full">
+        {/* Settings Icon */}
+        <div className="absolute top-2 right-2 p-2 md:p-3 rounded-full z-10">
           <Link to="/User/UserSettings?tab=User_Schedule_Settings">
-            <IoSettings className="text-red-500 hover:text-red-400 text-4xl transition-transform duration-500 hover:rotate-180" />
+            <IoSettings className="text-red-500 hover:text-red-400 text-3xl md:text-4xl transition-transform duration-500 hover:rotate-180" />
           </Link>
         </div>
 
         {/* Title & Clock */}
-        <div className="text-center pt-5">
-          <p className="text-3xl italic text-black font-semibold py-2">
+        <div className="md:text-center pt-5 px-2">
+          <p className="text-xl md:text-3xl italic text-black font-semibold py-2">
             DAILY SCHEDULE PLANNER
           </p>
-          <div className="p-[2px] bg-white w-1/3 mx-auto"></div>
-          <p className="text-2xl font-bold text-gray-800">({formattedTime})</p>
+          <div className="p-[2px] bg-white w-1/2 md:w-1/3 mx-auto mb-2"></div>
+          <p className="text-center text-lg md:text-2xl font-bold text-gray-800">
+            ({formattedTime})
+          </p>
         </div>
 
-        {/* Day Selector & Today's Date */}
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center p-3 border-b border-gray-300 bg-white/70 rounded-t-xl mt-3">
-          {/* Display Today's Date */}
-          <div className="flex gap-2 items-center md:items-start text-md md:text-lg">
+        {/* Date + Day Selector */}
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center p-3 border-b border-gray-300 bg-white/70 rounded-t-xl mt-3 gap-4 md:gap-0">
+          {/* Today's Date */}
+          <div className="flex gap-2 items-center text-sm md:text-lg">
             <p className="font-semibold text-gray-800">Today&apos;s Date:</p>
             <p className="font-semibold text-black">{formattedDate}</p>
           </div>
 
           {/* Day Selector */}
-          <div className="flex gap-2 mt-4 md:mt-0 flex-wrap justify-center">
+          <div className="flex gap-2 flex-wrap justify-center">
             {weekDays.map((day) => {
               const isAvailable = availableDays.includes(day);
               const isSelected = selectedDay === day;
@@ -165,19 +167,19 @@ const UserSchedulePlanner = () => {
                 <p
                   key={day}
                   onClick={() => isAvailable && setSelectedDay(day)}
-                  className={`rounded-full border-2 border-black text-black w-10 h-10 flex items-center justify-center text-lg font-medium
-                    ${
-                      isSelected
-                        ? "bg-linear-to-bl hover:bg-linear-to-tr from-blue-300 to-blue-600 text-white font-bold"
-                        : "bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-400"
-                    }
-                    ${
-                      isAvailable
-                        ? "cursor-pointer"
-                        : "opacity-50 cursor-not-allowed"
-                    }`}
+                  className={`rounded-full border-2 border-black text-black w-9 h-9 md:w-10 md:h-10 flex items-center justify-center text-base font-medium
+                ${
+                  isSelected
+                    ? "bg-gradient-to-bl hover:bg-gradient-to-tr from-blue-300 to-blue-600 text-white font-bold"
+                    : "bg-gradient-to-bl hover:bg-gradient-to-tr from-gray-100 to-gray-400"
+                }
+                ${
+                  isAvailable
+                    ? "cursor-pointer"
+                    : "opacity-50 cursor-not-allowed"
+                }`}
                 >
-                  {day[0]} {/* Show first letter of each day */}
+                  {day[0]}
                 </p>
               );
             })}
@@ -185,9 +187,9 @@ const UserSchedulePlanner = () => {
         </div>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto flex bg-white/80 rounded-b-xl">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 bg-white/80 rounded-b-xl px-2 py-5">
           {/* Schedule Section */}
-          <section className="w-full md:w-1/2 px-2 py-5">
+          <section className="w-full md:w-1/2">
             <TodaysSchedule
               scheduleData={selectedSchedule?.schedule}
               scheduleInfo={selectedSchedule}
@@ -195,8 +197,8 @@ const UserSchedulePlanner = () => {
             />
           </section>
 
-          {/* Notes & Todo Section */}
-          <section className="w-full md:w-1/2 px-2 py-5">
+          {/* Notes + Todo Section */}
+          <section className="w-full md:w-1/2">
             <ExtraList
               priority={userSchedule.priority}
               note={userSchedule.notes}
@@ -207,7 +209,7 @@ const UserSchedulePlanner = () => {
         </div>
       </div>
 
-      {/* Modal for unauthorized access */}
+      {/* Unauthorized Modal */}
       <dialog
         ref={unauthorizedModalRef}
         id="Not_My_Schedule"
@@ -220,11 +222,10 @@ const UserSchedulePlanner = () => {
           <p className="py-4 text-gray-700">
             Please go back and check your own schedule.
           </p>
-          {/* Modal Actions */}
           <div className="flex justify-center gap-4 mt-4">
             <button
               onClick={() => window.history.back()}
-              className="bg-linear-to-bl hover:bg-linear-to-tr from-red-400 to-red-600 text-white font-semibold rounded-lg cursor-pointer px-8 py-3"
+              className="bg-gradient-to-bl hover:bg-gradient-to-tr from-red-400 to-red-600 text-white font-semibold rounded-lg px-8 py-3"
             >
               Back to Previous Page
             </button>
@@ -232,7 +233,7 @@ const UserSchedulePlanner = () => {
         </div>
       </dialog>
 
-      {/* Modal for empty schedule data */}
+      {/* Generate Schedule Modal */}
       <dialog
         ref={generateModalRef}
         id="Generate_Schedule_Modal"

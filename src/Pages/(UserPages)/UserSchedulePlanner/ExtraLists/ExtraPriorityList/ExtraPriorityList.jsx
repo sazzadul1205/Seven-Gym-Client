@@ -31,18 +31,18 @@ const ExtraPriorityList = ({ priority, refetch }) => {
   const topPriorities = sortedPriorities?.slice(0, 5);
 
   return (
-    <div className="space-y-3 bg-gray-200 rounded-xl">
+    <div className="space-y-3 bg-gray-200 rounded-xl p-2">
       {/* Title Bar with Action Buttons */}
-      <div className="flex justify-between items-center font-semibold rounded-xl text-black bg-linear-to-b from-yellow-300 to-yellow-600 px-3">
+      <div className="flex justify-between items-center font-semibold rounded-xl text-black bg-gradient-to-b from-yellow-300 to-yellow-600 px-3 py-2 flex-wrap gap-2">
         {/* Add Priority Button */}
         <button
-          className="rounded-full bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-600 cursor-pointer p-[3px]"
+          className="rounded-full bg-gradient-to-bl hover:bg-gradient-to-tr from-green-300 to-green-600 cursor-pointer p-[3px]"
           onClick={() =>
             document.getElementById("Add_Priority_Modal").showModal()
           }
           data-tooltip-id="Add_Modal_Button_Tooltip_Priorities"
         >
-          <MdAddToPhotos className="text-white text-3xl font-bold p-1" />
+          <MdAddToPhotos className="text-white text-2xl md:text-3xl font-bold p-1" />
           <Tooltip
             id="Add_Modal_Button_Tooltip_Priorities"
             place="top"
@@ -51,17 +51,19 @@ const ExtraPriorityList = ({ priority, refetch }) => {
         </button>
 
         {/* Title */}
-        <p className="text-center py-3">PRIORITY LIST</p>
+        <p className="text-center py-1 text-sm md:text-base grow text-black">
+          PRIORITY LIST
+        </p>
 
         {/* View All Priorities Button */}
         <button
-          className="rounded-full bg-linear-to-bl hover:bg-linear-to-tr from-blue-300 to-blue-600 cursor-pointer p-[3px]"
+          className="rounded-full bg-gradient-to-bl hover:bg-gradient-to-tr from-blue-300 to-blue-600 cursor-pointer p-[3px]"
           onClick={() =>
             document.getElementById("View_All_Priority_Modal").showModal()
           }
           data-tooltip-id="View_List_Button_Tooltip_Priorities"
         >
-          <FaList className="text-white text-3xl font-bold p-[6px]" />
+          <FaList className="text-white text-2xl md:text-3xl font-bold p-[6px]" />
           <Tooltip
             id="View_List_Button_Tooltip_Priorities"
             place="top"
@@ -71,45 +73,41 @@ const ExtraPriorityList = ({ priority, refetch }) => {
       </div>
 
       {/* Priority List Display */}
-      <div className="space-y-3 px-2 pb-3 text-black">
+      <div className="space-y-3 px-1 pb-3 text-black">
         {priority?.length ? (
           topPriorities.map((event, index) => (
             <div
               key={index}
-              className="flex items-center gap-3 w-full cursor-pointer"
+              className="flex items-center gap-2 sm:gap-3 w-full cursor-pointer flex-wrap sm:flex-nowrap"
               onClick={() => {
                 setSelectedPriority(event);
                 document.getElementById("View_Priority_Modal").showModal();
               }}
             >
-              {/* Priority Icon */}
-              <FcHighPriority className="text-3xl text-red-500 border border-red-500 rounded-full p-1" />
+              {/* Icon */}
+              <FcHighPriority className="text-2xl sm:text-3xl text-red-500 border border-red-500 rounded-full p-1" />
 
-              {/* Priority Details */}
-              <div className="w-full flex flex-row justify-between bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-500 rounded-xl px-4 py-3 cursor-pointer ">
-                {/* Priority Title */}
-                <p className="flex font-bold md:font-semibold">
+              {/* Content Box */}
+              <div className="w-full flex flex-col sm:flex-row justify-between bg-gradient-to-bl hover:bg-gradient-to-tr from-red-300 to-red-500 rounded-xl px-4 py-3 text-sm sm:text-base">
+                {/* Title & Star */}
+                <div className="font-bold">
                   {event.title}
                   {event.isImportant && (
-                    <span className="text-yellow-500 font-bold ml-4">★</span>
+                    <span className="text-yellow-500 font-bold ml-2">★</span>
                   )}
-                </p>
-
-                {/* Separator (Desktop Only) */}
-                <p className="hidden md:flex">-</p>
+                </div>
 
                 {/* Reminder Date */}
-                <p className="font-bold">
+                <div className="font-medium mt-1 sm:mt-0">
                   {new Date(event.reminder).toLocaleString()}
-                </p>
+                </div>
               </div>
             </div>
           ))
         ) : (
-          // Empty State: Add Priority Button
           <div className="flex min-h-[100px] justify-center items-center py-16">
             <button
-              className="px-16 py-2 bg-linear-to-br hover:bg-linear-to-tl from-green-300 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition cursor-pointer"
+              className="px-10 py-2 bg-gradient-to-br hover:bg-gradient-to-tl from-green-300 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition cursor-pointer text-sm md:text-base"
               onClick={() =>
                 document.getElementById("Add_Priority_Modal").showModal()
               }
@@ -120,19 +118,15 @@ const ExtraPriorityList = ({ priority, refetch }) => {
         )}
       </div>
 
-      {/* Modal's */}
-
-      {/* Add Priority */}
+      {/* Modals */}
       <dialog id="Add_Priority_Modal" className="modal">
         <AddPriorityModal refetch={refetch} />
       </dialog>
 
-      {/* View Selected Priority */}
       <dialog id="View_Priority_Modal" className="modal">
         <ViewPriorityModal refetch={refetch} Priority={selectedPriority} />
       </dialog>
 
-      {/* View All priority's */}
       <dialog id="View_All_Priority_Modal" className="modal">
         <ViewAllPriorityModal refetch={refetch} priority={priority} />
       </dialog>

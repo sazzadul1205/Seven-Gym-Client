@@ -31,16 +31,16 @@ const ExtraNotesList = ({ note, refetch }) => {
   const topNotes = sortedNotes?.slice(0, 5);
 
   return (
-    <div className="space-y-3 bg-gray-200 rounded-xl">
+    <div className="space-y-3 bg-gray-200 rounded-xl p-2">
       {/* Title Bar with Action Buttons */}
-      <div className="flex justify-between items-center font-semibold rounded-xl text-black bg-linear-to-b from-yellow-300 to-yellow-600 px-3">
+      <div className="flex justify-between items-center flex-wrap gap-2 font-semibold rounded-xl text-black bg-gradient-to-b from-yellow-300 to-yellow-600 px-3 py-2">
         {/* Add Note Button */}
         <button
-          className="rounded-full bg-linear-to-bl hover:bg-linear-to-tr from-green-300 to-green-600 cursor-pointer p-[3px]"
+          className="rounded-full bg-gradient-to-bl hover:bg-gradient-to-tr from-green-300 to-green-600 cursor-pointer p-[3px]"
           onClick={() => document.getElementById("Add_Note_Modal").showModal()}
           data-tooltip-id="Add_Modal_Button_Tooltip_Notes"
         >
-          <MdAddToPhotos className="text-white text-3xl font-bold p-1" />
+          <MdAddToPhotos className="text-white text-2xl md:text-3xl font-bold p-1" />
           <Tooltip
             id="Add_Modal_Button_Tooltip_Notes"
             place="top"
@@ -49,17 +49,19 @@ const ExtraNotesList = ({ note, refetch }) => {
         </button>
 
         {/* Title */}
-        <p className="text-center py-3">NOTE LIST</p>
+        <p className="text-center text-sm md:text-base py-1 grow text-black">
+          NOTE LIST
+        </p>
 
         {/* View All Notes Button */}
         <button
-          className="rounded-full bg-linear-to-bl hover:bg-linear-to-tr from-blue-300 to-blue-600 cursor-pointer p-[3px]"
+          className="rounded-full bg-gradient-to-bl hover:bg-gradient-to-tr from-blue-300 to-blue-600 cursor-pointer p-[3px]"
           onClick={() =>
             document.getElementById("View_All_Note_Modal").showModal()
           }
           data-tooltip-id="View_List_Button_Tooltip_Notes"
         >
-          <FaList className="text-white text-3xl font-bold p-[6px]" />
+          <FaList className="text-white text-2xl md:text-3xl font-bold p-[6px]" />
           <Tooltip
             id="View_List_Button_Tooltip_Notes"
             place="top"
@@ -69,45 +71,45 @@ const ExtraNotesList = ({ note, refetch }) => {
       </div>
 
       {/* Notes List */}
-      <div className="space-y-3 px-2 pb-3 text-black">
+      <div className="space-y-3 px-1 pb-3 text-black">
         {note?.length ? (
           topNotes.map((event, index) => (
             <div
               key={index}
-              className="flex items-center gap-3 w-full cursor-pointer"
+              className="flex items-center gap-2 sm:gap-3 w-full cursor-pointer flex-wrap sm:flex-nowrap"
               onClick={() => {
                 setSelectedNote(event);
                 document.getElementById("View_Note_Modal").showModal();
               }}
             >
-              {/* Priority Icon */}
-              <IoIosCreate className="text-4xl text-yellow-500 border border-yellow-500 rounded-full font-semibold p-1" />
+              {/* Note Icon */}
+              <IoIosCreate className="text-3xl sm:text-4xl text-yellow-500 border border-yellow-500 rounded-full font-semibold p-1" />
 
-              {/* Priority Details */}
-              <div className="w-full flex flex-row justify-between bg-linear-to-bl hover:bg-linear-to-tr from-yellow-300 to-yellow-500 rounded-xl px-4 py-3 cursor-pointer ">
-                {/* Priority Title */}
-                <p className="flex font-bold md:font-semibold">
+              {/* Note Details */}
+              <div className="w-full flex flex-col sm:flex-row justify-between bg-gradient-to-bl hover:bg-gradient-to-tr from-yellow-300 to-yellow-500 rounded-xl px-4 py-3 text-sm sm:text-base">
+                {/* Note Title */}
+                <p className="font-bold flex flex-wrap">
                   {event.title}
                   {event.isImportant && (
-                    <span className="text-red-500 font-bold ml-4">★</span>
+                    <span className="text-red-500 font-bold ml-2">★</span>
                   )}
                 </p>
 
-                {/* Separator (Desktop Only) */}
-                <p className="hidden md:flex">-</p>
+                {/* Optional Separator for Desktop */}
+                <p className="hidden sm:flex">-</p>
 
                 {/* Reminder Date */}
-                <p className="font-bold">
+                <p className="font-semibold mt-1 sm:mt-0">
                   {new Date(event.reminder).toLocaleString()}
                 </p>
               </div>
             </div>
           ))
         ) : (
-          // Empty State: Add Priority Button
+          // Empty State
           <div className="flex min-h-[100px] justify-center items-center py-16">
             <button
-              className="px-16 py-2 bg-linear-to-br hover:bg-linear-to-tl from-green-300 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition cursor-pointer"
+              className="px-10 py-2 bg-gradient-to-br hover:bg-gradient-to-tl from-green-300 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition cursor-pointer text-sm md:text-base"
               onClick={() =>
                 document.getElementById("Add_Note_Modal").showModal()
               }
@@ -118,19 +120,15 @@ const ExtraNotesList = ({ note, refetch }) => {
         )}
       </div>
 
-      {/* Modal's */}
-
-      {/* Add Note  */}
+      {/* Modals */}
       <dialog id="Add_Note_Modal" className="modal">
         <AddNotesModal refetch={refetch} />
       </dialog>
 
-      {/* View Selected Note  */}
       <dialog id="View_Note_Modal" className="modal">
         <ViewNotesModal refetch={refetch} Note={selectedNote} />
       </dialog>
 
-      {/* View All Notes Modal */}
       <dialog id="View_All_Note_Modal" className="modal">
         <ViewAllNotesModal refetch={refetch} note={note} />
       </dialog>
