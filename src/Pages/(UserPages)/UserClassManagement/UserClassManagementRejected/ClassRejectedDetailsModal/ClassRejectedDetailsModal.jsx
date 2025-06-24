@@ -8,7 +8,6 @@ import {
   FaMoneyBillAlt,
   FaClock,
   FaCalendarAlt,
-  FaHourglassEnd,
   FaDotCircle,
 } from "react-icons/fa";
 
@@ -84,54 +83,25 @@ const formatDateTimeTooltip = (dateStr) => {
   });
 };
 
-// Calculate days left from today to a given date string
-const calculateDaysLeft = (dateStr) => {
-  if (!dateStr) return null;
-
-  let endDate = new Date(dateStr);
-  if (isNaN(endDate)) {
-    // Try manual parse dd-MM-yyyy or dd/MM/yyyy
-    const parts = dateStr.match(/(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
-    if (parts) {
-      // eslint-disable-next-line no-unused-vars
-      const [_, dd, MM, yyyy] = parts;
-      endDate = new Date(`${yyyy}-${MM}-${dd}T00:00:00`);
-    }
-  }
-  if (isNaN(endDate)) return null;
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  endDate.setHours(0, 0, 0, 0);
-
-  const diffTime = endDate - today;
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  return diffDays >= 0 ? diffDays : null;
-};
+// Add this helper at the top
+const getStatusDate = (data) =>
+  data?.rejectedAt || data?.droppedAt || data?.acceptedAt || null;
 
 const ClassRejectedDetailsModal = ({ selectedRejectedData }) => {
   const axiosPublic = useAxiosPublic();
-
-  // Get class name or fallback to "N/A"
   const className = selectedRejectedData?.applicant?.classesName || "N/A";
-
-  // Get class name or fallback to "N/A"
   const status = selectedRejectedData?.status || "N/A";
 
-  // Get applicant data, fallback to empty object
   const applicant =
     selectedRejectedData?.applicant?.applicantData ||
     selectedRejectedData?.applicant ||
     {};
 
-  // Get applicant email or fallback to "N/A"
   const email =
     applicant?.email ||
     selectedRejectedData?.applicant?.applicantEmail ||
     "N/A";
 
-  // Fetch class details with react-query
   const {
     data: ClassData,
     isLoading,
@@ -145,28 +115,27 @@ const ClassRejectedDetailsModal = ({ selectedRejectedData }) => {
     enabled: className !== "N/A",
   });
 
-  // Loading and Error
   if (isLoading) return <Loading />;
   if (error) return <FetchingError />;
 
   return (
     <div className="modal-box w-full max-w-3xl max-h-[90vh] overflow-y-auto p-0 bg-gradient-to-b from-white to-gray-100 text-gray-900 rounded-lg shadow-lg">
-      {/* Modal header */}
+      {/* Modal Header */}
       <header className="flex justify-between items-center border-b border-gray-300 px-4 sm:px-6 py-3 sm:py-4 bg-white rounded-t-lg">
         <h3 className="text-md md:text-xl font-semibold tracking-wide">
-          Class Booking Accepted Details
+          Class Booking {status} Details
         </h3>
         <ImCross
           className="text-xl text-gray-600 hover:text-red-600 cursor-pointer transition-colors"
-          onClick={() => {
-            document.getElementById("Class_Reject_Details_Modal")?.close();
-          }}
+          onClick={() =>
+            document.getElementById("Class_Reject_Details_Modal")?.close()
+          }
         />
       </header>
 
-      {/* Modal body */}
+      {/* Modal Body */}
       <section className="px-4 sm:px-8 py-6 space-y-6 sm:space-y-8">
-        {/* Class info and user info */}
+        {/* Class & User Info */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
           <div className="flex items-center gap-4 sm:gap-5">
             {ClassData?.icon && (
@@ -184,7 +153,6 @@ const ClassRejectedDetailsModal = ({ selectedRejectedData }) => {
             </div>
           </div>
 
-          {/* User info */}
           <div className="md:mt-0 mt-2">
             <TrainerBookingRequestUserBasicInfo email={email} />
           </div>
@@ -192,51 +160,41 @@ const ClassRejectedDetailsModal = ({ selectedRejectedData }) => {
 
         {/* Grid Info Section */}
         <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          {/* Total Price */}
           <InfoRow
             icon={<FaMoneyBillAlt className="text-green-600" />}
             label="Total Price"
             value={`$${selectedRejectedData?.applicant?.totalPrice ?? "N/A"}`}
           />
 
+          {/* Submitted Date */}
           <InfoRow
             icon={<FaCalendarAlt className="text-blue-600" />}
             label="Submitted At"
             value={formatDateTimeTooltip(
               selectedRejectedData?.applicant?.submittedDate
             )}
-            tooltip={new Date(
-              selectedRejectedData?.applicant?.submittedDate
-            ).toString()}
           />
 
-          <InfoRow
-            icon={<FaClock className="text-indigo-600" />}
-            label="Accepted At"
-            value={formatDateTimeTooltip(selectedRejectedData?.acceptedAt)}
-            tooltip={new Date(selectedRejectedData?.acceptedAt).toString()}
-          />
+          {/* Rejected / Dropped At */}
+          {getStatusDate(selectedRejectedData) && (
+            <InfoRow
+              icon={<FaClock className="text-indigo-600" />}
+              label="Rejected / Dropped At"
+              value={formatDateTimeTooltip(getStatusDate(selectedRejectedData))}
+            />
+          )}
 
-          <div className="flex items-center gap-2 text-gray-700">
-            {selectedRejectedData?.paid ? (
-              <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold select-none">
-                Paid
-              </span>
-            ) : (
-              <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold select-none">
-                Waiting for Payment
-              </span>
-            )}
-          </div>
-
+          {/* Paid At (if paid) */}
           {selectedRejectedData?.paidAt && (
             <InfoRow
               icon={<FaClock className="text-green-600" />}
               label="Paid At"
               value={formatDateTimeTooltip(selectedRejectedData?.paidAt)}
-              tooltip={new Date(selectedRejectedData?.paidAt).toString()}
             />
           )}
 
+          {/* Start Date */}
           {selectedRejectedData?.startDate && (
             <InfoRow
               icon={<FaCalendarAlt className="text-blue-600" />}
@@ -245,28 +203,26 @@ const ClassRejectedDetailsModal = ({ selectedRejectedData }) => {
             />
           )}
 
-          {selectedRejectedData?.endDate && (
+          {/* Refund Amount (only if Dropped and refund given) */}
+          {selectedRejectedData?.status === "Dropped" &&
+            selectedRejectedData?.refundAmount && (
+              <InfoRow
+                icon={<FaMoneyBillAlt className="text-red-500" />}
+                label="Refunded Amount"
+                value={`$${selectedRejectedData.refundAmount}`}
+              />
+            )}
+
+          {/* Reason */}
+          {selectedRejectedData?.reason && (
             <InfoRow
-              icon={<FaHourglassEnd className="text-red-600" />}
-              label="End Date"
-              value={
-                <>
-                  <span className="whitespace-nowrap">
-                    {formatDateToDisplay(selectedRejectedData.endDate)}
-                  </span>
-                  {(() => {
-                    const daysLeft = calculateDaysLeft(
-                      selectedRejectedData.endDate
-                    );
-                    return daysLeft !== null
-                      ? ` (${daysLeft} day${daysLeft !== 1 ? "s" : ""} left)`
-                      : "";
-                  })()}
-                </>
-              }
+              icon={<FaDotCircle className="text-red-500" />}
+              label="Reason"
+              value={selectedRejectedData.reason}
             />
           )}
 
+          {/* Status */}
           <InfoRow
             icon={<FaDotCircle className="text-blue-600" />}
             label="Status"
