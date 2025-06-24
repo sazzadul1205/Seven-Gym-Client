@@ -10,7 +10,7 @@ import CommonButton from "../../../../../Shared/Buttons/CommonButton";
 import ClassBookingFormModal from "./ClassBookingFormModal/ClassBookingFormModal";
 
 // Reusable Pricing Card Component
-const PriceCard = ({ title, price }) => (
+export const PriceCard = ({ title, price }) => (
   <div
     className="flex flex-col items-center text-center
       bg-gradient-to-bl from-white to-gray-400

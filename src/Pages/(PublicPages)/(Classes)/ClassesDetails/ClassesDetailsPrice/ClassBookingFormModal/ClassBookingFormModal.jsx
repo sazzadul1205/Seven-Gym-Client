@@ -1,8 +1,16 @@
 import { useState, useMemo } from "react";
+
+// Import Icons
 import { ImCross } from "react-icons/im";
+
+// Import PAckages
 import Swal from "sweetalert2";
 import PropTypes from "prop-types";
+
+// import Hooks
 import useAxiosPublic from "../../../../../../Hooks/useAxiosPublic";
+
+// import Shared
 import CommonButton from "../../../../../../Shared/Buttons/CommonButton";
 
 const ClassesDetailsModal = ({ ThisModule, UsersData }) => {
@@ -259,7 +267,7 @@ const ClassesDetailsModal = ({ ThisModule, UsersData }) => {
             text="Submit Request"
             isLoading={loading}
             loadingText="Processing..."
-            disabled={!understandRisks}
+            disabled={typeof string === "string" || !understandRisks}
             bgColor="OriginalRed"
             px="px-10 md:px-16"
             py="py-3"

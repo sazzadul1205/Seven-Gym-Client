@@ -8,6 +8,8 @@ import ManagementClassDetailsContent from "./ManagementClassDetailsContent/Manag
 import ManagementClassKeyFeatures from "./ManagementClassKeyFeatures/ManagementClassKeyFeatures";
 import ClassDetailsContentEditModal from "./ManagementClassDetailsContent/ClassDetailsContentEditModal/ClassDetailsContentEditModal";
 import ClassDetailsKeyFeaturesEditModal from "./ManagementClassKeyFeatures/ClassDetailsKeyFeaturesEditModal/ClassDetailsKeyFeaturesEditModal";
+import ManagementClassPricing from "./ManagementClassPricing/ManagementClassPricing";
+import ClassDetailsPricingEditModal from "./ManagementClassPricing/ClassDetailsPricingEditModal/ClassDetailsPricingEditModal";
 
 const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
   const [selectedClassId, setSelectedClassId] = useState(
@@ -82,6 +84,9 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
 
             {/* Class Key Features */}
             <ManagementClassKeyFeatures selectedClass={selectedClass} />
+
+            {/* Class Pricing */}
+            <ManagementClassPricing selectedClass={selectedClass} />
           </div>
         </div>
       </div>
@@ -98,6 +103,14 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
       {/* Key Features Edit */}
       <dialog id="Class_Details_Key_Features_Edit_Modal" className="modal">
         <ClassDetailsKeyFeaturesEditModal
+          selectedClass={selectedClass}
+          Refetch={Refetch}
+        />
+      </dialog>
+
+      {/* Key Pricing Edit */}
+      <dialog id="Class_Pricing_Edit_Modal" className="modal">
+        <ClassDetailsPricingEditModal
           selectedClass={selectedClass}
           Refetch={Refetch}
         />
