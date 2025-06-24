@@ -20,14 +20,20 @@ import UserRefundInvoices from "./UserRefundInvoices/UserRefundInvoices";
 import UserSettingsWorkout from "./UserSettingsWorkout/UserSettingsWorkout";
 import UserPaymentInvoices from "./UserPaymentInvoices/UserPaymentInvoices";
 import UserSettingsSchedule from "./UserSettingsSchedule/UserSettingsSchedule";
+import UserClassRefundInvoices from "./UserClassRefundInvoices/UserClassRefundInvoices";
 import UserSettingsInformation from "./UserSettingsInformation/UserSettingsInformation";
 import UserSettingsTestimonials from "./UserSettingsTestimonials/UserSettingsTestimonials";
+import UserSessionPayedInvoices from "./UserSessionPayedInvoices/UserSessionPayedInvoices";
+import UserClassPaymentInvoices from "./UserClassPaymentInvoices/UserClassPaymentInvoices";
+import UserSessionRefundInvoices from "./UserSessionRefundInvoices/UserSessionRefundInvoices";
 
 // import Assets
-import ClassPayment from "../../../assets/UserClassInvoices/Payment.png";
-import ClassRefund from "../../../assets/UserClassInvoices/Refund.png";
-import UserClassPaymentInvoices from "./UserClassPaymentInvoices/UserClassPaymentInvoices";
-import UserClassRefundInvoices from "./UserClassRefundInvoices/UserClassRefundInvoices";
+import invoice1 from "../../../assets/UserSettingsIcon/invoice1.png";
+import invoice2 from "../../../assets/UserSettingsIcon/invoice2.png";
+import invoice3 from "../../../assets/UserSettingsIcon/invoice3.png";
+import invoice4 from "../../../assets/UserSettingsIcon/invoice4.png";
+import invoice5 from "../../../assets/UserSettingsIcon/invoice5.png";
+import invoice6 from "../../../assets/UserSettingsIcon/invoice6.png";
 
 const UserSettings = () => {
   const { user } = useAuth();
@@ -49,7 +55,7 @@ const UserSettings = () => {
     const params = new URLSearchParams();
     params.set("tab", activeTab);
     navigate({ search: params.toString() }, { replace: true });
-    window.scrollTo(0, 0); // Scroll to top
+    window.scrollTo(0, 0);
   }, [activeTab, navigate]);
 
   // Fetch user data
@@ -66,7 +72,7 @@ const UserSettings = () => {
 
   // Fetch User Personal Schedule Data
   const {
-    data: schedulesData = [],
+    data: schedulesData,
     isLoading: scheduleDataIsLoading,
     error: scheduleDataError,
     refetch: schedulesDataRefetch,
@@ -77,12 +83,12 @@ const UserSettings = () => {
         const response = await axiosPublic.get(
           `/User_Schedule?email=${user?.email}`
         );
-        return response.data; // Return data if the request succeeds
+        return response.data;
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          return []; // Return an empty array if the data is not found
+          return [];
         }
-        throw error; // Throw other errors (like network issues)
+        throw error;
       }
     },
   });
@@ -109,13 +115,13 @@ const UserSettings = () => {
   } = useQuery({
     queryKey: ["UserTierUpgradePaymentData", user?.email],
     queryFn: async () => {
-      if (!user?.email) return []; // Prevent query if email is undefined
+      if (!user?.email) return [];
       const res = await axiosPublic.get(
         `/Tier_Upgrade_Payment?email=${user?.email}`
       );
       return res.data;
     },
-    enabled: !!user?.email, // Only run if email exists
+    enabled: !!user?.email,
   });
 
   // Fetch User Tier Upgrade Payment Data
@@ -126,13 +132,13 @@ const UserSettings = () => {
   } = useQuery({
     queryKey: ["UserTierUpgradeRefundData"],
     queryFn: async () => {
-      if (!user?.email) return []; // Prevent query if email is undefined
+      if (!user?.email) return [];
       const res = await axiosPublic.get(
         `/Tier_Upgrade_Refund?email=${user?.email}`
       );
       return res.data;
     },
-    enabled: !!user?.email, // Only run if email exists
+    enabled: !!user?.email,
   });
 
   // Fetch User Class Payment Data
@@ -143,13 +149,13 @@ const UserSettings = () => {
   } = useQuery({
     queryKey: ["UserClassPaymentData"],
     queryFn: async () => {
-      if (!user?.email) return []; // Prevent query if email is undefined
+      if (!user?.email) return [];
       const res = await axiosPublic.get(
         `/Class_booking_Payment?email=${user?.email}`
       );
       return res.data;
     },
-    enabled: !!user?.email, // Only run if email exists
+    enabled: !!user?.email,
   });
 
   // Fetch User Class Refund Data
@@ -160,13 +166,47 @@ const UserSettings = () => {
   } = useQuery({
     queryKey: ["UserClassRefundData"],
     queryFn: async () => {
-      if (!user?.email) return []; // Prevent query if email is undefined
+      if (!user?.email) return [];
       const res = await axiosPublic.get(
         `/Class_booking_Refund?email=${user?.email}`
       );
       return res.data;
     },
-    enabled: !!user?.email, // Only run if email exists
+    enabled: !!user?.email,
+  });
+
+  // Fetch User Class Refund Data
+  const {
+    data: SessionPaymentInvoicesData,
+    isLoading: SessionPaymentInvoicesIsLoading,
+    error: SessionPaymentInvoicesError,
+  } = useQuery({
+    queryKey: ["SessionPaymentInvoices"],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      const res = await axiosPublic.get(
+        `/Trainer_Session_Payment?bookerEmail=${user?.email}`
+      );
+      return res.data;
+    },
+    enabled: !!user?.email,
+  });
+
+  // Fetch User Class Refund Data
+  const {
+    data: SessionRefundInvoicesData,
+    isLoading: SessionRefundInvoicesIsLoading,
+    error: SessionRefundInvoicesError,
+  } = useQuery({
+    queryKey: ["SessionRefundInvoices"],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      const res = await axiosPublic.get(
+        `/Trainer_Session_Refund?bookerEmail=${user?.email}`
+      );
+      return res.data;
+    },
+    enabled: !!user?.email,
   });
 
   // Ensure safe access
@@ -225,9 +265,9 @@ const UserSettings = () => {
       ),
     },
     {
-      id: "User_Payment_Invoices",
-      Icon: "https://i.ibb.co.com/PGvSpC7S/Payed-Invoices.png",
-      title: "User Payment Invoices",
+      id: "User_Tier_Upgrade_Payment_Invoices",
+      Icon: invoice1,
+      title: "Tier Upgrade Payment Invoices",
       content: (
         <UserPaymentInvoices
           UserTierUpgradePayment={UserTierUpgradePaymentData}
@@ -235,9 +275,9 @@ const UserSettings = () => {
       ),
     },
     {
-      id: "User_Refund_Invoices",
-      Icon: "https://i.ibb.co.com/Q3b578xv/Refund-Invoices.png",
-      title: "User Refund Invoices",
+      id: "User_Tier_Upgrade_Refund_Invoices",
+      Icon: invoice2,
+      title: "Tier Upgrade Refund Invoices",
       content: (
         <UserRefundInvoices
           UserTierUpgradeRefundData={UserTierUpgradeRefundData}
@@ -245,17 +285,37 @@ const UserSettings = () => {
       ),
     },
     {
+      id: "User_Session_Payed_Invoices",
+      Icon: invoice3,
+      title: "Session Payed Invoices",
+      content: (
+        <UserSessionPayedInvoices
+          SessionPaymentInvoicesData={SessionPaymentInvoicesData}
+        />
+      ),
+    },
+    {
+      id: "User_Session_Refund_Invoices",
+      Icon: invoice4,
+      title: "Session Refund Invoices",
+      content: (
+        <UserSessionRefundInvoices
+          SessionRefundInvoicesData={SessionRefundInvoicesData}
+        />
+      ),
+    },
+    {
       id: "User_Class_Payment_Invoices",
-      Icon: ClassPayment,
-      title: "User Class Payment Invoices",
+      Icon: invoice5,
+      title: "Class Payment Invoices",
       content: (
         <UserClassPaymentInvoices UserClassPaymentData={UserClassPaymentData} />
       ),
     },
     {
       id: "User_Class_Refund_Invoices",
-      Icon: ClassRefund,
-      title: "User Class Refund Invoices",
+      Icon: invoice6,
+      title: "Class Refund Invoices",
       content: (
         <UserClassRefundInvoices UserClassRefundData={UserClassRefundData} />
       ),
@@ -270,8 +330,10 @@ const UserSettings = () => {
     UserClassRefundIsLoading ||
     UserTestimonialsILoading ||
     UserClassPaymentIsLoading ||
-    UserTierUpgradePaymentIsLoading ||
-    UserTierUpgradeRefundIsLoading
+    UserTierUpgradeRefundIsLoading ||
+    SessionRefundInvoicesIsLoading ||
+    SessionPaymentInvoicesIsLoading ||
+    UserTierUpgradePaymentIsLoading
   )
     return <Loading />;
 
@@ -282,8 +344,10 @@ const UserSettings = () => {
     UserTestimonialError ||
     UserClassRefundError ||
     UserClassPaymentError ||
-    UserTierUpgradePaymentError ||
-    UserTierUpgradeRefundError
+    UserTierUpgradeRefundError ||
+    SessionRefundInvoicesError ||
+    SessionPaymentInvoicesError ||
+    UserTierUpgradePaymentError
   ) {
     return <FetchingError />;
   }
@@ -358,19 +422,19 @@ const UserSettings = () => {
       <div className="flex min-h-screen mx-auto bg-gray-100 border-t border-gray-500">
         <div className="hidden lg:block w-1/5 bg-gray-200 text-black border-r border-gray-500">
           {/* Title */}
-          <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2">
+          <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-3">
             User Settings Options
           </p>
 
           {/* Tab's */}
-          <div className="space-y-2">
+          <div className="space-y-1">
             {tabs.map((tab) => (
               <p
                 key={tab.id}
-                className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold mt-2 cursor-pointer ${
+                className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold cursor-pointer ${
                   activeTab === tab.id
-                    ? "bg-linear-to-br from-blue-500 to-blue-300 text-white border border-gray-500"
-                    : "bg-linear-to-bl border border-gray-400 from-gray-200 to-gray-300 hover:from-blue-400 hover:to-blue-200 hover:text-white"
+                    ? "bg-linear-to-br from-blue-500 to-blue-300 text-white border border-gray-500 "
+                    : "bg-linear-to-bl from-gray-200 to-gray-300 hover:from-blue-400 hover:to-blue-200 hover:text-white"
                 }`}
                 onClick={() => setActiveTab(tab.id)}
               >
