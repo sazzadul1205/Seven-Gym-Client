@@ -146,9 +146,9 @@ const AddNotesModal = ({ refetch }) => {
             id="isImportant"
             className="checkbox checkbox-error"
           />
-          <label
+         <label
             htmlFor="isImportant"
-            className={`font-semibold px-3 py-1 rounded-lg transition-all ${
+            className={`font-semibold px-3 py-1 text-xs md:text-md rounded-lg transition-all ${
               isVeryImportant
                 ? "bg-red-500 text-white animate-pulse shadow-lg"
                 : "bg-gray-200"
@@ -174,7 +174,7 @@ const AddNotesModal = ({ refetch }) => {
             />
             <button
               type="button"
-              className="font-semibold text-2xl bg-linear-to-bl hover:bg-linear-to-tr from-emerald-300 to-emerald-600 shadow-lg py-2 px-8 cursor-pointer"
+              className="font-semibold text-md bg-linear-to-bl hover:bg-linear-to-tr from-emerald-300 to-emerald-600 shadow-lg py-2 px-8 cursor-pointer"
               onClick={() => {
                 const tagInput = document.getElementById("tags");
                 handleAddTag(tagInput.value);

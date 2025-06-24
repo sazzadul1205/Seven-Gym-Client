@@ -121,6 +121,7 @@ const UserSettingsWorkout = ({ UsersData, refetch }) => {
           <MdOutlineWorkOutline /> User Workout Settings
         </p>
       </div>
+
       {/* Add Workout Button */}
       <div className="flex items-center justify-between bg-gray-400/50 p-3">
         <CommonButton
@@ -134,168 +135,352 @@ const UserSettingsWorkout = ({ UsersData, refetch }) => {
           }
         />
       </div>
-      {/* Today's Workouts Table */}
-      <div className="bg-gray-400/50 text-black p-3 mt-2 overflow-x-auto">
-        <h3 className="text-black font-semibold text-lg mb-3">
-          Today&apos;s Workouts ({todayDate})
-        </h3>
-        <div className="overflow-x-auto">
-          <table className="table w-full border-collapse border border-gray-300">
-            {/* Table Header */}
-            <thead className="bg-gray-300 text-gray-700">
-              <tr>
-                <th className="p-3 text-left">Workout Name</th>
-                <th className="p-3 text-left">Type</th>
-                <th className="p-3 text-left">Intensity</th>
-                <th className="p-3 text-left">Location</th>
-                <th className="p-3 text-left">Date</th>
-                <th className="p-3 text-left">Duration</th>
-                <th className="p-3 text-left">Calories</th>
-                <th className="p-3 text-left">Notes</th>
-                <th className="p-3 text-left">Delete</th>
-              </tr>
-            </thead>
 
-            {/* Table Body */}
-            <tbody>
-              {todaysWorkouts.length > 0 ? (
-                todaysWorkouts.map((workout, index) => (
-                  <tr
-                    key={workout.workoutId}
-                    className={`border-b border-gray-200 ${
-                      index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                    }`}
-                  >
-                    <td className="p-3 font-semibold">{workout.name}</td>
-                    <td className="p-3">{workout.type}</td>
-                    <td className="p-3">
-                      <span
-                        className={`px-2 py-1 rounded-md text-white ${
-                          workout.intensity === "High"
-                            ? "bg-red-500"
-                            : workout.intensity === "Moderate"
-                            ? "bg-yellow-500"
-                            : "bg-green-500"
-                        }`}
-                      >
-                        {workout.intensity}
-                      </span>
-                    </td>
-                    <td className="p-3">{workout.location}</td>
-                    <td className="p-3">
-                      {formatRegisteredDate(workout.registeredDateAndTime)}
-                    </td>
-                    <td className="p-3">{workout.duration}</td>
-                    <td className="p-3">{workout.calories}</td>
-                    <td className="p-3">{workout.notes}</td>
-                    <td className="p-3">
-                      <button
-                        className="px-4 bg-gradient-to-bl hover:bg-gradient-to-tr from-red-400 to-red-600 py-3 text-white text-xl rounded-xl cursor-pointer"
-                        onClick={() => deleteWorkout(workout.workoutId)}
-                      >
-                        <FaRegTrashAlt />
-                      </button>
+      {/* Today's Workouts */}
+      <>
+        {/* Table View */}
+        <div className="hidden md:block bg-gray-400/50 text-black p-3 mt-2 overflow-x-auto">
+          <h3 className="text-black font-semibold text-lg mb-3">
+            Today&apos;s Workouts ({todayDate})
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="table w-full border-collapse border border-gray-300">
+              {/* Table Header */}
+              <thead className="bg-gray-300 text-gray-700">
+                <tr>
+                  <th className="p-3 text-left">Workout Name</th>
+                  <th className="p-3 text-left">Type</th>
+                  <th className="p-3 text-left">Intensity</th>
+                  <th className="p-3 text-left">Location</th>
+                  <th className="p-3 text-left">Date</th>
+                  <th className="p-3 text-left">Duration</th>
+                  <th className="p-3 text-left">Calories</th>
+                  <th className="p-3 text-left">Notes</th>
+                  <th className="p-3 text-left">Delete</th>
+                </tr>
+              </thead>
+
+              {/* Table Body */}
+              <tbody>
+                {todaysWorkouts.length > 0 ? (
+                  todaysWorkouts.map((workout, index) => (
+                    <tr
+                      key={workout.workoutId}
+                      className={`border-b border-gray-200 ${
+                        index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                      }`}
+                    >
+                      <td className="p-3 font-semibold">{workout.name}</td>
+                      <td className="p-3">{workout.type}</td>
+                      <td className="p-3">
+                        <span
+                          className={`px-2 py-1 rounded-md text-white ${
+                            workout.intensity === "High"
+                              ? "bg-red-500"
+                              : workout.intensity === "Moderate"
+                              ? "bg-yellow-500"
+                              : "bg-green-500"
+                          }`}
+                        >
+                          {workout.intensity}
+                        </span>
+                      </td>
+                      <td className="p-3">{workout.location}</td>
+                      <td className="p-3">
+                        {formatRegisteredDate(workout.registeredDateAndTime)}
+                      </td>
+                      <td className="p-3">{workout.duration}</td>
+                      <td className="p-3">{workout.calories}</td>
+                      <td className="p-3">{workout.notes}</td>
+                      <td className="p-3">
+                        <button
+                          className="px-4 bg-gradient-to-bl hover:bg-gradient-to-tr from-red-400 to-red-600 py-3 text-white text-xl rounded-xl cursor-pointer"
+                          onClick={() => deleteWorkout(workout.workoutId)}
+                        >
+                          <FaRegTrashAlt />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="9"
+                      className="p-3 text-center text-black font-semibold bg-white"
+                    >
+                      <div className="justify-center flex items-center gap-2">
+                        <BsExclamationCircle className="text-red-500" />
+                        No workouts recorded&apos;s
+                        <BsExclamationCircle className="text-red-500" />
+                      </div>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="9"
-                    className="p-3 text-center text-black font-semibold bg-white"
-                  >
-                    <div className="justify-center flex items-center gap-2">
-                      <BsExclamationCircle className="text-red-500" />
-                      No workouts recorded&apos;s
-                      <BsExclamationCircle className="text-red-500" />
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-      {/* All Workouts Table */}
-      <div className="bg-gray-400/50 text-black p-3 mt-6 overflow-x-auto">
-        <h3 className="text-black font-semibold text-lg mb-3">All Workouts</h3>
-        <div className="overflow-x-auto">
-          <table className="table w-full border-collapse border border-gray-300">
-            {/* Table Header */}
-            <thead className="bg-gray-300 text-gray-700">
-              <tr>
-                <th className="p-3 text-left">Workout Name</th>
-                <th className="p-3 text-left">Type</th>
-                <th className="p-3 text-left">Intensity</th>
-                <th className="p-3 text-left">Location</th>
-                <th className="p-3 text-left">Date</th>
-                <th className="p-3 text-left">Duration</th>
-                <th className="p-3 text-left">Calories</th>
-                <th className="p-3 text-left">Notes</th>
-                <th className="p-3 text-left">Delete</th>
-              </tr>
-            </thead>
 
-            {/* Table Body */}
-            <tbody>
-              {filteredUserWorkout.length > 0 ? (
-                filteredUserWorkout.map((workout, index) => (
-                  <tr
-                    key={workout.workoutId}
-                    className={`border-b border-gray-200 ${
-                      index % 2 === 0 ? "bg-gray-50" : "bg-white"
+        {/* Card View */}
+        <div className="block md:hidden bg-gray-400/50 text-black p-3 mt-2 space-y-4">
+          {/* Title */}
+          <h3 className="text-black font-semibold text-lg mb-3">
+            Today&apos;s Workouts ({todayDate})
+          </h3>
+
+          {/* Content */}
+          {todaysWorkouts.length > 0 ? (
+            todaysWorkouts.map((workout) => (
+              <div
+                key={workout.workoutId}
+                className="bg-white border border-gray-300 rounded-lg p-4 shadow-sm space-y-2"
+              >
+                {/* Name & Intensity */}
+                <div className="flex justify-between items-center">
+                  {/* Name */}
+                  <p className="text-lg font-semibold">{workout.name}</p>
+
+                  {/* Intensity */}
+                  <span
+                    className={`text-xs px-2 py-1 rounded text-white ${
+                      workout.intensity === "High"
+                        ? "bg-red-500"
+                        : workout.intensity === "Moderate"
+                        ? "bg-yellow-500"
+                        : "bg-green-500"
                     }`}
                   >
-                    <td className="p-3 font-semibold">{workout.name}</td>
-                    <td className="p-3">{workout.type}</td>
-                    <td className="p-3">
-                      <span
-                        className={`px-2 py-1 rounded-md text-white ${
-                          workout.intensity === "High"
-                            ? "bg-red-500"
-                            : workout.intensity === "Moderate"
-                            ? "bg-yellow-500"
-                            : "bg-green-500"
-                        }`}
-                      >
-                        {workout.intensity}
-                      </span>
-                    </td>
-                    <td className="p-3">{workout.location}</td>
-                    <td className="p-3">
-                      {formatRegisteredDate(workout.registeredDateAndTime)}
-                    </td>
-                    <td className="p-3">{workout.duration}</td>
-                    <td className="p-3">{workout.calories}</td>
-                    <td className="p-3">{workout.notes}</td>
-                    <td className="p-3">
-                      <button
-                        className="px-4 bg-gradient-to-bl hover:bg-gradient-to-tr from-red-400 to-red-600 py-3 text-white text-xl rounded-xl cursor-pointer"
-                        onClick={() => deleteWorkout(workout.workoutId)}
-                      >
-                        <FaRegTrashAlt />
-                      </button>
+                    {workout.intensity}
+                  </span>
+                </div>
+
+                {/* Type */}
+                <p className="text-sm">
+                  <strong>Type:</strong> {workout.type}
+                </p>
+
+                {/* Location */}
+                <p className="text-sm">
+                  <strong>Location:</strong> {workout.location}
+                </p>
+
+                {/* Date */}
+                <p className="text-sm">
+                  <strong>Date:</strong>{" "}
+                  {formatRegisteredDate(workout.registeredDateAndTime)}
+                </p>
+
+                {/* Duration */}
+                <p className="text-sm">
+                  <strong>Duration:</strong> {workout.duration}
+                </p>
+
+                {/* Calories */}
+                <p className="text-sm">
+                  <strong>Calories:</strong> {workout.calories}
+                </p>
+
+                {/* Notes */}
+                <p className="text-sm">
+                  <strong>Notes:</strong> {workout.notes}
+                </p>
+
+                {/* Delete */}
+                <div className="pt-2">
+                  <button
+                    onClick={() => deleteWorkout(workout.workoutId)}
+                    className="w-full bg-gradient-to-bl hover:bg-gradient-to-tr from-red-400 to-red-600 text-white rounded-md py-2 flex justify-center items-center gap-2"
+                  >
+                    <FaRegTrashAlt className="text-lg" />
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-black font-semibold bg-white p-4 rounded">
+              <div className="flex justify-center items-center gap-2">
+                <BsExclamationCircle className="text-red-500" />
+                No workouts recorded
+                <BsExclamationCircle className="text-red-500" />
+              </div>
+            </div>
+          )}
+        </div>
+      </>
+
+      {/* All Workouts */}
+      <>
+        {/* Table View */}
+        <div className="hidden md:block bg-gray-400/50 text-black p-3 mt-2 overflow-x-auto">
+          <h3 className="text-black font-semibold text-lg mb-3">
+            All Workouts
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="table w-full border-collapse border border-gray-300">
+              {/* Table Header */}
+              <thead className="bg-gray-300 text-gray-700">
+                <tr>
+                  <th className="p-3 text-left">Workout Name</th>
+                  <th className="p-3 text-left">Type</th>
+                  <th className="p-3 text-left">Intensity</th>
+                  <th className="p-3 text-left">Location</th>
+                  <th className="p-3 text-left">Date</th>
+                  <th className="p-3 text-left">Duration</th>
+                  <th className="p-3 text-left">Calories</th>
+                  <th className="p-3 text-left">Notes</th>
+                  <th className="p-3 text-left">Delete</th>
+                </tr>
+              </thead>
+
+              {/* Table Body */}
+              <tbody>
+                {filteredUserWorkout.length > 0 ? (
+                  filteredUserWorkout.map((workout, index) => (
+                    <tr
+                      key={workout.workoutId}
+                      className={`border-b border-gray-200 ${
+                        index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                      }`}
+                    >
+                      <td className="p-3 font-semibold">{workout.name}</td>
+                      <td className="p-3">{workout.type}</td>
+                      <td className="p-3">
+                        <span
+                          className={`px-2 py-1 rounded-md text-white ${
+                            workout.intensity === "High"
+                              ? "bg-red-500"
+                              : workout.intensity === "Moderate"
+                              ? "bg-yellow-500"
+                              : "bg-green-500"
+                          }`}
+                        >
+                          {workout.intensity}
+                        </span>
+                      </td>
+                      <td className="p-3">{workout.location}</td>
+                      <td className="p-3">
+                        {formatRegisteredDate(workout.registeredDateAndTime)}
+                      </td>
+                      <td className="p-3">{workout.duration}</td>
+                      <td className="p-3">{workout.calories}</td>
+                      <td className="p-3">{workout.notes}</td>
+                      <td className="p-3">
+                        <button
+                          className="px-4 bg-gradient-to-bl hover:bg-gradient-to-tr from-red-400 to-red-600 py-3 text-white text-xl rounded-xl cursor-pointer"
+                          onClick={() => deleteWorkout(workout.workoutId)}
+                        >
+                          <FaRegTrashAlt />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="9"
+                      className="p-3 text-center text-black font-semibold bg-white"
+                    >
+                      <div className="justify-center flex items-center gap-2">
+                        <BsExclamationCircle className="text-red-500" />
+                        No workouts recorded&apos;s
+                        <BsExclamationCircle className="text-red-500" />
+                      </div>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="9"
-                    className="p-3 text-center text-black font-semibold bg-white"
-                  >
-                    <div className="justify-center flex items-center gap-2">
-                      <BsExclamationCircle className="text-red-500" />
-                      No workouts recorded&apos;s
-                      <BsExclamationCircle className="text-red-500" />
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+
+        {/* Card View */}
+        <div className="block md:hidden bg-gray-400/50 text-black p-3 mt-2 space-y-4">
+          {/* Title */}
+          <h3 className="text-black font-semibold text-lg mb-3">
+            All Workouts
+          </h3>
+
+          {/* Content */}
+          {filteredUserWorkout.length > 0 ? (
+            filteredUserWorkout.map((workout) => (
+              <div
+                key={workout.workoutId}
+                className="bg-white border border-gray-300 rounded-lg p-4 shadow-sm space-y-2"
+              >
+                {/* Name & Intensity */}
+                <div className="flex justify-between items-center">
+                  {/* Name */}
+                  <p className="text-lg font-semibold">{workout.name}</p>
+
+                  {/* Intensity */}
+                  <span
+                    className={`text-xs px-2 py-1 rounded text-white ${
+                      workout.intensity === "High"
+                        ? "bg-red-500"
+                        : workout.intensity === "Moderate"
+                        ? "bg-yellow-500"
+                        : "bg-green-500"
+                    }`}
+                  >
+                    {workout.intensity}
+                  </span>
+                </div>
+
+                {/* Type */}
+                <p className="text-sm">
+                  <strong>Type:</strong> {workout.type}
+                </p>
+
+                {/* Location */}
+                <p className="text-sm">
+                  <strong>Location:</strong> {workout.location}
+                </p>
+
+                {/* Date */}
+                <p className="text-sm">
+                  <strong>Date:</strong>{" "}
+                  {formatRegisteredDate(workout.registeredDateAndTime)}
+                </p>
+
+                {/* Duration */}
+                <p className="text-sm">
+                  <strong>Duration:</strong> {workout.duration}
+                </p>
+
+                {/* Calories */}
+                <p className="text-sm">
+                  <strong>Calories:</strong> {workout.calories}
+                </p>
+
+                {/* Notes */}
+                <p className="text-sm">
+                  <strong>Notes:</strong> {workout.notes}
+                </p>
+
+                {/* Delete */}
+                <div className="pt-2">
+                  <button
+                    onClick={() => deleteWorkout(workout.workoutId)}
+                    className="w-full bg-gradient-to-bl hover:bg-gradient-to-tr from-red-400 to-red-600 text-white rounded-md py-2 flex justify-center items-center gap-2"
+                  >
+                    <FaRegTrashAlt className="text-lg" />
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-black font-semibold bg-white p-4 rounded">
+              <div className="flex justify-center items-center gap-2">
+                <BsExclamationCircle className="text-red-500" />
+                No workouts recorded
+                <BsExclamationCircle className="text-red-500" />
+              </div>
+            </div>
+          )}
+        </div>
+      </>
 
       {/* Modal */}
       {/* Pass handleWorkoutAdded to the modal */}

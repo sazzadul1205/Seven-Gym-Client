@@ -205,6 +205,7 @@ const UserSettingsSchedule = ({ userSchedule, refetch }) => {
                       </option>
                     ))}
                   </select>
+
                   {/* End Time Selector */}
                   <select
                     value={endTime}
@@ -223,6 +224,7 @@ const UserSettingsSchedule = ({ userSchedule, refetch }) => {
                     ))}
                   </select>
                 </div>
+
                 <div className="flex justify-center gap-4 mt-6">
                   <button
                     className="bg-gradient-to-bl hover:bg-gradient-to-tr from-green-300 to-green-600 text-white font-semibold rounded-xl shadow-xl hover:shadow-2xl py-3 w-[200px]  cursor-pointer delay-200"
@@ -283,44 +285,44 @@ UserSettingsSchedule.propTypes = {
   userSchedule: PropTypes.shape({
     schedule: PropTypes.objectOf(
       PropTypes.shape({
-        dayName: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired, // Format: "DD-MM-YYYY"
+        dayName: PropTypes.string,
+        date: PropTypes.string,
         schedule: PropTypes.objectOf(
           PropTypes.shape({
-            id: PropTypes.string.isRequired,
+            id: PropTypes.string,
             title: PropTypes.string,
             notes: PropTypes.string,
             location: PropTypes.string,
             status: PropTypes.string,
           })
-        ).isRequired,
+        ),
       })
     ),
     priority: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        title: PropTypes.string.isRequired,
-        level: PropTypes.string, // Example: "High", "Medium", "Low"
+        id: PropTypes.string,
+        title: PropTypes.string,
+        level: PropTypes.string,
         description: PropTypes.string,
       })
     ),
     todo: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        task: PropTypes.string.isRequired,
-        completed: PropTypes.bool.isRequired,
+        id: PropTypes.string,
+        task: PropTypes.string,
+        completed: PropTypes.bool,
       })
     ),
     notes: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        title: PropTypes.string.isRequired,
-        content: PropTypes.string.isRequired,
-        dateCreated: PropTypes.string.isRequired, // Format: "DD-MM-YYYY"
+        id: PropTypes.string,
+        title: PropTypes.string,
+        content: PropTypes.string,
+        dateCreated: PropTypes.string,
       })
     ),
   }),
-  refetch: PropTypes.func.isRequired,
+  refetch: PropTypes.func,
 };
 
 export default UserSettingsSchedule;

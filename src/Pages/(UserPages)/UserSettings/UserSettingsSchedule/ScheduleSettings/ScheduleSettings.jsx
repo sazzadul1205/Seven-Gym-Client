@@ -283,7 +283,7 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
                 : "bg-linear-to-bl hover:bg-linear-to-tr from-red-300 to-red-600 cursor-pointer"
             }`}
           >
-            Delete <FaRegTrashAlt />
+            <p className="hidden md:flex" >Delete</p> <FaRegTrashAlt />
             <span className="ml-2 text-white">({selectedSchedules.size})</span>
           </button>
 

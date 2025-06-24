@@ -104,7 +104,7 @@ const SchedulePrioritySettings = ({ UserPriorityData, refetch }) => {
         <div className="flex justify-between items-center">
           {/* Delete priority Button */}
           <button
-            className={`flex items-center rounded-lg text-xl font-semibold gap-3 px-6 py-2 ${
+            className={`flex items-center rounded-lg gap-3 px-5 md:px-10 py-2 md:py-3 ${
               selectedPriorities.size > 0
                 ? "bg-gradient-to-bl from-red-300 to-red-600 hover:from-red-400 hover:to-red-700 cursor-pointer"
                 : "bg-gray-400 text-gray-700 cursor-not-allowed"
@@ -112,14 +112,16 @@ const SchedulePrioritySettings = ({ UserPriorityData, refetch }) => {
             disabled={selectedPriorities.size === 0}
             onClick={handleDeleteSelected}
           >
-            Delete <FaRegTrashAlt />
+            <p className="font-semibold hidden md:block">Delete</p>{" "}
+            <FaRegTrashAlt className="text-lg" />
           </button>
 
           {/* Add Priority Button */}
           <CommonButton
             text="Add Priority"
             bgColor="green"
-            px="px-10"
+            px="px-5 md:px-10"
+            py="py-2 md:py-3"
             clickEvent={() =>
               document.getElementById("Add_Priority_Modal").showModal()
             }

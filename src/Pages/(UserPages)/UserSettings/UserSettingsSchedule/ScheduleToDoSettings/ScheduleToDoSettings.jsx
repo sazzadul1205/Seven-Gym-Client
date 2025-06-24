@@ -108,7 +108,7 @@ const ScheduleToDoSettings = ({ UserToDoData, refetch }) => {
         <div className="flex justify-between items-center">
           {/* Delete priority Button */}
           <button
-            className={`flex items-center rounded-lg text-xl font-semibold gap-3 px-6 py-2 ${
+            className={`flex items-center rounded-lg gap-3 px-5 md:px-10 py-2 md:py-3 ${
               selectedToDos.size > 0
                 ? "bg-gradient-to-bl from-red-300 to-red-600 hover:from-red-400 hover:to-red-700 cursor-pointer"
                 : "bg-gray-400 text-gray-700 cursor-not-allowed"
@@ -116,14 +116,16 @@ const ScheduleToDoSettings = ({ UserToDoData, refetch }) => {
             disabled={selectedToDos.size === 0}
             onClick={handleDeleteSelected}
           >
-            Delete <FaRegTrashAlt />
+            <p className="font-semibold hidden md:block">Delete</p>{" "}
+            <FaRegTrashAlt className="text-lg" />
           </button>
 
-          {/* Add To Do Button */}
+          {/* Add Priority Button */}
           <CommonButton
-            text="Add To Do"
+            text="Add Priority"
             bgColor="green"
-            px="px-10"
+            px="px-5 md:px-10"
+            py="py-2 md:py-3"
             clickEvent={() =>
               document.getElementById("Add_To-Do_Modal").showModal()
             }
@@ -160,7 +162,7 @@ const ScheduleToDoSettings = ({ UserToDoData, refetch }) => {
                 {/* To-Do Details */}
                 <div className="flex-1 border-l border-gray-400 pl-4 md:pl-5">
                   {/* Task Title & Priority */}
-                  <div className="flex flex-col md:flex-row gap-4">  
+                  <div className="flex flex-col md:flex-row gap-4">
                     <h3 className="text-lg font-semibold text-gray-800 break-words sm:break-normal">
                       {todo.task}
                     </h3>
@@ -244,17 +246,17 @@ const ScheduleToDoSettings = ({ UserToDoData, refetch }) => {
 ScheduleToDoSettings.propTypes = {
   UserToDoData: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired, // Ensure 'id' is a string
-      task: PropTypes.string.isRequired,
-      priority: PropTypes.oneOf(["Low", "Medium", "High"]).isRequired, // Priority must be one of these values
-      dueDate: PropTypes.string.isRequired, // Assuming it's an ISO date string
-      estimatedTime: PropTypes.string.isRequired,
-      category: PropTypes.string.isRequired,
+      id: PropTypes.string,
+      task: PropTypes.string,
+      priority: PropTypes.oneOf(["Low", "Medium", "High"]),
+      dueDate: PropTypes.string,
+      estimatedTime: PropTypes.string,
+      category: PropTypes.string,
       description: PropTypes.string,
-      tags: PropTypes.arrayOf(PropTypes.string), // Array of tag strings
+      tags: PropTypes.arrayOf(PropTypes.string),
     })
-  ).isRequired,
-  refetch: PropTypes.func.isRequired, // Ensure refetch is a function
+  ),
+  refetch: PropTypes.func,
 };
 
 export default ScheduleToDoSettings;

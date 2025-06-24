@@ -98,9 +98,9 @@ const ScheduleNoteSettings = ({ UserNoteData, refetch }) => {
 
         {/* Delete Button */}
         <div className="flex justify-between items-center">
-          {/* Delete Notes Button */}
+          {/* Delete priority Button */}
           <button
-            className={`flex items-center rounded-lg text-xl font-semibold gap-3 px-6 py-2 ${
+            className={`flex items-center rounded-lg gap-3 px-5 md:px-10 py-2 md:py-3 ${
               selectedNotes.size > 0
                 ? "bg-gradient-to-bl from-red-300 to-red-600 hover:from-red-400 hover:to-red-700 cursor-pointer"
                 : "bg-gray-400 text-gray-700 cursor-not-allowed"
@@ -108,20 +108,23 @@ const ScheduleNoteSettings = ({ UserNoteData, refetch }) => {
             disabled={selectedNotes.size === 0}
             onClick={handleDeleteSelected}
           >
-            Delete <FaRegTrashAlt />
+            <p className="font-semibold hidden md:block">Delete</p>{" "}
+            <FaRegTrashAlt className="text-lg" />
           </button>
 
-          {/* Add Notes Button */}
+          {/* Add Priority Button */}
           <CommonButton
-            text="Add Notes"
+            text="Add Priority"
             bgColor="green"
-            px="px-10"
+            px="px-5 md:px-10"
+            py="py-2 md:py-3"
             clickEvent={() =>
               document.getElementById("Add_Note_Modal").showModal()
             }
           />
         </div>
       </div>
+
       {/* Notes List Section */}
       <div className="bg-gray-400/50 text-black p-3 mt-4">
         <h3 className="text-black font-semibold text-lg pb-3">Notes List</h3>
@@ -215,15 +218,15 @@ const ScheduleNoteSettings = ({ UserNoteData, refetch }) => {
 ScheduleNoteSettings.propTypes = {
   UserNoteData: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
+      id: PropTypes.string,
+      title: PropTypes.string,
       isImportant: PropTypes.bool,
-      reminder: PropTypes.string.isRequired,
-      content: PropTypes.string.isRequired,
+      reminder: PropTypes.string,
+      content: PropTypes.string,
       tags: PropTypes.arrayOf(PropTypes.string),
     })
-  ).isRequired,
-  refetch: PropTypes.func.isRequired,
+  ),
+  refetch: PropTypes.func,
 };
 
 export default ScheduleNoteSettings;
