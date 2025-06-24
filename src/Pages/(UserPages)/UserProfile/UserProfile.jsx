@@ -59,24 +59,7 @@ const UserProfile = () => {
       );
       return res.data;
     },
-    enabled: trainerNames.length > 0, // Prevent fetching if trainerNames are empty
-  });
-
-  // Fetch class details
-  const {
-    data: ClassesData,
-    isLoading: ClassesIsLoading,
-    error: ClassesError,
-  } = useQuery({
-    queryKey: ["ClassesData", classesName],
-    queryFn: async () => {
-      if (classesName.length === 0) return [];
-      const res = await axiosPublic.get(
-        `/Class_Details/multi?modules=${classesName.join(",")}`
-      );
-      return res.data;
-    },
-    enabled: classesName.length > 0,
+    enabled: trainerNames.length > 0,
   });
 
   // Fetch all Trainer Booking Request Request
@@ -96,11 +79,28 @@ const UserProfile = () => {
     enabled: classesName.length > 0,
   });
 
+  // Fetch all Trainer Booking Request Request
+  const {
+    data: ClassBookingAcceptedData,
+    isLoading: ClassBookingAcceptedIsLoading,
+    error: ClassBookingAcceptedError,
+  } = useQuery({
+    queryKey: ["ClassBookingAcceptedData", user?.email],
+    queryFn: async () => {
+      if (classesName.length === 0) return [];
+      const res = await axiosPublic.get(
+        `/Class_Booking_Accepted?email=${user?.email}`
+      );
+      return res.data;
+    },
+    enabled: classesName.length > 0,
+  });
+
   // Load States
   if (
     UsersLoading ||
     BookedTrainerLoading ||
-    ClassesIsLoading ||
+    ClassBookingAcceptedIsLoading ||
     TrainersBookingAcceptedIsLoading
   )
     return <Loading />;
@@ -109,7 +109,7 @@ const UserProfile = () => {
   if (
     UsersError ||
     BookedTrainerError ||
-    ClassesError ||
+    ClassBookingAcceptedError ||
     TrainersBookingAcceptedError
   ) {
     return <FetchingError />;
@@ -150,7 +150,9 @@ const UserProfile = () => {
             />
 
             {/* Current Attending Classes */}
-            <UserProfileAttendingClasses ClassesData={ClassesData} />
+            <UserProfileAttendingClasses
+              ClassBookingAcceptedData={ClassBookingAcceptedData}
+            />
           </div>
         </div>
 

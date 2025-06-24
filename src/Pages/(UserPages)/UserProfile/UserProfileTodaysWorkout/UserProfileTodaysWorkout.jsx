@@ -82,7 +82,7 @@ const UserProfileTodaysWorkout = ({ recentWorkouts, refetch }) => {
         {/* Title */}
         <div className="flex items-center gap-3">
           <MdOutlineRecentActors className="text-yellow-300 text-3xl sm:text-3xl" />
-          <h2 className="text-lg sm:text-xl font-semibold text-black">
+          <h2 className="text-md font-semibold text-black">
             Today&apos;s Workouts
           </h2>
         </div>

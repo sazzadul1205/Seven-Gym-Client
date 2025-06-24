@@ -4,8 +4,12 @@ import PropTypes from "prop-types";
 
 import groupClass from "../../../../assets/UserProfile/GroupClass.png";
 import CommonButton from "../../../../Shared/Buttons/CommonButton";
+import UserClassCompletedCard from "../../UserClassManagement/UserClassManagementCompleted/UserClassCompletedCard/UserClassCompletedCard";
+import { useState } from "react";
+import ClassCompletedDetailsModal from "../../UserClassManagement/UserClassManagementCompleted/ClassCompletedDetailsModal/ClassCompletedDetailsModal";
 
-const UserProfileAttendingClasses = ({ ClassesData }) => {
+const UserProfileAttendingClasses = ({ ClassBookingAcceptedData }) => {
+  const [selectedCompletedData, setSelectedCompletedData] = useState("");
   return (
     <div className="bg-linear-to-bl hover:bg-linear-to-tr from-gray-100 to-gray-300 p-5 shadow-xl rounded-xl*">
       {/* Header Section */}
@@ -18,7 +22,7 @@ const UserProfileAttendingClasses = ({ ClassesData }) => {
       <div className="bg-black p-[1px]"></div>
 
       {/* If No Classes Are Available */}
-      {(!ClassesData || ClassesData.length === 0) && (
+      {(!ClassBookingAcceptedData || ClassBookingAcceptedData.length === 0) && (
         <div className="flex flex-col items-center space-y-4 pt-4">
           <p className="text-gray-500">No classes available at the moment.</p>
 
@@ -35,48 +39,44 @@ const UserProfileAttendingClasses = ({ ClassesData }) => {
       )}
 
       {/* If Classes Exist, Display List */}
-      {ClassesData?.length > 0 && (
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-4">
-          {ClassesData.map((classDetail, index) => (
-            <div
-              key={index}
-              className="relative border-2 border-blue-500 bg-white hover:bg-gray-300 text-black px-6 py-3 rounded-lg group transition duration-300"
-            >
-              {/* Class Link */}
-              <Link to={`/Classes/${classDetail.module}`}>
-                {/* Class Icon */}
-                {classDetail?.icon && (
-                  <img
-                    src={classDetail.icon}
-                    alt={classDetail.module}
-                    className="w-16 h-16 mx-auto mb-2"
-                  />
-                )}
+      <div className="pt-5">
+        {ClassBookingAcceptedData?.length > 0 && (
+          <div className="grid gap-6 grid-cols-1 ">
+            {ClassBookingAcceptedData.map((item) => (
+              <UserClassCompletedCard
+                key={item._id}
+                item={item}
+                setSelectedCompletedData={setSelectedCompletedData}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
-                {/* Class Name */}
-                <div className="text-center text-sm">{classDetail.module}</div>
-
-                {/* Hover Overlay (Join Now) */}
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="text-white font-bold text-lg">Join Now</span>
-                </div>
-              </Link>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Modal */}
+      <dialog id="Class_Completed_Details_Modal" className="modal">
+        <ClassCompletedDetailsModal
+          selectedCompletedData={selectedCompletedData}
+        />
+      </dialog>
     </div>
   );
 };
 
 // PropTypes validation
 UserProfileAttendingClasses.propTypes = {
-  ClassesData: PropTypes.arrayOf(
+  ClassBookingAcceptedData: PropTypes.arrayOf(
     PropTypes.shape({
-      module: PropTypes.string.isRequired, // Name of the module
-      icon: PropTypes.string, // Optional class icon URL
+      _id: PropTypes.string.isRequired,
+      className: PropTypes.string,
+      classType: PropTypes.string,
+      trainerName: PropTypes.string,
+      classDate: PropTypes.string,
+      startTime: PropTypes.string,
+      endTime: PropTypes.string,
+      status: PropTypes.string,
     })
-  ), // ClassesData must be an array and is required
+  ),
 };
 
 export default UserProfileAttendingClasses;
