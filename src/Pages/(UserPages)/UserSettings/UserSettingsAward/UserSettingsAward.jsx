@@ -121,13 +121,14 @@ const UserSettingsAward = ({ UsersData, refetch }) => {
       </div>
 
       {/* Add Award Button */}
-      <div className="flex items-center justify-between bg-gray-400/50 p-3">
+      <div className="flex items-center justify-between bg-gray-400/50 border-b border-gray-100 p-3">
         <CommonButton
           text="Add New Award"
           bgColor="green"
-          px="px-10"
+          px="px-5 md:px-10"
+          py="py-2 md:py-3"
           icon={<IoMdAdd />}
-          iconSize="text-xl"
+          iconSize="text-lg md:text-xl "
           clickEvent={() =>
             document.getElementById("Add_Award_Modal").showModal()
           }
@@ -135,7 +136,7 @@ const UserSettingsAward = ({ UsersData, refetch }) => {
       </div>
 
       {/* My Awards Table */}
-      <div className="bg-gray-400/50 text-black p-3 mt-2 overflow-x-auto">
+      <div className="hidden md:block bg-gray-400/50 text-black p-1">
         <h3 className="text-black font-semibold text-lg mb-3">My Awards</h3>
         <div className="overflow-x-auto">
           <table className="table w-full border-collapse border border-gray-300">
@@ -236,6 +237,81 @@ const UserSettingsAward = ({ UsersData, refetch }) => {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="block md:hidden p-3 space-y-4 text-black">
+        {UserAwards.length > 0 ? (
+          UserAwards.map((award, index) => (
+            <div
+              key={award.awardCode}
+              className="bg-white shadow-md rounded-lg p-4 space-y-2 border border-gray-300"
+            >
+              {/* Header */}
+              <div className="flex items-center gap-3">
+                {/* Icon */}
+                <img
+                  src={award.awardIcon}
+                  alt={award.awardName}
+                  className="w-12 h-12 rounded-full border"
+                />
+                {/* Info */}
+                <div>
+                  {/* Name */}
+                  <p className="font-semibold text-base">{award.awardName}</p>
+                  {/* Ranking */}
+                  <span
+                    className={`text-xs px-2 py-1 rounded text-white ${
+                      award.awardRanking.includes("Gold")
+                        ? "bg-yellow-500"
+                        : award.awardRanking.includes("Silver")
+                        ? "bg-gray-400"
+                        : award.awardRanking.includes("Bronze")
+                        ? "bg-orange-500"
+                        : "bg-blue-500"
+                    }`}
+                  >
+                    {award.awardRanking}
+                  </span>
+                </div>
+              </div>
+
+              {/* Description */}
+              <p className="text-sm">
+                <strong>Description:</strong> {award.description}
+              </p>
+
+              {/* Date */}
+              <p className="text-sm">
+                <strong>Date:</strong> {award.dateAwarded}
+              </p>
+
+              {/* Awarded By */}
+              <p className="text-sm">
+                <strong>Awarded By:</strong> {award.awardedBy}
+              </p>
+
+              {/* Trash Button & Star  */}
+              <div className="flex justify-between items-center pt-2">
+                <button onClick={() => toggleFavorite(index, award.awardCode)}>
+                  {award.favorite ? (
+                    <FaStar className="text-yellow-400 text-2xl" />
+                  ) : (
+                    <FaRegStar className="text-gray-500 text-2xl" />
+                  )}
+                </button>
+                <button
+                  onClick={() => deleteAward(award.awardCode)}
+                  className="p-2 bg-gradient-to-bl hover:bg-gradient-to-tr from-red-400 to-red-600 text-white rounded-lg"
+                >
+                  <FaRegTrashAlt />
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500">No awards recorded.</p>
+        )}
       </div>
 
       {/* Modal */}

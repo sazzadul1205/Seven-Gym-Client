@@ -146,7 +146,7 @@ const BannerSelector = ({
           </div>
 
           {/* Save Button */}
-          <div className="flex justify-between px-5 py-3">
+          <div className="flex flex-col md:flex-row gap-2 justify-between px-5 py-3">
             <CommonButton
               clickEvent={() => document.getElementById("fileInput").click()}
               text="Select Image"
