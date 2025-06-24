@@ -14,7 +14,7 @@ import { IoSettings } from "react-icons/io5";
 // Import Info Component
 import { InfoSection } from "../../../(PublicPages)/(Classes)/ClassesDetails/ClassesDetailsContent/ClassesDetailsContent";
 
-const ManagementClassDetailsContent = ({ selectedClass, Refetch }) => {
+const ManagementClassDetailsContent = ({ selectedClass }) => {
   return (
     <div className="relative">
       {/* Settings Icon (Top Left) */}
