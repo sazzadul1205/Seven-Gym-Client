@@ -3,12 +3,18 @@ import PropTypes from "prop-types";
 import { ImCross } from "react-icons/im";
 import useAxiosPublic from "../../../../../Hooks/useAxiosPublic";
 import CommonButton from "../../../../../Shared/Buttons/CommonButton";
+import { useForm } from "react-hook-form";
 
 const ClassDetailsPricingEditModal = ({ selectedClass, Refetch }) => {
   const axiosPublic = useAxiosPublic();
   const [dailyFee, setDailyFee] = useState(selectedClass?.dailyClassFee || 0);
   const [loading, setLoading] = useState(false);
   const [modalError, setModalError] = useState(null);
+
+  // React Hook Form setup
+  const {
+    formState: { errors },
+  } = useForm();
 
   // Fixed additional fees
   const equipmentMaintenanceFee = 10;
@@ -54,12 +60,11 @@ const ClassDetailsPricingEditModal = ({ selectedClass, Refetch }) => {
   };
 
   return (
-    <div className="modal-box max-w-xl p-0 bg-gradient-to-b from-white to-gray-200 text-black rounded-xl shadow-lg">
+    <div className="modal-box max-w-xl p-0 bg-gradient-to-b from-white to-gray-300 text-black">
       {/* Modal Header */}
-      <div className="flex justify-between items-center border-b-2 border-gray-300 px-5 py-4 bg-gray-100 rounded-t-xl">
+      <div className="flex justify-between items-center border-b-2 border-gray-200 px-5 py-4">
         <h3 className="font-bold text-lg">
-          Edit: <span className="text-blue-700">{selectedClass?.module}</span>{" "}
-          Class Pricing
+          Edit : {selectedClass?.module} Class Key Features
         </h3>
         <ImCross
           className="text-xl hover:text-[#F72C5B] cursor-pointer"
@@ -69,8 +74,15 @@ const ClassDetailsPricingEditModal = ({ selectedClass, Refetch }) => {
         />
       </div>
 
+      {/* Show errors if any */}
+      {(Object.keys(errors).length > 0 || modalError) && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md space-y-1 text-sm m-5">
+          {modalError && <div>{modalError}</div>}
+        </div>
+      )}
+
       {/* Body */}
-      <div className="p-6 space-y-4">
+      <div className="px-6 pt-6 space-y-4">
         {/* Input */}
         <label className="block text-sm font-semibold text-gray-700">
           Base Daily Class Fee ($)
@@ -112,7 +124,7 @@ const ClassDetailsPricingEditModal = ({ selectedClass, Refetch }) => {
         </div>
 
         {/* Save Changes */}
-        <div className="flex justify-end px-6 pb-6 pt-4">
+        <div className="md:col-span-2 flex justify-end px-6 pb-6">
           <CommonButton
             clickEvent={handleSaveChanges}
             text="Save Changes"

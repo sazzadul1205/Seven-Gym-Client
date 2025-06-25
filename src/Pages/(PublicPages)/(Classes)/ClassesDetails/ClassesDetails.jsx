@@ -1,15 +1,18 @@
 import { useParams } from "react-router";
+
+// Import Packages
 import { useQuery } from "@tanstack/react-query";
 
 // Import Background Image
 import Classes_Background from "../../../../assets/Classes-Background/Classes_Background.jpg";
 
+// Import Hooks & Shared
 import useAuth from "../../../../Hooks/useAuth";
 import Loading from "../../../../Shared/Loading/Loading";
 import useAxiosPublic from "../../../../Hooks/useAxiosPublic";
 import FetchingError from "../../../../Shared/Component/FetchingError";
 
-// Component Import
+// Import Component
 import ClassesDetailsMore from "./ClassesDetailsMore/ClassesDetailsMore";
 import ClassesDetailsPrice from "./ClassesDetailsPrice/ClassesDetailsPrice";
 import ClassesDetailsReview from "./ClassesDetailsReview/ClassesDetailsReview";

@@ -10,14 +10,37 @@ import ClassDetailsContentEditModal from "./ManagementClassDetailsContent/ClassD
 import ClassDetailsKeyFeaturesEditModal from "./ManagementClassKeyFeatures/ClassDetailsKeyFeaturesEditModal/ClassDetailsKeyFeaturesEditModal";
 import ManagementClassPricing from "./ManagementClassPricing/ManagementClassPricing";
 import ClassDetailsPricingEditModal from "./ManagementClassPricing/ClassDetailsPricingEditModal/ClassDetailsPricingEditModal";
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "../../../Shared/Loading/Loading";
+import FetchingError from "../../../Shared/Component/FetchingError";
+import ManagementClassSchedule from "./ManagementClassSchedule/ManagementClassSchedule";
+import ClassDetailsScheduleEditModal from "./ManagementClassSchedule/ClassDetailsScheduleEditModal/ClassDetailsScheduleEditModal";
 
 const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
+  const axiosPublic = useAxiosPublic();
+
   const [selectedClassId, setSelectedClassId] = useState(
     ClassDetailsData?.[0]?._id || null
   );
   const [selectedClass, setSelectedClass] = useState(
     ClassDetailsData?.[0] || null
   );
+
+  // Fetch Class Schedule
+  const {
+    data: ClassScheduleData,
+    isLoading: ClassScheduleDataIsLoading,
+    error: ClassScheduleDataError,
+  } = useQuery({
+    queryKey: ["ClassScheduleData", selectedClass?.module],
+    queryFn: async () =>
+      axiosPublic
+        .get(
+          `/Our_Classes_Schedule/SearchByModule?moduleName=${selectedClass?.module}`
+        )
+        .then((res) => res.data),
+  });
 
   // Update selected class when data updates
   useEffect(() => {
@@ -28,6 +51,16 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
       setSelectedClass(updatedClass || ClassDetailsData[0]);
     }
   }, [ClassDetailsData, selectedClassId]);
+
+  // Handle Loading State
+  if (ClassScheduleDataIsLoading) {
+    return <Loading />;
+  }
+
+  // Handle Errors
+  if (ClassScheduleDataError) {
+    return <FetchingError />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -87,6 +120,12 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
 
             {/* Class Pricing */}
             <ManagementClassPricing selectedClass={selectedClass} />
+
+            {/* Class Schedule */}
+            <ManagementClassSchedule ClassScheduleData={ClassScheduleData} />
+
+            {/* Classes Trainer */}
+            {/* <ManageClassTrainers TrainersData={TrainersData} /> */}
           </div>
         </div>
       </div>
@@ -111,6 +150,15 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
       {/* Key Pricing Edit */}
       <dialog id="Class_Pricing_Edit_Modal" className="modal">
         <ClassDetailsPricingEditModal
+          selectedClass={selectedClass}
+          Refetch={Refetch}
+        />
+      </dialog>
+
+      {/* Schedule Edit */}
+      <dialog id="Class_Schedule_Edit_Modal" className="modal">
+        <ClassDetailsScheduleEditModal
+          ClassScheduleData={ClassScheduleData}
           selectedClass={selectedClass}
           Refetch={Refetch}
         />
