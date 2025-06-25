@@ -37,10 +37,31 @@ const ClassDetailsTrainersEditModal = ({
     return <FetchingError />;
   }
 
-  const handleDeleteTrainer = (trainer) => {
-    // Replace this with your delete logic
-    console.log("Deleting trainer:", trainer);
-    // Confirm + API Call + State Update
+  const handleDeleteTrainer = async (trainer) => {
+    const { data: scheduleData } = await axiosPublic.get(
+      `/Trainers_Schedule/TrainerId/${trainer?._id}`
+    );
+
+    const modifiedScheduleData = removeMatchingClassType(
+      scheduleData,
+      selectedClass?.module
+    );
+    console.log(trainer);
+    console.log(modifiedScheduleData);
+
+    await axiosPublic.put("/Class_Details/trainer", {
+      module: selectedClass?.module,
+      trainer: { _id: trainer?._id, name: trainer?.name },
+      action: "remove",
+    });
+
+    // Update the trainer's schedule (remove relevant classType)
+    await axiosPublic.put("/Trainers_Schedule/Update", {
+      trainerName: scheduleData.trainerName,
+      trainerSchedule: modifiedScheduleData.trainerSchedule,
+    });
+
+    Refetch();
   };
 
   return (
@@ -69,7 +90,7 @@ const ClassDetailsTrainersEditModal = ({
               <button
                 id={`delete-trainer-btn-${trainer._id}`}
                 className="absolute top-3 right-3 border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105 transition-transform duration-200 z-10"
-                onClick={() => handleDeleteTrainer(trainer._id)}
+                onClick={() => handleDeleteTrainer(trainer)}
               >
                 <FaRegTrashAlt className="text-red-500" />
               </button>
@@ -139,12 +160,35 @@ const ClassDetailsTrainersEditModal = ({
       </div>
 
       <ClassDetailsTrainersEditTrainerTable
-        TrainerBasicData={TrainerBasicData}
         ClassScheduleData={ClassScheduleData}
+        TrainerBasicData={TrainerBasicData}
         selectedClass={selectedClass}
+        Refetch={Refetch}
       />
     </div>
   );
 };
 
 export default ClassDetailsTrainersEditModal;
+
+const removeMatchingClassType = (scheduleData, moduleName) => {
+  const classToRemove = `${moduleName} Class`;
+
+  // Deep clone to avoid mutating the original if needed
+  const transformed = JSON.parse(JSON.stringify(scheduleData));
+
+  for (const day in transformed.trainerSchedule) {
+    const timeSlots = transformed.trainerSchedule[day];
+
+    for (const time in timeSlots) {
+      const slot = timeSlots[time];
+      if (slot.classType === classToRemove) {
+        slot.classType = "";
+        slot.participantLimit = 0;
+        slot.classPrice = 0;
+      }
+    }
+  }
+
+  return transformed;
+};
