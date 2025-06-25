@@ -8,7 +8,7 @@ import { IoSettings } from "react-icons/io5";
 // Import Trainer Public Id Card
 import TrainerPublicIdCard from "../../../../Shared/Component/TrainerPublicIdCard";
 
-const ManageClassTrainers = ({ ClassTrainersData }) => {
+const ManagementClassTrainers = ({ ClassTrainersData }) => {
   return (
     <section className="relative bg-gradient-to-bl from-gray-200/80 to-gray-500/50 p-2 md:p-10 mx-0 md:mx-10 rounded-none md:rounded-xl shadow-inner">
       {/* Settings Icon (Top Left) */}
@@ -29,6 +29,7 @@ const ManageClassTrainers = ({ ClassTrainersData }) => {
           content="Edit Class Trainers "
         />
       </>
+      
       {/* Title */}
       <header className="mb-4 border-b-2 border-gray-100 pb-3">
         <h3 className="text-2xl text-white font-semibold">
@@ -49,7 +50,7 @@ const ManageClassTrainers = ({ ClassTrainersData }) => {
 };
 
 // Prop Validation
-ManageClassTrainers.propTypes = {
+ManagementClassTrainers.propTypes = {
   ClassTrainersData: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -58,4 +59,4 @@ ManageClassTrainers.propTypes = {
   ),
 };
 
-export default ManageClassTrainers;
+export default ManagementClassTrainers;

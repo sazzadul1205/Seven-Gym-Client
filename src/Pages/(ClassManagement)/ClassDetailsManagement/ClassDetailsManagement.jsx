@@ -16,8 +16,10 @@ import Loading from "../../../Shared/Loading/Loading";
 import FetchingError from "../../../Shared/Component/FetchingError";
 import ManagementClassSchedule from "./ManagementClassSchedule/ManagementClassSchedule";
 import ClassDetailsScheduleEditModal from "./ManagementClassSchedule/ClassDetailsScheduleEditModal/ClassDetailsScheduleEditModal";
-import ManageClassTrainers from "./ManageClassTrainers/ManageClassTrainers";
-import ClassDetailsTrainersEditModal from "./ManageClassTrainers/ClassDetailsTrainersEditModal/ClassDetailsTrainersEditModal";
+import ManagementClassMoreDetails from "./ManagementClassMoreDetails/ManagementClassMoreDetails";
+import ManagementClassTrainers from "./ManagementClassTrainers/ManagementClassTrainers";
+import ClassDetailsTrainersEditModal from "./ManagementClassTrainers/ClassDetailsTrainersEditModal/ClassDetailsTrainersEditModal";
+import ClassDetailsMoreDetailsEditModal from "./ManagementClassMoreDetails/ClassDetailsMoreDetailsEditModal/ClassDetailsMoreDetailsEditModal";
 
 const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
   const axiosPublic = useAxiosPublic();
@@ -145,7 +147,10 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
             <ManagementClassSchedule ClassScheduleData={ClassScheduleData} />
 
             {/* Classes Trainer */}
-            <ManageClassTrainers ClassTrainersData={ClassTrainersData} />
+            <ManagementClassTrainers ClassTrainersData={ClassTrainersData} />
+
+            {/* Classes Trainer */}
+            <ManagementClassMoreDetails selectedClass={selectedClass} />
           </div>
         </div>
       </div>
@@ -190,6 +195,14 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
           selectedClass={selectedClass}
           ClassScheduleData={ClassScheduleData}
           ClassTrainersData={ClassTrainersData}
+          Refetch={Refetch}
+        />
+      </dialog>
+
+      {/* Trainer Edit */}
+      <dialog id="Class_More_Details_Edit_Modal" className="modal">
+        <ClassDetailsMoreDetailsEditModal
+          selectedClass={selectedClass}
           Refetch={Refetch}
         />
       </dialog>

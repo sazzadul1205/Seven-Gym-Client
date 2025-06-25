@@ -41,6 +41,7 @@ const parseValidationMessage = (msg) => {
 };
 
 const ValidationMessage = ({
+  setDeleteTrainerError,
   setValidationMessage,
   setPendingTrainer,
   validationMessage,
@@ -80,21 +81,21 @@ const ValidationMessage = ({
     }
   };
 
-  // Confirm adding even if validation failed
+  // Handles adding a trainer even if validation failed
   const handleAddAnyway = async () => {
-    // If no pending trainer or schedule data, exit early
+    // Exit if no pending trainer or schedule data
     if (!pendingTrainer || !scheduleData?.trainerName) return;
 
     // Extract available slots from the validation message
     const availableSlots = extractAvailableSlots(validationMessage);
 
-    // Helper: Update the schedule with available slots for the selected class
+    // Helper function to update the schedule with available slots for the class
     const transformScheduleWithAvailableSlots = (
       scheduleData,
       availableSlots,
       className
     ) => {
-      // Clone the schedule data to avoid direct mutation
+      // Clone the schedule data
       const transformed = { ...scheduleData };
 
       // For each available slot, update the trainer's schedule
@@ -152,24 +153,22 @@ const ValidationMessage = ({
     try {
       // Update class details with the new trainer
       await axiosPublic.put("/Class_Details/trainer", payload);
-
       // Update the trainer's schedule
       await axiosPublic.put(
         "/Trainers_Schedule/Update",
         updateTrainerSchedulePayload
       );
-
-      // Refetch Anyway
       Refetch();
+      setDeleteTrainerError(null); // Clear any previous error
     } catch (error) {
-      // Log any errors that occur during the process
-      console.error(
-        "Failed to complete operation:",
-        error.response?.data || error.message
+      // Handle errors and set error message
+      console.error("Failed to complete operation:", error);
+      setDeleteTrainerError(
+        error.response?.data || "Failed to add trainer. Please try again."
       );
     }
 
-    // Reset validation message and pending trainer state
+    // Reset validation and pending trainer state
     setValidationMessage("");
     setPendingTrainer(null);
   };
@@ -182,7 +181,6 @@ const ValidationMessage = ({
 
   return (
     <div className="mb-6 p-5 bg-blue-50 border-l-4 border-blue-400 rounded shadow-sm text-blue-800 mx-auto">
-        
       <div className="flex items-start space-x-3">
         {/* Icon */}
         <span className="flex-shrink-0 h-6 w-6 text-blue-500 mt-1">
@@ -257,7 +255,6 @@ const ValidationMessage = ({
             />
           </div>
         </div>
-
       </div>
     </div>
   );
@@ -265,6 +262,7 @@ const ValidationMessage = ({
 
 // Prop Validation
 ValidationMessage.propTypes = {
+  setDeleteTrainerError: PropTypes.func,
   setValidationMessage: PropTypes.func,
   validationMessage: PropTypes.string,
   setPendingTrainer: PropTypes.func,
