@@ -16,6 +16,8 @@ import Loading from "../../../Shared/Loading/Loading";
 import FetchingError from "../../../Shared/Component/FetchingError";
 import ManagementClassSchedule from "./ManagementClassSchedule/ManagementClassSchedule";
 import ClassDetailsScheduleEditModal from "./ManagementClassSchedule/ClassDetailsScheduleEditModal/ClassDetailsScheduleEditModal";
+import ManageClassTrainers from "./ManageClassTrainers/ManageClassTrainers";
+import ClassDetailsTrainersEditModal from "./ManageClassTrainers/ClassDetailsTrainersEditModal/ClassDetailsTrainersEditModal";
 
 const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
   const axiosPublic = useAxiosPublic();
@@ -42,6 +44,24 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
         .then((res) => res.data),
   });
 
+  // Map through all and get _id array
+  const ClassTrainerIds =
+    selectedClass?.trainers?.map((trainer) => trainer?._id) || [];
+
+  // Fetch Trainers Data
+  const {
+    data: ClassTrainersData,
+    isLoading: ClassTrainersIsLoading,
+    error: ClassTrainerError,
+  } = useQuery({
+    queryKey: ["ClassTrainersData", ClassTrainerIds],
+    queryFn: async () =>
+      axiosPublic
+        .get(`/Trainers/BasicInfo?ids=${ClassTrainerIds.join(",")}`)
+        .then((res) => res.data),
+    enabled: ClassTrainerIds.length > 0,
+  });
+
   // Update selected class when data updates
   useEffect(() => {
     if (ClassDetailsData?.length && selectedClassId) {
@@ -53,12 +73,12 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
   }, [ClassDetailsData, selectedClassId]);
 
   // Handle Loading State
-  if (ClassScheduleDataIsLoading) {
+  if (ClassScheduleDataIsLoading || ClassTrainersIsLoading) {
     return <Loading />;
   }
 
   // Handle Errors
-  if (ClassScheduleDataError) {
+  if (ClassScheduleDataError || ClassTrainerError) {
     return <FetchingError />;
   }
 
@@ -125,7 +145,7 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
             <ManagementClassSchedule ClassScheduleData={ClassScheduleData} />
 
             {/* Classes Trainer */}
-            {/* <ManageClassTrainers TrainersData={TrainersData} /> */}
+            <ManageClassTrainers ClassTrainersData={ClassTrainersData} />
           </div>
         </div>
       </div>
@@ -160,6 +180,16 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
         <ClassDetailsScheduleEditModal
           ClassScheduleData={ClassScheduleData}
           selectedClass={selectedClass}
+          Refetch={Refetch}
+        />
+      </dialog>
+
+      {/* Trainer Edit */}
+      <dialog id="Class_Trainers_Edit_Modal" className="modal">
+        <ClassDetailsTrainersEditModal
+          selectedClass={selectedClass}
+          ClassScheduleData={ClassScheduleData}
+          ClassTrainersData={ClassTrainersData}
           Refetch={Refetch}
         />
       </dialog>
