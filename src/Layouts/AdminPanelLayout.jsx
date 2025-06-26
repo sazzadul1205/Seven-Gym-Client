@@ -20,6 +20,7 @@ import booking from "../assets/AdminPanel/booking.png";
 import gallery from "../assets/AdminPanel/gallery.png";
 import homepage from "../assets/AdminPanel/homepage.png";
 import costumer from "../assets/AdminPanel/costumer.png";
+import training from "../assets/AdminPanel/training.png";
 import dashboard from "../assets/AdminPanel/dashboard.png";
 import satisfaction from "../assets/AdminPanel/satisfaction.png";
 import trainerInvoice from "../assets/AdminPanel/trainerInvoice.png";
@@ -232,19 +233,14 @@ const AdminPanelLayout = () => {
     },
     {
       id: "Class_Bookings",
-      Icon: booking,
+      Icon: training,
       title: "Class Bookings",
       content: (
         <AllClassBookings
-          AllTrainerBookingRequestData={AllTrainerBookingRequestData}
-          AllTrainerBookingHistoryData={AllTrainerBookingHistoryData}
-          AllTrainerBookingAcceptedData={AllTrainerBookingAcceptedData}
-          AllTrainerBookingCompletedData={AllTrainerBookingCompletedData}
-          AllTrainerBookingCancelledData={AllTrainerBookingCancelledData}
-          TrainerBookingRequestStatusData={TrainerBookingRequestStatusData}
-          TrainerBookingAcceptedStatusData={TrainerBookingAcceptedStatusData}
-          TrainerBookingCompletedStatusData={TrainerBookingCompletedStatusData}
-          TrainerBookingCancelledStatusData={TrainerBookingCancelledStatusData}
+          ClassBookingRequestData={ClassBookingRequestData}
+          ClassBookingRejectedData={ClassBookingRejectedData}
+          ClassBookingAcceptedData={ClassBookingAcceptedData}
+          ClassBookingCompletedData={ClassBookingCompletedData}
         />
       ),
     },
