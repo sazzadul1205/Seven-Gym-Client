@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react";
 
 // Import Packages
 import { Tooltip } from "react-tooltip";
+import PropTypes from "prop-types";
 
 // Import Icons
 import { FaFileInvoiceDollar, FaSearch } from "react-icons/fa";
@@ -325,6 +326,31 @@ const AllClassBookingPayedRecept = ({ ClassBookingPayedData }) => {
       </dialog>
     </>
   );
+};
+
+// Prop Validation
+AllClassBookingPayedRecept.propTypes = {
+  ClassBookingPayedData: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      applicant: PropTypes.shape({
+        applicantEmail: PropTypes.string,
+        applicantData: PropTypes.shape({
+          email: PropTypes.string,
+          name: PropTypes.string,
+        }),
+        classesName: PropTypes.string,
+        duration: PropTypes.string,
+        totalPrice: PropTypes.number,
+        submittedDate: PropTypes.string,
+        name: PropTypes.string,
+      }),
+      stripePaymentID: PropTypes.string,
+      paymentMethod: PropTypes.string,
+      paidAt: PropTypes.string,
+      status: PropTypes.string,
+    })
+  ).isRequired,
 };
 
 export default AllClassBookingPayedRecept;
