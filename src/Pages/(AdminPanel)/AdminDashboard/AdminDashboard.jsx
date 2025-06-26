@@ -32,6 +32,7 @@ const AdminDashboard = ({
   TrainerBookingCancelledStatusData,
   TrainerSessionCompletedStatusData,
   TrainerBookingAcceptedStatusData,
+  ClassBookingCompletedStatusData,
   TrainerBookingRequestStatusData,
   TrainerSessionPaymentStatusData,
   TrainerSessionRefundStatusData,
@@ -107,6 +108,7 @@ const AdminDashboard = ({
         TrainerSessionRefundStatusData={TrainerSessionRefundStatusData}
         TrainerSessionActiveStatusData={TrainerSessionActiveStatusData}
         TrainerSessionPaymentStatusData={TrainerSessionPaymentStatusData}
+        ClassBookingCompletedStatusData={ClassBookingCompletedStatusData}
         TrainerSessionCompletedStatusData={TrainerSessionCompletedStatusData}
       />
 
@@ -169,20 +171,62 @@ const AdminDashboard = ({
 
 // Prop Validation
 AdminDashboard.propTypes = {
-  TrainerBookingCompletedStatusData: PropTypes.array,
-  TrainerBookingCancelledStatusData: PropTypes.array,
-  TrainerSessionCompletedStatusData: PropTypes.array,
-  TrainerBookingAcceptedStatusData: PropTypes.array,
-  TrainerBookingRequestStatusData: PropTypes.array,
-  TrainerSessionPaymentStatusData: PropTypes.array,
-  TrainerSessionRefundStatusData: PropTypes.array,
-  TrainerSessionActiveStatusData: PropTypes.array,
-  DailyTierUpgradePaymentData: PropTypes.array,
-  DailyTierUpgradeRefundData: PropTypes.array,
-  TestimonialsData: PropTypes.array,
-  AllTrainersData: PropTypes.array,
-  PromotionsData: PropTypes.array,
-  AllUsersData: PropTypes.array,
+  TrainerBookingCompletedStatusData: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+  ]),
+  TrainerBookingCancelledStatusData: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+  ]),
+  TrainerSessionCompletedStatusData: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+  ]),
+  TrainerBookingAcceptedStatusData: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+  ]),
+  TrainerBookingRequestStatusData: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+  ]),
+  TrainerSessionPaymentStatusData: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+  ]),
+  TrainerSessionRefundStatusData: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+  ]),
+  TrainerSessionActiveStatusData: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+  ]),
+  ClassBookingCompletedStatusData: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+  ]),
+  ClassBookingPaymentStatusData: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+  ]),
+  ClassBookingRefundStatusData: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+  ]),
+  DailyTierUpgradePaymentData: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+  ]),
+  DailyTierUpgradeRefundData: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+  ]),
+  TestimonialsData: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+  AllTrainersData: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+  PromotionsData: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+  AllUsersData: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
 };
 
-export default AdminDashboard;s
+export default AdminDashboard;

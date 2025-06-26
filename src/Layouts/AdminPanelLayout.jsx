@@ -126,6 +126,7 @@ const AdminPanelLayout = () => {
     AllTrainerBookingCancelledData,
     TrainerSessionPaymentStatusData,
     TrainerBookingRequestStatusData,
+    ClassBookingCompletedStatusData,
     TrainerBookingAcceptedStatusData,
     TrainerSessionCompletedStatusData,
     TrainerBookingCompletedStatusData,
@@ -153,6 +154,7 @@ const AdminPanelLayout = () => {
           TrainerBookingCompletedStatusData={TrainerBookingCompletedStatusData}
           TrainerBookingCancelledStatusData={TrainerBookingCancelledStatusData}
           TrainerBookingAcceptedStatusData={TrainerBookingAcceptedStatusData}
+          ClassBookingCompletedStatusData={ClassBookingCompletedStatusData}
           TrainerSessionPaymentStatusData={TrainerSessionPaymentStatusData}
           TrainerBookingRequestStatusData={TrainerBookingRequestStatusData}
           TrainerSessionRefundStatusData={TrainerSessionRefundStatusData}
@@ -251,6 +253,7 @@ const AdminPanelLayout = () => {
           ClassBookingCompletedData={ClassBookingCompletedData}
           ClassBookingRefundStatusData={ClassBookingRefundStatusData}
           ClassBookingPaymentStatusData={ClassBookingPaymentStatusData}
+          ClassBookingCompletedStatusData={ClassBookingCompletedStatusData}
         />
       ),
     },

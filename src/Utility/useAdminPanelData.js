@@ -393,7 +393,7 @@ const useAdminPanelData = () => {
     refetch: ClassBookingRefundRefetch,
   } = useFetchData("ClassBookingRefundData", "/Class_Booking_Refund");
 
-  // 41. Fetch Class Refund
+  // 41. Fetch Class Payed Daily Status
   const {
     data: ClassBookingPaymentStatusData,
     isLoading: ClassBookingPaymentStatusIsLoading,
@@ -404,7 +404,7 @@ const useAdminPanelData = () => {
     "/Class_Booking_Payment/DailyStatus"
   );
 
-  // 41. Fetch Class Refund
+  // 41. Fetch Class Refund Daily Status
   const {
     data: ClassBookingRefundStatusData,
     isLoading: ClassBookingRefundStatusIsLoading,
@@ -413,6 +413,17 @@ const useAdminPanelData = () => {
   } = useFetchData(
     "ClassBookingRefundStatusData",
     "/Class_Booking_Refund/DailyStatus"
+  );
+
+  // 42. Fetch Class Completed Daily Status
+  const {
+    data: ClassBookingCompletedStatusData,
+    isLoading: ClassBookingCompletedStatusIsLoading,
+    error: ClassBookingCompletedStatusError,
+    refetch: ClassBookingCompletedStatusRefetch,
+  } = useFetchData(
+    "ClassBookingCompletedStatusData",
+    "/Class_Booking_Completed/DailyStatus"
   );
 
   // Unified refetch function
@@ -457,6 +468,7 @@ const useAdminPanelData = () => {
     await AllTrainerBookingCompletedRefetch();
     await AllTrainerBookingCancelledRefetch();
     await TrainerBookingRequestStatusRefetch();
+    await ClassBookingCompletedStatusRefetch();
     await TrainerSessionPaymentStatusRefetch();
     await TrainerBookingAcceptedStatusRefetch();
     await TrainerSessionCompletedStatusRefetch();
@@ -505,6 +517,7 @@ const useAdminPanelData = () => {
     AllTrainerBookingCompletedIsLoading ||
     AllTrainerBookingCancelledIsLoading ||
     TrainerSessionPaymentStatusIsLoading ||
+    ClassBookingCompletedStatusIsLoading ||
     TrainerBookingRequestStatusIsLoading ||
     TrainerBookingAcceptedStatusIsLoading ||
     TrainerSessionCompletedStatusIsLoading ||
@@ -552,6 +565,7 @@ const useAdminPanelData = () => {
     AllTrainerBookingCompletedError ||
     AllTrainerBookingCancelledError ||
     TrainerSessionPaymentStatusError ||
+    ClassBookingCompletedStatusError ||
     TrainerBookingRequestStatusError ||
     TrainerBookingAcceptedStatusError ||
     TrainerSessionCompletedStatusError ||
@@ -607,6 +621,7 @@ const useAdminPanelData = () => {
     AllTrainerBookingCancelledData,
     TrainerSessionPaymentStatusData,
     TrainerBookingRequestStatusData,
+    ClassBookingCompletedStatusData,
     TrainerBookingAcceptedStatusData,
     TrainerSessionCompletedStatusData,
     TrainerBookingCompletedStatusData,

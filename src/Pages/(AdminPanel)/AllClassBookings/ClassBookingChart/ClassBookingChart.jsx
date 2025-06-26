@@ -32,11 +32,20 @@ const formatCurrencyTooltip = (value, name) => {
 const ClassBookingChart = ({
   ClassBookingRefundStatusData,
   ClassBookingPaymentStatusData,
+  ClassBookingCompletedStatusData,
 }) => {
   // Combine all dates from both datasets
   const allDates = useMemo(
-    () => [...ClassBookingRefundStatusData, ...ClassBookingPaymentStatusData],
-    [ClassBookingRefundStatusData, ClassBookingPaymentStatusData]
+    () => [
+      ...ClassBookingRefundStatusData,
+      ...ClassBookingPaymentStatusData,
+      ...ClassBookingCompletedStatusData,
+    ],
+    [
+      ClassBookingRefundStatusData,
+      ClassBookingPaymentStatusData,
+      ClassBookingCompletedStatusData,
+    ]
   );
 
   // Extract unique months in "YYYY-MM" format from the data
@@ -87,17 +96,21 @@ const ClassBookingChart = ({
   const chartData = useMemo(() => {
     const refunds = filterDataByMonth(ClassBookingRefundStatusData);
     const payments = filterDataByMonth(ClassBookingPaymentStatusData);
+    const completed = filterDataByMonth(ClassBookingCompletedStatusData);
 
     return fullDates.map((date) => {
       const r = refunds.find((d) => d.date === date) || {};
       const p = payments.find((d) => d.date === date) || {};
+      const s = completed.find((d) => d.date === date) || {};
 
       return {
         date,
         paymentAmount: p.totalPrice || 0,
         refundAmount: r.refundAmount || 0,
+        completedAmount: s.totalPrice || 0,
         paymentCount: p.count || 0,
         refundCount: r.count || 0,
+        completedCount: s.count || 0,
       };
     });
   }, [
@@ -105,6 +118,7 @@ const ClassBookingChart = ({
     filterDataByMonth,
     ClassBookingRefundStatusData,
     ClassBookingPaymentStatusData,
+    ClassBookingCompletedStatusData,
   ]);
 
   // Display month label like "June 2025"
@@ -151,10 +165,10 @@ const ClassBookingChart = ({
         </div>
       </div>
 
-      {/* Booking & Refund Amounts Line Chart */}
+      {/* Booking, Refund & Completion Amounts */}
       <div>
         <h4 className="text-lg font-semibold mb-2 pl-2">
-          Booking & Refund Amounts
+          Booking, Refund & Completion Amounts
         </h4>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={chartData}>
@@ -175,11 +189,17 @@ const ClassBookingChart = ({
               stroke="#ff7f7f"
               name="Total Refunds"
             />
+            <Line
+              type="monotone"
+              dataKey="completedAmount"
+              stroke="#3b82f6"
+              name="Total Completed"
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
-      {/* Booking & Refund Counts Line Chart */}
+      {/* Transaction Counts */}
       <div>
         <h4 className="text-lg font-semibold mb-2 pl-2">Transaction Counts</h4>
         <ResponsiveContainer width="100%" height={300}>
@@ -201,6 +221,12 @@ const ClassBookingChart = ({
               stroke="#ffc658"
               name="Refund Count"
             />
+            <Line
+              type="monotone"
+              dataKey="completedCount"
+              stroke="#10b981"
+              name="Completed Count"
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -218,6 +244,13 @@ ClassBookingChart.propTypes = {
     })
   ).isRequired,
   ClassBookingPaymentStatusData: PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.string.isRequired,
+      totalPrice: PropTypes.number,
+      count: PropTypes.number,
+    })
+  ).isRequired,
+  ClassBookingCompletedStatusData: PropTypes.arrayOf(
     PropTypes.shape({
       date: PropTypes.string.isRequired,
       totalPrice: PropTypes.number,

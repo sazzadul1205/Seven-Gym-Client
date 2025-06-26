@@ -29,6 +29,7 @@ const AllClassBookings = ({
   ClassBookingCompletedData,
   ClassBookingRefundStatusData,
   ClassBookingPaymentStatusData,
+  ClassBookingCompletedStatusData,
 }) => {
   const [activeTab, setActiveTab] = useState("Request");
   const [isLoading, setIsLoading] = useState(false);
@@ -90,6 +91,7 @@ const AllClassBookings = ({
       <ClassBookingChart
         ClassBookingRefundStatusData={ClassBookingRefundStatusData}
         ClassBookingPaymentStatusData={ClassBookingPaymentStatusData}
+        ClassBookingCompletedStatusData={ClassBookingCompletedStatusData}
       />
 
       {/* Tab Buttons */}
@@ -134,6 +136,7 @@ AllClassBookings.propTypes = {
   ClassBookingCompletedData: PropTypes.array,
   ClassBookingRefundStatusData: PropTypes.array,
   ClassBookingPaymentStatusData: PropTypes.array,
+  ClassBookingCompletedStatusData: PropTypes.array,
 };
 
 export default AllClassBookings;
