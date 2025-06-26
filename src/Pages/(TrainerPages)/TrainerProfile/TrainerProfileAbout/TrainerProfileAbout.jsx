@@ -33,7 +33,7 @@ const TrainerProfileAbout = ({ TrainerDetails, refetch }) => {
       />
 
       {/* Trainer Name & Bio Section */}
-      <div className="text-center">
+      <div className="text-center pt-6">
         <h2 className="text-3xl font-semibold text-gray-800">
           About {TrainerDetails?.name || "Unknown Trainer"}
         </h2>

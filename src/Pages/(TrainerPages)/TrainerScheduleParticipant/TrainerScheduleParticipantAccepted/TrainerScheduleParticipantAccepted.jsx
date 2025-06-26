@@ -136,7 +136,7 @@ const TrainerScheduleParticipantAccepted = ({
             {TrainerBookingAcceptedData.map((booking) => (
               <div
                 key={booking._id}
-                className={`transition-colors duration-200 hover:bg-gray-100 border-b border-gray-500 ${
+                className={`transition-colors duration-200 hover:bg-gray-100 bg-white p-2 border-b border-gray-500 ${
                   !booking.startAt ? "bg-green-100 hover:bg-green-50" : ""
                 } ${
                   booking.status === "Ended" ? "bg-red-100 hover:bg-red-50" : ""

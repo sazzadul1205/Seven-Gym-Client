@@ -40,7 +40,7 @@ const TrainerProfile = ({ TrainerScheduleData, TrainerData, refetch }) => {
         </div>
 
         {/* Trainer Pricing and Availability */}
-        <div className="max-w-7xl mx-auto">
+        <div className="md:max-w-7xl mx-auto">
           <TrainerProfileSchedule
             TrainerDetails={TrainerData || {}}
             TrainerSchedule={TrainerProfileScheduleData || {}}
@@ -48,7 +48,7 @@ const TrainerProfile = ({ TrainerScheduleData, TrainerData, refetch }) => {
         </div>
 
         {/* Trainer Certifications & Details */}
-        <div className="max-w-7xl mx-auto">
+        <div className="md:max-w-7xl mx-auto">
           <TrainerProfileDetails
             TrainerDetails={TrainerData || {}}
             refetch={refetch}
@@ -56,7 +56,7 @@ const TrainerProfile = ({ TrainerScheduleData, TrainerData, refetch }) => {
         </div>
 
         {/* Trainer Testimonials */}
-        <div className="max-w-7xl mx-auto">
+        <div className="md:max-w-7xl mx-auto">
           <TrainerDetailsTestimonials TrainerDetails={TrainerData || {}} />
         </div>
       </div>

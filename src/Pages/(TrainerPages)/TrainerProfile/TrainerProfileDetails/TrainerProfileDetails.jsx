@@ -18,7 +18,7 @@ const TrainerProfileDetails = ({ TrainerDetails, refetch }) => {
   if (!TrainerDetails) return null;
 
   return (
-    <div className="relative mx-auto px-10 pt-3">
+    <div className="relative mx-auto px-0  md:px-10 pt-3">
       {/* Settings Icon (Top Right) */}
       <div
         className="absolute top-2 right-2 p-2"
