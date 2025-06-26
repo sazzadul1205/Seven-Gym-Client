@@ -26,6 +26,7 @@ import AdminDashboardTestimonialView from "./AdminDashboardTestimonialView/Admin
 import AdminDashboardPromotionView from "./AdminDashboardPromotionView/AdminDashboardPromotionView";
 import AdminDashboardSessionGraph from "./AdminDashboardSessionGraph/AdminDashboardSessionGraph";
 import AdminDashboardCards from "./AdminDashboardCards/AdminDashboardCards";
+import AdminDashboardClassGraph from "./AdminDashboardClassGraph/AdminDashboardClassGraph";
 
 const AdminDashboard = ({
   TrainerBookingCompletedStatusData,
@@ -124,6 +125,13 @@ const AdminDashboard = ({
         TrainerBookingAcceptedStatusData={TrainerBookingAcceptedStatusData}
         TrainerBookingCompletedStatusData={TrainerBookingCompletedStatusData}
         TrainerBookingCancelledStatusData={TrainerBookingCancelledStatusData}
+      />
+
+      {/* Section: Class Booking Stats Graph */}
+      <AdminDashboardClassGraph
+        ClassBookingRefundStatusData={ClassBookingRefundStatusData}
+        ClassBookingPaymentStatusData={ClassBookingPaymentStatusData}
+        ClassBookingCompletedStatusData={ClassBookingCompletedStatusData}
       />
 
       {/* Section: Booking Overview Table */}
