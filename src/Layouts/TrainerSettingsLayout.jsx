@@ -40,6 +40,8 @@ import TrainerAddModal from "../Pages/(TrainerPages)/TrainerAddModal/TrainerAddM
 
 // Import Component
 import TrainerSettingsLayoutHeader from "../Pages/(TrainerPages)/TrainerSettingsLayoutHeader/TrainerSettingsLayoutHeader";
+
+// Import Common Button
 import CommonButton from "../Shared/Buttons/CommonButton";
 
 const TrainerSettingsLayout = () => {
@@ -282,14 +284,18 @@ const TrainerSettingsLayout = () => {
         TrainerData={TrainerData}
       />
 
-      {/* Floating Drawer Button for Mobile */}
-      <div
-        htmlFor="trainer-settings-drawer"
-        className="fixed lg:hidden top-20 left-0 bg-gray-500/70 shadow-md cursor-pointer z-50 p-2 "
-      >
-        <p className="bg-linear-to-bl from-blue-300 to-blue-600 p-4 rounded-full">
-          <RiArchiveDrawerFill size={24} />
-        </p>
+      {/* Header Section */}
+      <div className="mx-auto md:hidden flex justify-between gap-6 bg-gray-400 px-4 py-2">
+        {/* Back Button */}
+        <div className="flex" />
+
+        {/* Floating Drawer Button for Mobile */}
+        <label
+          htmlFor="trainer-settings-drawer"
+          className="p-3 bg-blue-500 text-white rounded-full shadow-md cursor-pointer lg:hidden"
+        >
+          <RiArchiveDrawerFill size={20} />
+        </label>
       </div>
 
       {/* Drawer for Mobile & Tablet View */}
@@ -327,8 +333,8 @@ const TrainerSettingsLayout = () => {
                   key={tab.id}
                   className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold cursor-pointer ${
                     activeTab === tab.id
-                      ? "bg-blue-500 text-white border border-gray-500"
-                      : "hover:bg-blue-300 border border-gray-500"
+                      ? "bg-blue-500 text-white "
+                      : "hover:bg-blue-300 "
                   }`}
                   onClick={() => {
                     setActiveTab(tab.id);
@@ -359,10 +365,10 @@ const TrainerSettingsLayout = () => {
             {tabs.map((tab) => (
               <p
                 key={tab.id}
-                className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold mt-2 cursor-pointer ${
+                className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold cursor-pointer ${
                   activeTab === tab.id
-                    ? "bg-linear-to-br from-blue-500 to-blue-300 text-white border border-gray-500"
-                    : "bg-linear-to-bl border border-gray-400 from-gray-200 to-gray-300 hover:from-blue-400 hover:to-blue-200 hover:text-white"
+                    ? "bg-linear-to-br from-blue-500 to-blue-300 text-white"
+                    : "bg-linear-to-bl from-gray-200 to-gray-300 hover:from-blue-400 hover:to-blue-200 hover:text-white"
                 }`}
                 onClick={() => setActiveTab(tab.id)}
               >
