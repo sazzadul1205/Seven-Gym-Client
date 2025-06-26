@@ -27,6 +27,7 @@ import ClassAccepted from "../Pages/(ClassManagement)/ClassAccepted/ClassAccepte
 import ClassRejected from "../Pages/(ClassManagement)/ClassRejected/ClassRejected";
 import ClassCompleted from "../Pages/(ClassManagement)/ClassCompleted/ClassCompleted";
 import ClassDetailsManagement from "../Pages/(ClassManagement)/ClassDetailsManagement/ClassDetailsManagement";
+import ClassParticipants from "../Pages/(ClassManagement)/ClassParticipants/ClassParticipants";
 
 const ClassManagementLayout = () => {
   const { logOut } = useAuth();
@@ -38,7 +39,7 @@ const ClassManagementLayout = () => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const searchParams = new URLSearchParams(location.search);
-  const initialTab = searchParams.get("tab") || "Class_Request";
+  const initialTab = searchParams.get("tab") || "Class_Details_Management";
   const [activeTab, setActiveTab] = useState(initialTab);
 
   const {
@@ -118,6 +119,18 @@ const ClassManagementLayout = () => {
       content: (
         <ClassCompleted
           ClassBookingCompletedData={ClassBookingCompletedData}
+          Refetch={handleRefetch}
+        />
+      ),
+    },
+    {
+      id: "Class_Participants",
+      Icon: worksheet,
+      title: "Class Participants",
+      content: (
+        <ClassParticipants
+          ClassBookingAcceptedData={ClassBookingAcceptedData}
+          ClassDetailsData={ClassDetailsData}
           Refetch={handleRefetch}
         />
       ),

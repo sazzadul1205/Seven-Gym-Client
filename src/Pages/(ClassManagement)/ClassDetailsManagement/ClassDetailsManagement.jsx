@@ -1,25 +1,36 @@
 import { useEffect, useState } from "react";
 
+// Import Packages
+import { useQuery } from "@tanstack/react-query";
+import PropTypes from "prop-types";
+
 // Import Background Image
 import Classes_Background from "../../../assets/Classes-Background/Classes_Background.jpg";
 
-// Import Components
-import ManagementClassDetailsContent from "./ManagementClassDetailsContent/ManagementClassDetailsContent";
-import ManagementClassKeyFeatures from "./ManagementClassKeyFeatures/ManagementClassKeyFeatures";
-import ClassDetailsContentEditModal from "./ManagementClassDetailsContent/ClassDetailsContentEditModal/ClassDetailsContentEditModal";
-import ClassDetailsKeyFeaturesEditModal from "./ManagementClassKeyFeatures/ClassDetailsKeyFeaturesEditModal/ClassDetailsKeyFeaturesEditModal";
-import ManagementClassPricing from "./ManagementClassPricing/ManagementClassPricing";
-import ClassDetailsPricingEditModal from "./ManagementClassPricing/ClassDetailsPricingEditModal/ClassDetailsPricingEditModal";
-import useAxiosPublic from "../../../Hooks/useAxiosPublic";
-import { useQuery } from "@tanstack/react-query";
+// Shared
 import Loading from "../../../Shared/Loading/Loading";
 import FetchingError from "../../../Shared/Component/FetchingError";
+
+// Import Hooks
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
+
+// Import Components
+import ManagementClassPricing from "./ManagementClassPricing/ManagementClassPricing";
 import ManagementClassSchedule from "./ManagementClassSchedule/ManagementClassSchedule";
-import ClassDetailsScheduleEditModal from "./ManagementClassSchedule/ClassDetailsScheduleEditModal/ClassDetailsScheduleEditModal";
-import ManagementClassMoreDetails from "./ManagementClassMoreDetails/ManagementClassMoreDetails";
 import ManagementClassTrainers from "./ManagementClassTrainers/ManagementClassTrainers";
+import ManagementClassMoreDetails from "./ManagementClassMoreDetails/ManagementClassMoreDetails";
+import ManagementClassTestimonial from "./ManagementClassTestimonial/ManagementClassTestimonial";
+import ManagementClassKeyFeatures from "./ManagementClassKeyFeatures/ManagementClassKeyFeatures";
+import ManagementClassDetailsContent from "./ManagementClassDetailsContent/ManagementClassDetailsContent";
+
+// Import Modals
+import ClassDetailsPricingEditModal from "./ManagementClassPricing/ClassDetailsPricingEditModal/ClassDetailsPricingEditModal";
+import ClassDetailsScheduleEditModal from "./ManagementClassSchedule/ClassDetailsScheduleEditModal/ClassDetailsScheduleEditModal";
 import ClassDetailsTrainersEditModal from "./ManagementClassTrainers/ClassDetailsTrainersEditModal/ClassDetailsTrainersEditModal";
+import ClassDetailsContentEditModal from "./ManagementClassDetailsContent/ClassDetailsContentEditModal/ClassDetailsContentEditModal";
 import ClassDetailsMoreDetailsEditModal from "./ManagementClassMoreDetails/ClassDetailsMoreDetailsEditModal/ClassDetailsMoreDetailsEditModal";
+import ClassDetailsKeyFeaturesEditModal from "./ManagementClassKeyFeatures/ClassDetailsKeyFeaturesEditModal/ClassDetailsKeyFeaturesEditModal";
+import ClassDetailsTestimonialsEditModal from "./ManagementClassTestimonial/ClassDetailsTestimonialsEditModal/ClassDetailsTestimonialsEditModal";
 
 const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
   const axiosPublic = useAxiosPublic();
@@ -151,6 +162,9 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
 
             {/* Classes Trainer */}
             <ManagementClassMoreDetails selectedClass={selectedClass} />
+
+            {/* Classes Testimonials */}
+            <ManagementClassTestimonial selectedClass={selectedClass} />
           </div>
         </div>
       </div>
@@ -206,8 +220,29 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
           Refetch={Refetch}
         />
       </dialog>
+
+      {/* Trainer Edit */}
+      <dialog id="Class_Testimonials_Edit_Modal" className="modal">
+        <ClassDetailsTestimonialsEditModal
+          selectedClass={selectedClass}
+          Refetch={Refetch}
+        />
+      </dialog>
     </div>
   );
+};
+
+// Prop Validation
+ClassDetailsManagement.propTypes = {
+  ClassDetailsData: PropTypes.arrayOf(PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    module: PropTypes.string.isRequired,
+    icon: PropTypes.string,
+    trainers: PropTypes.arrayOf(PropTypes.shape({
+      _id: PropTypes.string,
+    })),
+  })).isRequired,
+  Refetch: PropTypes.func.isRequired,
 };
 
 export default ClassDetailsManagement;
