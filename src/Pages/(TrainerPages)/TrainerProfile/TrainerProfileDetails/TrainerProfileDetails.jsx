@@ -1,5 +1,6 @@
 // Import Package
 import PropTypes from "prop-types";
+import { Tooltip } from "react-tooltip";
 
 // Importing icons for UI enhancement
 import {
@@ -10,7 +11,6 @@ import {
   FaHandshake,
 } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
-import { Tooltip } from "react-tooltip";
 import TrainerProfileDetailsUpdateModal from "./TrainerProfileDetailsUpdateModal/TrainerProfileDetailsUpdateModal";
 
 const TrainerProfileDetails = ({ TrainerDetails, refetch }) => {
@@ -249,7 +249,7 @@ TrainerProfileDetails.propTypes = {
     awards: PropTypes.arrayOf(
       PropTypes.shape({
         title: PropTypes.string,
-        year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Accepts both string and number
+        year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         organization: PropTypes.string.isRequired,
       })
     ),
