@@ -46,6 +46,7 @@ import AllExtraPageManagement from "../Pages/(AdminPanel)/AllExtraPageManagement
 import GalleryPageAdminControl from "../Pages/(AdminPanel)/GalleryPageAdminControl/GalleryPageAdminControl";
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
 import CommunityPostsManagement from "../Pages/(AdminPanel)/CommunityPostsManagement/CommunityPostsManagement";
+import AllClassBookings from "../Pages/(AdminPanel)/AllClassBookings/AllClassBookings";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -101,9 +102,13 @@ const AdminPanelLayout = () => {
     HomeWelcomeSectionData,
     TierUpgradePaymentData,
     HomeServicesSectionData,
+    ClassBookingRequestData,
     TrainerSessionRefundData,
     TrainerSessionActiveData,
+    ClassBookingRejectedData,
+    ClassBookingAcceptedData,
     TrainerSessionPaymentData,
+    ClassBookingCompletedData,
     DailyTierUpgradeRefundData,
     DailyTierUpgradePaymentData,
     TrainerSessionCompletedData,
@@ -213,6 +218,24 @@ const AdminPanelLayout = () => {
       title: "Trainer Sessions Bookings",
       content: (
         <AllTrainerBookings
+          AllTrainerBookingRequestData={AllTrainerBookingRequestData}
+          AllTrainerBookingHistoryData={AllTrainerBookingHistoryData}
+          AllTrainerBookingAcceptedData={AllTrainerBookingAcceptedData}
+          AllTrainerBookingCompletedData={AllTrainerBookingCompletedData}
+          AllTrainerBookingCancelledData={AllTrainerBookingCancelledData}
+          TrainerBookingRequestStatusData={TrainerBookingRequestStatusData}
+          TrainerBookingAcceptedStatusData={TrainerBookingAcceptedStatusData}
+          TrainerBookingCompletedStatusData={TrainerBookingCompletedStatusData}
+          TrainerBookingCancelledStatusData={TrainerBookingCancelledStatusData}
+        />
+      ),
+    },
+    {
+      id: "Class_Bookings",
+      Icon: booking,
+      title: "Class Bookings",
+      content: (
+        <AllClassBookings
           AllTrainerBookingRequestData={AllTrainerBookingRequestData}
           AllTrainerBookingHistoryData={AllTrainerBookingHistoryData}
           AllTrainerBookingAcceptedData={AllTrainerBookingAcceptedData}

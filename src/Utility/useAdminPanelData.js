@@ -345,6 +345,38 @@ const useAdminPanelData = () => {
     refetch: UserRefetch,
   } = useFetchData("UserData", `/Users?email=${user?.email}`);
 
+  // 1. Fetch Class Request
+  const {
+    data: ClassBookingRequestData,
+    isLoading: ClassBookingRequestIsLoading,
+    error: ClassBookingRequestError,
+    refetch: ClassBookingRequestRefetch,
+  } = useFetchData("ClassBookingRequestData", "/Class_Booking_Request");
+
+  // 2. Fetch Class Accepted
+  const {
+    data: ClassBookingAcceptedData,
+    isLoading: ClassBookingAcceptedIsLoading,
+    error: ClassBookingAcceptedError,
+    refetch: ClassBookingAcceptedRefetch,
+  } = useFetchData("ClassBookingAcceptedData", "/Class_Booking_Accepted");
+
+  // 3. Fetch Class Rejected
+  const {
+    data: ClassBookingRejectedData,
+    isLoading: ClassBookingRejectedIsLoading,
+    error: ClassBookingRejectedError,
+    refetch: ClassBookingRejectedRefetch,
+  } = useFetchData("ClassBookingRejectedData", "/Class_Booking_Rejected");
+
+  // 4. Fetch Class Completed
+  const {
+    data: ClassBookingCompletedData,
+    isLoading: ClassBookingCompletedIsLoading,
+    error: ClassBookingCompletedError,
+    refetch: ClassBookingCompletedRefetch,
+  } = useFetchData("ClassBookingCompletedData", "/Class_Booking_Completed");
+
   // Unified refetch function
   const refetchAll = async () => {
     await UserRefetch();
@@ -365,8 +397,12 @@ const useAdminPanelData = () => {
     await TierUpgradePaymentRefetch();
     await HomeWelcomeSectionRefetch();
     await HomeServicesSectionRefetch();
+    await ClassBookingRequestRefetch();
     await TrainerSessionRefundRefetch();
+    await ClassBookingAcceptedRefetch();
+    await ClassBookingRejectedRefetch();
     await TrainerSessionActiveRefetch();
+    await ClassBookingCompletedRefetch();
     await TrainerSessionPaymentRefetch();
     await DailyTierUpgradeRefundRefetch();
     await DailyTierUpgradePaymentRefetch();
@@ -405,9 +441,13 @@ const useAdminPanelData = () => {
     TierUpgradePaymentIsLoading ||
     HomeWelcomeSectionIsLoading ||
     HomeServicesSectionIsLoading ||
+    ClassBookingRequestIsLoading ||
+    ClassBookingRejectedIsLoading ||
+    ClassBookingAcceptedIsLoading ||
     TrainerSessionRefundIsLoading ||
     TrainerSessionActiveIsLoading ||
     TrainerSessionPaymentIsLoading ||
+    ClassBookingCompletedIsLoading ||
     DailyTierUpgradeRefundIsLoading ||
     TrainerSessionCompletedIsLoading ||
     DailyTierUpgradePaymentIsLoading ||
@@ -444,9 +484,13 @@ const useAdminPanelData = () => {
     TierUpgradePaymentError ||
     HomeWelcomeSectionError ||
     HomeServicesSectionError ||
+    ClassBookingRequestError ||
+    ClassBookingAcceptedError ||
+    ClassBookingRejectedError ||
     TrainerSessionRefundError ||
     TrainerSessionActiveError ||
     TrainerSessionPaymentError ||
+    ClassBookingCompletedError ||
     DailyTierUpgradeRefundError ||
     TrainerSessionCompletedError ||
     DailyTierUpgradePaymentError ||
@@ -489,10 +533,14 @@ const useAdminPanelData = () => {
     TierUpgradeRefundData,
     HomeWelcomeSectionData,
     TierUpgradePaymentData,
+    ClassBookingRequestData,
     HomeServicesSectionData,
     TrainerSessionRefundData,
     TrainerSessionActiveData,
+    ClassBookingRejectedData,
+    ClassBookingAcceptedData,
     TrainerSessionPaymentData,
+    ClassBookingCompletedData,
     DailyTierUpgradeRefundData,
     DailyTierUpgradePaymentData,
     TrainerSessionCompletedData,
