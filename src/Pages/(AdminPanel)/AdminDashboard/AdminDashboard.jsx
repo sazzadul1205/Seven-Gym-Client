@@ -10,6 +10,7 @@ import satisfaction from "../../../assets/AdminPanel/satisfaction.png";
 import dashboard from "../../../assets/AdminPanel/dashboard.png";
 import homepage from "../../../assets/AdminPanel/homepage.png";
 import costumer from "../../../assets/AdminPanel/costumer.png";
+import training from "../../../assets/AdminPanel/training.png";
 import invoice from "../../../assets/AdminPanel/invoice.png";
 import booking from "../../../assets/AdminPanel/booking.png";
 import gallery from "../../../assets/AdminPanel/gallery.png";
@@ -35,6 +36,8 @@ const AdminDashboard = ({
   TrainerSessionPaymentStatusData,
   TrainerSessionRefundStatusData,
   TrainerSessionActiveStatusData,
+  ClassBookingPaymentStatusData,
+  ClassBookingRefundStatusData,
   DailyTierUpgradePaymentData,
   DailyTierUpgradeRefundData,
   TestimonialsData,
@@ -70,6 +73,11 @@ const AdminDashboard = ({
       title: "Trainer Bookings",
       icon: booking,
     },
+    {
+      id: "Class_Bookings",
+      title: "Class Bookings",
+      icon: training,
+    },
     { id: "Trainer_Schedule", title: "Trainer Schedule", icon: weekly },
     { id: "Home_Page_View", title: "Home Page View", icon: homepage },
     { id: "Gallery_Page_View", title: "Gallery Page View", icon: gallery },
@@ -94,6 +102,8 @@ const AdminDashboard = ({
         AllTrainersData={AllTrainersData}
         DailyTierUpgradeRefundData={DailyTierUpgradeRefundData}
         DailyTierUpgradePaymentData={DailyTierUpgradePaymentData}
+        ClassBookingRefundStatusData={ClassBookingRefundStatusData}
+        ClassBookingPaymentStatusData={ClassBookingPaymentStatusData}
         TrainerSessionRefundStatusData={TrainerSessionRefundStatusData}
         TrainerSessionActiveStatusData={TrainerSessionActiveStatusData}
         TrainerSessionPaymentStatusData={TrainerSessionPaymentStatusData}
@@ -175,4 +185,4 @@ AdminDashboard.propTypes = {
   AllUsersData: PropTypes.array,
 };
 
-export default AdminDashboard;
+export default AdminDashboard;s

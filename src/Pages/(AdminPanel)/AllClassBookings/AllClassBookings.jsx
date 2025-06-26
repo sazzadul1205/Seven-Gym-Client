@@ -8,6 +8,7 @@ import AllClassBookingCompleted from "./AllClassBookingCompleted/AllClassBooking
 import AllClassBookingRejected from "./AllClassBookingRejected/AllClassBookingRejected";
 import AllClassBookingPayedRecept from "./AllClassBookingPayedRecept/AllClassBookingPayedRecept";
 import AllClassBookingRefundedRecept from "./AllClassBookingRefundedRecept/AllClassBookingRefundedRecept";
+import ClassBookingChart from "./ClassBookingChart/ClassBookingChart";
 
 // Define all tabs clearly
 const TABS = [
@@ -26,8 +27,10 @@ const AllClassBookings = ({
   ClassBookingRejectedData,
   ClassBookingAcceptedData,
   ClassBookingCompletedData,
+  ClassBookingRefundStatusData,
+  ClassBookingPaymentStatusData,
 }) => {
-  const [activeTab, setActiveTab] = useState("request");
+  const [activeTab, setActiveTab] = useState("Request");
   const [isLoading, setIsLoading] = useState(false);
 
   // Show loading spinner briefly when switching tabs
@@ -84,6 +87,11 @@ const AllClassBookings = ({
 
   return (
     <div className="text-black">
+      <ClassBookingChart
+        ClassBookingRefundStatusData={ClassBookingRefundStatusData}
+        ClassBookingPaymentStatusData={ClassBookingPaymentStatusData}
+      />
+
       {/* Tab Buttons */}
       <div className="flex gap-2 border-b">
         {TABS.map((tab) => (
@@ -118,12 +126,14 @@ const AllClassBookings = ({
 
 // Prop Validation
 AllClassBookings.propTypes = {
-  ClassBookingPayedData: PropTypes.array.isRequired,
-  ClassBookingRefundData: PropTypes.array.isRequired,
-  ClassBookingRequestData: PropTypes.array.isRequired,
-  ClassBookingRejectedData: PropTypes.array.isRequired,
-  ClassBookingAcceptedData: PropTypes.array.isRequired,
-  ClassBookingCompletedData: PropTypes.array.isRequired,
+  ClassBookingPayedData: PropTypes.array,
+  ClassBookingRefundData: PropTypes.array,
+  ClassBookingRequestData: PropTypes.array,
+  ClassBookingRejectedData: PropTypes.array,
+  ClassBookingAcceptedData: PropTypes.array,
+  ClassBookingCompletedData: PropTypes.array,
+  ClassBookingRefundStatusData: PropTypes.array,
+  ClassBookingPaymentStatusData: PropTypes.array,
 };
 
 export default AllClassBookings;

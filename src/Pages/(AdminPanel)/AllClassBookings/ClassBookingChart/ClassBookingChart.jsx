@@ -1,64 +1,58 @@
-import { useMemo, useState, useCallback } from "react";
+import { useCallback, useMemo, useState } from "react";
+
+// Import Packages
 import PropTypes from "prop-types";
+
+// Import ReChart Components
 import {
   LineChart,
   Line,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
+  CartesianGrid,
   Legend,
   ResponsiveContainer,
 } from "recharts";
 
-// Helpers
+// Get number of days in a given month/year
 const getDaysInMonth = (year, month) => new Date(year, month, 0).getDate();
 
+// Extract year, month, day from "YYYY-MM-DD" formatted string
 const extractYMDFromDDMMYYYY = (dateStr) => {
-  const [dd, mm, yyyy] = dateStr.split("-");
+  const [yyyy, mm, dd] = dateStr.split("-");
   return { year: yyyy, month: mm, day: dd };
 };
 
-// Custom tooltip formatter for amount chart
+// Format tooltip to show currency value with dollar symbol
 const formatCurrencyTooltip = (value, name) => {
   return [`${value} $`, name];
 };
 
-// Main Component
-const TrainerBookingChart = ({
-  TrainerBookingRequestStatusData = [],
-  TrainerBookingAcceptedStatusData = [],
-  TrainerBookingCompletedStatusData = [],
-  TrainerBookingCancelledStatusData = [],
+const ClassBookingChart = ({
+  ClassBookingRefundStatusData,
+  ClassBookingPaymentStatusData,
 }) => {
+  // Combine all dates from both datasets
   const allDates = useMemo(
-    () => [
-      ...TrainerBookingRequestStatusData,
-      ...TrainerBookingAcceptedStatusData,
-      ...TrainerBookingCompletedStatusData,
-      ...TrainerBookingCancelledStatusData,
-    ],
-    [
-      TrainerBookingRequestStatusData,
-      TrainerBookingAcceptedStatusData,
-      TrainerBookingCompletedStatusData,
-      TrainerBookingCancelledStatusData,
-    ]
+    () => [...ClassBookingRefundStatusData, ...ClassBookingPaymentStatusData],
+    [ClassBookingRefundStatusData, ClassBookingPaymentStatusData]
   );
 
+  // Extract unique months in "YYYY-MM" format from the data
   const allMonths = useMemo(() => {
     const months = new Set();
     allDates.forEach((item) => {
-      const rawDate =
-        item.date || item.acceptedDate || item.endDate || item.droppedDate;
+      const rawDate = item.date;
       if (rawDate) {
         const { year, month } = extractYMDFromDDMMYYYY(rawDate);
         months.add(`${year}-${month}`);
       }
     });
-    return Array.from(months).sort().reverse();
+    return Array.from(months).sort().reverse(); // Sort for dropdown
   }, [allDates]);
 
+  // Default to current month on initial render
   const [selectedMonth, setSelectedMonth] = useState(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
@@ -67,19 +61,21 @@ const TrainerBookingChart = ({
     )}`;
   });
 
+  // Generate all full dates (e.g., 2025-06-01 to 2025-06-30) for the selected month
   const fullDates = useMemo(() => {
     const [year, month] = selectedMonth.split("-");
     const days = getDaysInMonth(parseInt(year), parseInt(month));
     return Array.from({ length: days }, (_, i) => {
       const day = String(i + 1).padStart(2, "0");
-      return `${day}-${month}-${year}`;
+      return `${year}-${month}-${day}`;
     });
   }, [selectedMonth]);
 
+  // Filter data based on the selected month
   const filterDataByMonth = useCallback(
-    (data, dateKey) =>
+    (data) =>
       data.filter((d) => {
-        const rawDate = d[dateKey];
+        const rawDate = d.date;
         if (!rawDate) return false;
         const { year, month } = extractYMDFromDDMMYYYY(rawDate);
         return `${year}-${month}` === selectedMonth;
@@ -87,48 +83,31 @@ const TrainerBookingChart = ({
     [selectedMonth]
   );
 
+  // Build chart-ready data combining refunds and payments by date
   const chartData = useMemo(() => {
-    const request = filterDataByMonth(TrainerBookingRequestStatusData, "date");
-    const accepted = filterDataByMonth(
-      TrainerBookingAcceptedStatusData,
-      "acceptedDate"
-    );
-    const completed = filterDataByMonth(
-      TrainerBookingCompletedStatusData,
-      "endDate"
-    );
-    const cancelled = filterDataByMonth(
-      TrainerBookingCancelledStatusData,
-      "droppedDate"
-    );
+    const refunds = filterDataByMonth(ClassBookingRefundStatusData);
+    const payments = filterDataByMonth(ClassBookingPaymentStatusData);
 
     return fullDates.map((date) => {
-      const r = request.find((d) => d.date === date) || {};
-      const a = accepted.find((d) => d.acceptedDate === date) || {};
-      const c = completed.find((d) => d.endDate === date) || {};
-      const x = cancelled.find((d) => d.droppedDate === date) || {};
+      const r = refunds.find((d) => d.date === date) || {};
+      const p = payments.find((d) => d.date === date) || {};
 
       return {
         date,
-        requestPrice: r.totalPrice || 0,
-        acceptedPrice: a.totalPrice || 0,
-        completedPrice: c.totalPrice || 0,
-        refundedAmount: x.refundedAmount || 0,
-        requestSessions: r.sessions || 0,
-        acceptedSessions: a.sessions || 0,
-        completedSessions: c.sessions || 0,
-        cancelledSessions: x.sessions || 0,
+        paymentAmount: p.totalPrice || 0,
+        refundAmount: r.refundAmount || 0,
+        paymentCount: p.count || 0,
+        refundCount: r.count || 0,
       };
     });
   }, [
     fullDates,
     filterDataByMonth,
-    TrainerBookingRequestStatusData,
-    TrainerBookingAcceptedStatusData,
-    TrainerBookingCompletedStatusData,
-    TrainerBookingCancelledStatusData,
+    ClassBookingRefundStatusData,
+    ClassBookingPaymentStatusData,
   ]);
 
+  // Display month label like "June 2025"
   const monthLabel = useMemo(() => {
     const [year, month] = selectedMonth.split("-");
     const label = new Date(year, parseInt(month) - 1).toLocaleString(
@@ -142,7 +121,7 @@ const TrainerBookingChart = ({
 
   return (
     <div className="w-full space-y-10 bg-gray-200/20">
-      {/* Header & Month Selector */}
+      {/* Header and Month Selector */}
       <div className="flex justify-between items-center mb-4 bg-gray-400 px-5 py-2 rounded">
         <h3 className="text-white font-semibold text-lg">
           {monthLabel} - Trainer Booking Overview
@@ -172,77 +151,55 @@ const TrainerBookingChart = ({
         </div>
       </div>
 
-      {/* Line Chart: Booking Amounts */}
+      {/* Booking & Refund Amounts Line Chart */}
       <div>
-        <h4 className="text-lg font-semibold mb-2">Booking Amounts</h4>
+        <h4 className="text-lg font-semibold mb-2 pl-2">
+          Booking & Refund Amounts
+        </h4>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" tickFormatter={(d) => d.split("-")[0]} />
+            <XAxis dataKey="date" tickFormatter={(d) => d.split("-")[2]} />
             <YAxis />
             <Tooltip formatter={formatCurrencyTooltip} />
             <Legend />
             <Line
               type="monotone"
-              dataKey="requestPrice"
-              stroke="#8884d8"
-              name="Requested"
-            />
-            <Line
-              type="monotone"
-              dataKey="acceptedPrice"
+              dataKey="paymentAmount"
               stroke="#82ca9d"
-              name="Accepted"
+              name="Total Payments"
             />
             <Line
               type="monotone"
-              dataKey="completedPrice"
-              stroke="#ffc658"
-              name="Completed"
-            />
-            <Line
-              type="monotone"
-              dataKey="refundedAmount"
+              dataKey="refundAmount"
               stroke="#ff7f7f"
-              name="Refunded"
+              name="Total Refunds"
             />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
-      {/* Line Chart: Sessions Count */}
+      {/* Booking & Refund Counts Line Chart */}
       <div>
-        <h4 className="text-lg font-semibold mb-2">Sessions Count</h4>
+        <h4 className="text-lg font-semibold mb-2 pl-2">Transaction Counts</h4>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" tickFormatter={(d) => d.split("-")[0]} />
+            <XAxis dataKey="date" tickFormatter={(d) => d.split("-")[2]} />
             <YAxis />
             <Tooltip />
             <Legend />
             <Line
               type="monotone"
-              dataKey="requestSessions"
+              dataKey="paymentCount"
               stroke="#8884d8"
-              name="Requested Sessions"
+              name="Payment Count"
             />
             <Line
               type="monotone"
-              dataKey="acceptedSessions"
-              stroke="#82ca9d"
-              name="Accepted Sessions"
-            />
-            <Line
-              type="monotone"
-              dataKey="completedSessions"
+              dataKey="refundCount"
               stroke="#ffc658"
-              name="Completed Sessions"
-            />
-            <Line
-              type="monotone"
-              dataKey="cancelledSessions"
-              stroke="#ff7f7f"
-              name="Cancelled Sessions"
+              name="Refund Count"
             />
           </LineChart>
         </ResponsiveContainer>
@@ -251,12 +208,22 @@ const TrainerBookingChart = ({
   );
 };
 
-// Prop Validation
-TrainerBookingChart.propTypes = {
-  TrainerBookingRequestStatusData: PropTypes.array,
-  TrainerBookingAcceptedStatusData: PropTypes.array,
-  TrainerBookingCompletedStatusData: PropTypes.array,
-  TrainerBookingCancelledStatusData: PropTypes.array,
+// PropTypes validation
+ClassBookingChart.propTypes = {
+  ClassBookingRefundStatusData: PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.string.isRequired,
+      refundAmount: PropTypes.number,
+      count: PropTypes.number,
+    })
+  ).isRequired,
+  ClassBookingPaymentStatusData: PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.string.isRequired,
+      totalPrice: PropTypes.number,
+      count: PropTypes.number,
+    })
+  ).isRequired,
 };
 
-export default TrainerBookingChart;
+export default ClassBookingChart;

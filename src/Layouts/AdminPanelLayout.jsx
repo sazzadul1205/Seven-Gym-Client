@@ -116,8 +116,10 @@ const AdminPanelLayout = () => {
     DailyTierUpgradePaymentData,
     TrainerSessionCompletedData,
     AllTrainerBookingRequestData,
+    ClassBookingRefundStatusData,
     AllTrainerBookingHistoryData,
     AllTrainerBookingAcceptedData,
+    ClassBookingPaymentStatusData,
     TrainerSessionRefundStatusData,
     TrainerSessionActiveStatusData,
     AllTrainerBookingCompletedData,
@@ -155,6 +157,8 @@ const AdminPanelLayout = () => {
           TrainerBookingRequestStatusData={TrainerBookingRequestStatusData}
           TrainerSessionRefundStatusData={TrainerSessionRefundStatusData}
           TrainerSessionActiveStatusData={TrainerSessionActiveStatusData}
+          ClassBookingPaymentStatusData={ClassBookingPaymentStatusData}
+          ClassBookingRefundStatusData={ClassBookingRefundStatusData}
           DailyTierUpgradePaymentData={DailyTierUpgradePaymentData}
           DailyTierUpgradeRefundData={DailyTierUpgradeRefundData}
           TestimonialsData={TestimonialsData}
@@ -245,6 +249,8 @@ const AdminPanelLayout = () => {
           ClassBookingRejectedData={ClassBookingRejectedData}
           ClassBookingAcceptedData={ClassBookingAcceptedData}
           ClassBookingCompletedData={ClassBookingCompletedData}
+          ClassBookingRefundStatusData={ClassBookingRefundStatusData}
+          ClassBookingPaymentStatusData={ClassBookingPaymentStatusData}
         />
       ),
     },

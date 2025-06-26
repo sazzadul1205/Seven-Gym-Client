@@ -52,6 +52,8 @@ const AdminDashboardCards = ({
   AllTrainersData,
   DailyTierUpgradeRefundData,
   DailyTierUpgradePaymentData,
+  ClassBookingRefundStatusData,
+  ClassBookingPaymentStatusData,
   TrainerSessionRefundStatusData,
   TrainerSessionActiveStatusData,
   TrainerSessionPaymentStatusData,
@@ -64,7 +66,9 @@ const AdminDashboardCards = ({
     TrainerSessionPaymentStatusData,
     TrainerSessionCompletedStatusData,
     DailyTierUpgradePaymentData,
-    DailyTierUpgradeRefundData
+    DailyTierUpgradeRefundData,
+    ClassBookingRefundStatusData,
+    ClassBookingPaymentStatusData
   );
 
   const [selectedMonth, setSelectedMonth] = useState(
@@ -122,13 +126,28 @@ const AdminDashboardCards = ({
     (item) => item.date.startsWith(previousMonth)
   );
 
-  // NEW: Active sessions filtering
   const filteredTrainerActive = filterByMonth(
     TrainerSessionActiveStatusData,
     "date"
   );
   const filteredTrainerActivePrev = TrainerSessionActiveStatusData.filter(
     (item) => item.date.startsWith(previousMonth)
+  );
+
+  const filteredClassPayments = filterByMonth(
+    ClassBookingPaymentStatusData,
+    "date"
+  );
+  const filteredClassPaymentsPrev = ClassBookingPaymentStatusData.filter(
+    (item) => item.date.startsWith(previousMonth)
+  );
+
+  const filteredClassRefunds = filterByMonth(
+    ClassBookingRefundStatusData,
+    "date"
+  );
+  const filteredClassRefundsPrev = ClassBookingRefundStatusData.filter((item) =>
+    item.date.startsWith(previousMonth)
   );
 
   // Sum helpers
@@ -180,6 +199,18 @@ const AdminDashboardCards = ({
     "totalPaid"
   );
 
+  const totalClassPayments = sumField(filteredClassPayments, "totalPrice");
+  const totalClassPaymentsPrev = sumField(
+    filteredClassPaymentsPrev,
+    "totalPrice"
+  );
+
+  const totalClassRefunds = sumField(filteredClassRefunds, "refundAmount");
+  const totalClassRefundsPrev = sumField(
+    filteredClassRefundsPrev,
+    "refundAmount"
+  );
+
   // For users and trainers, just simple difference - no dates
   const usersCount = AllUsersData.length;
   const trainersCount = AllTrainersData.length;
@@ -218,6 +249,15 @@ const AdminDashboardCards = ({
   const activePaymentsChange = calculateChange(
     totalTrainerActivePayments,
     totalTrainerActivePaymentsPrev
+  );
+
+  const classPaymentsChange = calculateChange(
+    totalClassPayments,
+    totalClassPaymentsPrev
+  );
+  const classRefundsChange = calculateChange(
+    totalClassRefunds,
+    totalClassRefundsPrev
   );
 
   return (
@@ -308,6 +348,21 @@ const AdminDashboardCards = ({
           currency
           change={activePaymentsChange}
         />
+        <Card
+          icon={FiCreditCard}
+          title="Class Booking Payments"
+          value={totalClassPayments}
+          currency
+          change={classPaymentsChange}
+        />
+
+        <Card
+          icon={FiRefreshCcw}
+          title="Class Booking Refunds"
+          value={totalClassRefunds}
+          currency
+          change={classRefundsChange}
+        />
       </div>
     </div>
   );
@@ -319,39 +374,51 @@ AdminDashboardCards.propTypes = {
   AllTrainersData: PropTypes.arrayOf(PropTypes.object).isRequired,
   DailyTierUpgradeRefundData: PropTypes.arrayOf(
     PropTypes.shape({
-      _id: PropTypes.string,
-      totalRefunded: PropTypes.number,
+      _id: PropTypes.string.isRequired,
+      totalRefunded: PropTypes.number.isRequired,
     })
   ).isRequired,
   DailyTierUpgradePaymentData: PropTypes.arrayOf(
     PropTypes.shape({
-      _id: PropTypes.string,
-      totalRevenue: PropTypes.number,
+      _id: PropTypes.string.isRequired,
+      totalRevenue: PropTypes.number.isRequired,
     })
   ).isRequired,
   TrainerSessionRefundStatusData: PropTypes.arrayOf(
     PropTypes.shape({
-      date: PropTypes.string,
-      totalRefunded: PropTypes.number,
+      date: PropTypes.string.isRequired,
+      totalRefunded: PropTypes.number.isRequired,
     })
   ).isRequired,
   TrainerSessionActiveStatusData: PropTypes.arrayOf(
     PropTypes.shape({
-      date: PropTypes.string,
-      count: PropTypes.number,
-      totalPaid: PropTypes.number,
+      date: PropTypes.string.isRequired,
+      count: PropTypes.number.isRequired,
+      totalPaid: PropTypes.number.isRequired,
     })
   ).isRequired,
   TrainerSessionPaymentStatusData: PropTypes.arrayOf(
     PropTypes.shape({
-      date: PropTypes.string,
-      totalPaid: PropTypes.number,
+      date: PropTypes.string.isRequired,
+      totalPaid: PropTypes.number.isRequired,
     })
   ).isRequired,
   TrainerSessionCompletedStatusData: PropTypes.arrayOf(
     PropTypes.shape({
-      date: PropTypes.string,
-      count: PropTypes.number,
+      date: PropTypes.string.isRequired,
+      count: PropTypes.number.isRequired,
+    })
+  ).isRequired,
+  ClassBookingRefundStatusData: PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.string.isRequired,
+      refundAmount: PropTypes.number.isRequired,
+    })
+  ).isRequired,
+  ClassBookingPaymentStatusData: PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.string.isRequired,
+      totalPrice: PropTypes.number.isRequired,
     })
   ).isRequired,
 };

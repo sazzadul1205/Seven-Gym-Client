@@ -393,6 +393,28 @@ const useAdminPanelData = () => {
     refetch: ClassBookingRefundRefetch,
   } = useFetchData("ClassBookingRefundData", "/Class_Booking_Refund");
 
+  // 41. Fetch Class Refund
+  const {
+    data: ClassBookingPaymentStatusData,
+    isLoading: ClassBookingPaymentStatusIsLoading,
+    error: ClassBookingPaymentStatusError,
+    refetch: ClassBookingPaymentStatusRefetch,
+  } = useFetchData(
+    "ClassBookingPaymentStatusData",
+    "/Class_Booking_Payment/DailyStatus"
+  );
+
+  // 41. Fetch Class Refund
+  const {
+    data: ClassBookingRefundStatusData,
+    isLoading: ClassBookingRefundStatusIsLoading,
+    error: ClassBookingRefundStatusError,
+    refetch: ClassBookingRefundStatusRefetch,
+  } = useFetchData(
+    "ClassBookingRefundStatusData",
+    "/Class_Booking_Refund/DailyStatus"
+  );
+
   // Unified refetch function
   const refetchAll = async () => {
     await UserRefetch();
@@ -427,7 +449,9 @@ const useAdminPanelData = () => {
     await TrainerSessionCompletedRefetch();
     await AllTrainerBookingHistoryRefetch();
     await AllTrainerBookingRequestRefetch();
+    await ClassBookingRefundStatusRefetch();
     await AllTrainerBookingAcceptedRefetch();
+    await ClassBookingPaymentStatusRefetch();
     await TrainerSessionRefundStatusRefetch();
     await TrainerSessionActiveStatusRefetch();
     await AllTrainerBookingCompletedRefetch();
@@ -473,6 +497,8 @@ const useAdminPanelData = () => {
     DailyTierUpgradePaymentIsLoading ||
     AllTrainerBookingHistoryIsLoading ||
     AllTrainerBookingRequestIsLoading ||
+    ClassBookingRefundStatusIsLoading ||
+    ClassBookingPaymentStatusIsLoading ||
     AllTrainerBookingAcceptedIsLoading ||
     TrainerSessionRefundStatusIsLoading ||
     TrainerSessionActiveStatusIsLoading ||
@@ -518,7 +544,9 @@ const useAdminPanelData = () => {
     DailyTierUpgradePaymentError ||
     AllTrainerBookingHistoryError ||
     AllTrainerBookingRequestError ||
+    ClassBookingRefundStatusError ||
     AllTrainerBookingAcceptedError ||
+    ClassBookingPaymentStatusError ||
     TrainerSessionRefundStatusError ||
     TrainerSessionActiveStatusError ||
     AllTrainerBookingCompletedError ||
@@ -570,8 +598,10 @@ const useAdminPanelData = () => {
     TrainerSessionCompletedData,
     AllTrainerBookingRequestData,
     AllTrainerBookingHistoryData,
+    ClassBookingRefundStatusData,
     AllTrainerBookingAcceptedData,
     TrainerSessionRefundStatusData,
+    ClassBookingPaymentStatusData,
     TrainerSessionActiveStatusData,
     AllTrainerBookingCompletedData,
     AllTrainerBookingCancelledData,
