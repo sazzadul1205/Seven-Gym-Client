@@ -100,8 +100,10 @@ const AdminPanelLayout = () => {
     TrainersScheduleData,
     HomeBannerSectionData,
     TierUpgradeRefundData,
+    ClassBookingPayedData,
     HomeWelcomeSectionData,
     TierUpgradePaymentData,
+    ClassBookingRefundData,
     HomeServicesSectionData,
     ClassBookingRequestData,
     TrainerSessionRefundData,
@@ -237,6 +239,8 @@ const AdminPanelLayout = () => {
       title: "Class Bookings",
       content: (
         <AllClassBookings
+          ClassBookingPayedData={ClassBookingPayedData}
+          ClassBookingRefundData={ClassBookingRefundData}
           ClassBookingRequestData={ClassBookingRequestData}
           ClassBookingRejectedData={ClassBookingRejectedData}
           ClassBookingAcceptedData={ClassBookingAcceptedData}

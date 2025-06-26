@@ -345,7 +345,7 @@ const useAdminPanelData = () => {
     refetch: UserRefetch,
   } = useFetchData("UserData", `/Users?email=${user?.email}`);
 
-  // 1. Fetch Class Request
+  // 36. Fetch Class Request
   const {
     data: ClassBookingRequestData,
     isLoading: ClassBookingRequestIsLoading,
@@ -353,7 +353,7 @@ const useAdminPanelData = () => {
     refetch: ClassBookingRequestRefetch,
   } = useFetchData("ClassBookingRequestData", "/Class_Booking_Request");
 
-  // 2. Fetch Class Accepted
+  // 37. Fetch Class Accepted
   const {
     data: ClassBookingAcceptedData,
     isLoading: ClassBookingAcceptedIsLoading,
@@ -361,7 +361,7 @@ const useAdminPanelData = () => {
     refetch: ClassBookingAcceptedRefetch,
   } = useFetchData("ClassBookingAcceptedData", "/Class_Booking_Accepted");
 
-  // 3. Fetch Class Rejected
+  // 38. Fetch Class Rejected
   const {
     data: ClassBookingRejectedData,
     isLoading: ClassBookingRejectedIsLoading,
@@ -369,13 +369,29 @@ const useAdminPanelData = () => {
     refetch: ClassBookingRejectedRefetch,
   } = useFetchData("ClassBookingRejectedData", "/Class_Booking_Rejected");
 
-  // 4. Fetch Class Completed
+  // 39. Fetch Class Completed
   const {
     data: ClassBookingCompletedData,
     isLoading: ClassBookingCompletedIsLoading,
     error: ClassBookingCompletedError,
     refetch: ClassBookingCompletedRefetch,
   } = useFetchData("ClassBookingCompletedData", "/Class_Booking_Completed");
+
+  // 40. Fetch Class Payed
+  const {
+    data: ClassBookingPayedData,
+    isLoading: ClassBookingPayedIsLoading,
+    error: ClassBookingPayedError,
+    refetch: ClassBookingPayedRefetch,
+  } = useFetchData("ClassBookingPayedData", "/Class_Booking_Payment");
+
+  // 41. Fetch Class Refund
+  const {
+    data: ClassBookingRefundData,
+    isLoading: ClassBookingRefundIsLoading,
+    error: ClassBookingRefundError,
+    refetch: ClassBookingRefundRefetch,
+  } = useFetchData("ClassBookingRefundData", "/Class_Booking_Refund");
 
   // Unified refetch function
   const refetchAll = async () => {
@@ -394,6 +410,8 @@ const useAdminPanelData = () => {
     await TrainersScheduleRefetch();
     await HomeBannerSectionRefetch();
     await TierUpgradeRefundRefetch();
+    await ClassBookingPayedRefetch();
+    await ClassBookingRefundRefetch();
     await TierUpgradePaymentRefetch();
     await HomeWelcomeSectionRefetch();
     await HomeServicesSectionRefetch();
@@ -438,6 +456,8 @@ const useAdminPanelData = () => {
     TrainersScheduleIsLoading ||
     TierUpgradeRefundIsLoading ||
     HomeBannerSectionIsLoading ||
+    ClassBookingPayedIsLoading ||
+    ClassBookingRefundIsLoading ||
     TierUpgradePaymentIsLoading ||
     HomeWelcomeSectionIsLoading ||
     HomeServicesSectionIsLoading ||
@@ -481,8 +501,10 @@ const useAdminPanelData = () => {
     TrainersScheduleError ||
     HomeBannerSectionError ||
     TierUpgradeRefundError ||
+    ClassBookingPayedError ||
     TierUpgradePaymentError ||
     HomeWelcomeSectionError ||
+    ClassBookingRefundError ||
     HomeServicesSectionError ||
     ClassBookingRequestError ||
     ClassBookingAcceptedError ||
@@ -530,8 +552,10 @@ const useAdminPanelData = () => {
     CommunityPostsData,
     TrainersScheduleData,
     HomeBannerSectionData,
+    ClassBookingPayedData,
     TierUpgradeRefundData,
     HomeWelcomeSectionData,
+    ClassBookingRefundData,
     TierUpgradePaymentData,
     ClassBookingRequestData,
     HomeServicesSectionData,

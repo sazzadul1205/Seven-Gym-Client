@@ -6,6 +6,8 @@ import AllClassBookingRequest from "./AllClassBookingRequest/AllClassBookingRequ
 import AllClassBookingAccepted from "./AllClassBookingAccepted/AllClassBookingAccepted";
 import AllClassBookingCompleted from "./AllClassBookingCompleted/AllClassBookingCompleted";
 import AllClassBookingRejected from "./AllClassBookingRejected/AllClassBookingRejected";
+import AllClassBookingPayedRecept from "./AllClassBookingPayedRecept/AllClassBookingPayedRecept";
+import AllClassBookingRefundedRecept from "./AllClassBookingRefundedRecept/AllClassBookingRefundedRecept";
 
 // Define all tabs clearly
 const TABS = [
@@ -13,9 +15,13 @@ const TABS = [
   { key: "Accepted", label: "Class Accepted Bookings" },
   { key: "Completed", label: "Class Completed Bookings" },
   { key: "Rejected", label: "Class Rejected Bookings" },
+  { key: "Payed", label: "Class Payed Recept" },
+  { key: "Refunded", label: "Class Refunded Recept" },
 ];
 
 const AllClassBookings = ({
+  ClassBookingPayedData,
+  ClassBookingRefundData,
   ClassBookingRequestData,
   ClassBookingRejectedData,
   ClassBookingAcceptedData,
@@ -24,12 +30,12 @@ const AllClassBookings = ({
   const [activeTab, setActiveTab] = useState("request");
   const [isLoading, setIsLoading] = useState(false);
 
-// Show loading spinner briefly when switching tabs
-useEffect(() => {
+  // Show loading spinner briefly when switching tabs
+  useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => setIsLoading(false), 300);
     return () => clearTimeout(timer);
-}, [activeTab]);
+  }, [activeTab]);
 
   // Tab rendering logic
   const renderTabContent = () => {
@@ -56,6 +62,18 @@ useEffect(() => {
         return (
           <AllClassBookingRejected
             ClassBookingRejectedData={ClassBookingRejectedData}
+          />
+        );
+      case "Payed":
+        return (
+          <AllClassBookingPayedRecept
+            ClassBookingPayedData={ClassBookingPayedData}
+          />
+        );
+      case "Refunded":
+        return (
+          <AllClassBookingRefundedRecept
+            ClassBookingRefundData={ClassBookingRefundData}
           />
         );
 
@@ -100,6 +118,8 @@ useEffect(() => {
 
 // Prop Validation
 AllClassBookings.propTypes = {
+  ClassBookingPayedData: PropTypes.array.isRequired,
+  ClassBookingRefundData: PropTypes.array.isRequired,
   ClassBookingRequestData: PropTypes.array.isRequired,
   ClassBookingRejectedData: PropTypes.array.isRequired,
   ClassBookingAcceptedData: PropTypes.array.isRequired,
