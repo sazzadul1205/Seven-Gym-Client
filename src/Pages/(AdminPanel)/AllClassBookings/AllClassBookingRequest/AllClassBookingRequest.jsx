@@ -85,24 +85,13 @@ const AllClassBookingRequest = ({ ClassBookingRequestData }) => {
   ]);
 
   return (
-    <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen text-black">
-      {/* Header Section */}
-      <div className="flex md:block items-center md:mx-auto md:text-center space-y-1 py-4 px-2">
-        {/* Title Cars */}
-        <div>
-          {/* Title */}
-          <h3 className="text-xl md:text-2xl sm:text-3xl font-bold text-gray-800">
-            Class Booking Requests
-          </h3>
-
-          {/* Sub Title */}
-          <p className="text-black text-sm md:text-base mt-1">
-            Manage and respond to client class bookings
-          </p>
-        </div>
+    <>
+      {/* Page Header */}
+      <div className="bg-gray-400 py-2">
+        <h3 className="font-semibold text-white text-center text-lg">
+          All Class Booking Request
+        </h3>
       </div>
-
-      <div className="mx-auto bg-white w-1/3 p-[1px] mb-3" />
 
       {/* Filter Section */}
       <div className="flex md:flex-row flex-col md:flex-wrap justify-center gap-4 w-full p-4 bg-gray-400 border border-t-white">
@@ -281,7 +270,7 @@ const AllClassBookingRequest = ({ ClassBookingRequestData }) => {
           </tbody>
         </table>
       </div>
-    </div>
+    </>
   );
 };
 
