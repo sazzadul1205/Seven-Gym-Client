@@ -234,14 +234,18 @@ const ClassDetailsManagement = ({ ClassDetailsData, Refetch }) => {
 
 // Prop Validation
 ClassDetailsManagement.propTypes = {
-  ClassDetailsData: PropTypes.arrayOf(PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    module: PropTypes.string.isRequired,
-    icon: PropTypes.string,
-    trainers: PropTypes.arrayOf(PropTypes.shape({
+  ClassDetailsData: PropTypes.arrayOf(
+    PropTypes.shape({
       _id: PropTypes.string,
-    })),
-  })).isRequired,
+      module: PropTypes.string,
+      icon: PropTypes.string,
+      trainers: PropTypes.arrayOf(
+        PropTypes.shape({
+          _id: PropTypes.string,
+        })
+      ),
+    })
+  ),
   Refetch: PropTypes.func.isRequired,
 };
 

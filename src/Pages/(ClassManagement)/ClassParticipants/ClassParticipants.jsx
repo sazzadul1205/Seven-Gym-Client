@@ -1,13 +1,26 @@
-import React, { useState, useMemo } from "react";
-import TrainerBookingRequestUserBasicInfo from "../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
-import CachedUserInfo from "../../(AdminPanel)/AllTrainerBookings/CachedUserInfo";
+import { useMemo, useState } from "react";
+
+// Import Package
 import { format, parse } from "date-fns";
 import { Tooltip } from "react-tooltip";
+import PropTypes from "prop-types";
+import Swal from "sweetalert2";
+
+// Import Icons
 import { FaInfo, FaRegClock, FaRegTrashAlt } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
+
+// import Hooks
 import useAxiosPublic from "../../../Hooks/useAxiosPublic";
+
+// import Components 
+import CachedUserInfo from "../../(AdminPanel)/AllTrainerBookings/CachedUserInfo";
+import TrainerBookingRequestUserBasicInfo from "../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestUserBasicInfo/TrainerBookingRequestUserBasicInfo";
+
+// Import Reason
 import { getRejectionReason } from "../../(TrainerPages)/TrainerBookingRequest/TrainerBookingRequestButton/getRejectionReasonPrompt";
-import Swal from "sweetalert2";
+
+// Import Modal
 import ClassAcceptedSetTimeModal from "../ClassAccepted/ClassAcceptedSetTimeModal/ClassAcceptedSetTimeModal";
 import ClassAcceptedDetailsModal from "../ClassAccepted/ClassAcceptedDetailsModal/ClassAcceptedDetailsModal";
 
@@ -18,8 +31,7 @@ const ClassParticipants = ({
 }) => {
   const axiosPublic = useAxiosPublic();
 
-  const [selectedBookingAcceptedData, setSelectedBookingAcceptedData] =
-    useState("");
+  const [selectedParticipantData, setSelectedParticipantData] = useState("");
 
   const [selectedClassId, setSelectedClassId] = useState(
     ClassDetailsData?.[0]?._id || null
@@ -28,10 +40,11 @@ const ClassParticipants = ({
     ClassDetailsData?.[0] || null
   );
 
-  // Filter participants based on selected class's module
+  // Local Cache fo User Data
+  const [userInfoCache, setUserInfoCache] = useState({});
+
   const participants = useMemo(() => {
     if (!selectedClass?.module) return [];
-
     return ClassBookingAcceptedData.filter(
       (item) =>
         item?.applicant?.classesName === selectedClass.module &&
@@ -179,14 +192,13 @@ const ClassParticipants = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <div className="flex flex-col md:flex-row gap-4">
+    <div className="min-h-screen bg-gray-100">
+      <div className="flex flex-col md:flex-row">
         {/* Vertical Tabs */}
-        <div className="bg-gray-300 p-3 rounded-md">
+        <div className="bg-gray-400 py-2 px-4">
           <div className="flex md:flex-col gap-3">
             {ClassDetailsData.map((cls) => {
               const isActive = selectedClassId === cls._id;
-
               return (
                 <button
                   key={cls._id}
@@ -212,22 +224,28 @@ const ClassParticipants = ({
           </div>
         </div>
 
-        {/* Participant Details */}
-        <div className="flex-1 bg-white p-5 rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-4">
-            {selectedClass?.module} Participants
+        {/* Participants Table */}
+        <div className="min-h-screen bg-fixed bg-cover bg-center w-full text-black">
+          {/* Participant Count */}
+          <h2 className="text-lg font-semibold mb-4 text-blue-700 border-b pb-1 p-2">
+            {selectedClass?.module} Participants ({participants.length})
           </h2>
 
-          {participants.length > 0 ? (
-            <div className="grid md:grid-cols-2 gap-4">
-              {participants.map((entry, index) => {
-                const data = entry?.applicant?.applicantData || {};
+          {/* Table */}
+          <div className="p-1">
+            {participants.length > 0 ? (
+              participants?.map((item, index) => {
+                const applicant =
+                  item.applicant.applicantData || item.applicant;
+                const altEmail = applicant.applicantEmail;
+                const { email } = applicant;
+                const paid = item.paid;
+                const isCompleted = isClassCompleted(item.endDate);
                 return (
-                  <div key={index} className="hidden md:flex overflow-x-auto">
-                    {/* Data Table */}
-                    <table className="min-w-full table-auto border border-gray-300 text-sm">
-                      {/* Table Header */}
-                      <thead className="bg-gray-100 text-left text-sm">
+                  <div key={index} className="overflow-x-auto">
+                    <table className="w-full text-sm border">
+                      {/* Table - Head */}
+                      <thead className="bg-gray-400 border border-black">
                         <tr>
                           <th className="py-3 px-4 border">#</th>
                           <th className="py-3 px-4 border">Applicant</th>
@@ -243,278 +261,253 @@ const ClassParticipants = ({
                         </tr>
                       </thead>
 
-                      {/* Table Body */}
-                      <tbody>
-                        {data.length > 0 ? (
-                          data?.map((item, index) => {
-                            const applicant =
-                              item.applicant.applicantData || item.applicant;
-                            const altEmail = applicant.applicantEmail;
-                            const { email } = applicant;
-                            const paid = item.paid;
+                      {/* Table - Body */}
+                      <tbody className="border border-black">
+                        {participants.map((item) => (
+                          <tr
+                            key={item._id}
+                            className={`${
+                              isCompleted
+                                ? "bg-red-100 hover:bg-red-200 border "
+                                : !paid
+                                ? "bg-yellow-100 hover:bg-yellow-200 border "
+                                : "bg-white hover:bg-gray-50 border "
+                            }`}
+                          >
+                            {/* Serial Number */}
+                            <td className="py-3 px-4 font-medium">
+                              {index + 1}
+                            </td>
 
-                            const isCompleted = isClassCompleted(item.endDate);
-                            return (
-                              <tr
-                                key={item._id}
-                                className={`${
-                                  isCompleted
-                                    ? "bg-red-100 hover:bg-red-200"
-                                    : !paid
-                                    ? "bg-yellow-100 hover:bg-yellow-200"
-                                    : "bg-white hover:bg-gray-50"
-                                }`}
-                              >
-                                {/* Serial Number */}
-                                <td className="py-3 px-4 font-medium">
-                                  {index + 1}
-                                </td>
-
-                                {/* User Info */}
-                                <td className="py-3 px-4">
-                                  <TrainerBookingRequestUserBasicInfo
+                            {/* User Info */}
+                            <td className="py-3 px-4">
+                              <TrainerBookingRequestUserBasicInfo
+                                email={email || altEmail}
+                                renderUserInfo={(user) => (
+                                  <CachedUserInfo
+                                    user={user}
                                     email={email || altEmail}
-                                    renderUserInfo={(user) => (
-                                      <CachedUserInfo
-                                        user={user}
-                                        email={email || altEmail}
-                                      />
-                                    )}
+                                    setUserInfoCache={setUserInfoCache}
+                                    userInfoCache={userInfoCache}
                                   />
-                                </td>
+                                )}
+                              />
+                            </td>
 
-                                {/* Class Name */}
-                                <td className="py-3 px-4 font-semibold">
-                                  {isCompleted ? (
-                                    <span className="text-red-600">
-                                      Completed
-                                    </span>
-                                  ) : (
-                                    item.applicant.classesName
-                                  )}
-                                </td>
+                            {/* Class Name */}
+                            <td className="py-3 px-4 font-semibold">
+                              {isCompleted ? (
+                                <span className="text-red-600">Completed</span>
+                              ) : (
+                                item.applicant.classesName
+                              )}
+                            </td>
 
-                                {/* Applicant Number */}
-                                <td className="p-3">
-                                  {(() => {
-                                    const rawPhone =
-                                      item.applicant?.applicantData?.phone ||
-                                      item.applicant?.applicantPhone ||
-                                      "";
+                            {/* Applicant Number */}
+                            <td className="p-3">
+                              {(() => {
+                                const rawPhone =
+                                  item.applicant?.applicantData?.phone ||
+                                  item.applicant?.applicantPhone ||
+                                  "";
 
-                                    // Ensure it starts with a '+' and add a space after the first 3 digits
-                                    const formattedPhone = rawPhone
-                                      ? `${
-                                          rawPhone.startsWith("+") ? "" : "+"
-                                        }${rawPhone}`.replace(
-                                          /^(\+\d{3})(\d+)/,
-                                          (_, code, rest) => `${code} ${rest}`
-                                        )
-                                      : "N/A";
-
-                                    return formattedPhone;
-                                  })()}
-                                </td>
-
-                                {/* Applicant Phone Number */}
-                                <td className="py-3 px-4">
-                                  {item.applicant.duration}
-                                </td>
-
-                                {/* Class Price */}
-                                <td className="py-3 px-4">
-                                  ${" "}
-                                  {parseFloat(
-                                    item.applicant.totalPrice
-                                  ).toFixed(2)}
-                                </td>
-
-                                {/* Submitted At */}
-                                <td className="py-3 px-4">
-                                  {new Date(
-                                    item?.applicant?.submittedDate
-                                  ).toLocaleString("en-US", {
-                                    month: "short",
-                                    day: "2-digit",
-                                    year: "numeric",
-                                    hour: "numeric",
-                                    minute: "2-digit",
-                                    hour12: true,
-                                  })}
-                                </td>
-
-                                {/* Start At */}
-                                <td className="py-3 px-4">
-                                  {paid ? (
-                                    item.startDate ? (
-                                      <span className="text-black font-medium">
-                                        {formatDate(item.startDate)}
-                                      </span>
-                                    ) : (
-                                      <span className="text-green-600 font-medium">
-                                        Set Start Time ...
-                                      </span>
+                                // Ensure it starts with a '+' and add a space after the first 3 digits
+                                const formattedPhone = rawPhone
+                                  ? `${
+                                      rawPhone.startsWith("+") ? "" : "+"
+                                    }${rawPhone}`.replace(
+                                      /^(\+\d{3})(\d+)/,
+                                      (_, code, rest) => `${code} ${rest}`
                                     )
-                                  ) : (
-                                    <span className="italic text-gray-500">
-                                      Waiting for payment...
-                                    </span>
-                                  )}
-                                </td>
+                                  : "N/A";
 
-                                {/* End At */}
-                                <td className="py-3 px-4">
+                                return formattedPhone;
+                              })()}
+                            </td>
+
+                            {/* Applicant Phone Number */}
+                            <td className="py-3 px-4">
+                              {item.applicant.duration}
+                            </td>
+
+                            {/* Class Price */}
+                            <td className="py-3 px-4">
+                              ${" "}
+                              {parseFloat(item.applicant.totalPrice).toFixed(2)}
+                            </td>
+
+                            {/* Submitted At */}
+                            <td className="py-3 px-4">
+                              {new Date(
+                                item?.applicant?.submittedDate
+                              ).toLocaleString("en-US", {
+                                month: "short",
+                                day: "2-digit",
+                                year: "numeric",
+                                hour: "numeric",
+                                minute: "2-digit",
+                                hour12: true,
+                              })}
+                            </td>
+
+                            {/* Start At */}
+                            <td className="py-3 px-4">
+                              {paid ? (
+                                item.startDate ? (
+                                  <span className="text-black font-medium">
+                                    {formatDate(item.startDate)}
+                                  </span>
+                                ) : (
+                                  <span className="text-green-600 font-medium">
+                                    Set Start Time ...
+                                  </span>
+                                )
+                              ) : (
+                                <span className="italic text-gray-500">
+                                  Waiting for payment...
+                                </span>
+                              )}
+                            </td>
+
+                            {/* End At */}
+                            <td className="py-3 px-4">
+                              {paid ? (
+                                item.endDate ? (
+                                  <span className="text-black font-medium">
+                                    {formatDate(item.endDate)}
+                                  </span>
+                                ) : (
+                                  <span className="text-green-600 font-medium">
+                                    Set End Time ...
+                                  </span>
+                                )
+                              ) : (
+                                <span className="italic text-gray-500">
+                                  Waiting for payment...
+                                </span>
+                              )}
+                            </td>
+
+                            {/* End At */}
+                            <td className="p-3 font-bold">
+                              {paid ? (
+                                <span className="text-green-600">Paid</span>
+                              ) : (
+                                <span className="text-red-500">Unpaid</span>
+                              )}
+                            </td>
+
+                            {/* Action */}
+                            <td className="py-3 px-4 text-center">
+                              <div className="flex gap-3">
+                                <>
                                   {paid ? (
-                                    item.endDate ? (
-                                      <span className="text-black font-medium">
-                                        {formatDate(item.endDate)}
-                                      </span>
-                                    ) : (
-                                      <span className="text-green-600 font-medium">
-                                        Set End Time ...
-                                      </span>
-                                    )
-                                  ) : (
-                                    <span className="italic text-gray-500">
-                                      Waiting for payment...
-                                    </span>
-                                  )}
-                                </td>
-
-                                {/* End At */}
-
-                                <td className="p-3 font-bold">
-                                  {paid ? (
-                                    <span className="text-green-600">Paid</span>
-                                  ) : (
-                                    <span className="text-red-500">Unpaid</span>
-                                  )}
-                                </td>
-
-                                {/* Action */}
-                                <td className="py-3 px-4 text-center">
-                                  <div className="flex gap-3">
-                                    <>
-                                      {paid ? (
-                                        <>
-                                          <button
-                                            id={`drop-applicant-btn-${item._id}`}
-                                            className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                                            onClick={() => handleDrop(item)}
-                                          >
-                                            <IoMdDownload className="text-red-600" />
-                                          </button>
-                                          <Tooltip
-                                            anchorSelect={`#drop-applicant-btn-${item._id}`}
-                                            content="Drop Applicant"
-                                          />
-                                        </>
-                                      ) : (
-                                        <>
-                                          <button
-                                            id={`delete-applicant-btn-${item._id}`}
-                                            className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                                            onClick={() => handleReject(item)}
-                                          >
-                                            <FaRegTrashAlt className="text-red-500" />
-                                          </button>
-                                          <Tooltip
-                                            anchorSelect={`#delete-applicant-btn-${item._id}`}
-                                            content="Delete Applicant"
-                                          />
-                                        </>
-                                      )}
-                                    </>
-
                                     <>
                                       <button
-                                        id={`details-applicant-btn-${item._id}`}
-                                        className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                                        id={`drop-applicant-btn-${item._id}`}
+                                        className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                                        onClick={() => handleDrop(item)}
+                                      >
+                                        <IoMdDownload className="text-red-600" />
+                                      </button>
+                                      <Tooltip
+                                        anchorSelect={`#drop-applicant-btn-${item._id}`}
+                                        content="Drop Applicant"
+                                      />
+                                    </>
+                                  ) : (
+                                    <>
+                                      <button
+                                        id={`delete-applicant-btn-${item._id}`}
+                                        className="border-2 border-red-500 bg-red-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                                        onClick={() => handleReject(item)}
+                                      >
+                                        <FaRegTrashAlt className="text-red-500" />
+                                      </button>
+                                      <Tooltip
+                                        anchorSelect={`#delete-applicant-btn-${item._id}`}
+                                        content="Delete Applicant"
+                                      />
+                                    </>
+                                  )}
+                                </>
+
+                                <>
+                                  <button
+                                    id={`details-applicant-btn-${item._id}`}
+                                    className="border-2 border-yellow-500 bg-yellow-100 rounded-full p-2 cursor-pointer hover:scale-105"
+                                    onClick={() => {
+                                      setSelectedParticipantData(item);
+                                      document
+                                        .getElementById(
+                                          "Class_Accepted_Details_Modal"
+                                        )
+                                        .showModal();
+                                    }}
+                                  >
+                                    <FaInfo className="text-yellow-500" />
+                                  </button>
+                                  <Tooltip
+                                    anchorSelect={`#details-applicant-btn-${item._id}`}
+                                    content="details Applicant"
+                                  />
+                                </>
+
+                                {/* Start Button (Only if Paid) */}
+                                <>
+                                  {paid && !item.startDate && (
+                                    <>
+                                      <button
+                                        id={`start-class-btn-${item._id}`}
+                                        className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"
                                         onClick={() => {
-                                          setSelectedBookingAcceptedData(item);
+                                          setSelectedParticipantData(item);
                                           document
                                             .getElementById(
-                                              "Class_Accepted_Details_Modal"
+                                              "Class_Accepted_Set_Time_Modal"
                                             )
                                             .showModal();
                                         }}
                                       >
-                                        <FaInfo className="text-yellow-500" />
+                                        <FaRegClock className="text-blue-600" />
                                       </button>
                                       <Tooltip
-                                        anchorSelect={`#details-applicant-btn-${item._id}`}
-                                        content="details Applicant"
+                                        anchorSelect={`#start-class-btn-${item._id}`}
+                                        content="Start Class"
                                       />
                                     </>
-
-                                    {/* Start Button (Only if Paid) */}
-                                    <>
-                                      {paid && !item.startDate && (
-                                        <>
-                                          <button
-                                            id={`start-class-btn-${item._id}`}
-                                            className="border-2 border-blue-500 bg-blue-100 rounded-full p-2 cursor-pointer hover:scale-105"
-                                            onClick={() => {
-                                              setSelectedBookingAcceptedData(
-                                                item
-                                              );
-                                              document
-                                                .getElementById(
-                                                  "Class_Accepted_Set_Time_Modal"
-                                                )
-                                                .showModal();
-                                            }}
-                                          >
-                                            <FaRegClock className="text-blue-600" />
-                                          </button>
-                                          <Tooltip
-                                            anchorSelect={`#start-class-btn-${item._id}`}
-                                            content="Start Class"
-                                          />
-                                        </>
-                                      )}
-                                    </>
-                                  </div>
-                                </td>
-                              </tr>
-                            );
-                          })
-                        ) : (
-                          <tr>
-                            <td
-                              colSpan={11}
-                              className="text-center py-6 bg-white text-black font-semibold italic"
-                            >
-                              No Booking Accepted Data Available.
+                                  )}
+                                </>
+                              </div>
                             </td>
                           </tr>
-                        )}
+                        ))}
                       </tbody>
                     </table>
                   </div>
                 );
-              })}
-            </div>
-          ) : (
-            <div className="text-center text-gray-500 text-lg mt-10">
-              Class is empty.
-            </div>
-          )}
+              })
+            ) : (
+              <p className="w-full bg-white py-10 text-center font-bold text-black">
+                No Participants for this class.
+              </p>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Modal */}
       <dialog id="Class_Accepted_Details_Modal" className="modal">
         <ClassAcceptedDetailsModal
-          selectedBookingAcceptedData={selectedBookingAcceptedData}
+          selectedBookingAcceptedData={selectedParticipantData}
         />
       </dialog>
 
       {/* Modal */}
       <dialog id="Class_Accepted_Set_Time_Modal" className="modal">
         <ClassAcceptedSetTimeModal
-          setSelectedBookingAcceptedData={setSelectedBookingAcceptedData}
-          selectedBookingAcceptedData={selectedBookingAcceptedData}
+          setSelectedBookingAcceptedData={setSelectedParticipantData}
+          selectedBookingAcceptedData={selectedParticipantData}
           Refetch={Refetch}
         />
       </dialog>
@@ -522,19 +515,14 @@ const ClassParticipants = ({
   );
 };
 
-export default ClassParticipants;
-
-const formatDate = (dateStr) => {
-  if (!dateStr) return "";
-  // Parse date from "dd-MM-yyyy" format
-  const parsedDate = parse(dateStr, "dd-MM-yyyy", new Date());
-
-  // If invalid date, fallback
-  if (isNaN(parsedDate)) return dateStr;
-
-  // Format to "MMM, d, yyyy" → e.g. Mar, 20, 2025
-  return format(parsedDate, "MMM, d  yyyy");
+// Prop Validation
+ClassParticipants.propTypes = {
+  ClassBookingAcceptedData: PropTypes.arrayOf(PropTypes.object).isRequired,
+  ClassDetailsData: PropTypes.arrayOf(PropTypes.object).isRequired,
+  Refetch: PropTypes.func.isRequired,
 };
+
+export default ClassParticipants;
 
 const isClassCompleted = (endDateStr) => {
   if (!endDateStr) return false;
@@ -548,4 +536,16 @@ const isClassCompleted = (endDateStr) => {
   today.setHours(0, 0, 0, 0);
 
   return endDate < today; // strictly before today
+};
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  // Parse date from "dd-MM-yyyy" format
+  const parsedDate = parse(dateStr, "dd-MM-yyyy", new Date());
+
+  // If invalid date, fallback
+  if (isNaN(parsedDate)) return dateStr;
+
+  // Format to "MMM, d, yyyy" → e.g. Mar, 20, 2025
+  return format(parsedDate, "MMM, d  yyyy");
 };
