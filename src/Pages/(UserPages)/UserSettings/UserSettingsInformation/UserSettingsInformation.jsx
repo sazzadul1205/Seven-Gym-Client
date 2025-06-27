@@ -50,16 +50,15 @@ const UserSettingsInformation = ({ UsersData, refetch }) => {
   // State hooks
   const [dob, setDob] = useState(initialDob);
   const [phone, setPhone] = useState(initialPhone);
+  const [isChanged, setIsChanged] = useState(false);
   const [fullName, setFullName] = useState(initialFullName);
-  const [profileImage, setProfileImage] = useState(initialProfile);
   const [profileImageFile, setProfileImageFile] = useState(null);
-  const [description, setDescription] = useState(initialDescription);
+  const [profileImage, setProfileImage] = useState(initialProfile);
   const [socialLinks, setSocialLinks] = useState(initialSocialLinks);
+  const [description, setDescription] = useState(initialDescription);
+  const [backgroundImageFile, setBackgroundImageFile] = useState(null);
   const [selectedGoals, setSelectedGoals] = useState(initialSelectedGoals);
   const [backgroundImage, setBackgroundImage] = useState(initialBackground);
-  const [backgroundImageFile, setBackgroundImageFile] = useState(null);
-
-  const [isChanged, setIsChanged] = useState(false);
 
   // Check for changes
   useEffect(() => {
@@ -200,37 +199,42 @@ const UserSettingsInformation = ({ UsersData, refetch }) => {
 
       {/* Content */}
       <div className="space-y-3">
+        {/* Banner image selection component */}
         <BannerSelector
           backgroundImage={backgroundImage}
           setBackgroundImage={setBackgroundImage}
           setBackgroundImageFile={setBackgroundImageFile}
         />
 
+        {/* Basic user info (name, phone, dob, profile image) */}
         <BasicInfoSelector
+          dob={dob}
+          phone={phone}
+          setDob={setDob}
+          setPhone={setPhone}
+          fullName={fullName}
+          setFullName={setFullName}
           profileImage={profileImage}
           setProfileImage={setProfileImage}
           setProfileImageFile={setProfileImageFile}
-          fullName={fullName}
-          setFullName={setFullName}
-          phone={phone}
-          setPhone={setPhone}
-          dob={dob}
-          setDob={setDob}
         />
 
+        {/* User details and goals selection */}
         <DetailsInfoSelector
           description={description}
-          setDescription={setDescription}
           selectedGoals={selectedGoals}
+          setDescription={setDescription}
           setSelectedGoals={setSelectedGoals}
         />
 
+        {/* Social links input section */}
         <SocialLinkSelector
           UsersData={UsersData}
           socialLinks={socialLinks}
           setSocialLinks={setSocialLinks}
         />
 
+        {/* Save button section */}
         <div className="bg-gray-400/50 p-3 text-black mb-2">
           <div className="flex justify-end">
             <CommonButton
@@ -240,7 +244,7 @@ const UserSettingsInformation = ({ UsersData, refetch }) => {
               isLoading={isLoading}
               disabled={!isChanged || isLoading}
               text="Save"
-              variant="outline" // Use the outline variant
+              variant="outline"
               loadingText="Saving..."
             />
           </div>

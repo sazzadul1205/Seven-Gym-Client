@@ -32,7 +32,7 @@ const DetailsInfoSelector = ({
             value={description}
             onChange={handleDescriptionChange}
             placeholder="Enter your bio..."
-            className="w-full p-2 border border-gray-300 rounded-md bg-white h-[150px] leading-11"
+            className="w-full p-2 border border-gray-300 rounded-md bg-white h-[150px] "
           />
         </div>
 

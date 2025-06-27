@@ -60,8 +60,8 @@ const ScheduleSettings = ({ UserScheduleData, refetch }) => {
   const axiosPublic = useAxiosPublic();
 
   // State: expanded days, selected schedule IDs, and selectedID for modal
-  const [expandedDays, setExpandedDays] = useState(new Set());
   const [selectedSchedules, setSelectedSchedules] = useState(new Set());
+  const [expandedDays, setExpandedDays] = useState(new Set());
   const [selectedID, setSelectedID] = useState(null);
 
   // Toggle individual schedule checkbox selection

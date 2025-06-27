@@ -29,8 +29,6 @@ const useTrainerDashboardData = () => {
     enabled: !!user?.email,
   });
 
-  console.log(TrainerData);
-
   // 3. Fetch Trainer Schedule
   const {
     data: TrainerScheduleData = [],

@@ -12,6 +12,7 @@ import useAuth from "../../../../Hooks/useAuth";
 // Import Modal
 import ViewPlanModal from "./ViewPlanModal/ViewPlanModal";
 import TodaysScheduleAddModal from "./TodaysScheduleAddModal/TodaysScheduleAddModal";
+import CommonButton from "../../../../Shared/Buttons/CommonButton";
 
 const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
   const { user } = useAuth();
@@ -19,6 +20,7 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
 
   // Selected event ID state
   const [selectedID, setSelectedID] = useState(null);
+  const [isRegenerating, setIsRegenerating] = useState(false);
 
   // Fetch event details based on selected ID
   const { data: eventDetails, isLoading } = useQuery({
@@ -119,12 +121,15 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
 
   // Regenerate schedule for next occurrence
   const handleRegenerateClick = async () => {
+    setIsRegenerating(true); // Set loading state to true
+
+    // Create a unique schedule ID for the next day (e.g., "Monday-27-06-2025")
     const updatedScheduleID = `${nextDayName}-${nextDate
       .split(" ")
       .reverse()
       .join("-")}`;
 
-    // Clear details for each time slot
+    // Build a new, empty schedule object for each time slot
     const updatedScheduleData = {};
     Object.keys(scheduleData).forEach((time) => {
       updatedScheduleData[time] = {
@@ -136,8 +141,10 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
       };
     });
 
+    // Format the date for the new schedule
     const formattedDate = nextDate.split(" ").join("-");
 
+    // Construct the regenerated schedule object
     const regeneratedSchedule = {
       id: updatedScheduleID,
       dayName: nextDayName,
@@ -146,11 +153,14 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
     };
 
     try {
+      // Send the new schedule to the server for the user
       await axiosPublic.put("/User_Schedule/RegenerateNewDaySchedule", {
         email: user.email,
         dayName: nextDayName,
         scheduleData: regeneratedSchedule,
       });
+
+      // Show success message
       Swal.fire({
         title: "Success!",
         text: "Schedule updated successfully.",
@@ -158,8 +168,11 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
         timer: 1500,
         showConfirmButton: false,
       });
+
+      // Refresh the schedule data
       refetch();
     } catch (error) {
+      // Handle errors and show error message
       console.error("Error updating schedule:", error);
       Swal.fire({
         title: "Error!",
@@ -167,6 +180,8 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
         icon: "error",
         confirmButtonText: "OK",
       });
+    } finally {
+      setIsRegenerating(false);
     }
   };
 
@@ -185,12 +200,21 @@ const TodaysSchedule = ({ scheduleData, scheduleInfo, refetch }) => {
             <span className="text-lg font-semibold"> {nextDayName}</span>?
           </h4>
           <p>[ {nextDate} ]</p>
-          <button
-            onClick={handleRegenerateClick}
-            className="bg-linear-to-bl hover:bg-linear-to-tr from-blue-400 to-blue-600 text-white font-bold rounded-lg shadow-md hover:shadow-xl py-2 px-10 cursor-pointer"
-          >
-            Regenerate
-          </button>
+          <div className="mx-auto justify-center flex" >
+            <CommonButton
+              clickEvent={handleRegenerateClick}
+              text="Regenerate"
+              loadingText="Regenerating..."
+              isLoading={isRegenerating}
+              bgColor="blue"
+              px="px-10"
+              py="py-2"
+              textColor="text-white"
+              borderRadius="rounded-lg"
+              width="auto"
+              className="shadow-md"
+            />
+          </div>
         </div>
       )}
 

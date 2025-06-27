@@ -177,7 +177,7 @@ const FitnessGoalsSelector = ({ selectedGoals, setSelectedGoals }) => {
         </h3>
 
         {/* Area */}
-        <div className="flex flex-wrap bg-white gap-2 py-4 px-2">
+        <div className="flex flex-wrap bg-white gap-2 py-4 px-2 overflow-y-auto max-h-[120px]">
           {selectedGoals.map((goal) => {
             const bgColor = goalColors[goal] || "#F72C5B";
             const textColor = getTextColor(bgColor);
