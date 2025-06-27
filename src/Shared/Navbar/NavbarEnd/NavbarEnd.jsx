@@ -13,7 +13,7 @@ import { ImExit } from "react-icons/im";
 import { GiUpgrade } from "react-icons/gi";
 import { AiTwotoneSchedule } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
-import { FaStopwatch, FaUser } from "react-icons/fa";
+import { FaStopwatch, FaUser, FaWpforms } from "react-icons/fa";
 import { MdDashboard, MdOutlineClass } from "react-icons/md";
 
 // Import Button
@@ -62,6 +62,11 @@ const NavbarEnd = ({ UsersData }) => {
         name: "User Class Management",
         path: "/User/UserClassManagement",
         icon: <MdOutlineClass />,
+      },
+      {
+        name: "User Form",
+        path: "/User/UserForm",
+        icon: <FaWpforms />,
       },
     ],
     Trainer: [

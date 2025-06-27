@@ -112,7 +112,7 @@ const TrainerScheduleDayControl = ({
                 : "bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
             }`}
           >
-            {isAdded ? `− ${day}` : `+ ${day}`} {/* Button label */}
+            {isAdded ? `− ${day}` : `+ ${day}`}
           </button>
         );
       })}
@@ -120,16 +120,16 @@ const TrainerScheduleDayControl = ({
   );
 };
 
-// ✅ PropTypes validation
+// PropTypes validation
 TrainerScheduleDayControl.propTypes = {
-  tempSchedule: PropTypes.object.isRequired,
-  selectedCount: PropTypes.number.isRequired,
-  setChangesMade: PropTypes.func.isRequired,
-  setTempSchedule: PropTypes.func.isRequired,
-  defaultTimeSlots: PropTypes.arrayOf(PropTypes.string).isRequired,
+  tempSchedule: PropTypes.object,
+  selectedCount: PropTypes.number,
+  setChangesMade: PropTypes.func,
+  setTempSchedule: PropTypes.func,
+  defaultTimeSlots: PropTypes.arrayOf(PropTypes.string),
   TrainerProfileData: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-  }).isRequired,
+    name: PropTypes.string,
+  }),
 };
 
 export default TrainerScheduleDayControl;

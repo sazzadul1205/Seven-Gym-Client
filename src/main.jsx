@@ -66,6 +66,7 @@ import BannedPage from "./Pages/BannedPage/BannedPage.jsx";
 import AdminPrivateRoute from "./Routes/AdminPrivateRoute.jsx";
 import ScrollToTop from "./Routes/ScrollToTop.jsx";
 import ClassManagementLayout from "./Layouts/ClassManagementLayout.jsx";
+import UserForm from "./Pages/(UserPages)/UserForm/UserForm.jsx";
 
 // React Query Client
 const queryClient = new QueryClient();
@@ -189,6 +190,15 @@ createRoot(document.getElementById("root")).render(
                 element={
                   <MemberPrivateRoute>
                     <UserTrainerSessionPayment />
+                  </MemberPrivateRoute>
+                }
+              />
+
+              <Route
+                path="/User/UserForm"
+                element={
+                  <MemberPrivateRoute>
+                    <UserForm />
                   </MemberPrivateRoute>
                 }
               />
