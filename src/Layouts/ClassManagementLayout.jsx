@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 // Import Icons
@@ -7,6 +7,11 @@ import { FaPowerOff } from "react-icons/fa";
 // Import Assets
 import worksheet from "../assets/ClassManagement/worksheet.png";
 import management from "../assets/ClassManagement/management.png";
+import IconClassRequest from "../assets/ClassManagement/ClassRequest.png";
+import IconClassAccepted from "../assets/ClassManagement/ClassAccepted.png";
+import IconClassRejected from "../assets/ClassManagement/ClassRejected.png";
+import IconClassCompleted from "../assets/ClassManagement/ClassCompleted.png";
+import IconClassParticipants from "../assets/ClassManagement/ClassParticipants.png";
 
 // Import Packages
 import Swal from "sweetalert2";
@@ -19,19 +24,17 @@ import Loading from "../Shared/Loading/Loading";
 import CommonButton from "../Shared/Buttons/CommonButton";
 import FetchingError from "../Shared/Component/FetchingError";
 
-// Import Tabs Component
-import ClassRequest from "../Pages/(ClassManagement)/ClassRequest/ClassRequest";
-
 // Import Utility
 import useClassManagementData from "../Utility/useClassManagementData";
 
 // Import Tab Component
+import ClassRequest from "../Pages/(ClassManagement)/ClassRequest/ClassRequest";
 import ClassAccepted from "../Pages/(ClassManagement)/ClassAccepted/ClassAccepted";
 import ClassRejected from "../Pages/(ClassManagement)/ClassRejected/ClassRejected";
 import ClassCompleted from "../Pages/(ClassManagement)/ClassCompleted/ClassCompleted";
 import ClassParticipants from "../Pages/(ClassManagement)/ClassParticipants/ClassParticipants";
-import ClassDetailsManagement from "../Pages/(ClassManagement)/ClassDetailsManagement/ClassDetailsManagement";
 import ClassControlDashboard from "../Pages/(ClassManagement)/ClassControlDashboard/ClassControlDashboard";
+import ClassDetailsManagement from "../Pages/(ClassManagement)/ClassDetailsManagement/ClassDetailsManagement";
 
 const ClassManagementLayout = () => {
   const { logOut } = useAuth();
@@ -39,12 +42,28 @@ const ClassManagementLayout = () => {
 
   // State Management
   const [spinning, setSpinning] = useState(false);
-  const [tabLoading] = useState(false);
+  const [tabLoading, setTabLoading] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const searchParams = new URLSearchParams(location.search);
-  const initialTab = searchParams.get("tab") || "Class_Details_Management";
+  const initialTab = searchParams.get("tab") || "Class_Management_Dashboard";
   const [activeTab, setActiveTab] = useState(initialTab);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set("tab", activeTab);
+    navigate({ search: params.toString() }, { replace: true });
+    window.scrollTo(0, 0);
+  }, [activeTab, navigate]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const urlTab = params.get("tab") || "Class_Management_Dashboard";
+    if (urlTab !== activeTab) {
+      setActiveTab(urlTab);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
   const {
     // Is Loading States
@@ -54,6 +73,7 @@ const ClassManagementLayout = () => {
     error,
 
     // Data
+    UserData,
     ClassDetailsData,
     ClassBookingRequestData,
     ClassBookingAcceptedData,
@@ -81,6 +101,7 @@ const ClassManagementLayout = () => {
       title: "Class Management Dashboard",
       content: (
         <ClassControlDashboard
+          Refetch={handleRefetch}
           ClassBookingRequestData={ClassBookingRequestData}
           ClassBookingAcceptedData={ClassBookingAcceptedData}
           ClassBookingRejectedData={ClassBookingRejectedData}
@@ -88,7 +109,6 @@ const ClassManagementLayout = () => {
           ClassBookingRefundStatusData={ClassBookingRefundStatusData}
           ClassBookingPaymentStatusData={ClassBookingPaymentStatusData}
           ClassBookingCompletedStatusData={ClassBookingCompletedStatusData}
-          Refetch={handleRefetch}
         />
       ),
     },
@@ -105,7 +125,7 @@ const ClassManagementLayout = () => {
     },
     {
       id: "Class_Request",
-      Icon: worksheet,
+      Icon: IconClassRequest,
       title: "Class Request",
       content: (
         <ClassRequest
@@ -116,7 +136,7 @@ const ClassManagementLayout = () => {
     },
     {
       id: "Class_Accepted",
-      Icon: worksheet,
+      Icon: IconClassAccepted,
       title: "Class Accepted",
       content: (
         <ClassAccepted
@@ -127,7 +147,7 @@ const ClassManagementLayout = () => {
     },
     {
       id: "Class_Rejected",
-      Icon: worksheet,
+      Icon: IconClassRejected,
       title: "Class Rejected",
       content: (
         <ClassRejected
@@ -138,7 +158,7 @@ const ClassManagementLayout = () => {
     },
     {
       id: "Class_Completed",
-      Icon: worksheet,
+      Icon: IconClassCompleted,
       title: "Class Completed",
       content: (
         <ClassCompleted
@@ -149,7 +169,7 @@ const ClassManagementLayout = () => {
     },
     {
       id: "Class_Participants",
-      Icon: worksheet,
+      Icon: IconClassParticipants,
       title: "Class Participants",
       content: (
         <ClassParticipants
@@ -160,6 +180,10 @@ const ClassManagementLayout = () => {
       ),
     },
   ];
+
+  // Loading state
+  if (isLoading) return <Loading />;
+  if (error) return <FetchingError />;
 
   // Handle SignOut
   const handleSignOut = async () => {
@@ -193,11 +217,9 @@ const ClassManagementLayout = () => {
     }
   };
 
-  // Loading state
-  if (isLoading) return <Loading />;
-
-  // Error state
-  if (error) return <FetchingError />;
+  if (!UserData) {
+    return <div>Loading user info...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -207,16 +229,19 @@ const ClassManagementLayout = () => {
         <div className="flex gap-2 items-center">
           {/* Avatar */}
           <img
-            src={"https://i.ibb.co/LhkYdTFJ/blob.jpg"}
-            alt="Class Manager"
+            src={UserData?.profileImage || ""}
+            alt="Manager Profile"
             className="w-12 h-12 rounded-full border border-gray-300"
           />
+
           {/* Basic Info */}
           <div className="text-black">
             {/* Name */}
-            <p className="font-semibold">{"i am the Class Manager"}</p>
+            <p className="font-semibold">
+              {UserData?.fullName || "I Am Manager"}
+            </p>
             {/* Role */}
-            <p className="text-sm font-light">{"Class Manager"}</p>
+            <p className="text-sm font-light">{UserData?.role || "Manager"}</p>
           </div>
         </div>
 
@@ -248,31 +273,38 @@ const ClassManagementLayout = () => {
         </div>
       </div>
 
-      {/*  Tabs Section */}
-      <div className="flex min-h-screen mx-auto bg-gray-100 border-t border-gray-500">
-        <div className="hidden lg:block w-1/5 bg-gray-200 text-black border-r border-gray-500">
+      {/* Body */}
+      <div className="flex">
+        {/* Sidebar */}
+        <div className="w-1/6 border-r border-gray-300 bg-gradient-to-bl from-gray-300 to-gray-100 min-h-screen">
           {/* Title */}
-          <p className="text-xl font-semibold italic bg-gray-400 text-white px-5 py-2">
+          <p className="text-xl font-semibold italic bg-gray-400 text-black px-5 py-4">
             Class Management Options
           </p>
 
           {/* Navigation Tab */}
-          <div className="space-y-2">
-            {tabs.map((tab) => (
-              <p
-                key={tab.id}
-                className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold mt-2 cursor-pointer ${
-                  activeTab === tab.id
-                    ? "bg-linear-to-br from-blue-500 to-blue-300 text-white border border-gray-500"
-                    : "bg-linear-to-bl border border-gray-400 from-gray-200 to-gray-300 hover:from-blue-400 hover:to-blue-200 hover:text-white"
-                }`}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                <img src={tab.Icon} alt="Tab Icon" className="w-5" />
-                {tab.title}
-              </p>
-            ))}
-          </div>
+          {tabs.map((tab) => (
+            <p
+              key={tab.id}
+              className={`flex items-center gap-3 w-full text-left px-4 py-5 mt-2 font-bold cursor-pointer text-black ${
+                activeTab === tab.id
+                  ? "bg-linear-to-br from-blue-500 to-blue-300 text-black "
+                  : "bg-linear-to-bl  from-gray-200 to-gray-300 hover:from-blue-400 hover:to-blue-200 hover:text-black"
+              }`}
+              onClick={() => {
+                if (tab.id !== activeTab) {
+                  setTabLoading(true);
+                  setTimeout(() => {
+                    setActiveTab(tab.id);
+                    setTabLoading(false);
+                  }, 300);
+                }
+              }}
+            >
+              <img src={tab.Icon} alt="Tab Icon" className="w-5" />
+              {tab.title}
+            </p>
+          ))}
         </div>
 
         {/* Main Content */}
@@ -315,7 +347,7 @@ const ClassManagementLayout = () => {
           ></label>
           <div className="menu bg-gray-300 text-black border-r border-gray-500 min-h-full w-3/4 md:w-80 p-0">
             {/* Title */}
-            <p className="text-base font-semibold italic bg-gray-400 text-white px-1 lg:px-5 py-6">
+            <p className="text-base font-semibold italic bg-gray-400 text-black px-1 lg:px-5 py-6">
               Class Management Options
             </p>
 
@@ -325,7 +357,7 @@ const ClassManagementLayout = () => {
                   key={tab.id}
                   className={`flex items-center gap-3 w-full text-left px-4 py-4 font-bold cursor-pointer ${
                     activeTab === tab.id
-                      ? "bg-blue-500 text-white border border-gray-500"
+                      ? "bg-blue-500 text-black border border-gray-500"
                       : "hover:bg-blue-300 border border-gray-500"
                   }`}
                   onClick={() => {

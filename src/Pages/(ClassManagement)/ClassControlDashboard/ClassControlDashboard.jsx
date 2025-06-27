@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import DashboardCardPrimary from "../../(AdminPanel)/AdminDashboard/AdminDashboardCards/DashboardCardPrimary/DashboardCardPrimary";
 import DashboardCardSecondary from "../../(AdminPanel)/AdminDashboard/AdminDashboardCards/DashboardCardSecondary/DashboardCardSecondary";
+import ClassBookingChart from "../../(AdminPanel)/AllClassBookings/ClassBookingChart/ClassBookingChart";
 
 // Import Component
 
@@ -14,7 +15,7 @@ const ClassControlDashboard = ({
   ClassBookingCompletedStatusData,
 }) => {
   return (
-    <>
+    <div className="space-y-5 " >
       <DashboardCardPrimary
         ClassBookingRequestData={ClassBookingRequestData}
         ClassBookingAcceptedData={ClassBookingAcceptedData}
@@ -31,8 +32,12 @@ const ClassControlDashboard = ({
         ClassBookingCompletedStatusData={ClassBookingCompletedStatusData}
       />
 
-
-    </>
+      <ClassBookingChart
+        ClassBookingRefundStatusData={ClassBookingRefundStatusData}
+        ClassBookingPaymentStatusData={ClassBookingPaymentStatusData}
+        ClassBookingCompletedStatusData={ClassBookingCompletedStatusData}
+      />
+    </div>
   );
 };
 

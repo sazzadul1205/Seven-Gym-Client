@@ -1,6 +1,9 @@
+import useAuth from "../Hooks/useAuth";
 import useFetchData from "./useFetchData";
 
 const useClassManagementData = () => {
+  const { user } = useAuth();
+
   // 1. Fetch Class Request
   const {
     data: ClassBookingRequestData,
@@ -74,8 +77,17 @@ const useClassManagementData = () => {
     "/Class_Booking_Completed/DailyStatus"
   );
 
+  // 8. Fetch Terms Of Service
+  const {
+    data: UserData,
+    isLoading: UserIsLoading,
+    error: UserError,
+    refetch: UserRefetch,
+  } = useFetchData("UserData", `/Users?email=${user?.email}`);
+
   // Unified refetch function
   const refetchAll = async () => {
+    await UserRefetch();
     await ClassDetailsRefetch();
     await ClassBookingRequestRefetch();
     await ClassBookingAcceptedRefetch();
@@ -87,6 +99,7 @@ const useClassManagementData = () => {
   };
 
   const isLoading =
+    UserIsLoading ||
     ClassDetailsIsLoading ||
     ClassBookingRequestIsLoading ||
     ClassBookingRejectedIsLoading ||
@@ -97,6 +110,7 @@ const useClassManagementData = () => {
     ClassBookingCompletedStatusIsLoading;
 
   const error =
+    UserError ||
     ClassDetailsError ||
     ClassBookingRequestError ||
     ClassBookingAcceptedError ||
@@ -114,6 +128,7 @@ const useClassManagementData = () => {
     error,
 
     // Data
+    UserData,
     ClassDetailsData,
     ClassBookingRequestData,
     ClassBookingAcceptedData,

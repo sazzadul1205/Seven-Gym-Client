@@ -134,14 +134,14 @@ const ClassBookingChart = ({
   }, [selectedMonth]);
 
   return (
-    <div className="w-full space-y-10 bg-gray-200/20">
+    <div className="w-full space-y-10 bg-gray-200/20 text-black">
       {/* Header and Month Selector */}
       <div className="flex justify-between items-center mb-4 bg-gray-400 px-5 py-2 rounded">
         <h3 className="text-white font-semibold text-lg">
           {monthLabel} - Trainer Booking Overview
         </h3>
-        <div>
-          <label className="text-white block">Select Month</label>
+        <div className="flex items-center gap-5" >
+          <label className="text-white block">Select Month :</label>
           <select
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}

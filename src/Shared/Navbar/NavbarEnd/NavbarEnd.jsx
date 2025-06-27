@@ -11,10 +11,10 @@ import useAuth from "../../../Hooks/useAuth";
 // Import Icons
 import { ImExit } from "react-icons/im";
 import { GiUpgrade } from "react-icons/gi";
-import { MdDashboard, MdOutlineClass } from "react-icons/md";
 import { AiTwotoneSchedule } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaStopwatch, FaUser } from "react-icons/fa";
+import { MdDashboard, MdOutlineClass } from "react-icons/md";
 
 // Import Button
 import CommonButton from "../../Buttons/CommonButton";
@@ -71,8 +71,7 @@ const NavbarEnd = ({ UsersData }) => {
         icon: <MdDashboard />,
       },
     ],
-    ClassManager: [{ name: "Dashboard", path: "/ClassManagerDashboard" }],
-    Moderator: [{ name: "Moderator Dashboard", path: "/ModeratorDashboard" }],
+    Manager: [{ name: "Class Manager", path: "/Class_Management" }],
     Admin: [{ name: "Admin Dashboard", path: "/Admin" }],
   };
 

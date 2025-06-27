@@ -141,8 +141,6 @@ const AdminPanelLayout = () => {
     setTimeout(() => setSpinning(false), 1000);
   };
 
-  // console.log(UserData);
-
   const tabs = [
     {
       id: "Dashboard",

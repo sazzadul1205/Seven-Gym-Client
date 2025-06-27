@@ -81,9 +81,9 @@ const DashboardCardPrimary = ({
   });
 
   return (
-    <div className="bg-gradient-to-t from-gray-200 to-gray-400 text-black">
+    <div className="bg-gradient-to-t from-gray-200 to-gray-400 text-black p-2 space-y-3">
       {/* Header */}
-      <div className="flex md:block items-center md:mx-auto md:text-center space-y-1 py-4 px-2">
+      <div className="flex md:block items-center md:mx-auto md:text-center space-y-1">
         {/* Title Cars */}
         <div>
           {/* Title */}
@@ -102,7 +102,7 @@ const DashboardCardPrimary = ({
       <div className="mx-auto bg-white w-1/3 p-[1px] mb-3" />
 
       {/* Booking Status Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-2">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ">
         <StatCard
           title="Booking Requests"
           value={requestCount}
@@ -130,7 +130,7 @@ const DashboardCardPrimary = ({
       </div>
 
       {/* Financial Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <StatCard
           title="Total Payments"
           value={`$${paymentTotal.toFixed(2)}`}
