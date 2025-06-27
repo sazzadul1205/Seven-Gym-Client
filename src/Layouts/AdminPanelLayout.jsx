@@ -23,6 +23,7 @@ import costumer from "../assets/AdminPanel/costumer.png";
 import training from "../assets/AdminPanel/training.png";
 import dashboard from "../assets/AdminPanel/dashboard.png";
 import satisfaction from "../assets/AdminPanel/satisfaction.png";
+import onlineSurvey from "../assets/AdminPanel/onlineSurvey.png";
 import ProfileSettingsIcon from "../assets/ProfileSettingsIcon.png";
 import trainerInvoice from "../assets/AdminPanel/trainerInvoice.png";
 import communityPosts from "../assets/AdminPanel/communityPosts.png";
@@ -42,6 +43,7 @@ import AllTrainerBookings from "../Pages/(AdminPanel)/AllTrainerBookings/AllTrai
 import FeedbackManagement from "../Pages/(AdminPanel)/FeedbackManagement/FeedbackManagement";
 import AllTrainerSchedule from "../Pages/(AdminPanel)/AllTrainerSchedule/AllTrainerSchedule";
 import TierUpgradeInvoices from "../Pages/(AdminPanel)/TierUpgradeInvoices/TierUpgradeInvoices";
+import BasicProfileSettings from "../Pages/(UserPages)/BasicProfileSettings/BasicProfileSettings";
 import HomePageAdminControl from "../Pages/(AdminPanel)/HomePageAdminControl/HomePageAdminControl";
 import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
 import TestimonialsManagement from "../Pages/(AdminPanel)/TestimonialsManagement/TestimonialsManagement";
@@ -49,7 +51,7 @@ import AllExtraPageManagement from "../Pages/(AdminPanel)/AllExtraPageManagement
 import GalleryPageAdminControl from "../Pages/(AdminPanel)/GalleryPageAdminControl/GalleryPageAdminControl";
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
 import CommunityPostsManagement from "../Pages/(AdminPanel)/CommunityPostsManagement/CommunityPostsManagement";
-import BasicProfileSettings from "../Pages/(UserPages)/BasicProfileSettings/BasicProfileSettings";
+import AdminUserForm from "../Pages/(AdminPanel)/AdminUserForm/AdminUserForm";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -90,6 +92,7 @@ const AdminPanelLayout = () => {
     UserData,
     GalleryData,
     AboutUsData,
+    UserFormData,
     AllUsersData,
     FeedbackData,
     PromotionsData,
@@ -341,6 +344,12 @@ const AdminPanelLayout = () => {
       content: (
         <BasicProfileSettings UsersData={UserData} Refetch={handleRefetch} />
       ),
+    },
+    {
+      id: "User_Forms",
+      Icon: onlineSurvey,
+      title: "Applications",
+      content: <AdminUserForm UserFormData={UserFormData} Refetch={handleRefetch} />,
     },
   ];
 

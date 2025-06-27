@@ -426,12 +426,21 @@ const useAdminPanelData = () => {
     "/Class_Booking_Completed/DailyStatus"
   );
 
+  // 43. Fetch Class Completed Daily Status
+  const {
+    data: UserFormData,
+    isLoading: UserFormIsLoading,
+    error: UserFormError,
+    refetch: UserFormRefetch,
+  } = useFetchData("UserFormData", "/User_Form");
+
   // Unified refetch function
   const refetchAll = async () => {
     await UserRefetch();
     await GalleryRefetch();
     await AboutUsRefetch();
     await AllUsersRefetch();
+    await UserFormRefetch();
     await FeedbackRefetch();
     await PromotionsRefetch();
     await OurMissionsRefetch();
@@ -480,6 +489,7 @@ const useAdminPanelData = () => {
     UserIsLoading ||
     GalleryIsLoading ||
     AboutUsIsLoading ||
+    UserFormIsLoading ||
     AllUsersIsLoading ||
     FeedbackIsLoading ||
     PromotionsIsLoading ||
@@ -528,6 +538,7 @@ const useAdminPanelData = () => {
     UserError ||
     GalleryError ||
     AboutUsError ||
+    UserFormError ||
     AllUsersError ||
     FeedbackError ||
     PromotionsError ||
@@ -583,6 +594,7 @@ const useAdminPanelData = () => {
     UserData,
     GalleryData,
     AboutUsData,
+    UserFormData,
     AllUsersData,
     FeedbackData,
     PromotionsData,

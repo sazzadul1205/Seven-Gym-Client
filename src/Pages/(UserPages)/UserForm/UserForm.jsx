@@ -192,7 +192,7 @@ const UserForm = () => {
               className="w-full border border-gray-300 p-2 rounded"
             >
               <option value="">Select Position</option>
-              <option value="Class Manager">Class Manager</option>
+              <option value="Manager">Manager</option>
               <option value="Trainer">Trainer</option>
             </select>
             {errors.position && (
