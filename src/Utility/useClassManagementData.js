@@ -41,6 +41,39 @@ const useClassManagementData = () => {
     refetch: ClassDetailsRefetch,
   } = useFetchData("ClassDetailsData", "/Class_Details");
 
+  // 5. Fetch Class Payed Daily Status
+  const {
+    data: ClassBookingPaymentStatusData,
+    isLoading: ClassBookingPaymentStatusIsLoading,
+    error: ClassBookingPaymentStatusError,
+    refetch: ClassBookingPaymentStatusRefetch,
+  } = useFetchData(
+    "ClassBookingPaymentStatusData",
+    "/Class_Booking_Payment/DailyStatus"
+  );
+
+  // 6. Fetch Class Refund Daily Status
+  const {
+    data: ClassBookingRefundStatusData,
+    isLoading: ClassBookingRefundStatusIsLoading,
+    error: ClassBookingRefundStatusError,
+    refetch: ClassBookingRefundStatusRefetch,
+  } = useFetchData(
+    "ClassBookingRefundStatusData",
+    "/Class_Booking_Refund/DailyStatus"
+  );
+
+  // 7. Fetch Class Completed Daily Status
+  const {
+    data: ClassBookingCompletedStatusData,
+    isLoading: ClassBookingCompletedStatusIsLoading,
+    error: ClassBookingCompletedStatusError,
+    refetch: ClassBookingCompletedStatusRefetch,
+  } = useFetchData(
+    "ClassBookingCompletedStatusData",
+    "/Class_Booking_Completed/DailyStatus"
+  );
+
   // Unified refetch function
   const refetchAll = async () => {
     await ClassDetailsRefetch();
@@ -48,6 +81,9 @@ const useClassManagementData = () => {
     await ClassBookingAcceptedRefetch();
     await ClassBookingRejectedRefetch();
     await ClassBookingCompletedRefetch();
+    await ClassBookingRefundStatusRefetch();
+    await ClassBookingPaymentStatusRefetch();
+    await ClassBookingCompletedStatusRefetch();
   };
 
   const isLoading =
@@ -55,14 +91,20 @@ const useClassManagementData = () => {
     ClassBookingRequestIsLoading ||
     ClassBookingRejectedIsLoading ||
     ClassBookingAcceptedIsLoading ||
-    ClassBookingCompletedIsLoading;
+    ClassBookingCompletedIsLoading ||
+    ClassBookingRefundStatusIsLoading ||
+    ClassBookingPaymentStatusIsLoading ||
+    ClassBookingCompletedStatusIsLoading;
 
   const error =
     ClassDetailsError ||
     ClassBookingRequestError ||
     ClassBookingAcceptedError ||
     ClassBookingRejectedError ||
-    ClassBookingCompletedError;
+    ClassBookingCompletedError ||
+    ClassBookingRefundStatusError ||
+    ClassBookingPaymentStatusError ||
+    ClassBookingCompletedStatusError;
 
   return {
     // Is Loading States
@@ -77,7 +119,9 @@ const useClassManagementData = () => {
     ClassBookingAcceptedData,
     ClassBookingRejectedData,
     ClassBookingCompletedData,
-
+    ClassBookingRefundStatusData,
+    ClassBookingPaymentStatusData,
+    ClassBookingCompletedStatusData,
 
     // Refetch All
     refetchAll,

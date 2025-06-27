@@ -456,7 +456,7 @@ AdminDashboardCards.propTypes = {
 export default AdminDashboardCards;
 
 // Card component with comparison arrow
-const Card = ({ icon: Icon, title, value, currency = false, change }) => {
+export const Card = ({ icon: Icon, title, value, currency = false, change }) => {
   const isUp = change.direction === "up";
   const isDown = change.direction === "down";
 

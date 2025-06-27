@@ -4,13 +4,14 @@ import { useNavigate } from "react-router";
 // Import Icons
 import { FaPowerOff } from "react-icons/fa";
 
-// Assets
+// Import Assets
 import worksheet from "../assets/ClassManagement/worksheet.png";
+import management from "../assets/ClassManagement/management.png";
 
 // Import Packages
 import Swal from "sweetalert2";
 
-// import Hooks
+// Import Hooks
 import useAuth from "../Hooks/useAuth";
 
 // Import Shared
@@ -21,13 +22,16 @@ import FetchingError from "../Shared/Component/FetchingError";
 // Import Tabs Component
 import ClassRequest from "../Pages/(ClassManagement)/ClassRequest/ClassRequest";
 
-// import Utility
+// Import Utility
 import useClassManagementData from "../Utility/useClassManagementData";
+
+// Import Tab Component
 import ClassAccepted from "../Pages/(ClassManagement)/ClassAccepted/ClassAccepted";
 import ClassRejected from "../Pages/(ClassManagement)/ClassRejected/ClassRejected";
 import ClassCompleted from "../Pages/(ClassManagement)/ClassCompleted/ClassCompleted";
-import ClassDetailsManagement from "../Pages/(ClassManagement)/ClassDetailsManagement/ClassDetailsManagement";
 import ClassParticipants from "../Pages/(ClassManagement)/ClassParticipants/ClassParticipants";
+import ClassDetailsManagement from "../Pages/(ClassManagement)/ClassDetailsManagement/ClassDetailsManagement";
+import ClassControlDashboard from "../Pages/(ClassManagement)/ClassControlDashboard/ClassControlDashboard";
 
 const ClassManagementLayout = () => {
   const { logOut } = useAuth();
@@ -55,6 +59,9 @@ const ClassManagementLayout = () => {
     ClassBookingAcceptedData,
     ClassBookingRejectedData,
     ClassBookingCompletedData,
+    ClassBookingRefundStatusData,
+    ClassBookingPaymentStatusData,
+    ClassBookingCompletedStatusData,
 
     // Refetch All
     refetchAll,
@@ -68,6 +75,23 @@ const ClassManagementLayout = () => {
   };
 
   const tabs = [
+    {
+      id: "Class_Management_Dashboard",
+      Icon: management,
+      title: "Class Management Dashboard",
+      content: (
+        <ClassControlDashboard
+          ClassBookingRequestData={ClassBookingRequestData}
+          ClassBookingAcceptedData={ClassBookingAcceptedData}
+          ClassBookingRejectedData={ClassBookingRejectedData}
+          ClassBookingCompletedData={ClassBookingCompletedData}
+          ClassBookingRefundStatusData={ClassBookingRefundStatusData}
+          ClassBookingPaymentStatusData={ClassBookingPaymentStatusData}
+          ClassBookingCompletedStatusData={ClassBookingCompletedStatusData}
+          Refetch={handleRefetch}
+        />
+      ),
+    },
     {
       id: "Class_Details_Management",
       Icon: worksheet,

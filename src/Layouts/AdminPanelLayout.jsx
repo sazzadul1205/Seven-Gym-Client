@@ -35,6 +35,7 @@ import useAdminPanelData from "../Utility/useAdminPanelData";
 
 // Tab Components
 import AdminDashboard from "../Pages/(AdminPanel)/AdminDashboard/AdminDashboard";
+import AllClassBookings from "../Pages/(AdminPanel)/AllClassBookings/AllClassBookings";
 import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserManagement";
 import AllTrainerBookings from "../Pages/(AdminPanel)/AllTrainerBookings/AllTrainerBookings";
 import FeedbackManagement from "../Pages/(AdminPanel)/FeedbackManagement/FeedbackManagement";
@@ -47,7 +48,6 @@ import AllExtraPageManagement from "../Pages/(AdminPanel)/AllExtraPageManagement
 import GalleryPageAdminControl from "../Pages/(AdminPanel)/GalleryPageAdminControl/GalleryPageAdminControl";
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
 import CommunityPostsManagement from "../Pages/(AdminPanel)/CommunityPostsManagement/CommunityPostsManagement";
-import AllClassBookings from "../Pages/(AdminPanel)/AllClassBookings/AllClassBookings";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -150,24 +150,24 @@ const AdminPanelLayout = () => {
       title: "Dashboard",
       content: (
         <AdminDashboard
-          TrainerSessionCompletedStatusData={TrainerSessionCompletedStatusData}
-          TrainerBookingCompletedStatusData={TrainerBookingCompletedStatusData}
-          TrainerBookingCancelledStatusData={TrainerBookingCancelledStatusData}
-          TrainerBookingAcceptedStatusData={TrainerBookingAcceptedStatusData}
+          Refetch={refetchAll}
+          AllUsersData={AllUsersData}
+          PromotionsData={PromotionsData}
+          AllTrainersData={AllTrainersData}
+          TestimonialsData={TestimonialsData}
+          DailyTierUpgradeRefundData={DailyTierUpgradeRefundData}
+          DailyTierUpgradePaymentData={DailyTierUpgradePaymentData}
+          ClassBookingRefundStatusData={ClassBookingRefundStatusData}
+          ClassBookingPaymentStatusData={ClassBookingPaymentStatusData}
+          TrainerSessionActiveStatusData={TrainerSessionActiveStatusData}
+          TrainerSessionRefundStatusData={TrainerSessionRefundStatusData}
+          TrainerBookingRequestStatusData={TrainerBookingRequestStatusData}
           ClassBookingCompletedStatusData={ClassBookingCompletedStatusData}
           TrainerSessionPaymentStatusData={TrainerSessionPaymentStatusData}
-          TrainerBookingRequestStatusData={TrainerBookingRequestStatusData}
-          TrainerSessionRefundStatusData={TrainerSessionRefundStatusData}
-          TrainerSessionActiveStatusData={TrainerSessionActiveStatusData}
-          ClassBookingPaymentStatusData={ClassBookingPaymentStatusData}
-          ClassBookingRefundStatusData={ClassBookingRefundStatusData}
-          DailyTierUpgradePaymentData={DailyTierUpgradePaymentData}
-          DailyTierUpgradeRefundData={DailyTierUpgradeRefundData}
-          TestimonialsData={TestimonialsData}
-          AllTrainersData={AllTrainersData}
-          PromotionsData={PromotionsData}
-          AllUsersData={AllUsersData}
-          Refetch={refetchAll}
+          TrainerBookingAcceptedStatusData={TrainerBookingAcceptedStatusData}
+          TrainerBookingCompletedStatusData={TrainerBookingCompletedStatusData}
+          TrainerBookingCancelledStatusData={TrainerBookingCancelledStatusData}
+          TrainerSessionCompletedStatusData={TrainerSessionCompletedStatusData}
         />
       ),
     },
@@ -196,11 +196,11 @@ const AdminPanelLayout = () => {
       title: "Tier Upgrade Invoices",
       content: (
         <TierUpgradeInvoices
-          DailyTierUpgradePaymentData={DailyTierUpgradePaymentData}
-          DailyTierUpgradeRefundData={DailyTierUpgradeRefundData}
-          TierUpgradePaymentData={TierUpgradePaymentData}
-          TierUpgradeRefundData={TierUpgradeRefundData}
           Refetch={refetchAll}
+          TierUpgradeRefundData={TierUpgradeRefundData}
+          TierUpgradePaymentData={TierUpgradePaymentData}
+          DailyTierUpgradeRefundData={DailyTierUpgradeRefundData}
+          DailyTierUpgradePaymentData={DailyTierUpgradePaymentData}
         />
       ),
     },
