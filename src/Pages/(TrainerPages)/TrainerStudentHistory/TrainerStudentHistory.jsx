@@ -1,6 +1,5 @@
 // import Packages
 import PropTypes from "prop-types";
-import { Tooltip } from "react-tooltip";
 
 import { useQuery } from "@tanstack/react-query";
 
@@ -12,13 +11,12 @@ import { formatDate } from "../../../Utility/formatDate";
 import { fetchTierBadge } from "../../../Utility/fetchTierBadge";
 
 // import Icons
-import { MdRateReview } from "react-icons/md";
 import { FaTriangleExclamation } from "react-icons/fa6";
 
 // Main component that displays trainer's student history
 const TrainerStudentHistory = ({ TrainerStudentHistoryData }) => {
   // Extract student booking history (array of objects)
-  const students = TrainerStudentHistoryData?.StudentsHistory || [];
+  const students = TrainerStudentHistoryData?.StudentsHistory;
 
   return (
     <div className="bg-gradient-to-t from-gray-200 to-gray-400 min-h-screen">
@@ -59,9 +57,9 @@ const TrainerStudentHistory = ({ TrainerStudentHistoryData }) => {
   );
 };
 
+// Prop Validation
 TrainerStudentHistory.propTypes = {
   TrainerStudentHistoryData: PropTypes.oneOfType([
-    // Case for a single object
     PropTypes.shape({
       _id: PropTypes.string.isRequired,
       trainerId: PropTypes.string.isRequired,
@@ -73,7 +71,6 @@ TrainerStudentHistory.propTypes = {
         })
       ).isRequired,
     }),
-    // Case for an array of objects
     PropTypes.arrayOf(
       PropTypes.shape({
         _id: PropTypes.string.isRequired,
@@ -118,59 +115,41 @@ const StudentCard = ({ email, booking }) => {
 
   return (
     <div
-      className={`p-4 flex flex-col gap-4 transition-colors duration-200 hover:bg-gray-100 border border-gray-300 rounded-lg text-black shadow-sm cursor-default transform hover:-translate-y-1
-        ${!booking.startAt ? "bg-green-100 hover:bg-green-50" : ""}`}
+      className={`p-4 flex flex-col gap-4 border border-gray-300 rounded-lg text-black shadow-sm cursor-default transform transition duration-300 ease-in-out hover:-translate-y-1 hover:bg-gray-100 ${
+        !booking.startAt ? "bg-green-100 hover:bg-green-50" : ""
+      }`}
     >
-      {/* Top Row: Avatar, Info */}
-      <div className="flex md:flex-col flex-col sm:items-center sm:gap-4">
-        {/* Student Avatar */}
+      {/* Avatar + Info */}
+      <div className="flex flex-col items-center gap-3 text-center">
+        {/* Avatar */}
         <img
           src={data.profileImage}
           alt={data.fullName || "Student"}
-          className="w-16 h-16 rounded-full object-cover border sm:w-20 sm:h-20"
+          className="w-20 h-20 rounded-full object-cover border"
         />
 
-        {/* Student Info */}
-        <div className="flex-1 mt-2 sm:mt-0">
-          <p className="font-semibold text-base sm:text-lg">{data.fullName}</p>
-          <p className="text-xs text-gray-600 italic">{email}</p>
+        {/* Info */}
+        <div>
+          <p className="font-semibold text-lg">{data.fullName}</p>
+          <p className="text-sm text-gray-600 italic">{email}</p>
         </div>
       </div>
 
-      {/* Tier Badge based on user tier */}
+      {/* Tier Badge */}
       <span
         className={`${fetchTierBadge(
           data?.tier
-        )} flex items-center justify-center text-center  mx-auto`}
+        )} px-3 py-1 rounded-full text-sm font-medium mx-auto`}
       >
         {data?.tier} Tier
       </span>
 
-      {/* Bottom Row: Last Booking Info & Review Button */}
-      <div className="flex flex-row sm:items-center justify-between gap-1 sm:gap-0">
-        {/* Last Booking Info */}
-        <div className="space-y-1">
-          <p className="font-bold text-sm sm:text-base">Last Booking:</p>
-          <p className="text-sm font-normal">
-            {formatDate(booking?.ActiveTime) || "N/A"}
-          </p>
-        </div>
-
-        {/* Review/Info Button with Tooltip */}
-        <div>
-          <button
-            id={`view-details-btn-${booking._id}`}
-            className="border-2 border-green-500 bg-green-200 hover:bg-green-300 rounded-full p-2 hover:scale-105 transition-transform duration-200 cursor-pointer"
-          >
-            <MdRateReview className="text-green-500" />
-          </button>
-
-          {/* Tooltip for Review button */}
-          <Tooltip
-            anchorSelect={`#view-details-btn-${booking._id}`}
-            content="View Review"
-          />
-        </div>
+      {/* Last Booking Info */}
+      <div className="flex flex-col items-center gap-1">
+        <p className="font-bold text-sm">Last Booking:</p>
+        <p className="text-sm text-gray-700">
+          {formatDate(booking?.ActiveTime) || "N/A"}
+        </p>
       </div>
     </div>
   );
