@@ -42,6 +42,7 @@ import UserSettings from "./Pages/(UserPages)/UserSettings/UserSettings.jsx";
 import UserTierUpgrade from "./Pages/(UserPages)/UserTierUpgrade/UserTierUpgrade.jsx";
 import TermsOfService from "./Pages/(PublicPages)/(About)/TermsOfService/TermsOfService.jsx";
 import TearUpgradePayment from "./Pages/(UserPages)/TierUpgradePayment/TierUpgradePayment.jsx";
+import UserClassManagement from "./Pages/(UserPages)/UserClassManagement/UserClassManagement.jsx";
 import UserSchedulePlanner from "./Pages/(UserPages)/UserSchedulePlanner/UserSchedulePlanner.jsx";
 import UserTrainerManagement from "./Pages/(UserPages)/UserTrainerManagement/UserTrainerManagement.jsx";
 import UserTrainerSessionPayment from "./Pages/(UserPages)/UserTrainerSessionPayment/UserTrainerSessionPayment.jsx";
@@ -52,6 +53,7 @@ import TrainerSettingsLayout from "./Layouts/TrainerSettingsLayout.jsx";
 // Private Route
 import MemberPrivateRoute from "./Routes/MemberPrivateRoute.jsx";
 import TrainerPrivateRoute from "./Routes/TrainerPrivateRoute.jsx";
+import ClassManagerPrivateRoute from "./Routes/ClassManagerPrivateRoute.jsx";
 
 // UnAuthorizes Page
 import UnauthorizedPage from "./Pages/UnauthorizedPage/UnauthorizedPage.jsx";
@@ -64,7 +66,6 @@ import BannedPage from "./Pages/BannedPage/BannedPage.jsx";
 import AdminPrivateRoute from "./Routes/AdminPrivateRoute.jsx";
 import ScrollToTop from "./Routes/ScrollToTop.jsx";
 import ClassManagementLayout from "./Layouts/ClassManagementLayout.jsx";
-import UserClassManagement from "./Pages/(UserPages)/UserClassManagement/UserClassManagement.jsx";
 
 // React Query Client
 const queryClient = new QueryClient();
@@ -216,7 +217,11 @@ createRoot(document.getElementById("root")).render(
             {/* Class Management */}
             <Route
               path="/Class_Management"
-              element={<ClassManagementLayout />}
+              element={
+                <ClassManagerPrivateRoute>
+                  <ClassManagementLayout />
+                </ClassManagerPrivateRoute>
+              }
             />
           </Routes>
         </BrowserRouter>
@@ -245,7 +250,7 @@ createRoot(document.getElementById("root")).render(
 //     static now() {
 //       const now = new OriginalDate();
 //       const fakeDateTimeString = `${FAKE_DATE_STRING}T${
-//         now.toTimeString().split(" ")[0]  
+//         now.toTimeString().split(" ")[0]
 //       }`;
 //       return new OriginalDate(fakeDateTimeString).getTime();
 //     }

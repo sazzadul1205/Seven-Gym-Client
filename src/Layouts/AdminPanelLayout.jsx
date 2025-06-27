@@ -23,6 +23,7 @@ import costumer from "../assets/AdminPanel/costumer.png";
 import training from "../assets/AdminPanel/training.png";
 import dashboard from "../assets/AdminPanel/dashboard.png";
 import satisfaction from "../assets/AdminPanel/satisfaction.png";
+import ProfileSettingsIcon from "../assets/ProfileSettingsIcon.png";
 import trainerInvoice from "../assets/AdminPanel/trainerInvoice.png";
 import communityPosts from "../assets/AdminPanel/communityPosts.png";
 
@@ -48,6 +49,7 @@ import AllExtraPageManagement from "../Pages/(AdminPanel)/AllExtraPageManagement
 import GalleryPageAdminControl from "../Pages/(AdminPanel)/GalleryPageAdminControl/GalleryPageAdminControl";
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
 import CommunityPostsManagement from "../Pages/(AdminPanel)/CommunityPostsManagement/CommunityPostsManagement";
+import BasicProfileSettings from "../Pages/(UserPages)/BasicProfileSettings/BasicProfileSettings";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -330,6 +332,14 @@ const AdminPanelLayout = () => {
           OurMissionsData={OurMissionsData}
           TermsOfServiceData={TermsOfServiceData}
         />
+      ),
+    },
+    {
+      id: "Profile_Settings",
+      Icon: ProfileSettingsIcon,
+      title: "Profile Settings",
+      content: (
+        <BasicProfileSettings UsersData={UserData} Refetch={handleRefetch} />
       ),
     },
   ];

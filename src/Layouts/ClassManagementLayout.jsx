@@ -7,6 +7,7 @@ import { FaPowerOff } from "react-icons/fa";
 // Import Assets
 import worksheet from "../assets/ClassManagement/worksheet.png";
 import management from "../assets/ClassManagement/management.png";
+import ProfileSettingsIcon from "../assets/ProfileSettingsIcon.png";
 import IconClassRequest from "../assets/ClassManagement/ClassRequest.png";
 import IconClassAccepted from "../assets/ClassManagement/ClassAccepted.png";
 import IconClassRejected from "../assets/ClassManagement/ClassRejected.png";
@@ -33,6 +34,7 @@ import ClassAccepted from "../Pages/(ClassManagement)/ClassAccepted/ClassAccepte
 import ClassRejected from "../Pages/(ClassManagement)/ClassRejected/ClassRejected";
 import ClassCompleted from "../Pages/(ClassManagement)/ClassCompleted/ClassCompleted";
 import ClassParticipants from "../Pages/(ClassManagement)/ClassParticipants/ClassParticipants";
+import BasicProfileSettings from "../Pages/(UserPages)/BasicProfileSettings/BasicProfileSettings";
 import ClassControlDashboard from "../Pages/(ClassManagement)/ClassControlDashboard/ClassControlDashboard";
 import ClassDetailsManagement from "../Pages/(ClassManagement)/ClassDetailsManagement/ClassDetailsManagement";
 
@@ -177,6 +179,14 @@ const ClassManagementLayout = () => {
           ClassDetailsData={ClassDetailsData}
           Refetch={handleRefetch}
         />
+      ),
+    },
+    {
+      id: "Profile_Settings",
+      Icon: ProfileSettingsIcon,
+      title: "Profile Settings",
+      content: (
+        <BasicProfileSettings UsersData={UserData} Refetch={handleRefetch} />
       ),
     },
   ];
