@@ -146,7 +146,7 @@ const AllManagerManagement = ({ AllUsersData, Refetch }) => {
       {currentData.length > 0 ? (
         <div className="overflow-x-auto">
           {/* Data Table */}
-          <table className="min-w-full table-auto border border-gray-300 text-sm">
+          <table className="min-w-full table-auto border border-gray-300 text-sm mb-20">
             {/* Table Header */}
             <thead>
               <tr className="bg-gray-100 border-b">
@@ -284,7 +284,7 @@ const AllManagerManagement = ({ AllUsersData, Refetch }) => {
           </table>
 
           {/* Pagination Controls */}
-          <div className="mt-6 flex justify-center items-center gap-4">
+          <div className="mt-6 flex justify-center items-center gap-4 ">
             <div className="join">
               {/* Previous Page */}
               <button

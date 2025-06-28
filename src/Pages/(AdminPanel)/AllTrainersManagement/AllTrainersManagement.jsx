@@ -182,7 +182,7 @@ const AllTrainersManagement = ({ AllTrainersData, Refetch }) => {
       {/* Tables */}
       <div className="overflow-x-auto">
         {/* Data Table */}
-        <table className="min-w-full table-auto border border-gray-300 text-sm">
+        <table className="min-w-full table-auto border border-gray-300 text-sm mb-20">
           {/* Table Header */}
           <thead>
             <tr className="bg-gray-100 border-b">

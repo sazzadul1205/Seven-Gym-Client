@@ -176,8 +176,9 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
       {openDropdownId === user._id && (
         <ul
           onClick={(e) => e.stopPropagation()}
-          className="absolute right-0 z-10 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg"
+          className="absolute right-0 z-[9999] mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg"
         >
+          {/* Always show Details */}
           <li
             className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
             onClick={() => handleUserAction("details", user)}
@@ -186,15 +187,18 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
             Details
           </li>
 
-          <li
-            onClick={() => handleUserAction("kick", user)}
-            className="flex items-center px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer"
-          >
-            <FaUserSlash className="mr-2" />
-            Kick User
-          </li>
+          {/* Kick option: Adjust label based on role */}
+          {user.role !== "Admin" && (
+            <li
+              onClick={() => handleUserAction("kick", user)}
+              className="flex items-center px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer"
+            >
+              <FaUserSlash className="mr-2" />
+              {user.role === "Manager" ? "Kick Manager" : "Kick User"}
+            </li>
+          )}
 
-          {/* Conditional Ban / UnBan */}
+          {/* Ban / UnBan logic */}
           {user.ban ? (
             <>
               <li
@@ -202,14 +206,16 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
                 onClick={() => handleUserAction("ban_details", user)}
               >
                 <FaExclamationTriangle className="mr-2" />
-                Ban Details
+                {user.role === "Manager"
+                  ? "Manager Ban Details"
+                  : "Ban Details"}
               </li>
               <li
                 className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer text-green-600"
                 onClick={() => handleUserAction("unBan", user)}
               >
                 <FaUnlock className="mr-2" />
-                UnBan User
+                {user.role === "Manager" ? "UnBan Manager" : "UnBan User"}
               </li>
             </>
           ) : (
@@ -218,7 +224,7 @@ const AllUserManagementDropdown = ({ user, Refetch }) => {
               onClick={() => handleUserAction("ban", user)}
             >
               <FaBan className="mr-2" />
-              Ban User
+              {user.role === "Manager" ? "Ban Manager" : "Ban User"}
             </li>
           )}
         </ul>
@@ -247,10 +253,12 @@ AllUserManagementDropdown.propTypes = {
   user: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     fullName: PropTypes.string.isRequired,
+    role: PropTypes.string.isRequired,
     ban: PropTypes.shape({
       End: PropTypes.string,
     }),
-  }).isRequired,
+  }),
+
   Refetch: PropTypes.func.isRequired,
 };
 
