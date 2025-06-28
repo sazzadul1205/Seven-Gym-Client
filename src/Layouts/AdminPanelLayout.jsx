@@ -18,6 +18,7 @@ import weekly from "../assets/AdminPanel/weekly.png";
 import invoice from "../assets/AdminPanel/invoice.png";
 import booking from "../assets/AdminPanel/booking.png";
 import gallery from "../assets/AdminPanel/gallery.png";
+import manager from "../assets/AdminPanel/manager.png";
 import homepage from "../assets/AdminPanel/homepage.png";
 import costumer from "../assets/AdminPanel/costumer.png";
 import training from "../assets/AdminPanel/training.png";
@@ -36,6 +37,7 @@ import useAuth from "../Hooks/useAuth";
 import useAdminPanelData from "../Utility/useAdminPanelData";
 
 // Tab Components
+import AdminUserForm from "../Pages/(AdminPanel)/AdminUserForm/AdminUserForm";
 import AdminDashboard from "../Pages/(AdminPanel)/AdminDashboard/AdminDashboard";
 import AllClassBookings from "../Pages/(AdminPanel)/AllClassBookings/AllClassBookings";
 import AllUserManagement from "../Pages/(AdminPanel)/AllUserManagement/AllUserManagement";
@@ -45,13 +47,13 @@ import AllTrainerSchedule from "../Pages/(AdminPanel)/AllTrainerSchedule/AllTrai
 import TierUpgradeInvoices from "../Pages/(AdminPanel)/TierUpgradeInvoices/TierUpgradeInvoices";
 import BasicProfileSettings from "../Pages/(UserPages)/BasicProfileSettings/BasicProfileSettings";
 import HomePageAdminControl from "../Pages/(AdminPanel)/HomePageAdminControl/HomePageAdminControl";
+import AllManagerManagement from "../Pages/(AdminPanel)/AllManagerManagement/AllManagerManagement";
 import AllTrainersManagement from "../Pages/(AdminPanel)/AllTrainersManagement/AllTrainersManagement";
 import TestimonialsManagement from "../Pages/(AdminPanel)/TestimonialsManagement/TestimonialsManagement";
 import AllExtraPageManagement from "../Pages/(AdminPanel)/AllExtraPageManagement/AllExtraPageManagement";
 import GalleryPageAdminControl from "../Pages/(AdminPanel)/GalleryPageAdminControl/GalleryPageAdminControl";
 import TrainerSessionsInvoices from "../Pages/(AdminPanel)/TrainerSessionsInvoices/TrainerSessionsInvoices";
 import CommunityPostsManagement from "../Pages/(AdminPanel)/CommunityPostsManagement/CommunityPostsManagement";
-import AdminUserForm from "../Pages/(AdminPanel)/AdminUserForm/AdminUserForm";
 
 const AdminPanelLayout = () => {
   const { logOut } = useAuth();
@@ -189,6 +191,17 @@ const AdminPanelLayout = () => {
       content: (
         <AllTrainersManagement
           AllTrainersData={AllTrainersData}
+          Refetch={refetchAll}
+        />
+      ),
+    },
+    {
+      id: "All_Manager",
+      Icon: manager,
+      title: "All Manager",
+      content: (
+        <AllManagerManagement
+          AllUsersData={AllUsersData}
           Refetch={refetchAll}
         />
       ),
@@ -349,7 +362,9 @@ const AdminPanelLayout = () => {
       id: "User_Forms",
       Icon: onlineSurvey,
       title: "Applications",
-      content: <AdminUserForm UserFormData={UserFormData} Refetch={handleRefetch} />,
+      content: (
+        <AdminUserForm UserFormData={UserFormData} Refetch={handleRefetch} />
+      ),
     },
   ];
 

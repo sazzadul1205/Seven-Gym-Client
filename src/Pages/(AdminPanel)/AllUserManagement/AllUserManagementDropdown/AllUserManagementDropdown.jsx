@@ -248,7 +248,7 @@ AllUserManagementDropdown.propTypes = {
     _id: PropTypes.string.isRequired,
     fullName: PropTypes.string.isRequired,
     ban: PropTypes.shape({
-      End: PropTypes.string, // or Date if it's a Date object already
+      End: PropTypes.string,
     }),
   }).isRequired,
   Refetch: PropTypes.func.isRequired,

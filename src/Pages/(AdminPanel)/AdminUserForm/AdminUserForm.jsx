@@ -33,9 +33,11 @@ const AdminUserForm = ({ UserFormData, Refetch }) => {
 
       if (confirm.isConfirmed) {
         const response = await axiosPublic.put("/Users/UpdateRole", {
-          id: user?.userId, // ✅ Use the actual User ID, not form ID
+          id: user?.userId,
           role: user?.position,
         });
+
+        await axiosPublic.delete(`/User_Form/${user?._id}`);
 
         if (response.status === 200) {
           Swal.fire({
