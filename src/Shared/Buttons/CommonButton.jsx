@@ -3,26 +3,25 @@ import { ImSpinner9 } from "react-icons/im";
 
 const CommonButton = ({
   clickEvent,
-  type = "submit", // Default type
+  type = "submit",
   textColor = "text-white",
-  bgColor = "blue", // Default color
-  bgFromColor, // Optional override
-  bgToColor, // Optional override
+  bgColor = "blue",
+  bgFromColor,
+  bgToColor,
   text = "",
-  px = "px-5", // Horizontal padding
-  py = "py-3", // Vertical padding
-  icon, // Optional icon
-  iconSize = "text-lg", // Icon size
-  isLoading = false, // Loading state
-  loadingText = "Processing...", // Custom loading text
-  borderRadius = "rounded-lg", // Border radius
-  width = "auto", // Custom width
-  cursorStyle = "cursor-pointer", // Default cursor
-  disabled = false, // Disabled state
+  px = "px-5",
+  py = "py-3",
+  icon,
+  iconSize = "text-lg",
+  isLoading = false,
+  loadingText = "Processing...",
+  borderRadius = "rounded-lg",
+  width = "auto",
+  cursorStyle = "cursor-pointer",
+  disabled = false,
   className = "",
-  iconPosition = "before", // Default icon position before the text
+  iconPosition = "before",
 }) => {
-  // Preset color gradients for common background colors
   const colorMap = {
     OriginalRed: {
       from: "from-[#c23e5f]",
@@ -48,32 +47,43 @@ const CommonButton = ({
       from: "from-gray-300",
       to: "to-gray-600",
     },
-    // add other colors as needed
   };
 
-  // Determine fromColor and toColor using override or colorMap fallback
-  const fromColor = bgFromColor
-    ? `from-[${bgFromColor}]`
-    : colorMap[bgColor]?.from || `from-${bgColor}-300`;
+  // Detect whether custom values are used
+  const usingCustomGradient = !!(bgFromColor || bgToColor);
 
-  const toColor = bgToColor
-    ? `to-[${bgToColor}]`
-    : colorMap[bgColor]?.to || `to-${bgColor}-600`;
+  // Get tailwind-safe classes or fallback to custom inline style
+  const fromColor = !usingCustomGradient
+    ? colorMap[bgColor]?.from || `from-${bgColor}-300`
+    : "";
 
-  const isButtonDisabled = isLoading || disabled; // Disable button if loading or disabled
+  const toColor = !usingCustomGradient
+    ? colorMap[bgColor]?.to || `to-${bgColor}-600`
+    : "";
+
+  const isButtonDisabled = isLoading || disabled;
+
+  // Build style for custom gradient if custom colors are used
+  const customStyle = usingCustomGradient
+    ? {
+        "--tw-gradient-from": bgFromColor,
+        "--tw-gradient-to": bgToColor,
+        "--tw-gradient-stops": `var(--tw-gradient-from), var(--tw-gradient-to)`,
+      }
+    : {};
 
   return (
     <button
       type={type}
+      style={customStyle}
       className={`flex w-${width} items-center justify-center font-semibold ${px} ${py} ${borderRadius} ${cursorStyle} transition-all duration-300 
         ${textColor} 
         bg-gradient-to-bl ${fromColor} ${toColor}
         hover:bg-gradient-to-tr active:opacity-70 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
       onClick={clickEvent}
-      disabled={isButtonDisabled} // Disable button while loading
+      disabled={isButtonDisabled}
     >
       {isLoading ? (
-        // Show loading state with spinner
         <span className="flex items-center">
           <span className="animate-spin mr-2">
             <ImSpinner9 />
@@ -82,15 +92,10 @@ const CommonButton = ({
         </span>
       ) : (
         <>
-          {/* Optional icon */}
           {icon && iconPosition === "before" && (
             <span className={`${text ? "mr-2" : ""} ${iconSize}`}>{icon}</span>
           )}
-
-          {/* Optional button text */}
           {text && <span>{text}</span>}
-
-          {/* Optional icon after the text */}
           {icon && iconPosition === "after" && (
             <span className={`${text ? "ml-2" : ""} ${iconSize}`}>{icon}</span>
           )}
@@ -99,6 +104,7 @@ const CommonButton = ({
     </button>
   );
 };
+
 
 // PropTypes for type validation
 CommonButton.propTypes = {
