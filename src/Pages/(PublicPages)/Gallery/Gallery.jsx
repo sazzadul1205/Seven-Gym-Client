@@ -9,7 +9,7 @@ import { useState } from "react";
 // Function to fetch images with pagination
 const getImages = async ({ pageParam = 0 }) => {
   const res = await fetch(
-    `http://localhost:5000/Gallery?limit=20&offset=${pageParam}`
+    `https://seven-gym-server.vercel.app/Gallery?limit=20&offset=${pageParam}`
   );
 
   if (!res.ok) {
