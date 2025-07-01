@@ -1,7 +1,3 @@
-Here’s a solid and professional starter section for your `README.md` that sets the tone, purpose, and high-level structure of your project. This works well for both team use and external sharing:
-
----
-
 # 🏋️‍♂️ Seven Gym
 
 ## Gym Management Web Platform
